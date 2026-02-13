@@ -28,3 +28,5 @@ Dự án xây dựng website thương mại điện tử FPT Shop - một nền 
 | Phan Khac Anh Tuan ([KhacTuan1224](https://github.com/KhacTuan1224))           | Member      |
 | Nguyen Phuong Chinh ([chinhngprit](https://github.com/chinhngprit))            | Member      |
 | Nguyen Tan Khiem ([nguyentankhiem1610](https://github.com/nguyentankhiem1610)) | Member      |
+
+## Theo dõi dự án của lớp tại [link](https://docs.google.com/document/d/1SXeumwh1u8Yp0dC2vJMpMznbU5E-hHp4QlYRMehpj54/edit?fbclid=IwY2xjawP7fhlleHRuA2FlbQIxMQBzcnRjBmFwcF9pZAEwAAEedb2YK7uGIXycjsky8VB1DFG-L3-gWnW-waFfYHy-auBXTEFJHKVo2hiwIss_aem_jiqtsPn96N6dYubaf0h3ow&tab=t.n8hb9b8xnj2z)
