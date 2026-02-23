@@ -3,7 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 23, 2026 at 03:12 PM
+
+-- Generation Time: Feb 23, 2026 at 03:18 PM
 -- Server version: 8.0.44
 -- PHP Version: 8.2.12
 
@@ -20,27 +21,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `db_web`
 --
-
-DELIMITER $$
---
--- Procedures
---
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_LayChiTietSanPham` (IN `p_san_pham_id` INT)   BEGIN
-    SELECT 
-        sp.ten_san_pham, 
-        sp.hang_san_xuat,
-        pb.sku, 
-        pb.ten_phien_ban, 
-        pb.mau_sac, 
-        pb.cau_hinh, 
-        pb.gia_ban, 
-        pb.so_luong_ton
-    FROM SAN_PHAM sp
-    JOIN PHIEN_BAN_SAN_PHAM pb ON sp.id = pb.san_pham_id
-    WHERE sp.id = p_san_pham_id;
-END$$
-
-DELIMITER ;
 
 -- --------------------------------------------------------
 
