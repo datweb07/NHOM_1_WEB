@@ -15,4 +15,4 @@ BEGIN
             INSERT INTO chi_tiet_gio (gio_hang_id, phien_ban_id, so_luong) VALUES (p_gio_hang_id, p_phien_ban_id, p_so_luong_them);
         END IF;
     END IF;
-END
+

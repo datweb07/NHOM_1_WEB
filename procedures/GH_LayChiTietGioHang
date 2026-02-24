@@ -5,4 +5,3 @@ BEGIN
     JOIN phien_ban_san_pham pb ON ctg.phien_ban_id = pb.id
     JOIN san_pham sp ON pb.san_pham_id = sp.id 
     WHERE ctg.gio_hang_id = p_gio_hang_id;
-END
