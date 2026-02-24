@@ -1,4 +1,3 @@
-
 BEGIN
     DECLARE v_ton_kho INT;
     DECLARE v_ton_tai_trong_gio INT;
@@ -15,4 +14,5 @@ BEGIN
             INSERT INTO chi_tiet_gio (gio_hang_id, phien_ban_id, so_luong) VALUES (p_gio_hang_id, p_phien_ban_id, p_so_luong_them);
         END IF;
     END IF;
+END
 
