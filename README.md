@@ -1,5 +1,7 @@
 # E-Commerce Website - FPT Shop
 
+<img width="960" height="313" alt="fpt-shop-banner" src="https://github.com/datweb07/NHOM_1_WEB/blob/main/images/fpt-shop-banner.png" />
+
 ## Project Description
 
 The FPT Shop e-commerce website project is an online shopping platform specializing in technology products, mobile phones, laptops, tablets, and electronic accessories. The website provides a modern and convenient shopping experience with a user-friendly and easy-to-use interface.
