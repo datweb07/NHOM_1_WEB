@@ -1,17 +1,13 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
-
--- Generation Time: Feb 23, 2026 at 03:18 PM
--- Server version: 8.0.44
--- PHP Version: 8.2.12
+-- =============================================
+-- DATABASE: db_web (E-Commerce Website - FPT Shop)
+-- Version: 2.0
+-- Updated: 2026-02-24
+-- Charset: utf8mb4 (hỗ trợ tiếng Việt + emoji)
+-- =============================================
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -22,533 +18,356 @@ SET time_zone = "+00:00";
 -- Database: `db_web`
 --
 
--- --------------------------------------------------------
+-- =========================================================
+-- 1. BẢNG ĐỘC LẬP (TẠO TRƯỚC — không phụ thuộc bảng khác)
+-- =========================================================
 
---
--- Table structure for table `chi_tiet_don`
---
-
-CREATE TABLE `chi_tiet_don` (
-  `id` int NOT NULL,
-  `don_hang_id` int NOT NULL,
-  `phien_ban_id` int NOT NULL,
-  `so_luong` int DEFAULT '1',
-  `gia_tai_thoi_diem_mua` decimal(15,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `chi_tiet_gio`
---
-
-CREATE TABLE `chi_tiet_gio` (
-  `id` int NOT NULL,
-  `gio_hang_id` int NOT NULL,
-  `phien_ban_id` int NOT NULL,
-  `so_luong` int DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `danh_gia`
---
-
-CREATE TABLE `danh_gia` (
-  `id` int NOT NULL,
-  `nguoi_dung_id` int NOT NULL,
-  `san_pham_id` int NOT NULL,
-  `so_sao` int DEFAULT NULL,
-  `noi_dung` text COLLATE utf8mb4_unicode_ci,
-  `ngay_viet` datetime DEFAULT CURRENT_TIMESTAMP
-) ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `danh_muc`
---
-
-CREATE TABLE `danh_muc` (
-  `id` int NOT NULL,
-  `ten` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `danh_muc_cha_id` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `dia_chi`
---
-
-CREATE TABLE `dia_chi` (
-  `id` int NOT NULL,
-  `nguoi_dung_id` int NOT NULL,
-  `ten_nguoi_nhan` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `sdt_nhan` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `so_nha_duong` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `phuong_xa` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `quan_huyen` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `tinh_thanh` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mac_dinh` tinyint(1) DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `don_hang`
---
-
-CREATE TABLE `don_hang` (
-  `id` int NOT NULL,
-  `nguoi_dung_id` int DEFAULT NULL COMMENT 'Nullable (null neu la guest)',
-  `dia_chi_id` int DEFAULT NULL COMMENT 'Nullable (neu login)',
-  `trang_thai` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT 'CHO_DUYET' COMMENT 'CHO_DUYET, DA_HUY...',
-  `tong_tien` decimal(15,2) DEFAULT NULL,
-  `thong_tin_guest` text COLLATE utf8mb4_unicode_ci COMMENT 'JSON: ten, sdt, dia chi',
-  `ngay_tao` datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `gio_hang`
---
-
-CREATE TABLE `gio_hang` (
-  `id` int NOT NULL,
-  `nguoi_dung_id` int DEFAULT NULL COMMENT 'Nullable',
-  `session_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Cho khach vang lai'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `khuyen_mai`
---
-
-CREATE TABLE `khuyen_mai` (
-  `id` int NOT NULL,
-  `ten_chuong_trinh` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ngay_bat_dau` datetime DEFAULT NULL,
-  `ngay_ket_thuc` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `lich_su_tim_kiem`
---
-
-CREATE TABLE `lich_su_tim_kiem` (
-  `id` int NOT NULL,
-  `nguoi_dung_id` int NOT NULL,
-  `tu_khoa` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `thoi_gian_tim` datetime DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `nguoi_dung`
---
-
+-- ---------------------------------------------------------
+-- Bảng: NGUOI_DUNG (Người dùng / Tài khoản)
+-- ---------------------------------------------------------
 CREATE TABLE `nguoi_dung` (
-  `id` int NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `mat_khau` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ho_ten` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `sdt` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `loai_tai_khoan` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT 'MEMBER' COMMENT 'ADMIN, MEMBER'
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `email` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `mat_khau` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Lưu hash bằng password_hash()',
+    `ho_ten` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `sdt` VARCHAR(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `avatar_url` VARCHAR(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ảnh đại diện',
+    `ngay_sinh` DATE DEFAULT NULL,
+    `gioi_tinh` ENUM('NAM', 'NU', 'KHAC') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `loai_tai_khoan` ENUM('ADMIN', 'MEMBER') COLLATE utf8mb4_unicode_ci DEFAULT 'MEMBER',
+    `trang_thai` ENUM('ACTIVE', 'BLOCKED', 'UNVERIFIED') COLLATE utf8mb4_unicode_ci DEFAULT 'ACTIVE',
+    `ngay_tao` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `ngay_cap_nhat` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `phien_ban_san_pham`
---
-
-CREATE TABLE `phien_ban_san_pham` (
-  `id` int NOT NULL,
-  `san_pham_id` int NOT NULL,
-  `sku` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ten_phien_ban` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mau_sac` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `cau_hinh` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `gia_ban` decimal(15,2) DEFAULT NULL,
-  `so_luong_ton` int DEFAULT '0'
+-- ---------------------------------------------------------
+-- Bảng: DANH_MUC (Danh mục sản phẩm — phân cấp)
+-- Ví dụ: Điện thoại → Apple → iPhone 16 Series
+-- ---------------------------------------------------------
+CREATE TABLE `danh_muc` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `ten` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `slug` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'URL thân thiện: dien-thoai, laptop',
+    `icon_url` VARCHAR(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Icon hiển thị trên menu',
+    `danh_muc_cha_id` INT DEFAULT NULL,
+    `thu_tu` INT DEFAULT 0 COMMENT 'Thứ tự hiển thị trên menu',
+    `trang_thai` TINYINT(1) DEFAULT 1 COMMENT '1=hiện, 0=ẩn',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_dm_slug` (`slug`),
+    KEY `danh_muc_cha_id` (`danh_muc_cha_id`),
+    CONSTRAINT `danh_muc_ibfk_1` FOREIGN KEY (`danh_muc_cha_id`) REFERENCES `danh_muc` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+-- ---------------------------------------------------------
+-- Bảng: KHUYEN_MAI (Chương trình khuyến mãi)
+-- ---------------------------------------------------------
+CREATE TABLE `khuyen_mai` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `ten_chuong_trinh` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `loai_giam` ENUM('PHAN_TRAM', 'SO_TIEN') COLLATE utf8mb4_unicode_ci DEFAULT 'PHAN_TRAM',
+    `gia_tri_giam` DECIMAL(15,2) DEFAULT NULL COMMENT '10 = 10% hoặc 500000 = 500k VND',
+    `giam_toi_da` DECIMAL(15,2) DEFAULT NULL COMMENT 'Giảm tối đa (áp dụng nếu loại %)',
+    `ngay_bat_dau` DATETIME DEFAULT NULL,
+    `ngay_ket_thuc` DATETIME DEFAULT NULL,
+    `trang_thai` ENUM('HOAT_DONG', 'DA_HET_HAN', 'TAM_DUNG') COLLATE utf8mb4_unicode_ci DEFAULT 'HOAT_DONG',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Table structure for table `san_pham`
---
+-- ---------------------------------------------------------
+-- Bảng: MA_GIAM_GIA (Voucher / Coupon code)
+-- ---------------------------------------------------------
+CREATE TABLE `ma_giam_gia` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `ma_code` VARCHAR(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'VD: FPTSHOP50K, SALE10',
+    `mo_ta` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `loai_giam` ENUM('PHAN_TRAM', 'SO_TIEN') COLLATE utf8mb4_unicode_ci NOT NULL,
+    `gia_tri_giam` DECIMAL(15,2) NOT NULL,
+    `giam_toi_da` DECIMAL(15,2) DEFAULT NULL COMMENT 'Áp dụng nếu loại PHAN_TRAM',
+    `don_toi_thieu` DECIMAL(15,2) DEFAULT 0 COMMENT 'Giá trị đơn hàng tối thiểu',
+    `so_luot_da_dung` INT DEFAULT 0,
+    `gioi_han_su_dung` INT DEFAULT NULL COMMENT 'NULL = không giới hạn',
+    `ngay_bat_dau` DATETIME NOT NULL,
+    `ngay_ket_thuc` DATETIME NOT NULL,
+    `trang_thai` ENUM('HOAT_DONG', 'DA_HET_HAN', 'HET_LUOT') COLLATE utf8mb4_unicode_ci DEFAULT 'HOAT_DONG',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_ma_code` (`ma_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- =========================================================
+-- 2. BẢNG CẤP 1 (Phụ thuộc NGUOI_DUNG / DANH_MUC)
+-- =========================================================
+
+-- ---------------------------------------------------------
+-- Bảng: DIA_CHI (Địa chỉ giao hàng)
+-- ---------------------------------------------------------
+CREATE TABLE `dia_chi` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `nguoi_dung_id` INT NOT NULL,
+    `ten_nguoi_nhan` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `sdt_nhan` VARCHAR(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `so_nha_duong` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `phuong_xa` VARCHAR(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `quan_huyen` VARCHAR(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `tinh_thanh` VARCHAR(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `mac_dinh` TINYINT(1) DEFAULT 0 COMMENT '1 = địa chỉ mặc định',
+    PRIMARY KEY (`id`),
+    KEY `nguoi_dung_id` (`nguoi_dung_id`),
+    CONSTRAINT `dia_chi_ibfk_1` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------
+-- Bảng: LICH_SU_TIM_KIEM
+-- ---------------------------------------------------------
+CREATE TABLE `lich_su_tim_kiem` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `nguoi_dung_id` INT NOT NULL,
+    `tu_khoa` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `thoi_gian_tim` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `nguoi_dung_id` (`nguoi_dung_id`),
+    CONSTRAINT `lich_su_tim_kiem_ibfk_1` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------
+-- Bảng: SAN_PHAM (Sản phẩm)
+-- ---------------------------------------------------------
 CREATE TABLE `san_pham` (
-  `id` int NOT NULL,
-  `danh_muc_id` int DEFAULT NULL,
-  `ten_san_pham` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `hang_san_xuat` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mo_ta` text COLLATE utf8mb4_unicode_ci,
-  `diem_danh_gia` float DEFAULT '0'
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `danh_muc_id` INT DEFAULT NULL,
+    `ten_san_pham` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `slug` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'URL: iphone-16-pro-max',
+    `hang_san_xuat` VARCHAR(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Apple, Samsung, Xiaomi...',
+    `mo_ta` TEXT COLLATE utf8mb4_unicode_ci,
+    `gia_hien_thi` DECIMAL(15,2) DEFAULT NULL COMMENT 'Giá "từ" hiển thị (giá thấp nhất phiên bản)',
+    `diem_danh_gia` FLOAT DEFAULT 0,
+    `trang_thai` ENUM('CON_BAN', 'NGUNG_BAN', 'SAP_RA_MAT', 'HET_HANG') COLLATE utf8mb4_unicode_ci DEFAULT 'CON_BAN',
+    `noi_bat` TINYINT(1) DEFAULT 0 COMMENT '1 = hiện trên banner/trang chủ',
+    `ngay_tao` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `ngay_cap_nhat` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_sp_slug` (`slug`),
+    KEY `danh_muc_id` (`danh_muc_id`),
+    KEY `idx_hang_sx` (`hang_san_xuat`),
+    KEY `idx_trang_thai` (`trang_thai`),
+    CONSTRAINT `san_pham_ibfk_1` FOREIGN KEY (`danh_muc_id`) REFERENCES `danh_muc` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `san_pham_khuyen_mai`
---
-
-CREATE TABLE `san_pham_khuyen_mai` (
-  `san_pham_id` int NOT NULL,
-  `khuyen_mai_id` int NOT NULL
+-- ---------------------------------------------------------
+-- Bảng: GIO_HANG (Giỏ hàng)
+-- ---------------------------------------------------------
+CREATE TABLE `gio_hang` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `nguoi_dung_id` INT DEFAULT NULL COMMENT 'NULL nếu là khách vãng lai',
+    `session_id` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Session cho khách vãng lai',
+    `ngay_tao` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `ngay_cap_nhat` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `nguoi_dung_id` (`nguoi_dung_id`),
+    CONSTRAINT `gio_hang_ibfk_1` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+-- =========================================================
+-- 3. BẢNG CẤP 2 (Phụ thuộc SAN_PHAM / NGUOI_DUNG)
+-- =========================================================
 
---
--- Table structure for table `thanh_toan`
---
-
-CREATE TABLE `thanh_toan` (
-  `id` int NOT NULL,
-  `don_hang_id` int NOT NULL,
-  `nguoi_duyet_id` int DEFAULT NULL COMMENT 'Admin ID',
-  `phuong_thuc` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'COD, QR, TRA_GOP',
-  `so_tien` decimal(15,2) DEFAULT NULL,
-  `anh_bien_lai` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'URL anh',
-  `trang_thai_duyet` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT 'CHO_DUYET' COMMENT 'CHO_DUYET, THANH_CONG',
-  `ngay_thanh_toan` datetime DEFAULT NULL
+-- ---------------------------------------------------------
+-- Bảng: PHIEN_BAN_SAN_PHAM (Biến thể sản phẩm)
+-- VD: iPhone 16 Pro Max - 256GB - Đen Titan
+-- ---------------------------------------------------------
+CREATE TABLE `phien_ban_san_pham` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `san_pham_id` INT NOT NULL,
+    `sku` VARCHAR(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mã kho duy nhất',
+    `ten_phien_ban` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'iPhone 16 Pro Max 256GB',
+    `mau_sac` VARCHAR(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Đen Titan, Trắng, Xanh...',
+    `dung_luong` VARCHAR(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '128GB, 256GB, 512GB, 1TB',
+    `ram` VARCHAR(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '8GB, 12GB, 16GB',
+    `cau_hinh` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mô tả cấu hình khác (nếu có)',
+    `gia_ban` DECIMAL(15,2) DEFAULT NULL COMMENT 'Giá bán hiện tại',
+    `gia_goc` DECIMAL(15,2) DEFAULT NULL COMMENT 'Giá gốc (giá gạch ngang)',
+    `so_luong_ton` INT DEFAULT 0,
+    `trang_thai` ENUM('CON_HANG', 'HET_HANG', 'NGUNG_BAN') COLLATE utf8mb4_unicode_ci DEFAULT 'CON_HANG',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_sku` (`sku`),
+    KEY `san_pham_id` (`san_pham_id`),
+    CONSTRAINT `phien_ban_sp_ibfk_1` FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `chk_gia_ban` CHECK (`gia_ban` > 0),
+    CONSTRAINT `chk_gia_goc` CHECK (`gia_goc` IS NULL OR `gia_goc` >= `gia_ban`),
+    CONSTRAINT `chk_ton_kho` CHECK (`so_luong_ton` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+-- ---------------------------------------------------------
+-- Bảng: HINH_ANH_SAN_PHAM (Ảnh sản phẩm — 1 SP nhiều ảnh)
+-- *** BẢNG MỚI — giải quyết vấn đề thiếu ảnh ***
+-- ---------------------------------------------------------
+CREATE TABLE `hinh_anh_san_pham` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `san_pham_id` INT NOT NULL,
+    `phien_ban_id` INT DEFAULT NULL COMMENT 'NULL = ảnh chung, có giá trị = ảnh theo phiên bản/màu',
+    `url_anh` VARCHAR(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `alt_text` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mô tả ảnh cho SEO/accessibility',
+    `la_anh_chinh` TINYINT(1) DEFAULT 0 COMMENT '1 = ảnh đại diện hiển thị ở listing',
+    `thu_tu` INT DEFAULT 0 COMMENT 'Thứ tự trong gallery',
+    PRIMARY KEY (`id`),
+    KEY `san_pham_id` (`san_pham_id`),
+    KEY `phien_ban_id` (`phien_ban_id`),
+    CONSTRAINT `hinh_anh_ibfk_1` FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `hinh_anh_ibfk_2` FOREIGN KEY (`phien_ban_id`) REFERENCES `phien_ban_san_pham` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Table structure for table `thong_so_ky_thuat`
---
-
+-- ---------------------------------------------------------
+-- Bảng: THONG_SO_KY_THUAT (Key-Value linh hoạt)
+-- VD: Ram = 8GB, Chip = A18 Pro, Pin = 4685mAh
+-- ---------------------------------------------------------
 CREATE TABLE `thong_so_ky_thuat` (
-  `id` int NOT NULL,
-  `san_pham_id` int NOT NULL,
-  `ten_thong_so` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ram, Chip, Pin...',
-  `gia_tri` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '8GB, M1, 5000mAh...'
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `san_pham_id` INT NOT NULL,
+    `ten_thong_so` VARCHAR(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ram, Chip, Pin, Màn hình...',
+    `gia_tri` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '8GB, A18 Pro, 5000mAh...',
+    `thu_tu` INT DEFAULT 0 COMMENT 'Thứ tự hiển thị',
+    PRIMARY KEY (`id`),
+    KEY `san_pham_id` (`san_pham_id`),
+    CONSTRAINT `thong_so_ibfk_1` FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+-- ---------------------------------------------------------
+-- Bảng: DANH_GIA (Đánh giá / Review sản phẩm)
+-- ---------------------------------------------------------
+CREATE TABLE `danh_gia` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `nguoi_dung_id` INT NOT NULL,
+    `san_pham_id` INT NOT NULL,
+    `so_sao` INT DEFAULT NULL,
+    `noi_dung` TEXT COLLATE utf8mb4_unicode_ci,
+    `ngay_viet` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `nguoi_dung_id` (`nguoi_dung_id`),
+    KEY `san_pham_id` (`san_pham_id`),
+    CONSTRAINT `danh_gia_ibfk_1` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `danh_gia_ibfk_2` FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `chk_so_sao` CHECK (`so_sao` BETWEEN 1 AND 5)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Table structure for table `yeu_thich`
---
-
+-- ---------------------------------------------------------
+-- Bảng: YEU_THICH (Wishlist — N:N giữa Người dùng & Sản phẩm)
+-- ---------------------------------------------------------
 CREATE TABLE `yeu_thich` (
-  `nguoi_dung_id` int NOT NULL,
-  `san_pham_id` int NOT NULL,
-  `ngay_them` datetime DEFAULT CURRENT_TIMESTAMP
+    `nguoi_dung_id` INT NOT NULL,
+    `san_pham_id` INT NOT NULL,
+    `ngay_them` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`nguoi_dung_id`, `san_pham_id`),
+    KEY `san_pham_id` (`san_pham_id`),
+    CONSTRAINT `yeu_thich_ibfk_1` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `yeu_thich_ibfk_2` FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indexes for dumped tables
---
+-- ---------------------------------------------------------
+-- Bảng: SAN_PHAM_KHUYEN_MAI (N:N giữa Sản phẩm & Khuyến mãi)
+-- ---------------------------------------------------------
+CREATE TABLE `san_pham_khuyen_mai` (
+    `san_pham_id` INT NOT NULL,
+    `khuyen_mai_id` INT NOT NULL,
+    PRIMARY KEY (`san_pham_id`, `khuyen_mai_id`),
+    KEY `khuyen_mai_id` (`khuyen_mai_id`),
+    CONSTRAINT `sp_km_ibfk_1` FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `sp_km_ibfk_2` FOREIGN KEY (`khuyen_mai_id`) REFERENCES `khuyen_mai` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indexes for table `chi_tiet_don`
---
-ALTER TABLE `chi_tiet_don`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `don_hang_id` (`don_hang_id`),
-  ADD KEY `phien_ban_id` (`phien_ban_id`);
+-- =========================================================
+-- 4. BẢNG LIÊN QUAN ĐẾN GIAO DỊCH (Phụ thuộc nhiều bảng)
+-- =========================================================
 
---
--- Indexes for table `chi_tiet_gio`
---
-ALTER TABLE `chi_tiet_gio`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `gio_hang_id` (`gio_hang_id`),
-  ADD KEY `phien_ban_id` (`phien_ban_id`);
+-- ---------------------------------------------------------
+-- Bảng: CHI_TIET_GIO (Chi tiết giỏ hàng)
+-- ---------------------------------------------------------
+CREATE TABLE `chi_tiet_gio` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `gio_hang_id` INT NOT NULL,
+    `phien_ban_id` INT NOT NULL,
+    `so_luong` INT DEFAULT 1,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_gio_phienban` (`gio_hang_id`, `phien_ban_id`) COMMENT 'Tránh trùng SP trong giỏ',
+    KEY `phien_ban_id` (`phien_ban_id`),
+    CONSTRAINT `chi_tiet_gio_ibfk_1` FOREIGN KEY (`gio_hang_id`) REFERENCES `gio_hang` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `chi_tiet_gio_ibfk_2` FOREIGN KEY (`phien_ban_id`) REFERENCES `phien_ban_san_pham` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `chk_sl_gio` CHECK (`so_luong` >= 1)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indexes for table `danh_gia`
---
-ALTER TABLE `danh_gia`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `nguoi_dung_id` (`nguoi_dung_id`),
-  ADD KEY `san_pham_id` (`san_pham_id`);
+-- ---------------------------------------------------------
+-- Bảng: DON_HANG (Đơn hàng)
+-- ---------------------------------------------------------
+CREATE TABLE `don_hang` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `ma_don_hang` VARCHAR(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mã hiển thị: DH20260224001',
+    `nguoi_dung_id` INT DEFAULT NULL COMMENT 'NULL nếu là khách vãng lai',
+    `dia_chi_id` INT DEFAULT NULL COMMENT 'NULL nếu guest (dùng thong_tin_guest)',
+    `ma_giam_gia_id` INT DEFAULT NULL COMMENT 'Voucher áp dụng',
+    `trang_thai` ENUM('CHO_DUYET', 'DA_XAC_NHAN', 'DANG_GIAO', 'DA_GIAO', 'HOAN_THANH', 'DA_HUY', 'TRA_HANG')
+        COLLATE utf8mb4_unicode_ci DEFAULT 'CHO_DUYET',
+    `tong_tien` DECIMAL(15,2) DEFAULT NULL COMMENT 'Tổng tiền sản phẩm',
+    `phi_van_chuyen` DECIMAL(15,2) DEFAULT 0,
+    `tien_giam_gia` DECIMAL(15,2) DEFAULT 0 COMMENT 'Số tiền được giảm',
+    `tong_thanh_toan` DECIMAL(15,2) DEFAULT NULL COMMENT 'tong_tien + phi_van_chuyen - tien_giam_gia',
+    `thong_tin_guest` TEXT COLLATE utf8mb4_unicode_ci COMMENT 'JSON: {ten, sdt, dia_chi} cho khách vãng lai',
+    `ghi_chu` TEXT COLLATE utf8mb4_unicode_ci COMMENT 'Ghi chú của khách hàng',
+    `ngay_giao_du_kien` DATETIME DEFAULT NULL,
+    `ngay_tao` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `ngay_cap_nhat` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_ma_don` (`ma_don_hang`),
+    KEY `nguoi_dung_id` (`nguoi_dung_id`),
+    KEY `dia_chi_id` (`dia_chi_id`),
+    KEY `ma_giam_gia_id` (`ma_giam_gia_id`),
+    KEY `idx_trang_thai` (`trang_thai`),
+    KEY `idx_ngay_tao` (`ngay_tao`),
+    CONSTRAINT `don_hang_ibfk_1` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE SET NULL,
+    CONSTRAINT `don_hang_ibfk_2` FOREIGN KEY (`dia_chi_id`) REFERENCES `dia_chi` (`id`) ON DELETE SET NULL,
+    CONSTRAINT `don_hang_ibfk_3` FOREIGN KEY (`ma_giam_gia_id`) REFERENCES `ma_giam_gia` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indexes for table `danh_muc`
---
-ALTER TABLE `danh_muc`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `danh_muc_cha_id` (`danh_muc_cha_id`);
+-- ---------------------------------------------------------
+-- Bảng: CHI_TIET_DON (Chi tiết đơn hàng)
+-- ---------------------------------------------------------
+CREATE TABLE `chi_tiet_don` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `don_hang_id` INT NOT NULL,
+    `phien_ban_id` INT NOT NULL,
+    `so_luong` INT DEFAULT 1,
+    `gia_tai_thoi_diem_mua` DECIMAL(15,2) DEFAULT NULL COMMENT 'Snapshot giá lúc đặt hàng',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_don_phienban` (`don_hang_id`, `phien_ban_id`) COMMENT 'Tránh trùng SP trong đơn',
+    KEY `phien_ban_id` (`phien_ban_id`),
+    CONSTRAINT `chi_tiet_don_ibfk_1` FOREIGN KEY (`don_hang_id`) REFERENCES `don_hang` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `chi_tiet_don_ibfk_2` FOREIGN KEY (`phien_ban_id`) REFERENCES `phien_ban_san_pham` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `chk_sl_don` CHECK (`so_luong` >= 1),
+    CONSTRAINT `chk_gia_mua` CHECK (`gia_tai_thoi_diem_mua` > 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indexes for table `dia_chi`
---
-ALTER TABLE `dia_chi`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `nguoi_dung_id` (`nguoi_dung_id`);
+-- ---------------------------------------------------------
+-- Bảng: THANH_TOAN (Thông tin thanh toán)
+-- ---------------------------------------------------------
+CREATE TABLE `thanh_toan` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `don_hang_id` INT NOT NULL,
+    `nguoi_duyet_id` INT DEFAULT NULL COMMENT 'Admin duyệt thanh toán',
+    `phuong_thuc` ENUM('COD', 'CHUYEN_KHOAN', 'QR', 'TRA_GOP', 'VI_DIEN_TU')
+        COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `so_tien` DECIMAL(15,2) DEFAULT NULL,
+    `anh_bien_lai` VARCHAR(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'URL ảnh biên lai chuyển khoản',
+    `trang_thai_duyet` ENUM('CHO_DUYET', 'THANH_CONG', 'THAT_BAI', 'HOAN_TIEN')
+        COLLATE utf8mb4_unicode_ci DEFAULT 'CHO_DUYET',
+    `ghi_chu_duyet` TEXT COLLATE utf8mb4_unicode_ci COMMENT 'Admin ghi chú khi duyệt',
+    `ngay_thanh_toan` DATETIME DEFAULT NULL,
+    `ngay_duyet` DATETIME DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `don_hang_id` (`don_hang_id`),
+    KEY `nguoi_duyet_id` (`nguoi_duyet_id`),
+    CONSTRAINT `thanh_toan_ibfk_1` FOREIGN KEY (`don_hang_id`) REFERENCES `don_hang` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `thanh_toan_ibfk_2` FOREIGN KEY (`nguoi_duyet_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indexes for table `don_hang`
---
-ALTER TABLE `don_hang`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `nguoi_dung_id` (`nguoi_dung_id`),
-  ADD KEY `dia_chi_id` (`dia_chi_id`);
-
---
--- Indexes for table `gio_hang`
---
-ALTER TABLE `gio_hang`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `nguoi_dung_id` (`nguoi_dung_id`);
-
---
--- Indexes for table `khuyen_mai`
---
-ALTER TABLE `khuyen_mai`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `lich_su_tim_kiem`
---
-ALTER TABLE `lich_su_tim_kiem`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `nguoi_dung_id` (`nguoi_dung_id`);
-
---
--- Indexes for table `nguoi_dung`
---
-ALTER TABLE `nguoi_dung`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `phien_ban_san_pham`
---
-ALTER TABLE `phien_ban_san_pham`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `san_pham_id` (`san_pham_id`);
-
---
--- Indexes for table `san_pham`
---
-ALTER TABLE `san_pham`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `danh_muc_id` (`danh_muc_id`);
-
---
--- Indexes for table `san_pham_khuyen_mai`
---
-ALTER TABLE `san_pham_khuyen_mai`
-  ADD PRIMARY KEY (`san_pham_id`,`khuyen_mai_id`),
-  ADD KEY `khuyen_mai_id` (`khuyen_mai_id`);
-
---
--- Indexes for table `thanh_toan`
---
-ALTER TABLE `thanh_toan`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `don_hang_id` (`don_hang_id`),
-  ADD KEY `nguoi_duyet_id` (`nguoi_duyet_id`);
-
---
--- Indexes for table `thong_so_ky_thuat`
---
-ALTER TABLE `thong_so_ky_thuat`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `san_pham_id` (`san_pham_id`);
-
---
--- Indexes for table `yeu_thich`
---
-ALTER TABLE `yeu_thich`
-  ADD PRIMARY KEY (`nguoi_dung_id`,`san_pham_id`),
-  ADD KEY `san_pham_id` (`san_pham_id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `chi_tiet_don`
---
-ALTER TABLE `chi_tiet_don`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `chi_tiet_gio`
---
-ALTER TABLE `chi_tiet_gio`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `danh_gia`
---
-ALTER TABLE `danh_gia`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `danh_muc`
---
-ALTER TABLE `danh_muc`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `dia_chi`
---
-ALTER TABLE `dia_chi`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `don_hang`
---
-ALTER TABLE `don_hang`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `gio_hang`
---
-ALTER TABLE `gio_hang`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `khuyen_mai`
---
-ALTER TABLE `khuyen_mai`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `lich_su_tim_kiem`
---
-ALTER TABLE `lich_su_tim_kiem`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `nguoi_dung`
---
-ALTER TABLE `nguoi_dung`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `phien_ban_san_pham`
---
-ALTER TABLE `phien_ban_san_pham`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `san_pham`
---
-ALTER TABLE `san_pham`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `thanh_toan`
---
-ALTER TABLE `thanh_toan`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `thong_so_ky_thuat`
---
-ALTER TABLE `thong_so_ky_thuat`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `chi_tiet_don`
---
-ALTER TABLE `chi_tiet_don`
-  ADD CONSTRAINT `chi_tiet_don_ibfk_1` FOREIGN KEY (`don_hang_id`) REFERENCES `don_hang` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `chi_tiet_don_ibfk_2` FOREIGN KEY (`phien_ban_id`) REFERENCES `phien_ban_san_pham` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `chi_tiet_gio`
---
-ALTER TABLE `chi_tiet_gio`
-  ADD CONSTRAINT `chi_tiet_gio_ibfk_1` FOREIGN KEY (`gio_hang_id`) REFERENCES `gio_hang` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `chi_tiet_gio_ibfk_2` FOREIGN KEY (`phien_ban_id`) REFERENCES `phien_ban_san_pham` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `danh_gia`
---
-ALTER TABLE `danh_gia`
-  ADD CONSTRAINT `danh_gia_ibfk_1` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `danh_gia_ibfk_2` FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `danh_muc`
---
-ALTER TABLE `danh_muc`
-  ADD CONSTRAINT `danh_muc_ibfk_1` FOREIGN KEY (`danh_muc_cha_id`) REFERENCES `danh_muc` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `dia_chi`
---
-ALTER TABLE `dia_chi`
-  ADD CONSTRAINT `dia_chi_ibfk_1` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `don_hang`
---
-ALTER TABLE `don_hang`
-  ADD CONSTRAINT `don_hang_ibfk_1` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `don_hang_ibfk_2` FOREIGN KEY (`dia_chi_id`) REFERENCES `dia_chi` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `gio_hang`
---
-ALTER TABLE `gio_hang`
-  ADD CONSTRAINT `gio_hang_ibfk_1` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `lich_su_tim_kiem`
---
-ALTER TABLE `lich_su_tim_kiem`
-  ADD CONSTRAINT `lich_su_tim_kiem_ibfk_1` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `phien_ban_san_pham`
---
-ALTER TABLE `phien_ban_san_pham`
-  ADD CONSTRAINT `phien_ban_san_pham_ibfk_1` FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `san_pham`
---
-ALTER TABLE `san_pham`
-  ADD CONSTRAINT `san_pham_ibfk_1` FOREIGN KEY (`danh_muc_id`) REFERENCES `danh_muc` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `san_pham_khuyen_mai`
---
-ALTER TABLE `san_pham_khuyen_mai`
-  ADD CONSTRAINT `san_pham_khuyen_mai_ibfk_1` FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `san_pham_khuyen_mai_ibfk_2` FOREIGN KEY (`khuyen_mai_id`) REFERENCES `khuyen_mai` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `thanh_toan`
---
-ALTER TABLE `thanh_toan`
-  ADD CONSTRAINT `thanh_toan_ibfk_1` FOREIGN KEY (`don_hang_id`) REFERENCES `don_hang` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `thanh_toan_ibfk_2` FOREIGN KEY (`nguoi_duyet_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE SET NULL;
-
---
--- Constraints for table `thong_so_ky_thuat`
---
-ALTER TABLE `thong_so_ky_thuat`
-  ADD CONSTRAINT `thong_so_ky_thuat_ibfk_1` FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `yeu_thich`
---
-ALTER TABLE `yeu_thich`
-  ADD CONSTRAINT `yeu_thich_ibfk_1` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `yeu_thich_ibfk_2` FOREIGN KEY (`san_pham_id`) REFERENCES `san_pham` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
