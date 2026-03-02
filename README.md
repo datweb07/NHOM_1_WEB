@@ -32,3 +32,9 @@ The FPT Shop e-commerce website project is an online shopping platform specializ
 | Nguyen Tan Khiem ([nguyentankhiem1610](https://github.com/nguyentankhiem1610)) | Member      |
 
 ## Track the class project at this [link](https://docs.google.com/document/d/1SXeumwh1u8Yp0dC2vJMpMznbU5E-hHp4QlYRMehpj54/edit?fbclid=IwY2xjawP7fhlleHRuA2FlbQIxMQBzcnRjBmFwcF9pZAEwAAEedb2YK7uGIXycjsky8VB1DFG-L3-gWnW-waFfYHy-auBXTEFJHKVo2hiwIss_aem_jiqtsPn96N6dYubaf0h3ow&tab=t.n8hb9b8xnj2z)
+
+## Licenses
+
+This project is released under the **MIT License**. See the [LICENSE](LICENSE) file for full details.
+
+Third-party libraries and tools used in this project are listed in [THIRD-PARTY-LICENSES.md](THIRD-PARTY-LICENSES.md).
