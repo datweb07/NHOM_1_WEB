@@ -39,6 +39,4 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute 
 
 ## Licenses
 
-This project is released under the **MIT License**. See the [LICENSE](LICENSE) file for full details.
-
-Third-party libraries and tools used in this project are listed in [THIRD-PARTY-LICENSES.md](THIRD-PARTY-LICENSES.md).
+This project is released under the **MIT License**. See the [LICENSE.md](LICENSE.md) file for full details.
