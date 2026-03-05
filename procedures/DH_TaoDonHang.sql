@@ -1,3 +1,5 @@
+DELIMITER //
+
 CREATE PROCEDURE DH_TaoDonHang (
     IN p_nguoi_dung_id INT,
     IN p_dia_chi_id INT,
@@ -173,6 +175,6 @@ BEGIN
 
     COMMIT;
 
-END$$
+END//
 
 DELIMITER ;

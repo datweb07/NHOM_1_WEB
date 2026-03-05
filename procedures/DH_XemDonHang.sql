@@ -1,3 +1,5 @@
+DELIMITER //
+
 CREATE PROCEDURE DH_XemDonHang (
     IN p_don_hang_id INT,
     IN p_nguoi_dung_id INT
@@ -52,4 +54,6 @@ BEGIN
     JOIN san_pham sp ON pb.san_pham_id = sp.id
     WHERE ct.don_hang_id = p_don_hang_id;
 
-END
+END//
+
+DELIMITER ;
