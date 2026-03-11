@@ -86,17 +86,17 @@ class BaseModel
         return mysqli_affected_rows($this->link);
     }
     
-    // Dùng cho SELECT phức tạp (có JOIN, WHERE...)
-    // public function query($sql)
-    // {
-    //     $result = chayTruyVanTraVeDL($this->link, $sql);
+    //dùng cho SELECT phức tạp (có JOIN, WHERE...)
+    public function query($sql)
+    {
+        $result = chayTruyVanTraVeDL($this->link, $sql);
         
-    //     $data = [];
-    //     while ($row = mysqli_fetch_assoc($result)) {
-    //         $data[] = $row;
-    //     }
-    //     return $data;
-    // }
+        $data = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
+        }
+        return $data;
+    }
 
     // // Dùng cho INSERT/UPDATE/DELETE phức tạp
     // public function execute($sql)
