@@ -3,26 +3,56 @@
 class SanPham
 {
     private $id;
+    private $danhMucId;
     private $tenSanPham;
-    private $gia;
+    private $slug;
+    private $hangSanXuat;
     private $moTa;
-    private $soLuong;
-    private $danhMuc;
+    private $giaHienThi;
+    private $diemDanhGia;
+    private $trangThai;
+    private $noiBat;
+    private $ngayTao;
+    private $ngayCapNhat;
 
-    public function __construct($id = null, $tenSanPham = "", $gia = 0, $moTa = "", $soLuong = 0, DanhMuc $danhMuc = null)
-    {
+    public function __construct(
+        $id = null,
+        $danhMucId = null,
+        $tenSanPham = "",
+        $slug = "",
+        $hangSanXuat = "",
+        $moTa = "",
+        $giaHienThi = 0,
+        $diemDanhGia = 0,
+        $trangThai = "CON_BAN",
+        $noiBat = 0,
+        $ngayTao = null,
+        $ngayCapNhat = null
+    ) {
         $this->id = $id;
+        $this->danhMucId = $danhMucId;
         $this->tenSanPham = $tenSanPham;
-        $this->gia = $gia;
+        $this->slug = $slug;
+        $this->hangSanXuat = $hangSanXuat;
         $this->moTa = $moTa;
-        $this->soLuong = $soLuong;
-        $this->danhMuc = $danhMuc;
+        $this->giaHienThi = $giaHienThi;
+        $this->diemDanhGia = $diemDanhGia;
+        $this->trangThai = $trangThai;
+        $this->noiBat = $noiBat;
+        $this->ngayTao = $ngayTao;
+        $this->ngayCapNhat = $ngayCapNhat;
     }
 
-    // Getter
+    // ===== Getter =====
+
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getDanhMucId()
+    {
+        return $this->danhMucId;
     }
 
     public function getTenSanPham()
@@ -30,9 +60,14 @@ class SanPham
         return $this->tenSanPham;
     }
 
-    public function getGia()
+    public function getSlug()
     {
-        return $this->gia;
+        return $this->slug;
+    }
+
+    public function getHangSanXuat()
+    {
+        return $this->hangSanXuat;
     }
 
     public function getMoTa()
@@ -40,25 +75,56 @@ class SanPham
         return $this->moTa;
     }
 
-    public function getSoLuong()
+    public function getGiaHienThi()
     {
-        return $this->soLuong;
+        return $this->giaHienThi;
     }
 
-    public function getDanhMuc()
+    public function getDiemDanhGia()
     {
-        return $this->danhMuc;
+        return $this->diemDanhGia;
     }
 
-    // Setter
+    public function getTrangThai()
+    {
+        return $this->trangThai;
+    }
+
+    public function getNoiBat()
+    {
+        return $this->noiBat;
+    }
+
+    public function getNgayTao()
+    {
+        return $this->ngayTao;
+    }
+
+    public function getNgayCapNhat()
+    {
+        return $this->ngayCapNhat;
+    }
+
+    // ===== Setter =====
+
+    public function setDanhMucId($danhMucId)
+    {
+        $this->danhMucId = $danhMucId;
+    }
+
     public function setTenSanPham($tenSanPham)
     {
         $this->tenSanPham = $tenSanPham;
     }
 
-    public function setGia($gia)
+    public function setSlug($slug)
     {
-        $this->gia = $gia;
+        $this->slug = $slug;
+    }
+
+    public function setHangSanXuat($hangSanXuat)
+    {
+        $this->hangSanXuat = $hangSanXuat;
     }
 
     public function setMoTa($moTa)
@@ -66,19 +132,33 @@ class SanPham
         $this->moTa = $moTa;
     }
 
-    public function setSoLuong($soLuong)
+    public function setGiaHienThi($giaHienThi)
     {
-        $this->soLuong = $soLuong;
+        $this->giaHienThi = $giaHienThi;
     }
 
-    public function setDanhMuc(DanhMuc $danhMuc)
+    public function setDiemDanhGia($diemDanhGia)
     {
-        $this->danhMuc = $danhMuc;
+        $this->diemDanhGia = $diemDanhGia;
     }
 
-    // Method hiển thị thông tin
+    public function setTrangThai($trangThai)
+    {
+        $this->trangThai = $trangThai;
+    }
+
+    public function setNoiBat($noiBat)
+    {
+        $this->noiBat = $noiBat;
+    }
+
+    // ===== Method hiển thị =====
+
     public function hienThiThongTin()
     {
-        return "Sản phẩm: " . $this->tenSanPham . " - Giá: " . number_format($this->gia) . " VNĐ";
+        return "Sản phẩm: " . $this->tenSanPham .
+               " | Hãng: " . $this->hangSanXuat .
+               " | Giá: " . $this->giaHienThi .
+               " | Trạng thái: " . $this->trangThai;
     }
 }

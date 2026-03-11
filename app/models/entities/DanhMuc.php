@@ -3,29 +3,41 @@
 class DanhMuc
 {
     private $id;
-    private $tenDanhMuc;
+    private $ten;
     private $slug;
-    private $moTa;
+    private $iconUrl;
+    private $danhMucChaId;
+    private $thuTu;
     private $trangThai;
 
-    public function __construct($id = null, $tenDanhMuc = "", $slug = "", $moTa = "", $trangThai = 1)
-    {
+    public function __construct(
+        $id = null,
+        $ten = "",
+        $slug = "",
+        $iconUrl = "",
+        $danhMucChaId = null,
+        $thuTu = 0,
+        $trangThai = 1
+    ) {
         $this->id = $id;
-        $this->tenDanhMuc = $tenDanhMuc;
+        $this->ten = $ten;
         $this->slug = $slug;
-        $this->moTa = $moTa;
+        $this->iconUrl = $iconUrl;
+        $this->danhMucChaId = $danhMucChaId;
+        $this->thuTu = $thuTu;
         $this->trangThai = $trangThai;
     }
 
-    // Getter
+    // ===== Getter =====
+
     public function getId()
     {
         return $this->id;
     }
 
-    public function getTenDanhMuc()
+    public function getTen()
     {
-        return $this->tenDanhMuc;
+        return $this->ten;
     }
 
     public function getSlug()
@@ -33,9 +45,19 @@ class DanhMuc
         return $this->slug;
     }
 
-    public function getMoTa()
+    public function getIconUrl()
     {
-        return $this->moTa;
+        return $this->iconUrl;
+    }
+
+    public function getDanhMucChaId()
+    {
+        return $this->danhMucChaId;
+    }
+
+    public function getThuTu()
+    {
+        return $this->thuTu;
     }
 
     public function getTrangThai()
@@ -43,10 +65,11 @@ class DanhMuc
         return $this->trangThai;
     }
 
-    // Setter
-    public function setTenDanhMuc($tenDanhMuc)
+    // ===== Setter =====
+
+    public function setTen($ten)
     {
-        $this->tenDanhMuc = $tenDanhMuc;
+        $this->ten = $ten;
     }
 
     public function setSlug($slug)
@@ -54,9 +77,19 @@ class DanhMuc
         $this->slug = $slug;
     }
 
-    public function setMoTa($moTa)
+    public function setIconUrl($iconUrl)
     {
-        $this->moTa = $moTa;
+        $this->iconUrl = $iconUrl;
+    }
+
+    public function setDanhMucChaId($danhMucChaId)
+    {
+        $this->danhMucChaId = $danhMucChaId;
+    }
+
+    public function setThuTu($thuTu)
+    {
+        $this->thuTu = $thuTu;
     }
 
     public function setTrangThai($trangThai)
@@ -64,9 +97,13 @@ class DanhMuc
         $this->trangThai = $trangThai;
     }
 
-    // Method hiển thị thông tin
+    // ===== Method hiển thị =====
+
     public function hienThiThongTin()
     {
-        return "Danh mục: " . $this->tenDanhMuc;
+        return "Danh mục: " . $this->ten .
+               " | Slug: " . $this->slug .
+               " | Thứ tự: " . $this->thuTu .
+               " | Trạng thái: " . $this->trangThai ;
     }
 }
