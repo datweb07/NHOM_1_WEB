@@ -1,10 +1,8 @@
 <?php
 
-// namespace App\Models\Abstract;
-
-// use App\Models\BaseModel;
-
-require_once 'BaseModel.php';
+require_once __DIR__ . '/../BaseModel.php';
+require_once __DIR__ . '/../../enums/GioiTinh.php';
+require_once __DIR__ . '/../../enums/LoaiTaiKhoan.php';
 
 abstract class NguoiDung extends BaseModel
 {
