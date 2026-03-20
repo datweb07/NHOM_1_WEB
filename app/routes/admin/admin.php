@@ -12,6 +12,8 @@ function adminRoute(string $uri): void
 
     require_once dirname(__DIR__, 2) . '/controllers/admin/DanhMucController.php';
     $danhMucController = new DanhMucController();
+    require_once dirname(__DIR__, 2) . '/controllers/admin/DonHangController.php';
+    $donHangController = new DonHangController();
 
     if ($path === 'admin/danh-muc' && $method === 'GET') {
         $danhMucController->index();
@@ -46,6 +48,23 @@ function adminRoute(string $uri): void
     if ($path === 'admin/danh-muc/hien') {
         $id = $_GET['id'] ?? null;
         $danhMucController->hien($id);
+        return;
+    }
+
+    if ($path === 'admin/don-hang' && $method === 'GET') {
+        $donHangController->index();
+        return;
+    }
+
+    if ($path === 'admin/don-hang/chi-tiet' && $method === 'GET') {
+        $id = $_GET['id'] ?? null;
+        $donHangController->detail($id);
+        return;
+    }
+
+    if ($path === 'admin/don-hang/cap-nhat-trang-thai' && $method === 'POST') {
+        $id = $_GET['id'] ?? null;
+        $donHangController->capNhatTrangThai($id);
         return;
     }
 
