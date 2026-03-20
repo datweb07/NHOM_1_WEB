@@ -8,12 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <title>FPT Shop</title>
     <script src="https://kit.fontawesome.com/1f55434e39.js" crossorigin="anonymous"></script>
-    <link rel="icon" href="./assets/images/header/1.png">
-    <link rel="stylesheet" href="./assets/css/main.css">
-    <link rel="stylesheet" href="./assets/css/grid.css">
-    <link rel="stylesheet" href="./assets/css/slider.css">
-    <link rel="stylesheet" href="./assets/css/slider-card.css">
-    <link rel="stylesheet" href="./assets/css/reponsive.css">
+    <link rel="icon" href="/public/assets/client/images/header/1.png">
+    <link rel="stylesheet" href="/public/assets/client/css/main.css">
+    <link rel="stylesheet" href="/public/assets/client/css/grid.css">
+    <link rel="stylesheet" href="/public/assets/client/css/slider.css">
+    <link rel="stylesheet" href="/public/assets/client/css/slider-card.css">
+    <link rel="stylesheet" href="/public/assets/client/css/reponsive.css">
 </head>
 
 <body>
@@ -171,7 +171,7 @@
                                         <tr>
                                             <td>
                                                 <a href="#">
-                                                    <img src="./assets/images/navbar/1.png">
+                                                    <img src="/public/assets/client/images/navbar/1.png">
                                                 </a>
                                             </td>
                                             <td>
@@ -184,7 +184,7 @@
                                         <tr>
                                             <td>
                                                 <a href="#">
-                                                    <img src="./assets/images/navbar/2.png">
+                                                    <img src="/public/assets/client/images/navbar/2.png">
                                                 </a>
                                             </td>
                                             <td>
@@ -197,7 +197,7 @@
                                     </table>
                                     <div class="nav-box-banner">
                                         <a href="#">
-                                            <img src="./assets/images/navbar/3.png">
+                                            <img src="/public/assets/client/images/navbar/3.png">
                                         </a>
                                     </div>
                                 </div>
@@ -284,7 +284,7 @@
                                     </table>
                                     <div class="nav-box-banner">
                                         <a href="#">
-                                            <img src="./assets/images/navbar/4.png">
+                                            <img src="/public/assets/client/images/navbar/4.png">
                                         </a>
                                     </div>
                                 </div>
@@ -342,7 +342,7 @@
                                             <tr>
                                                 <td>
                                                     <a href="#">
-                                                        <img src="./assets/images/navbar/5.png">
+                                                        <img src="/public/assets/client/images/navbar/5.png">
                                                     </a>
                                                 </td>
                                                 <td>
@@ -354,7 +354,7 @@
                                             <tr>
                                                 <td>
                                                     <a href="#">
-                                                        <img src="./assets/images/navbar/6.png">
+                                                        <img src="/public/assets/client/images/navbar/6.png">
                                                     </a>
                                                 </td>
                                                 <td>
@@ -366,7 +366,7 @@
                                         </table>
                                         <div class="nav-box-banner">
                                             <a href="#">
-                                                <img src="./assets/images/navbar/7.png">
+                                                <img src="/public/assets/client/images/navbar/7.png">
                                             </a>
                                         </div>
                                 </div>
@@ -413,7 +413,7 @@
                                         <tr>
                                             <td>
                                                 <a href="#">
-                                                    <img src="./assets/images/navbar/8.png">
+                                                    <img src="/public/assets/client/images/navbar/8.png">
                                                 </a>
                                             </td>
                                             <td><a href="#">iPhone 13 Pro Max 128GB
@@ -423,7 +423,7 @@
                                         <tr>
                                             <td>
                                                 <a href="#">
-                                                    <img src="./assets/images/navbar/9.png">
+                                                    <img src="/public/assets/client/images/navbar/9.png">
                                                 </a>
                                             </td>
                                             <td><a href="#">iPhone 13 128GB
@@ -433,7 +433,7 @@
                                     </table>
                                     <div class="nav-box-banner">
                                         <a href="#">
-                                            <img src="./assets/images/navbar/10.png">
+                                            <img src="/public/assets/client/images/navbar/10.png">
                                         </a>
                                     </div>
                                 </div>
@@ -501,7 +501,7 @@
                                         <tr>
                                             <td>
                                                 <a href="#">
-                                                    <img src="./assets/images/navbar/11.png">
+                                                    <img src="/public/assets/client/images/navbar/11.png">
                                                 </a>
                                             </td>
                                             <td><a href="#">Combo Loa Bluetooth Karaoke kèm Mic không dây ivalue F12-65N
@@ -511,7 +511,7 @@
                                         <tr>
                                             <td>
                                                 <a href="#">
-                                                    <img src="./assets/images/navbar/12.png">
+                                                    <img src="/public/assets/client/images/navbar/12.png">
                                                 </a>
                                             </td>
                                             <td><a href="#">Pin sạc dự phòng UmeTravel 10000mAh TRIP10000 Quick Charge
@@ -522,7 +522,7 @@
                                     <div class="nav-box-banner">
 
                                         <a href="#">
-                                            <img src="./assets/images/navbar/13.png">
+                                            <img src="/public/assets/client/images/navbar/13.png">
                                         </a>
                                     </div>
                                 </div>
@@ -636,7 +636,7 @@
     <div class="main theme-lunar">
         <div class="slider">
             <div class="grid wide">
-                <img src="./assets/images/header/2.png" style="width: 100%">
+                <img src="/public/assets/client/images/header/2.png" style="width: 100%">
             </div>
             <div class="grid wide slider">
                 <div class="row">
@@ -647,32 +647,32 @@
                                 <div class="row no-warp main-slider">
                                     <div class="col l-12 m-12 c-12 wrapper-item-slider">
                                         <div class="item-slider">
-                                            <img src="./assets/images/others/1.png">
+                                            <img src="/public/assets/client/images/others/1.png">
                                         </div>
                                     </div>
                                     <div class="col l-12 m-12 c-12 wrapper-item-slider">
                                         <div class="item-slider">
-                                            <img src="./assets/images/others/2.png">
+                                            <img src="/public/assets/client/images/others/2.png">
                                         </div>
                                     </div>
                                     <div class="col l-12 m-12 c-12 wrapper-item-slider">
                                         <div class="item-slider">
-                                            <img src="./assets/images/others/3.png">
+                                            <img src="/public/assets/client/images/others/3.png">
                                         </div>
                                     </div>
                                     <div class="col l-12 m-12 c-12 wrapper-item-slider">
                                         <div class="item-slider">
-                                            <img src="./assets/images/others/1.png">
+                                            <img src="/public/assets/client/images/others/1.png">
                                         </div>
                                     </div>
                                     <div class="col l-12 m-12 c-12 wrapper-item-slider">
                                         <div class="item-slider">
-                                            <img src="./assets/images/others/2.png">
+                                            <img src="/public/assets/client/images/others/2.png">
                                         </div>
                                     </div>
                                     <div class="col l-12 m-12 c-12 wrapper-item-slider">
                                         <div class="item-slider">
-                                            <img src="./assets/images/others/3.png">
+                                            <img src="/public/assets/client/images/others/3.png">
                                         </div>
                                     </div>
                                 </div>
@@ -696,16 +696,16 @@
                     <div class="col l-3 c-12 m-12">
                         <div class="banner-top">
                             <div class="banner-img-item">
-                                <img src="./assets/images/others/4.png">
+                                <img src="/public/assets/client/images/others/4.png">
                             </div>
                             <div class="banner-img-item">
-                                <img src="./assets/images/others/5.png">
+                                <img src="/public/assets/client/images/others/5.png">
                             </div>
                             <div class="banner-img-item">
-                                <img src="./assets/images/others/6.png">
+                                <img src="/public/assets/client/images/others/6.png">
                             </div>
                             <div class="banner-img-item">
-                                <img src="./assets/images/others/7.png">
+                                <img src="/public/assets/client/images/others/7.png">
                             </div>
                         </div>
                     </div>
@@ -719,7 +719,7 @@
                         <div class="category-item">
                             <a href="#">
                                 <div class="img-category">
-                                    <img src="./assets/images/icon/phone.png">
+                                    <img src="/public/assets/client/images/icon/phone.png">
                                 </div>
                                 <p class="title-category">
                                     Điện thoại
@@ -731,7 +731,7 @@
                         <div class="category-item">
                             <a href="#">
                                 <div class="img-category">
-                                    <img src="./assets/images/icon/lap.png">
+                                    <img src="/public/assets/client/images/icon/lap.png">
                                 </div>
                                 <p class="title-category">
                                     Laptop
@@ -743,7 +743,7 @@
                         <div class="category-item">
                             <a href="#">
                                 <div class="img-category">
-                                    <img src="./assets/images/icon/apple.png">
+                                    <img src="/public/assets/client/images/icon/apple.png">
                                 </div>
                                 <p class="title-category">
                                     Apple
@@ -755,7 +755,7 @@
                         <div class="category-item">
                             <a href="#">
                                 <div class="img-category">
-                                    <img src="./assets/images/icon/samsung.png">
+                                    <img src="/public/assets/client/images/icon/samsung.png">
                                 </div>
                                 <p class="title-category">
                                     Samsung
@@ -767,7 +767,7 @@
                         <div class="category-item">
                             <a href="#">
                                 <div class="img-category">
-                                    <img src="./assets/images/icon/tablet.png">
+                                    <img src="/public/assets/client/images/icon/tablet.png">
                                 </div>
                                 <p class="title-category">
                                     Máy tính bảng
@@ -779,7 +779,7 @@
                         <div class="category-item">
                             <a href="#">
                                 <div class="img-category">
-                                    <img src="./assets/images/icon/xiaomi.png">
+                                    <img src="/public/assets/client/images/icon/xiaomi.png">
                                 </div>
                                 <p class="title-category">
                                     Xiaomi
@@ -791,7 +791,7 @@
                         <div class="category-item">
                             <a href="#">
                                 <div class="img-category">
-                                    <img src="./assets/images/icon/phone.png">
+                                    <img src="/public/assets/client/images/icon/phone.png">
                                 </div>
                                 <p class="title-category">
                                     Điện thoại
@@ -803,7 +803,7 @@
                         <div class="category-item">
                             <a href="#">
                                 <div class="img-category">
-                                    <img src="./assets/images/icon/lap.png">
+                                    <img src="/public/assets/client/images/icon/lap.png">
                                 </div>
                                 <p class="title-category">
                                     Laptop
@@ -815,7 +815,7 @@
                         <div class="category-item">
                             <a href="#">
                                 <div class="img-category">
-                                    <img src="./assets/images/icon/apple.png">
+                                    <img src="/public/assets/client/images/icon/apple.png">
                                 </div>
                                 <p class="title-category">
                                     Apple
@@ -827,7 +827,7 @@
                         <div class="category-item">
                             <a href="#">
                                 <div class="img-category">
-                                    <img src="./assets/images/icon/samsung.png">
+                                    <img src="/public/assets/client/images/icon/samsung.png">
                                 </div>
                                 <p class="title-category">
                                     Samsung
@@ -839,7 +839,7 @@
                         <div class="category-item">
                             <a href="#">
                                 <div class="img-category">
-                                    <img src="./assets/images/icon/tablet.png">
+                                    <img src="/public/assets/client/images/icon/tablet.png">
                                 </div>
                                 <p class="title-category">
                                     Máy tính bảng
@@ -851,7 +851,7 @@
                         <div class="category-item">
                             <a href="#">
                                 <div class="img-category">
-                                    <img src="./assets/images/icon/xiaomi.png">
+                                    <img src="/public/assets/client/images/icon/xiaomi.png">
                                 </div>
                                 <p class="title-category">
                                     Xiaomi
@@ -875,7 +875,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/14.png">
+                                        <img src="/public/assets/client/images/products/14.png">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -906,7 +906,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/15.jpg">
+                                        <img src="/public/assets/client/images/products/15.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -937,7 +937,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/16.jpg">
+                                        <img src="/public/assets/client/images/products/16.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -968,7 +968,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/17.jpg">
+                                        <img src="/public/assets/client/images/products/17.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -999,7 +999,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/14.png">
+                                        <img src="/public/assets/client/images/products/14.png">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1030,7 +1030,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/15.jpg">
+                                        <img src="/public/assets/client/images/products/15.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1061,7 +1061,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/16.jpg">
+                                        <img src="/public/assets/client/images/products/16.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1092,7 +1092,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/17.jpg">
+                                        <img src="/public/assets/client/images/products/17.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1133,7 +1133,7 @@
             <div class="grid wide">
                 <div class="row">
                     <div class="col l-12 banner">
-                        <img src="./assets/images/others/18.jpg">
+                        <img src="/public/assets/client/images/others/18.jpg">
                     </div>
                 </div>
             </div>
@@ -1151,7 +1151,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/14.png">
+                                        <img src="/public/assets/client/images/products/14.png">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1182,7 +1182,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/15.jpg">
+                                        <img src="/public/assets/client/images/products/15.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1213,7 +1213,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/16.jpg">
+                                        <img src="/public/assets/client/images/products/16.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1244,7 +1244,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/17.jpg">
+                                        <img src="/public/assets/client/images/products/17.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1275,7 +1275,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/14.png">
+                                        <img src="/public/assets/client/images/products/14.png">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1306,7 +1306,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/15.jpg">
+                                        <img src="/public/assets/client/images/products/15.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1337,7 +1337,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/16.jpg">
+                                        <img src="/public/assets/client/images/products/16.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1368,7 +1368,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/17.jpg">
+                                        <img src="/public/assets/client/images/products/17.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1405,7 +1405,7 @@
             <div class="grid wide">
                 <div class="row">
                     <div class="col l-12 banner">
-                        <img src="./assets/images/others/19.jpg">
+                        <img src="/public/assets/client/images/others/19.jpg">
                     </div>
                 </div>
             </div>
@@ -1423,7 +1423,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/20.jpg">
+                                        <img src="/public/assets/client/images/products/20.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1454,7 +1454,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/21.jpg">
+                                        <img src="/public/assets/client/images/products/21.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1485,7 +1485,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/22.jpg">
+                                        <img src="/public/assets/client/images/products/22.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1516,7 +1516,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/23.jpg">
+                                        <img src="/public/assets/client/images/products/23.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1547,7 +1547,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/20.jpg">
+                                        <img src="/public/assets/client/images/products/20.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1578,7 +1578,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/21.jpg">
+                                        <img src="/public/assets/client/images/products/21.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1609,7 +1609,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/22.jpg">
+                                        <img src="/public/assets/client/images/products/22.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1640,7 +1640,7 @@
                             <div class="product-card-item">
                                 <a href="./catagory.html">
                                     <div class="product-card-item-img">
-                                        <img src="./assets/images/products/23.jpg">
+                                        <img src="/public/assets/client/images/products/23.jpg">
                                         <div class="sticker">
                                             <span class="sticker-sale">Ưu đãi 5.000.000đ</span> <br>
                                             <span class="sticker-event">Trả góp 0%</span>
@@ -1677,7 +1677,7 @@
             <div class="grid wide">
                 <div class="row">
                     <div class="col l-12 banner">
-                        <img src="./assets/images/others/24.jpg">
+                        <img src="/public/assets/client/images/others/24.jpg">
                     </div>
                 </div>
             </div>
@@ -1842,17 +1842,17 @@
                 <div class="row">
                     <div class="col l-4 m-12 c-12 ">
                         <div class="category-bot-item">
-                            <img src="./assets/images/others/25.jpg">
+                            <img src="/public/assets/client/images/others/25.jpg">
                         </div>
                     </div>
                     <div class="col l-4 m-12 c-12 ">
                         <div class="category-bot-item">
-                            <img src="./assets/images/others/26.jpg">
+                            <img src="/public/assets/client/images/others/26.jpg">
                         </div>
                     </div>
                     <div class="col l-4 m-12 c-12 ">
                         <div class="category-bot-item">
-                            <img src="./assets//images/others/27.jpg">
+                            <img src="/public/assets/client//images/others/27.jpg">
                         </div>
                     </div>
                 </div>
@@ -1906,7 +1906,7 @@
                         <p class="footer-phone">1800 6601</p>
                         <p class="title-footer">Hỗ trợ thanh toán</p>
                         <div class="img-footer">
-                            <img src="./assets/images/others/28.png" alt="">
+                            <img src="/public/assets/client/images/others/28.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -1916,11 +1916,11 @@
                         <p class="footer-phone">1800 6616</p>
                         <p class="title-footer">Chứng nhận:</p>
                         <div class="img-footer footer-final">
-                            <img src="./assets/images/others/29.png">
+                            <img src="/public/assets/client/images/others/29.png">
                         </div>
                         <p class="title-footer">Website cùng tập đoàn:</p>
                         <div class="img-footer footer-final">
-                            <img src="./assets/images/others/30.jpg">
+                            <img src="/public/assets/client/images/others/30.jpg">
                         </div>
                     </div>
                 </div>
@@ -1941,9 +1941,9 @@
         </div>
     </div>
 
-    <script src="./assets/js/main.js"></script>
-    <script src="./assets/js/slider.js"></script>
-    <script src="./assets/js/slider-card.js"></script>
+    <script src="/public/assets/client/js/main.js"></script>
+    <script src="/public/assets/client/js/slider.js"></script>
+    <script src="/public/assets/client/js/slider-card.js"></script>
     <!-- <script src="https://cdn.ltp110.tk/js/tet-full.js"></script> -->
 </body>
 
