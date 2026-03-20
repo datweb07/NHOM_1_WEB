@@ -1,109 +1,100 @@
 <?php
+require_once dirname(__DIR__) . '/BaseModel.php';
 
-class DanhMuc
+class DanhMuc extends BaseModel
 {
-    private $id;
-    private $ten;
-    private $slug;
-    private $iconUrl;
-    private $danhMucChaId;
-    private $thuTu;
-    private $trangThai;
+    protected ?int $id = null;
+    protected ?string $ten = null;
+    protected ?string $slug = null;
+    protected ?string $iconUrl = null;
+    protected ?int $danhMucChaId = null;
+    protected ?int $thuTu = 0;
+    protected int $trangThai = 1;
 
-    public function __construct(
-        $id = null,
-        $ten = "",
-        $slug = "",
-        $iconUrl = "",
-        $danhMucChaId = null,
-        $thuTu = 0,
-        $trangThai = 1
-    ) {
-        $this->id = $id;
-        $this->ten = $ten;
-        $this->slug = $slug;
-        $this->iconUrl = $iconUrl;
-        $this->danhMucChaId = $danhMucChaId;
-        $this->thuTu = $thuTu;
-        $this->trangThai = $trangThai;
+    public function __construct()
+    {
+        parent::__construct('danh_muc');
     }
 
-    // ===== Getter =====
-
-    public function getId()
+    public function buildFilter(int $trangThaiFilter): ?int
     {
-        return $this->id;
+        if ($trangThaiFilter === 0 || $trangThaiFilter === 1) {
+            return $trangThaiFilter;
+        }
+        return null;
     }
 
-    public function getTen()
+    public function layDanhSach(?string $keyword = null, ?int $trangThai = null): array
     {
-        return $this->ten;
+        $where = [];
+
+        if ($keyword !== null && trim($keyword) !== '') {
+            $dbKeyword = addslashes(trim($keyword));
+            $where[] = "(dm.ten LIKE '%$dbKeyword%' OR dm.slug LIKE '%$dbKeyword%')";
+        }
+
+        if ($trangThai !== null) {
+            $where[] = "dm.trang_thai = $trangThai";
+        }
+
+        $whereSql = '';
+        if (!empty($where)) {
+            $whereSql = 'WHERE ' . implode(' AND ', $where);
+        }
+
+        $sql = "SELECT dm.*, cha.ten AS ten_danh_muc_cha,
+                       (SELECT COUNT(*) FROM san_pham sp WHERE sp.danh_muc_id = dm.id) AS tong_san_pham
+                FROM {$this->table} dm
+                LEFT JOIN {$this->table} cha ON dm.danh_muc_cha_id = cha.id
+                $whereSql
+                ORDER BY dm.thu_tu ASC, dm.id DESC";
+
+        return $this->query($sql);
     }
 
-    public function getSlug()
+    public function layDanhMucCha(int $excludeId = 0): array
     {
-        return $this->slug;
+        $excludeSql = $excludeId > 0 ? "AND id <> $excludeId" : '';
+        $sql = "SELECT id, ten FROM {$this->table} WHERE trang_thai = 1 $excludeSql ORDER BY thu_tu ASC, ten ASC";
+        return $this->query($sql);
     }
 
-    public function getIconUrl()
+    public function tonTaiSlug(string $slug, int $excludeId = 0): bool
     {
-        return $this->iconUrl;
+        $safeSlug = addslashes($slug);
+        $excludeSql = $excludeId > 0 ? "AND id <> $excludeId" : '';
+        $sql = "SELECT id FROM {$this->table} WHERE slug = '$safeSlug' $excludeSql LIMIT 1";
+        $result = $this->query($sql);
+        return !empty($result);
     }
 
-    public function getDanhMucChaId()
+    public function tonTaiDanhMuc(int $id): bool
     {
-        return $this->danhMucChaId;
+        $sql = "SELECT id FROM {$this->table} WHERE id = $id LIMIT 1";
+        $result = $this->query($sql);
+        return !empty($result);
     }
 
-    public function getThuTu()
+    public function anDanhMuc(int $id): int
     {
-        return $this->thuTu;
+        return $this->update($id, ['trang_thai' => 0]);
     }
 
-    public function getTrangThai()
+    public function hienDanhMuc(int $id): int
     {
-        return $this->trangThai;
+        return $this->update($id, ['trang_thai' => 1]);
     }
 
-    // ===== Setter =====
-
-    public function setTen($ten)
+    public function toArray(): array
     {
-        $this->ten = $ten;
-    }
-
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-    }
-
-    public function setIconUrl($iconUrl)
-    {
-        $this->iconUrl = $iconUrl;
-    }
-
-    public function setDanhMucChaId($danhMucChaId)
-    {
-        $this->danhMucChaId = $danhMucChaId;
-    }
-
-    public function setThuTu($thuTu)
-    {
-        $this->thuTu = $thuTu;
-    }
-
-    public function setTrangThai($trangThai)
-    {
-        $this->trangThai = $trangThai;
-    }
-
-    // ===== Method hiển thị =====
-
-    public function hienThiThongTin()
-    {
-        return "Danh mục: " . $this->ten .
-               " | Slug: " . $this->slug .
-               " | Thứ tự: " . $this->thuTu .
-               " | Trạng thái: " . $this->trangThai ;
+        return [
+            'id' => $this->id,
+            'ten' => $this->ten,
+            'slug' => $this->slug,
+            'icon_url' => $this->iconUrl,
+            'danh_muc_cha_id' => $this->danhMucChaId,
+            'thu_tu' => $this->thuTu,
+            'trang_thai' => $this->trangThai,
+        ];
     }
 }
