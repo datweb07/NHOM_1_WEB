@@ -73,6 +73,48 @@ class GioHangController
         unset($_SESSION['cart']);
     }
 
+    public function getCart(): array
+    {
+        \App\Core\Session::start();
+        $this->initCart();
+
+        return $_SESSION['cart'];
+    }
+
+    public function tinhTongTien(): float
+    {
+        \App\Core\Session::start();
+        $this->initCart();
+
+        $tongTien = 0;
+        foreach ($_SESSION['cart'] as $item) {
+            $gia = (float)($item['gia'] ?? 0);
+            $soLuong = (int)($item['so_luong'] ?? 0);
+            if ($gia < 0) {
+                $gia = 0;
+            }
+            if ($soLuong < 0) {
+                $soLuong = 0;
+            }
+            $tongTien += $gia * $soLuong;
+        }
+
+        return $tongTien;
+    }
+
+    public function tinhTongSoLuong(): int
+    {
+        \App\Core\Session::start();
+        $this->initCart();
+
+        $tongSoLuong = 0;
+        foreach ($_SESSION['cart'] as $item) {
+            $tongSoLuong += (int)($item['so_luong'] ?? 0);
+        }
+
+        return $tongSoLuong;
+    }
+
     private function initCart(): void
     {
         if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
