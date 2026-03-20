@@ -8,11 +8,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <title>FPT Shop</title>
     <script src="https://kit.fontawesome.com/1f55434e39.js" crossorigin="anonymous"></script>
-    <link rel="icon" href="./assets/images/header/1.png">
-    <link rel="stylesheet" href="./assets/css/main.css">
-    <link rel="stylesheet" href="./assets/css/grid.css">
-    <link rel="stylesheet" href="./assets/css/slider.css">
-    <link rel="stylesheet" href="./assets/css/reponsive.css">
+    <link rel="icon" href="/public/assets/client/images/header/1.png">
+    <link rel="stylesheet" href="/public/assets/client/css/main.css">
+    <link rel="stylesheet" href="/public/assets/client/css/grid.css">
+    <link rel="stylesheet" href="/public/assets/client/css/slider.css">
+    <link rel="stylesheet" href="/public/assets/client/css/reponsive.css">
 </head>
 
 <body>
@@ -180,7 +180,7 @@
                                                     <td>
                                                         <a href="#">
                                                             <img
-                                                                src="./assets/images/navbar/hot selling/1.png">
+                                                                src="/public/assets/client/images/navbar/hot selling/1.png">
                                                         </a>
                                                     </td>
                                                     <td>
@@ -193,7 +193,7 @@
                                                     <td>
                                                         <a href="#">
                                                             <img
-                                                                src="./assets/images/navbar/2.png">
+                                                                src="/public/assets/client/images/navbar/2.png">
                                                         </a>
                                                     </td>
                                                     <td>
@@ -207,7 +207,7 @@
                                         <div class="nav-box-banner">
                                             <a href="#">
                                                 <img
-                                                    src="./assets/images/navbar/3.png">
+                                                    src="/public/assets/client/images/navbar/3.png">
                                             </a>
                                         </div>
                                     </div>
@@ -298,7 +298,7 @@
                                         <div class="nav-box-banner">
                                             <a href="#">
                                                 <img
-                                                    src="./assets/images/navbar/4.png">
+                                                    src="/public/assets/client/images/navbar/4.png">
                                             </a>
                                         </div>
                                     </div>
@@ -360,7 +360,7 @@
                                                     <td>
                                                         <a href="#">
                                                             <img
-                                                                src="./assets/images/navbar/5.png">
+                                                                src="/public/assets/client/images/navbar/5.png">
                                                         </a>
                                                     </td>
                                                     <td>
@@ -373,7 +373,7 @@
                                                     <td>
                                                         <a href="#">
                                                             <img
-                                                                src="./assets/images/navbar/6.png">
+                                                                src="/public/assets/client/images/navbar/6.png">
                                                         </a>
                                                     </td>
                                                     <td>
@@ -387,7 +387,7 @@
                                         <div class="nav-box-banner">
                                             <a href="#">
                                                 <img
-                                                    src="./assets/images/navbar/7.png">
+                                                    src="/public/assets/client/images/navbar/7.png">
                                             </a>
                                         </div>
                                     </div>
@@ -436,7 +436,7 @@
                                                     <td>
                                                         <a href="#">
                                                             <img
-                                                                src="./assets/images/navbar/8.png">
+                                                                src="/public/assets/client/images/navbar/8.png">
                                                         </a>
                                                     </td>
                                                     <td><a href="#">iPhone 13 Pro Max 128GB <p
@@ -447,7 +447,7 @@
                                                     <td>
                                                         <a href="#">
                                                             <img
-                                                                src="./assets/images/navbar/9.png">
+                                                                src="/public/assets/client/images/navbar/9.png">
                                                         </a>
                                                     </td>
                                                     <td><a href="#">iPhone 13 128GB <p class="hot-selling-price">
@@ -459,7 +459,7 @@
                                         <div class="nav-box-banner">
                                             <a href="#">
                                                 <img
-                                                    src="./assets/images/navbar/10.png">
+                                                    src="/public/assets/client/images/navbar/10.png">
                                             </a>
                                         </div>
                                     </div>
@@ -526,7 +526,7 @@
                                                     <td>
                                                         <a href="#">
                                                             <img
-                                                                src="./assets/images/navbar/11.png">
+                                                                src="/public/assets/client/images/navbar/11.png">
                                                         </a>
                                                     </td>
                                                     <td><a href="#">Combo Loa Bluetooth Karaoke kèm Mic không dây ivalue
@@ -537,7 +537,7 @@
                                                     <td>
                                                         <a href="#">
                                                             <img
-                                                                src="./assets/images/navbar/12.png">
+                                                                src="/public/assets/client/images/navbar/12.png">
                                                         </a>
                                                     </td>
                                                     <td><a href="#">Pin sạc dự phòng UmeTravel 10000mAh TRIP10000 Quick
@@ -549,7 +549,7 @@
                                         <div class="nav-box-banner">
                                             <a href="#">
                                                 <img
-                                                    src="./assets/images/navbar/13.png">
+                                                    src="/public/assets/client/images/navbar/13.png">
                                             </a>
                                         </div>
                                     </div>
@@ -665,7 +665,7 @@
                     <div class="row">
                         <div class="col l-6 m-12 c-12">
                             <div class="product-img">
-                                <img src="./assets/images/products/31.jpg" alt="">
+                                <img src="/public/assets/client/images/products/31.jpg" alt="">
                             </div>
                             <ul class="product-info">
                                 <li class="product-info-item">
@@ -778,7 +778,7 @@
                             <p class="footer-phone">1800 6601</p>
                             <p class="title-footer">Hỗ trợ thanh toán</p>
                             <div class="img-footer">
-                                <img src="./assets/images/others/28.png" alt="">
+                                <img src="/public/assets/client/images/others/28.png" alt="">
                             </div>
                         </div>
                     </div>
@@ -788,11 +788,11 @@
                             <p class="footer-phone">1800 6616</p>
                             <p class="title-footer">Chứng nhận:</p>
                             <div class="img-footer footer-final">
-                                <img src="./assets/images/others/29.png">
+                                <img src="/public/assets/client/images/others/29.png">
                             </div>
                             <p class="title-footer">Website cùng tập đoàn:</p>
                             <div class="img-footer footer-final">
-                                <img src="./assets/images/others/30.jpg">
+                                <img src="/public/assets/client/images/others/30.jpg">
                             </div>
                         </div>
                     </div>
@@ -813,7 +813,7 @@
             </div>
         </div>
     </div>
-    <script src="./assets/js/main.js"></script>
+    <script src="/public/assets/client/js/main.js"></script>
 </body>
 
 </html>
