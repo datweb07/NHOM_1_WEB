@@ -1,0 +1,88 @@
+.wapper-slider {
+    width: 100%;
+    position: relative;
+    overflow-x: auto;
+    height: 100%;
+}
+
+.wapper-slider.product-detail {
+    height: 500px;
+}
+
+.wapper-slider.page {
+    height: 300px;
+}
+
+.wapper-slider::-webkit-scrollbar {
+    display: none;
+}
+
+.main-slider.page {
+    height: 300px;
+}
+
+.item-slider {
+    width: 100%;
+    transition: 2s;
+    border: 1px solid #ccc;
+}
+
+.item-slider.product-detail {
+    height: 500px;
+}
+
+.item-slider.page {
+    height: 300px;
+}
+
+.item-slider.page img {
+    height: 300px;
+}
+
+.item-slider img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+
+}
+
+.next-slider-card,
+.back-slider-card {
+    height: 40px;
+    width: 40px;
+    border: none;
+    border-radius: 50%;
+    line-height: 40px;
+    position: absolute;
+    top: 40%;
+    background-color: #ccc;
+    font-size: 16px;
+}
+
+.next-slider-card {
+    right: 10px;
+}
+
+.back-slider-card {
+    left: 10px;
+}
+
+.row.no-warp {
+    flex-wrap: nowrap;
+}
+
+.slider-content {
+    display: flex;
+    flex-wrap: nowrap;
+    box-shadow: 0 0 10px #ccc;
+}
+
+.slider-content li {
+    flex: 1;
+    text-align: center;
+    line-height: 50px;
+    height: 50px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    border-top: none;
+}
