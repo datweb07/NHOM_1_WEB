@@ -3,27 +3,47 @@
 class SanPhamController
 {
     private $sanPhamModel;
+    private $danhMucModel;
 
     public function __construct()
     {
         require_once dirname(__DIR__, 2) . '/models/entities/SanPham.php';
+        require_once dirname(__DIR__, 2) . '/models/entities/DanhMuc.php';
         $this->sanPhamModel = new SanPham();
+        $this->danhMucModel = new DanhMuc();
     }
     
     public function index(): void
     {
         $keyword = trim((string)($_GET['keyword'] ?? ''));
+        $danhMucId = trim((string)($_GET['danh_muc_id'] ?? ''));
+        $minPrice = trim((string)($_GET['min_price'] ?? ''));
+        $maxPrice = trim((string)($_GET['max_price'] ?? ''));
+
         $page = max(1, (int)($_GET['page'] ?? 1));
         $limit = 15; 
         $offset = ($page - 1) * $limit;
 
-        $whereClause = "";
+        $conditions = [];
+
         if ($keyword !== '') {
             $dbKeyword = addslashes($keyword);
-            $whereClause = "WHERE sp.ten_san_pham LIKE '%$dbKeyword%' 
-                               OR sp.id = '$dbKeyword' 
-                               OR sp.hang_san_xuat LIKE '%$dbKeyword%'";
+            $conditions[] = "(sp.ten_san_pham LIKE '%$dbKeyword%' OR sp.id = '$dbKeyword' OR sp.hang_san_xuat LIKE '%$dbKeyword%')";
         }
+
+        if ($danhMucId !== '' && is_numeric($danhMucId)) {
+            $conditions[] = "sp.danh_muc_id = " . (int)$danhMucId;
+        }
+
+        if ($minPrice !== '' && is_numeric($minPrice)) {
+            $conditions[] = "sp.gia_hien_thi >= " . (float)$minPrice;
+        }
+
+        if ($maxPrice !== '' && is_numeric($maxPrice)) {
+            $conditions[] = "sp.gia_hien_thi <= " . (float)$maxPrice;
+        }
+
+        $whereClause = empty($conditions) ? "" : "WHERE " . implode(" AND ", $conditions);
 
         $sqlCount = "SELECT COUNT(*) as total FROM san_pham sp $whereClause";
         $resultCount = $this->sanPhamModel->query($sqlCount);
@@ -39,9 +59,15 @@ class SanPhamController
         
         $danhSachSanPham = $this->sanPhamModel->query($sqlSearch);
 
+        $danhSachDanhMuc = $this->danhMucModel->layDanhSach(null, 1);
+
         $data = [
             'danhSachSanPham' => $danhSachSanPham,
+            'danhSachDanhMuc' => $danhSachDanhMuc,
             'keyword'         => $keyword,
+            'danhMucId'       => $danhMucId,
+            'minPrice'        => $minPrice,
+            'maxPrice'        => $maxPrice,
             'totalProducts'   => $totalProducts,
             'currentPage'     => $page,
             'totalPages'      => $totalPages,
