@@ -1,99 +1,84 @@
 <?php
 
-class SanPhamController 
+class SanPhamController
 {
-    public function index() 
-    {
-        //kết quả của admin trả ra dưới dạng bảng để quản lý và có quyền xem cả những sẳn phẩm ngừng bán
-        $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
-        $safeKeyword = htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8');
+    private $baseModel;
 
-        $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
-        if ($page < 1) {
-            $page = 1;
-        }
-        $limit = 15; 
+    public function __construct()
+    {
+        require_once dirname(__DIR__, 2) . '/models/BaseModel.php';
+        $this->baseModel = new BaseModel('san_pham');
+    }
+    
+    public function index(): void
+    {
+        $keyword = trim((string)($_GET['keyword'] ?? ''));
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $limit = 10; 
         $offset = ($page - 1) * $limit;
 
-        require_once dirname(__DIR__, 2) . '/models/entities/SanPham.php';
-        $sanPhamModel = new SanPham(); 
-        
-        $dbKeyword = addslashes($keyword);
-        
-        // Điều kiện tìm kiếm admin được quyền xem tất cả, kể cả NGUNG_BAN
-        $whereClause = "";
+        $whereSql = "";
         if ($keyword !== '') {
-            $whereClause = "WHERE sp.ten_san_pham LIKE '%$dbKeyword%' 
-                               OR sp.id = '$dbKeyword' 
-                               OR sp.hang_san_xuat LIKE '%$dbKeyword%'";
+            $keywordSafe = addslashes($keyword);
+            $whereSql = "WHERE ten_san_pham LIKE '%$keywordSafe%' OR hang_san_xuat LIKE '%$keywordSafe%'";
         }
 
-        $sqlCount = "SELECT COUNT(*) as total FROM san_pham sp $whereClause";
-        $resultCount = $sanPhamModel->query($sqlCount);
-        $totalProducts = !empty($resultCount) ? (int)$resultCount[0]['total'] : 0;
-        $totalPages = ceil($totalProducts / $limit);
+        $sqlCount = "SELECT COUNT(*) as total FROM san_pham $whereSql";
+        $resultCount = $this->baseModel->query($sqlCount);
+        $totalRecords = !empty($resultCount) ? (int)$resultCount[0]['total'] : 0;
+        $totalPages = max(1, ceil($totalRecords / $limit));
 
-        $sqlSearch = "SELECT sp.*, dm.ten AS ten_danh_muc 
-                      FROM san_pham sp
-                      LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.id
-                      $whereClause
-                      ORDER BY sp.ngay_tao DESC
-                      LIMIT $limit OFFSET $offset";
-        
-        $danhSachSanPham = $sanPhamModel->query($sqlSearch);
+        $sqlSelect = "SELECT * FROM san_pham $whereSql ORDER BY id DESC LIMIT $offset, $limit";
+        $danhSachSanPham = $this->baseModel->query($sqlSelect);
 
         $data = [
-            'keyword'         => $safeKeyword,
             'danhSachSanPham' => $danhSachSanPham,
-            'totalProducts'   => $totalProducts,
-            'currentPage'     => $page,
-            'totalPages'      => $totalPages,
-            'limit'           => $limit
+            'keyword' => $keyword,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'success' => $_GET['success'] ?? '',
+            'error' => $_GET['error'] ?? '',
         ];
 
         extract($data);
         require_once dirname(__DIR__, 2) . '/views/admin/san_pham/index.php';
     }
 
-    
-     //Xử lý xóa/ẩn sản phẩm 
-     
-    public function xoa($id) 
+    public function hide($id = null): void
     {
-        if (!$id || !is_numeric($id)) {
-            header("Location: /admin/san-pham?error=invalid_id");
+        $id = (int)($id ?? $_GET['id'] ?? 0);
+        if ($id <= 0) {
+            header("Location: /index.php?controller=SanPham&action=index&error=invalid_id");
             exit;
         }
         
-        $id = (int)$id; 
-        require_once dirname(__DIR__, 2) . '/models/entities/SanPham.php';
-        $sanPhamModel = new SanPham();
+        if (!$this->baseModel->getById($id)) {
+            header("Location: /index.php?controller=SanPham&action=index&error=not_found");
+            exit;
+        }
 
-        $sanPhamModel->update($id, ['trang_thai' => 'NGUNG_BAN']);
-        $sqlPhienBan = "UPDATE phien_ban_san_pham SET trang_thai = 'NGUNG_BAN' WHERE san_pham_id = $id";
-        chayTruyVanKhongTraVeDL($sanPhamModel->link, $sqlPhienBan);
-        header("Location: /admin/san-pham?success=deleted");
+        $this->baseModel->update($id, ['trang_thai' => 'NGUNG_BAN']);
+        
+        header("Location: /index.php?controller=SanPham&action=index&success=hidden");
         exit;
     }
-    // Xử lý chức năng mở bán lại
-    public function moBan($id) 
+
+    public function delete($id = null): void
     {
-        if (!$id || !is_numeric($id)) {
-            header("Location: /admin/san-pham?error=invalid_id");
+        $id = (int)($id ?? $_GET['id'] ?? 0);
+        if ($id <= 0) {
+            header("Location: /index.php?controller=SanPham&action=index&error=invalid_id");
             exit;
         }
         
-        $id = (int)$id; 
+        if (!$this->baseModel->getById($id)) {
+            header("Location: /index.php?controller=SanPham&action=index&error=not_found");
+            exit;
+        }
 
-        require_once dirname(__DIR__, 2) . '/models/entities/SanPham.php';
-        $sanPhamModel = new SanPham();
-        $sanPhamModel->update($id, ['trang_thai' => 'CON_BAN']);
-        $sqlPhienBan = "UPDATE phien_ban_san_pham 
-                        SET trang_thai = CASE WHEN so_luong_ton > 0 THEN 'CON_HANG' ELSE 'HET_HANG' END 
-                        WHERE san_pham_id = $id";
-        chayTruyVanKhongTraVeDL($sanPhamModel->link, $sqlPhienBan);
-
-        header("Location: /admin/san-pham?success=restored");
+        $this->baseModel->delete($id);
+        
+        header("Location: /index.php?controller=SanPham&action=index&success=deleted");
         exit;
     }
 }
