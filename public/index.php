@@ -2,14 +2,23 @@
 
 require_once '../app/core/Session.php';
 require_once '../config/db_module.php';
+require_once '../app/routes/client/client.php';
+require_once '../app/routes/admin/admin.php';
 
 \App\Core\Session::start();
 
 $link = null;
 taoKetNoi($link);
 
+$requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+$path = trim(parse_url($requestUri, PHP_URL_PATH) ?? '/', '/');
+
+if ($path === 'admin' || strpos($path, 'admin/') === 0) {
+    adminRoute($requestUri);
+} else {
+    clientRoute($requestUri);
+}
+
 if ($link) {
-    echo "Kết nối database thành công!";
     mysqli_close($link);
 }
-?>
