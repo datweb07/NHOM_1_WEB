@@ -39,10 +39,10 @@
                             </div>
                             <!-- end cart for mobile and tablet -->
                             <div class="col l-5 m-6 c-12">
-                                <form class="search-top">
-                                    <input type="search"
+                                <form class="search-top" action="" method="GET">
+                                    <input type="search" name="keyword" value="<?= htmlspecialchars($keyword ?? '') ?>"
                                         placeholder="Nhập tên điện thoại, máy tính, phụ kiện... cần tìm">
-                                    <button class="button-search">
+                                    <button class="button-search" type="submit">
                                         <i class="fa fa-magnifying-glass" aria-hidden="true"></i>
                                     </button>
                                     <ul class="history-search">
@@ -650,119 +650,115 @@
                 <div class="grid wide">
                     <div class="row">
                         <div class="col l-3 m-3 c-0">
-                            <div class="sidebar-product">
+                            <form id="filter-form" action="" method="GET" class="sidebar-product">
                                 <div class="sidebar-product-item item1">
                                     <h3 class="sidebar-product-title">Hãng sản xuất</h3>
                                     <div class="form-check">
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name="" value="checkedValue"
-                                                checked> Tất cả </label>
+                                            <input type="checkbox" class="form-check-input" name="hang_san_xuat[]" value="" <?= empty($hangSanXuat) ? 'checked' : '' ?>> Tất cả </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Apple </label>
+                                            <input type="checkbox" class="form-check-input" name="hang_san_xuat[]"
+                                                value="Apple" <?= in_array('Apple', $hangSanXuat ?? []) ? 'checked' : '' ?>> Apple </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Samsung </label>
+                                            <input type="checkbox" class="form-check-input" name="hang_san_xuat[]"
+                                                value="Samsung" <?= in_array('Samsung', $hangSanXuat ?? []) ? 'checked' : '' ?>> Samsung </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Xiaomi </label>
+                                            <input type="checkbox" class="form-check-input" name="hang_san_xuat[]"
+                                                value="Xiaomi" <?= in_array('Xiaomi', $hangSanXuat ?? []) ? 'checked' : '' ?>> Xiaomi </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> OPPO </label>
+                                            <input type="checkbox" class="form-check-input" name="hang_san_xuat[]"
+                                                value="OPPO" <?= in_array('OPPO', $hangSanXuat ?? []) ? 'checked' : '' ?>> OPPO </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Nokia </label>
+                                            <input type="checkbox" class="form-check-input" name="hang_san_xuat[]"
+                                                value="Nokia" <?= in_array('Nokia', $hangSanXuat ?? []) ? 'checked' : '' ?>> Nokia </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Vivo </label>
+                                            <input type="checkbox" class="form-check-input" name="hang_san_xuat[]"
+                                                value="Vivo" <?= in_array('Vivo', $hangSanXuat ?? []) ? 'checked' : '' ?>> Vivo </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Realme </label>
+                                            <input type="checkbox" class="form-check-input" name="hang_san_xuat[]"
+                                                value="Realme" <?= in_array('Realme', $hangSanXuat ?? []) ? 'checked' : '' ?>> Realme </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Vsmart </label>
+                                            <input type="checkbox" class="form-check-input" name="hang_san_xuat[]"
+                                                value="Vsmart" <?= in_array('Vsmart', $hangSanXuat ?? []) ? 'checked' : '' ?>> Vsmart </label>
                                     </div>
                                 </div>
                                 <div class="sidebar-product-item">
                                     <h3 class="sidebar-product-title">Mức giá</h3>
                                     <div class="form-check">
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name="" value="checkedValue"
-                                                checked> Tất cả </label>
+                                            <input type="checkbox" class="form-check-input" name="muc_gia[]" value="" <?= empty($mucGia) ? 'checked' : '' ?>> Tất cả </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Từ 2 - 4 triệu </label>
+                                            <input type="checkbox" class="form-check-input" name="muc_gia[]"
+                                                value="2-4" <?= in_array('2-4', $mucGia ?? []) ? 'checked' : '' ?>> Từ 2 - 4 triệu </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Từ 4 - 7 triệu </label>
+                                            <input type="checkbox" class="form-check-input" name="muc_gia[]"
+                                                value="4-7" <?= in_array('4-7', $mucGia ?? []) ? 'checked' : '' ?>> Từ 4 - 7 triệu </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Từ 7 - 10 triệu </label>
+                                            <input type="checkbox" class="form-check-input" name="muc_gia[]"
+                                                value="7-10" <?= in_array('7-10', $mucGia ?? []) ? 'checked' : '' ?>> Từ 7 - 10 triệu </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Từ 10 triệu </label>
+                                            <input type="checkbox" class="form-check-input" name="muc_gia[]"
+                                                value="tren-10" <?= in_array('tren-10', $mucGia ?? []) ? 'checked' : '' ?>> Từ 10 triệu </label>
                                     </div>
                                 </div>
                                 <div class="sidebar-product-item">
                                     <h3 class="sidebar-product-title">Tính năng đặt biệt</h3>
                                     <div class="form-check">
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name="" value="checkedValue"
-                                                checked> Tất cả </label>
+                                            <input type="checkbox" class="form-check-input" name="tinh_nang[]" value="" <?= empty($tinhNang) ? 'checked' : '' ?>> Tất cả </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Bảo mật vân tay </label>
+                                            <input type="checkbox" class="form-check-input" name="tinh_nang[]"
+                                                value="bao_mat_van_tay" <?= in_array('bao_mat_van_tay', $tinhNang ?? []) ? 'checked' : '' ?>> Bảo mật vân tay </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Nhận diện khuôn mặt </label>
+                                            <input type="checkbox" class="form-check-input" name="tinh_nang[]"
+                                                value="nhan_dien_khuon_mat" <?= in_array('nhan_dien_khuon_mat', $tinhNang ?? []) ? 'checked' : '' ?>> Nhận diện khuôn mặt </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Sạc nhanh </label>
+                                            <input type="checkbox" class="form-check-input" name="tinh_nang[]"
+                                                value="sac_nhanh" <?= in_array('sac_nhanh', $tinhNang ?? []) ? 'checked' : '' ?>> Sạc nhanh </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Chống nước &amp; bụi </label>
+                                            <input type="checkbox" class="form-check-input" name="tinh_nang[]"
+                                                value="chong_nuoc_bui" <?= in_array('chong_nuoc_bui', $tinhNang ?? []) ? 'checked' : '' ?>> Chống nước &amp; bụi </label>
                                     </div>
                                 </div>
                                 <div class="sidebar-product-item">
                                     <h3 class="sidebar-product-title">Pin</h3>
                                     <div class="form-check">
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name="" value="checkedValue"
-                                                checked> Tất cả </label>
+                                            <input type="checkbox" class="form-check-input" name="pin[]" value="" <?= empty($pin) ? 'checked' : '' ?>> Tất cả </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Trên 2000mah </label>
+                                            <input type="checkbox" class="form-check-input" name="pin[]"
+                                                value="tren-2000" <?= in_array('tren-2000', $pin ?? []) ? 'checked' : '' ?>> Trên 2000mah </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Trên 3000mah </label>
+                                            <input type="checkbox" class="form-check-input" name="pin[]"
+                                                value="tren-3000" <?= in_array('tren-3000', $pin ?? []) ? 'checked' : '' ?>> Trên 3000mah </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Trên 4000mah </label>
+                                            <input type="checkbox" class="form-check-input" name="pin[]"
+                                                value="tren-4000" <?= in_array('tren-4000', $pin ?? []) ? 'checked' : '' ?>> Trên 4000mah </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Trên 5000mah </label>
+                                            <input type="checkbox" class="form-check-input" name="pin[]"
+                                                value="tren-5000" <?= in_array('tren-5000', $pin ?? []) ? 'checked' : '' ?>> Trên 5000mah </label>
                                     </div>
                                 </div>
                                 <div class="sidebar-product-item">
                                     <h3 class="sidebar-product-title">Trả góp</h3>
                                     <div class="form-check">
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name="" value="checkedValue"
-                                                checked> Tất cả </label>
+                                            <input type="checkbox" class="form-check-input" name="tra_gop[]" value="" <?= empty($traGop) ? 'checked' : '' ?>> Tất cả </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Trả góp 0đ </label>
+                                            <input type="checkbox" class="form-check-input" name="tra_gop[]"
+                                                value="0d" <?= in_array('0d', $traGop ?? []) ? 'checked' : '' ?>> Trả góp 0đ </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Trả góp 0% </label>
+                                            <input type="checkbox" class="form-check-input" name="tra_gop[]"
+                                                value="0-phan-tram" <?= in_array('0-phan-tram', $traGop ?? []) ? 'checked' : '' ?>> Trả góp 0% </label>
                                         <label class="form-check-label">
-                                            <input type="checkbox" class="form-check-input" name=""
-                                                value="checkedValue"> Trả góp 0đ/0% </label>
+                                            <input type="checkbox" class="form-check-input" name="tra_gop[]"
+                                                value="0d-0-phan-tram" <?= in_array('0d-0-phan-tram', $traGop ?? []) ? 'checked' : '' ?>> Trả góp 0đ/0% </label>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
-                        <div class="col l-9 m-9 c-12">
+                        <!-- ĐẶT THÊM ID "main-product-area" CHO VÙNG SẢN PHẨM BÊN PHẢI -->
+                        <div id="main-product-area" class="col l-9 m-9 c-12">
                             <div class="product-category">
                                 <div class="grid wide product">
                                     <div class="product-wapper product">
@@ -1453,6 +1449,53 @@
         </div>
     </div>
     <script src="/public/assets/client/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterForm = document.getElementById('filter-form');
+            const mainProductArea = document.getElementById('main-product-area');
+
+            if (filterForm && mainProductArea) {
+                filterForm.addEventListener('change', function(e) {
+                    
+                    const formData = new FormData(filterForm);
+                    const searchParams = new URLSearchParams(formData);
+
+                    for (const [key, value] of Array.from(searchParams.entries())) {
+                        if (value === '') {
+                            searchParams.delete(key);
+                        }
+                    }
+
+                    const keywordInput = document.querySelector('input[name="keyword"]');
+                    if (keywordInput && keywordInput.value.trim() !== '') {
+                        searchParams.append('keyword', keywordInput.value);
+                    }
+
+                    const url = window.location.pathname + '?' + searchParams.toString();
+
+                    window.history.pushState({}, '', url);
+
+                    mainProductArea.style.opacity = '0.5';
+
+                    fetch(url)
+                        .then(response => response.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const newProductArea = doc.getElementById('main-product-area');
+                            
+                            if (newProductArea) {
+                                mainProductArea.innerHTML = newProductArea.innerHTML;
+                            }
+                        })
+                        .catch(error => console.error('Lỗi khi lọc sản phẩm:', error))
+                        .finally(() => {
+                            mainProductArea.style.opacity = '1';
+                        });
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
