@@ -1,6 +1,7 @@
 <?php
+require_once dirname(__DIR__) . '/BaseModel.php';
 
-class SanPham
+class SanPham extends BaseModel
 {
     private $id;
     private $danhMucId;
@@ -29,6 +30,8 @@ class SanPham
         $ngayTao = null,
         $ngayCapNhat = null
     ) {
+        parent::__construct('san_pham');
+
         $this->id = $id;
         $this->danhMucId = $danhMucId;
         $this->tenSanPham = $tenSanPham;
@@ -41,6 +44,109 @@ class SanPham
         $this->noiBat = $noiBat;
         $this->ngayTao = $ngayTao;
         $this->ngayCapNhat = $ngayCapNhat;
+    }
+
+    private function escapeLikeKeyword(string $keyword): string
+    {
+        return addslashes(trim($keyword));
+    }
+
+    private function buildWhereClause(?string $keyword = null, int $danhMucId = 0, ?float $giaMin = null, ?float $giaMax = null): string
+    {
+        $whereConditions = [];
+
+        if ($keyword !== null && trim($keyword) !== '') {
+            $dbKeyword = $this->escapeLikeKeyword($keyword);
+            $whereConditions[] = "(sp.ten_san_pham LIKE '%$dbKeyword%' OR sp.id = '$dbKeyword' OR sp.hang_san_xuat LIKE '%$dbKeyword%')";
+        }
+
+        if ($danhMucId > 0) {
+            $whereConditions[] = 'sp.danh_muc_id = ' . (int)$danhMucId;
+        }
+
+        if ($giaMin !== null) {
+            $whereConditions[] = 'sp.gia_hien_thi >= ' . (float)$giaMin;
+        }
+
+        if ($giaMax !== null) {
+            $whereConditions[] = 'sp.gia_hien_thi <= ' . (float)$giaMax;
+        }
+
+        if (empty($whereConditions)) {
+            return '';
+        }
+
+        return 'WHERE ' . implode(' AND ', $whereConditions);
+    }
+
+    public function demSanPham(?string $keyword = null, int $danhMucId = 0, ?float $giaMin = null, ?float $giaMax = null): int
+    {
+        $whereClause = $this->buildWhereClause($keyword, $danhMucId, $giaMin, $giaMax);
+        $sql = "SELECT COUNT(*) as total FROM {$this->table} sp $whereClause";
+        $result = parent::query($sql);
+
+        return !empty($result) ? (int)$result[0]['total'] : 0;
+    }
+
+    public function layDanhSachPhanTrang(?string $keyword = null, int $danhMucId = 0, ?float $giaMin = null, ?float $giaMax = null, int $limit = 15, int $offset = 0): array
+    {
+        $whereClause = $this->buildWhereClause($keyword, $danhMucId, $giaMin, $giaMax);
+        $limit = max(1, (int)$limit);
+        $offset = max(0, (int)$offset);
+
+        $sql = "SELECT sp.*, dm.ten AS ten_danh_muc
+                FROM {$this->table} sp
+                LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.id
+                $whereClause
+                ORDER BY sp.ngay_tao DESC
+                LIMIT $limit OFFSET $offset";
+
+        return parent::query($sql);
+    }
+
+    public function layDanhSachDanhMucHoatDong(): array
+    {
+        $sql = 'SELECT id, ten FROM danh_muc WHERE trang_thai = 1 ORDER BY thu_tu ASC, ten ASC';
+        return parent::query($sql);
+    }
+
+    public function ngungBan(int $id): int
+    {
+        return $this->update((int)$id, ['trang_thai' => 'NGUNG_BAN']);
+    }
+
+    public function moBanSanPham(int $id): int
+    {
+        return $this->update((int)$id, ['trang_thai' => 'CON_BAN']);
+    }
+
+    public function capNhatTrangThaiPhienBanKhiNgungBan(int $sanPhamId): int
+    {
+        $sanPhamId = (int)$sanPhamId;
+        $sql = "UPDATE phien_ban_san_pham SET trang_thai = 'NGUNG_BAN' WHERE san_pham_id = $sanPhamId";
+        return $this->query($sql);
+    }
+
+    public function capNhatTrangThaiPhienBanKhiMoBan(int $sanPhamId): int
+    {
+        $sanPhamId = (int)$sanPhamId;
+        $sql = "UPDATE phien_ban_san_pham
+                SET trang_thai = CASE WHEN so_luong_ton > 0 THEN 'CON_HANG' ELSE 'HET_HANG' END
+                WHERE san_pham_id = $sanPhamId";
+        return $this->query($sql);
+    }
+
+    public function query($sql)
+    {
+        $trimmed = ltrim($sql);
+        $command = strtoupper(strtok($trimmed, " \t\n\r"));
+
+        if (in_array($command, ['UPDATE', 'INSERT', 'DELETE', 'REPLACE'], true)) {
+            chayTruyVanKhongTraVeDL($this->link, $sql);
+            return mysqli_affected_rows($this->link);
+        }
+
+        return parent::query($sql);
     }
 
     // ===== Getter =====
@@ -157,8 +263,8 @@ class SanPham
     public function hienThiThongTin()
     {
         return "Sản phẩm: " . $this->tenSanPham .
-               " | Hãng: " . $this->hangSanXuat .
-               " | Giá: " . $this->giaHienThi .
-               " | Trạng thái: " . $this->trangThai;
+            " | Hãng: " . $this->hangSanXuat .
+            " | Giá: " . $this->giaHienThi .
+            " | Trạng thái: " . $this->trangThai;
     }
 }
