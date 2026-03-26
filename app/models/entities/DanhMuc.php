@@ -16,6 +16,11 @@ class DanhMuc extends BaseModel
         parent::__construct('danh_muc');
     }
 
+    private function escapeLikeKeyword(string $keyword): string
+    {
+        return addslashes(trim($keyword));
+    }
+
     public function buildFilter(int $trangThaiFilter): ?int
     {
         if ($trangThaiFilter === 0 || $trangThaiFilter === 1) {
@@ -29,12 +34,12 @@ class DanhMuc extends BaseModel
         $where = [];
 
         if ($keyword !== null && trim($keyword) !== '') {
-            $dbKeyword = addslashes(trim($keyword));
+            $dbKeyword = $this->escapeLikeKeyword($keyword);
             $where[] = "(dm.ten LIKE '%$dbKeyword%' OR dm.slug LIKE '%$dbKeyword%')";
         }
 
         if ($trangThai !== null) {
-            $where[] = "dm.trang_thai = $trangThai";
+            $where[] = 'dm.trang_thai = ' . (int)$trangThai;
         }
 
         $whereSql = '';
@@ -54,7 +59,7 @@ class DanhMuc extends BaseModel
 
     public function layDanhMucCha(int $excludeId = 0): array
     {
-        $excludeSql = $excludeId > 0 ? "AND id <> $excludeId" : '';
+        $excludeSql = $excludeId > 0 ? 'AND id <> ' . (int)$excludeId : '';
         $sql = "SELECT id, ten FROM {$this->table} WHERE trang_thai = 1 $excludeSql ORDER BY thu_tu ASC, ten ASC";
         return $this->query($sql);
     }
@@ -70,7 +75,7 @@ class DanhMuc extends BaseModel
 
     public function tonTaiDanhMuc(int $id): bool
     {
-        $sql = "SELECT id FROM {$this->table} WHERE id = $id LIMIT 1";
+        $sql = 'SELECT id FROM ' . $this->table . ' WHERE id = ' . (int)$id . ' LIMIT 1';
         $result = $this->query($sql);
         return !empty($result);
     }
