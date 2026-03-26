@@ -124,7 +124,8 @@ class SanPham extends BaseModel
     {
         $sanPhamId = (int)$sanPhamId;
         $sql = "UPDATE phien_ban_san_pham SET trang_thai = 'NGUNG_BAN' WHERE san_pham_id = $sanPhamId";
-        return $this->query($sql);
+        $this->query($sql);
+        return mysqli_affected_rows($this -> link);
     }
 
     public function capNhatTrangThaiPhienBanKhiMoBan(int $sanPhamId): int
@@ -133,21 +134,22 @@ class SanPham extends BaseModel
         $sql = "UPDATE phien_ban_san_pham
                 SET trang_thai = CASE WHEN so_luong_ton > 0 THEN 'CON_HANG' ELSE 'HET_HANG' END
                 WHERE san_pham_id = $sanPhamId";
-        return $this->query($sql);
+              $this->query($sql);
+              return mysqli_affected_rows($this -> link);
     }
 
-    public function query($sql)
-    {
-        $trimmed = ltrim($sql);
-        $command = strtoupper(strtok($trimmed, " \t\n\r"));
+    // public function query($sql)
+    // {
+    //     $trimmed = ltrim($sql);
+    //     $command = strtoupper(strtok($trimmed, " \t\n\r"));
 
-        if (in_array($command, ['UPDATE', 'INSERT', 'DELETE', 'REPLACE'], true)) {
-            chayTruyVanKhongTraVeDL($this->link, $sql);
-            return mysqli_affected_rows($this->link);
-        }
+    //     if (in_array($command, ['UPDATE', 'INSERT', 'DELETE', 'REPLACE'], true)) {
+    //         chayTruyVanKhongTraVeDL($this->link, $sql);
+    //         return mysqli_affected_rows($this->link);
+    //     }
 
-        return parent::query($sql);
-    }
+    //     return parent::query($sql);
+    // }
 
     // ===== Getter =====
 

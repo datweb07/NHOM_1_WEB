@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../config/db_module.php';
 class BaseModel
 {
     protected $table;
-    protected $link;
+    protected ?mysqli $link;
 
     public function __construct($table)
     {

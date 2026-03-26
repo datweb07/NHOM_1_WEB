@@ -6,8 +6,8 @@ class SanPhamController
 
     public function __construct() 
     {
-        require_once dirname(__DIR__, 2) . '/models/entities/SanPham.php';
-        $this->baseModel = new SanPham();
+        require_once dirname(__DIR__, 2) . '/models/BaseModel.php';
+        $this->baseModel = new BaseModel('san_pham');
     }
 
     public function index() 
