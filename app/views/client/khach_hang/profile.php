@@ -1,3 +1,25 @@
+<?php
+require_once __DIR__ . '/../../../middleware/AuthMiddleware.php';
+require_once __DIR__ . '/../../../models/BaseModel.php';
+
+//check quyền
+AuthMiddleware::checkMember();
+
+//lấy data user từ db
+$userId = \App\Core\Session::getUserId();
+if (!$userId) {
+    header('Location: /client/auth/login');
+    exit;
+}
+
+$userModel = new BaseModel('nguoi_dung');
+$user = $userModel->getById($userId);
+
+if (!$user) {
+    header('Location: /client/auth/login');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -531,7 +553,7 @@
                                 <li><a href="/profile.php" class="active"><i class="fa fa-user"></i> Hồ sơ của tôi</a></li>
                                 <li><a href="/don-hang.php"><i class="fa fa-file-invoice-dollar"></i> Đơn hàng của tôi</a></li>
                                 <li><a href="/dia-chi.php"><i class="fa fa-map-marker-alt"></i> Sổ địa chỉ</a></li>
-                                <li><a href="/logout.php"><i class="fa fa-sign-out-alt"></i> Đăng xuất</a></li>
+                                <li><a href="/client/auth/logout"><i class="fa fa-sign-out-alt"></i> Đăng xuất</a></li>
                             </ul>
                         </div>
                     </div>

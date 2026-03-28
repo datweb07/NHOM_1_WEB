@@ -74,7 +74,12 @@
                                     </a>
                                 </div>
                                 <div class="service-personal-account">
-                                    <a href="#">
+                                    <?php
+                                    $isLoggedIn = \App\Core\Session::isLoggedIn();
+                                    $userRole = \App\Core\Session::getUserRole();
+                                    $accountUrl = ($isLoggedIn && $userRole === 'MEMBER') ? '/client/profile' : '/client/auth/login';
+                                    ?>
+                                    <a href="<?php echo $accountUrl; ?>">
                                         <i class="fa fa-user"></i>
                                         <p>Tài khoản của tôi</p>
                                     </a>

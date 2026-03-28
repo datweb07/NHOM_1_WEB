@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng ký - FPT Shop</title>
+    <title>Đăng nhập quản trị - FPT Shop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="/public/assets/client/images/header/1.png">
 </head>
@@ -14,8 +14,8 @@
                 <div class="card shadow-sm">
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
-                            <h3 class="fw-bold">Đăng ký</h3>
-                            <p class="text-muted">Tạo tài khoản mới</p>
+                            <h3 class="fw-bold">Cổng quản trị nội bộ</h3>
+                            <p class="text-muted">Đăng nhập để tiếp tục</p>
                         </div>
 
                         <?php if (isset($_GET['error'])): ?>
@@ -24,28 +24,14 @@
                                 $errorMessages = [
                                     'invalid_email' => 'Email không hợp lệ',
                                     'empty_password' => 'Vui lòng nhập mật khẩu',
-                                    'empty_name' => 'Vui lòng nhập họ tên',
-                                    'email_exists' => 'Email đã được sử dụng',
-                                    'registration_failed' => 'Đăng ký thất bại, vui lòng thử lại'
+                                    'invalid_credentials' => 'Email hoặc mật khẩu không đúng'
                                 ];
                                 echo $errorMessages[$_GET['error']] ?? 'Đã có lỗi xảy ra';
                                 ?>
                             </div>
                         <?php endif; ?>
 
-                        <form method="POST" action="/client/auth/register">
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Họ và tên</label>
-                                <input 
-                                    type="text" 
-                                    class="form-control" 
-                                    id="name" 
-                                    name="name" 
-                                    placeholder="Nhập họ và tên của bạn"
-                                    required
-                                >
-                            </div>
-
+                        <form method="POST" action="/admin/auth/login">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input 
@@ -53,7 +39,7 @@
                                     class="form-control" 
                                     id="email" 
                                     name="email" 
-                                    placeholder="Nhập email của bạn"
+                                    placeholder="Nhập email quản trị"
                                     required
                                 >
                             </div>
@@ -71,14 +57,7 @@
                             </div>
 
                             <div class="d-grid mb-3">
-                                <button type="submit" class="btn btn-primary">Đăng ký</button>
-                            </div>
-
-                            <div class="text-center">
-                                <p class="mb-0">
-                                    Đã có tài khoản? 
-                                    <a href="/client/auth/login" class="text-decoration-none">Đăng nhập ngay</a>
-                                </p>
+                                <button type="submit" class="btn btn-primary">Đăng nhập</button>
                             </div>
                         </form>
                     </div>

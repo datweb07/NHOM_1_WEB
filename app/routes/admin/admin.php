@@ -10,6 +10,27 @@ function adminRoute(string $uri): void
         exit;
     }
 
+    if ($path === 'admin/auth/login') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once dirname(__DIR__, 2) . '/controllers/admin/AuthController.php';
+            \App\Controllers\Admin\AuthController::login($_POST['email'] ?? '', $_POST['password'] ?? '');
+            return;
+        }
+        require_once dirname(__DIR__, 2) . '/views/admin/auth/login.php';
+        return;
+    }
+
+    if ($path === 'admin/auth/logout') {
+        require_once dirname(__DIR__, 2) . '/controllers/admin/AuthController.php';
+        \App\Controllers\Admin\AuthController::logout();
+        return;
+    }
+
+    if ($path === 'admin/dashboard') {
+        require_once dirname(__DIR__, 2) . '/views/admin/dashboard/index.php';
+        return;
+    }
+
     require_once dirname(__DIR__, 2) . '/controllers/admin/DanhMucController.php';
     $danhMucController = new DanhMucController();
     require_once dirname(__DIR__, 2) . '/controllers/admin/DonHangController.php';

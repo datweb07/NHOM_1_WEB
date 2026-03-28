@@ -44,6 +44,43 @@ class KhachHang extends NguoiDung
         return false;
     }
 
+    /**
+     * Đăng ký tài khoản mới
+     */
+    public function dang_ky(string $email, string $matKhau, string $hoTen): ?int
+    {
+        // Check if email exists
+        $existingUser = $this->query("SELECT id FROM nguoi_dung WHERE email = '$email' LIMIT 1");
+        if (!empty($existingUser)) {
+            return null; // Email already exists
+        }
+
+        // Create new user
+        $matKhauHash = sha1(trim($matKhau));
+        $now = date('Y-m-d H:i:s');
+        
+        $newUserId = $this->create([
+            'email' => $email,
+            'mat_khau' => $matKhauHash,
+            'ho_ten' => $hoTen,
+            'loai_tai_khoan' => 'MEMBER',
+            'trang_thai' => 'ACTIVE',
+            'ngay_tao' => $now,
+            'ngay_cap_nhat' => $now
+        ]);
+
+        if ($newUserId) {
+            // Load user data
+            $this->id = $newUserId;
+            $this->email = $email;
+            $this->hoTen = $hoTen;
+            $this->loaiTaiKhoan = 'MEMBER';
+            $this->trangThai = 'ACTIVE';
+        }
+
+        return $newUserId;
+    }
+
     
     //update thông tin cá nhân
     public function quan_ly_ho_so(array $dataCapNhat)
@@ -52,7 +89,45 @@ class KhachHang extends NguoiDung
             return false;
         }
         
-        return $this->update($this->id, $dataCapNhat);
+        $result = $this->update($this->id, $dataCapNhat);
+        
+        // Update object properties if successful
+        if ($result) {
+            foreach ($dataCapNhat as $key => $value) {
+                $camelKey = str_replace('_', '', lcfirst(ucwords($key, '_')));
+                if (property_exists($this, $camelKey)) {
+                    $this->$camelKey = $value;
+                }
+            }
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Đổi mật khẩu
+     */
+    public function doi_mat_khau(string $matKhauCu, string $matKhauMoi): bool
+    {
+        if (!$this->id) {
+            return false;
+        }
+
+        // Verify old password
+        $matKhauCuHash = sha1(trim($matKhauCu));
+        if ($this->matKhau !== $matKhauCuHash) {
+            return false;
+        }
+
+        // Update to new password
+        $matKhauMoiHash = sha1(trim($matKhauMoi));
+        $result = $this->update($this->id, ['mat_khau' => $matKhauMoiHash]);
+        
+        if ($result) {
+            $this->matKhau = $matKhauMoiHash;
+        }
+        
+        return $result;
     }
 
     

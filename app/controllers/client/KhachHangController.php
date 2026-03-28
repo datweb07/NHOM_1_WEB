@@ -1,6 +1,7 @@
 <?php
 require_once dirname(__DIR__, 2) . '/core/Session.php';
 require_once dirname(__DIR__, 2) . '/models/BaseModel.php';
+require_once dirname(__DIR__, 2) . '/models/roles/KhachHang.php';
 
 class KhachHangController
 {
@@ -75,19 +76,42 @@ class KhachHangController
         \App\Core\Session::start();
         $userId = $_SESSION['user_id'] ?? null; 
         
-        if ($userId && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $hoTen = addslashes(trim($_POST['ho_ten'] ?? ''));
-            $sdt = addslashes(trim($_POST['sdt'] ?? ''));
-            $ngaySinh = addslashes(trim($_POST['ngay_sinh'] ?? ''));
-            $gioiTinh = addslashes(trim($_POST['gioi_tinh'] ?? ''));
-
-            $safeUserId = (int)$userId;
-            $sql = "UPDATE nguoi_dung SET ho_ten = '$hoTen', sdt = '$sdt', ngay_sinh = '$ngaySinh', gioi_tinh = '$gioiTinh' WHERE id = $safeUserId";
-            $this->khachHangModel->query($sql);
-
-            $_SESSION['success'] = "Cập nhật hồ sơ thành công!";
+        if (!$userId || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: /client/profile"); 
+            exit();
         }
-        header("Location: /profile.php"); 
+
+        $dataCapNhat = [
+            'ho_ten' => trim($_POST['ho_ten'] ?? ''),
+            'ngay_cap_nhat' => date('Y-m-d H:i:s')
+        ];
+
+        $sdt = trim($_POST['sdt'] ?? '');
+        if (!empty($sdt)) {
+            $dataCapNhat['sdt'] = $sdt;
+        }
+
+        $ngaySinh = trim($_POST['ngay_sinh'] ?? '');
+        if (!empty($ngaySinh)) {
+            $dataCapNhat['ngay_sinh'] = $ngaySinh;
+        }
+
+        $gioiTinh = trim($_POST['gioi_tinh'] ?? '');
+        if (!empty($gioiTinh)) {
+            $dataCapNhat['gioi_tinh'] = $gioiTinh;
+        }
+
+        $result = $this->khachHangModel->update($userId, $dataCapNhat);
+
+        if ($result) {
+            //cập nhật session vs data mới
+            \App\Core\Session::set('user_name', $dataCapNhat['ho_ten']);
+            $_SESSION['success'] = "Cập nhật hồ sơ thành công!";
+        } else {
+            $_SESSION['error'] = "Cập nhật hồ sơ thất bại!";
+        }
+
+        header("Location: /client/profile"); 
         exit();
     }
 
@@ -96,34 +120,53 @@ class KhachHangController
         \App\Core\Session::start();
         $userId = $_SESSION['user_id'] ?? null; 
         
-        if ($userId && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            $matKhauCu = $_POST['mat_khau_cu'] ?? '';
-            $matKhauMoi = $_POST['mat_khau_moi'] ?? '';
-            $xacNhanMatKhau = $_POST['xac_nhan_mat_khau'] ?? '';
-
-            if ($matKhauMoi !== $xacNhanMatKhau) {
-                $_SESSION['error'] = "Mật khẩu xác nhận không khớp!";
-                header("Location: /profile.php");
-                exit();
-            }
-
-            $safeUserId = (int)$userId;
-            $sql = "SELECT mat_khau FROM nguoi_dung WHERE id = $safeUserId";
-            $userList = $this->khachHangModel->query($sql);
-            $user = !empty($userList) ? $userList[0] : null;
-
-            if ($user) {
-                if ($matKhauCu === $user['mat_khau']) {
-                    $safeMatKhauMoi = addslashes($matKhauMoi); 
-                    $sqlUpdate = "UPDATE nguoi_dung SET mat_khau = '$safeMatKhauMoi' WHERE id = $safeUserId";
-                    $this->khachHangModel->query($sqlUpdate);
-                    $_SESSION['success'] = "Đổi mật khẩu thành công!";
-                } else {
-                    $_SESSION['error'] = "Mật khẩu hiện tại không đúng!";
-                }
-            }
+        if (!$userId || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: /client/profile");
+            exit();
         }
-        header("Location: /profile.php"); 
+
+        $matKhauCu = $_POST['mat_khau_cu'] ?? '';
+        $matKhauMoi = $_POST['mat_khau_moi'] ?? '';
+        $xacNhanMatKhau = $_POST['xac_nhan_mat_khau'] ?? '';
+
+        if ($matKhauMoi !== $xacNhanMatKhau) {
+            $_SESSION['error'] = "Mật khẩu xác nhận không khớp!";
+            header("Location: /client/profile");
+            exit();
+        }
+
+        if (strlen($matKhauMoi) < 6) {
+            $_SESSION['error'] = "Mật khẩu mới phải có ít nhất 6 ký tự!";
+            header("Location: /client/profile");
+            exit();
+        }
+
+        //lấy userId hiện tại
+        $userData = $this->khachHangModel->getById($userId);
+        
+        if (!$userData) {
+            $_SESSION['error'] = "Không tìm thấy thông tin người dùng!";
+            header("Location: /client/profile");
+            exit();
+        }
+
+        $matKhauCuHash = sha1(trim($matKhauCu));
+        if ($userData['mat_khau'] !== $matKhauCuHash) {
+            $_SESSION['error'] = "Mật khẩu hiện tại không đúng!";
+            header("Location: /client/profile");
+            exit();
+        }
+
+        $matKhauMoiHash = sha1(trim($matKhauMoi));
+        $result = $this->khachHangModel->update($userId, ['mat_khau' => $matKhauMoiHash]);
+
+        if ($result) {
+            $_SESSION['success'] = "Đổi mật khẩu thành công!";
+        } else {
+            $_SESSION['error'] = "Đổi mật khẩu thất bại!";
+        }
+
+        header("Location: /client/profile"); 
         exit();
     }
 }
