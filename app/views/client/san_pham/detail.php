@@ -27,7 +27,7 @@
                             <div class="col l-2 m-6 c-6">
                                 <div class="logo-top">
                                     <i class="fa fa-bars bar-reponsive" aria-hidden="true"></i>
-                                    <a class="logo f-logo" href="./index.html"></a>
+                                    <a class="logo f-logo" href="/index.php"></a>
                                 </div>
                             </div>
                             <!-- cart for mobile and tablet -->
@@ -59,9 +59,8 @@
                                             <i class="fa fa-file" aria-hidden="true"></i>
                                             <p>Thông tin hay</p>
                                         </a>
-                                        <ul class="news"><a href="#">
-                                            </a>
-                                            <li><a href="#"></a><a href="#">Tin mới</a></li>
+                                        <ul class="news">
+                                            <li><a href="#">Tin mới</a></li>
                                             <li><a href="#">Khuyến mãi</a></li>
                                             <li><a href="#">Thủ thuật</a></li>
                                             <li><a href="#">For games</a></li>
@@ -70,7 +69,6 @@
                                             <li><a href="#">App &amp; Game</a></li>
                                             <li><a href="#">Sự kiện</a></li>
                                         </ul>
-
                                     </div>
                                     <div class="service-pee">
                                         <a href="#">
@@ -102,7 +100,7 @@
                         <div class="col l-12 m-0 c-0">
                             <ul class="menu-top">
                                 <li class="menu-top-item">
-                                    <a href="product.html">
+                                    <a href="/san-pham">
                                         <i class="fa fa-mobile" aria-hidden="true"></i> Điện thoại </a>
                                     <div class="nav-box">
                                         <table class="nav-company">
@@ -166,8 +164,6 @@
                                                 <tr>
                                                     <td><a href="#">Trên 13 triệu</a></td>
                                                 </tr>
-                                                <tr>
-                                                </tr>
                                             </tbody>
                                         </table>
                                         <table class="hot-selling">
@@ -179,8 +175,7 @@
                                                 <tr>
                                                     <td>
                                                         <a href="#">
-                                                            <img
-                                                                src="/public/assets/client/images/navbar/hot selling/1.png">
+                                                            <img src="/assets/client/images/navbar/hot selling/1.png">
                                                         </a>
                                                     </td>
                                                     <td>
@@ -192,8 +187,7 @@
                                                 <tr>
                                                     <td>
                                                         <a href="#">
-                                                            <img
-                                                                src="/public/assets/client/images/navbar/2.png">
+                                                            <img src="/assets/client/images/navbar/2.png">
                                                         </a>
                                                     </td>
                                                     <td>
@@ -206,14 +200,13 @@
                                         </table>
                                         <div class="nav-box-banner">
                                             <a href="#">
-                                                <img
-                                                    src="/public/assets/client/images/navbar/3.png">
+                                                <img src="/assets/client/images/navbar/3.png">
                                             </a>
                                         </div>
                                     </div>
                                 </li>
                                 <li class="menu-top-item">
-                                    <a href="product.html">
+                                    <a href="/san-pham">
                                         <i class="fa fa-laptop" aria-hidden="true"></i> Laptop </a>
                                     <div class="nav-box">
                                         <table class="nav-company">
@@ -291,20 +284,17 @@
                                                 <tr>
                                                     <td><a href="#">Trên 30 triệu</a></td>
                                                 </tr>
-                                                <tr>
-                                                </tr>
                                             </tbody>
                                         </table>
                                         <div class="nav-box-banner">
                                             <a href="#">
-                                                <img
-                                                    src="/public/assets/client/images/navbar/4.png">
+                                                <img src="/public/assets/client/images/navbar/4.png">
                                             </a>
                                         </div>
                                     </div>
                                 </li>
                                 <li class="menu-top-item">
-                                    <a href="product.html">
+                                    <a href="/san-pham">
                                         <i class="fa fa-tablet" aria-hidden="true"></i> Máy tính bảng </a>
                                     <div class="nav-box">
                                         <table class="nav-company htablet">
@@ -344,10 +334,6 @@
                                                 <tr>
                                                     <td><a href="#">Trên 8 triệu</a></td>
                                                 </tr>
-                                                <tr>
-                                                    <td><a href="#">
-                                                        </a></td>
-                                                </tr>
                                             </tbody>
                                         </table>
                                         <table class="hot-selling">
@@ -359,8 +345,7 @@
                                                 <tr>
                                                     <td>
                                                         <a href="#">
-                                                            <img
-                                                                src="/public/assets/client/images/navbar/5.png">
+                                                            <img src="/public/assets/client/images/navbar/5.png">
                                                         </a>
                                                     </td>
                                                     <td>
@@ -372,8 +357,7 @@
                                                 <tr>
                                                     <td>
                                                         <a href="#">
-                                                            <img
-                                                                src="/public/assets/client/images/navbar/6.png">
+                                                            <img src="/public/assets/client/images/navbar/6.png">
                                                         </a>
                                                     </td>
                                                     <td>
@@ -386,14 +370,13 @@
                                         </table>
                                         <div class="nav-box-banner">
                                             <a href="#">
-                                                <img
-                                                    src="/public/assets/client/images/navbar/7.png">
+                                                <img src="/public/assets/client/images/navbar/7.png">
                                             </a>
                                         </div>
                                     </div>
                                 </li>
                                 <li class="menu-top-item">
-                                    <a href="product.html">
+                                    <a href="/san-pham">
                                         <i class="fa fa-apple" aria-hidden="true"></i> Apple </a>
                                     <div class="nav-box">
                                         <table class="nav-company">
@@ -435,8 +418,7 @@
                                                 <tr>
                                                     <td>
                                                         <a href="#">
-                                                            <img
-                                                                src="/public/assets/client/images/navbar/8.png">
+                                                            <img src="/public/assets/client/images/navbar/8.png">
                                                         </a>
                                                     </td>
                                                     <td><a href="#">iPhone 13 Pro Max 128GB <p
@@ -446,8 +428,7 @@
                                                 <tr>
                                                     <td>
                                                         <a href="#">
-                                                            <img
-                                                                src="/public/assets/client/images/navbar/9.png">
+                                                            <img src="/public/assets/client/images/navbar/9.png">
                                                         </a>
                                                     </td>
                                                     <td><a href="#">iPhone 13 128GB <p class="hot-selling-price">
@@ -458,14 +439,13 @@
                                         </table>
                                         <div class="nav-box-banner">
                                             <a href="#">
-                                                <img
-                                                    src="/public/assets/client/images/navbar/10.png">
+                                                <img src="/public/assets/client/images/navbar/10.png">
                                             </a>
                                         </div>
                                     </div>
                                 </li>
                                 <li class="menu-top-item">
-                                    <a href="product.html">
+                                    <a href="/san-pham">
                                         <i class="fa fa-desktop" aria-hidden="true"></i> PC-Linh kiện </a>
                                     <ul class="news">
                                         <li><a href="#">PC</a></li>
@@ -475,7 +455,7 @@
                                     </ul>
                                 </li>
                                 <li class="menu-top-item">
-                                    <a href="product.html">
+                                    <a href="/san-pham">
                                         <i class="fa fa-headphones" aria-hidden="true"></i> Phụ kiện </a>
                                     <div class="nav-box">
                                         <table class="nav-company">
@@ -511,8 +491,7 @@
                                                 <tr>
                                                     <td><a href="#">Phụ kiện khẩu trang lọc khí</a></td>
                                                     <td><a href="#">Bàn phím</a></td>
-                                                    <td><a href="#">
-                                                        </a></td>
+                                                    <td><a href="#"></a></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -525,8 +504,7 @@
                                                 <tr>
                                                     <td>
                                                         <a href="#">
-                                                            <img
-                                                                src="/public/assets/client/images/navbar/11.png">
+                                                            <img src="/public/assets/client/images/navbar/11.png">
                                                         </a>
                                                     </td>
                                                     <td><a href="#">Combo Loa Bluetooth Karaoke kèm Mic không dây ivalue
@@ -536,8 +514,7 @@
                                                 <tr>
                                                     <td>
                                                         <a href="#">
-                                                            <img
-                                                                src="/public/assets/client/images/navbar/12.png">
+                                                            <img src="/public/assets/client/images/navbar/12.png">
                                                         </a>
                                                     </td>
                                                     <td><a href="#">Pin sạc dự phòng UmeTravel 10000mAh TRIP10000 Quick
@@ -548,26 +525,25 @@
                                         </table>
                                         <div class="nav-box-banner">
                                             <a href="#">
-                                                <img
-                                                    src="/public/assets/client/images/navbar/13.png">
+                                                <img src="/public/assets/client/images/navbar/13.png">
                                             </a>
                                         </div>
                                     </div>
                                 </li>
                                 <li class="menu-top-item">
-                                    <a href="product.html">
+                                    <a href="/san-pham">
                                         <i class="fa fa-rotate-right" aria-hidden="true"></i> Máy cũ giá rẻ </a>
                                 </li>
                                 <li class="menu-top-item">
-                                    <a href="product.html">
+                                    <a href="/san-pham">
                                         <i class="fa fa-house-laptop" aria-hidden="true"></i> Hàng gia dụng </a>
                                 </li>
                                 <li class="menu-top-item">
-                                    <a href="product.html">
+                                    <a href="/san-pham">
                                         <i class="fa fa-sd-card" aria-hidden="true"></i> Sim&amp;Thẻ cào </a>
                                 </li>
                                 <li class="menu-top-item">
-                                    <a href="product.html">
+                                    <a href="/san-pham">
                                         <i class="fa fa-certificate" aria-hidden="true"></i> Khuyến mãi </a>
                                     <ul class="news">
                                         <li><a href="#">Thông tin trao thưởng</a></li>
@@ -585,43 +561,43 @@
         <div class="menu-mobile-tablet">
             <ul class="menu-mobile-tablet-list">
                 <li class="menu-mobile-tablet-list-item">
-                    <a href="product.html">
+                    <a href="/san-pham">
                         <i class="fa fa-mobile" aria-hidden="true"></i> Điện thoại </a>
                 </li>
                 <li class="menu-mobile-tablet-list-item">
-                    <a href="product.html">
+                    <a href="/san-pham">
                         <i class="fa fa-laptop" aria-hidden="true"></i> Laptop </a>
                 </li>
                 <li class="menu-mobile-tablet-list-item">
-                    <a href="product.html">
+                    <a href="/san-pham">
                         <i class="fa fa-apple" aria-hidden="true"></i> Apple </a>
                 </li>
                 <li class="menu-mobile-tablet-list-item">
-                    <a href="product.html">
+                    <a href="/san-pham">
                         <i class="fa fa-desktop" aria-hidden="true"></i> PC phụ kiện </a>
                 </li>
                 <li class="menu-mobile-tablet-list-item">
-                    <a href="product.html">
+                    <a href="/san-pham">
                         <i class="fa fa-headphones" aria-hidden="true"></i> Tai nghe </a>
                 </li>
                 <li class="menu-mobile-tablet-list-item">
-                    <a href="product.html">
+                    <a href="/san-pham">
                         <i class="fa fa-arrow-rotate-right" aria-hidden="true"></i> Máy cũ giá rẻ </a>
                 </li>
                 <li class="menu-mobile-tablet-list-item">
-                    <a href="product.html">
+                    <a href="/san-pham">
                         <i class="fa fa-house-laptop" aria-hidden="true"></i> Hàng gia dụng </a>
                 </li>
                 <li class="menu-mobile-tablet-list-item">
-                    <a href="product.html">
+                    <a href="/san-pham">
                         <i class="fa fa-sim-card" aria-hidden="true"></i> Sim&amp;Thẻ cào </a>
                 </li>
                 <li class="menu-mobile-tablet-list-item">
-                    <a href="product.html">
+                    <a href="/san-pham">
                         <i class="fa fa-certificate" aria-hidden="true"></i> Khuyến mãi </a>
                 </li>
                 <li class="menu-mobile-tablet-list-item">
-                    <a href="product.html">
+                    <a href="/san-pham">
                         <i class="fa fa-circle-dollar-to-slot" aria-hidden="true"></i> Trả góp </a>
                 </li>
             </ul>
@@ -637,7 +613,7 @@
                     <div class="col l-12 m-12 c-12">
                         <div class="breadcrumbs">
                             <ul>
-                                <li><a href="index.html">Home</a></li>
+                                <li><a href="/index.php">Home</a></li>
                                 <li><a href="#">Pictures</a></li>
                                 <li><a href="#">Summer 15</a></li>
                             </ul>

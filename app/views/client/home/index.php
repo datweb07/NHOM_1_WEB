@@ -26,7 +26,7 @@
                         <div class="col l-2 m-6 c-6">
                             <div class="logo-top">
                                 <i class="fa fa-bars bar-reponsive"></i>
-                                <a class="logo f-logo" href="./index.html"></a>
+                                <a class="logo f-logo" href="/index.php"></a>
                             </div>
                         </div>
                         <!-- cart for mobile and tablet -->
@@ -98,7 +98,7 @@
                     <div class="col l-12 m-0 c-0">
                         <ul class="menu-top">
                             <li class="menu-top-item">
-                                <a href="product.html">
+                                <a href="/san-pham">
                                     <i class="fa fa-mobile"></i>
                                     Điện thoại
                                 </a>
@@ -203,7 +203,7 @@
                                 </div>
                             </li>
                             <li class="menu-top-item">
-                                <a href="product.html">
+                                <a href="/san-pham">
                                     <i class="fa fa-laptop"></i>
                                     Laptop
                                 </a>
@@ -290,7 +290,7 @@
                                 </div>
                             </li>
                             <li class="menu-top-item">
-                                <a href="product.html">
+                                <a href="/san-pham">
                                     <i class="fa fa-tablet"></i>
                                     Máy tính bảng
                                 </a>
@@ -372,7 +372,7 @@
                                 </div>
                             </li>
                             <li class="menu-top-item">
-                                <a href="product.html">
+                                <a href="/san-pham">
                                     <i class="fa fa-apple"></i>
                                     Apple
                                 </a>
@@ -439,7 +439,7 @@
                                 </div>
                             </li>
                             <li class="menu-top-item">
-                                <a href="product.html">
+                                <a href="/san-pham">
                                     <i class="fa fa-desktop"></i>
                                     PC-Linh kiện
                                 </a>
@@ -451,7 +451,7 @@
                                 </ul>
                             </li>
                             <li class="menu-top-item">
-                                <a href="product.html">
+                                <a href="/san-pham">
                                     <i class="fa fa-headphones"></i>
                                     Phụ kiện
                                 </a>
@@ -528,26 +528,26 @@
                                 </div>
                             </li>
                             <li class="menu-top-item">
-                                <a href="product.html">
+                                <a href="/san-pham">
                                     <i class="fa fa-rotate-right"></i>
                                     Máy cũ giá rẻ
                                 </a>
 
                             </li>
                             <li class="menu-top-item">
-                                <a href="product.html">
+                                <a href="/san-pham">
                                     <i class="fa fa-house-laptop"></i>
                                     Hàng gia dụng
                                 </a>
                             </li>
                             <li class="menu-top-item">
-                                <a href="product.html">
+                                <a href="/san-pham">
                                     <i class="fa fa-sd-card"></i>
                                     Sim&amp;Thẻ cào
                                 </a>
                             </li>
                             <li class="menu-top-item">
-                                <a href="product.html">
+                                <a href="/san-pham">
                                     <i class="fa fa-certificate"></i>
                                     Khuyến mãi
                                 </a>
@@ -567,61 +567,61 @@
     <div class="menu-mobile-tablet">
         <ul class="menu-mobile-tablet-list">
             <li class="menu-mobile-tablet-list-item">
-                <a href="product.html">
+                <a href="/san-pham">
                     <i class="fa fa-mobile"></i>
                     Điện thoại
                 </a>
             </li>
             <li class="menu-mobile-tablet-list-item">
-                <a href="product.html">
+                <a href="/san-pham">
                     <i class="fa fa-laptop"></i>
                     Laptop
                 </a>
             </li>
             <li class="menu-mobile-tablet-list-item">
-                <a href="product.html">
+                <a href="/san-pham">
                     <i class="fa fa-apple"></i>
                     Apple
                 </a>
             </li>
             <li class="menu-mobile-tablet-list-item">
-                <a href="product.html">
+                <a href="/san-pham">
                     <i class="fa fa-desktop"></i>
                     PC phụ kiện
                 </a>
             </li>
             <li class="menu-mobile-tablet-list-item">
-                <a href="product.html">
+                <a href="/san-pham">
                     <i class="fa fa-headphones"></i>
                     Tai nghe
                 </a>
             </li>
             <li class="menu-mobile-tablet-list-item">
-                <a href="product.html">
+                <a href="/san-pham">
                     <i class="fa fa-arrow-rotate-right"></i>
                     Máy cũ giá rẻ
                 </a>
             </li>
             <li class="menu-mobile-tablet-list-item">
-                <a href="product.html">
+                <a href="/san-pham">
                     <i class="fa fa-house-laptop"></i>
                     Hàng gia dụng
                 </a>
             </li>
             <li class="menu-mobile-tablet-list-item">
-                <a href="product.html">
+                <a href="/san-pham">
                     <i class="fa fa-sim-card"></i>
                     Sim&amp;Thẻ cào
                 </a>
             </li>
             <li class="menu-mobile-tablet-list-item">
-                <a href="product.html">
+                <a href="/san-pham">
                     <i class="fa fa-certificate"></i>
                     Khuyến mãi
                 </a>
             </li>
             <li class="menu-mobile-tablet-list-item">
-                <a href="product.html">
+                <a href="/san-pham">
                     <i class="fa fa-circle-dollar-to-slot"></i>
                     Trả góp
                 </a>
@@ -873,7 +873,7 @@
                     <div class="row slider-main" style="transform: translateX(-1212px);">
                         <div class="col l-3 m-6 c-6 card-slider">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/14.png">
                                         <div class="sticker">
@@ -882,7 +882,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Iphone 13 128GB
                                         </h3>
@@ -904,7 +904,7 @@
                         </div>
                         <div class="col l-3 m-6 c-6 card-slider">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/15.jpg">
                                         <div class="sticker">
@@ -913,7 +913,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Iphone 13 256GB
                                         </h3>
@@ -935,7 +935,7 @@
                         </div>
                         <div class="col l-3 m-6 c-6 card-slider">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/16.jpg">
                                         <div class="sticker">
@@ -944,7 +944,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Samsung A50
                                         </h3>
@@ -966,7 +966,7 @@
                         </div>
                         <div class="col l-3 m-6 c-6 card-slider">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/17.jpg">
                                         <div class="sticker">
@@ -975,7 +975,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Vivo V23e
                                         </h3>
@@ -997,7 +997,7 @@
                         </div>
                         <div class="col l-3 m-6 c-6 card-slider">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/14.png">
                                         <div class="sticker">
@@ -1006,7 +1006,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Iphone 13 128GB
                                         </h3>
@@ -1028,7 +1028,7 @@
                         </div>
                         <div class="col l-3 m-6 c-6 card-slider">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/15.jpg">
                                         <div class="sticker">
@@ -1037,7 +1037,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Iphone 13 256GB
                                         </h3>
@@ -1059,7 +1059,7 @@
                         </div>
                         <div class="col l-3 m-6 c-6 card-slider">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/16.jpg">
                                         <div class="sticker">
@@ -1068,7 +1068,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Samsung A50
                                         </h3>
@@ -1090,7 +1090,7 @@
                         </div>
                         <div class="col l-3 m-6 c-6 card-slider">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/17.jpg">
                                         <div class="sticker">
@@ -1099,7 +1099,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Vivo V23e
                                         </h3>
@@ -1149,7 +1149,7 @@
                     <div class="row">
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/14.png">
                                         <div class="sticker">
@@ -1158,7 +1158,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Iphone 13 128GB
                                         </h3>
@@ -1180,7 +1180,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/15.jpg">
                                         <div class="sticker">
@@ -1189,7 +1189,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Iphone 13 256GB
                                         </h3>
@@ -1211,7 +1211,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/16.jpg">
                                         <div class="sticker">
@@ -1220,7 +1220,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Samsung A50
                                         </h3>
@@ -1242,7 +1242,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/17.jpg">
                                         <div class="sticker">
@@ -1251,7 +1251,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Vivo V23e
                                         </h3>
@@ -1273,7 +1273,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/14.png">
                                         <div class="sticker">
@@ -1282,7 +1282,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Iphone 13 128GB
                                         </h3>
@@ -1304,7 +1304,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/15.jpg">
                                         <div class="sticker">
@@ -1313,7 +1313,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Iphone 13 256GB
                                         </h3>
@@ -1335,7 +1335,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/16.jpg">
                                         <div class="sticker">
@@ -1344,7 +1344,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Samsung A50
                                         </h3>
@@ -1366,7 +1366,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/17.jpg">
                                         <div class="sticker">
@@ -1375,7 +1375,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Vivo V23e
                                         </h3>
@@ -1421,7 +1421,7 @@
                     <div class="row">
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/20.jpg">
                                         <div class="sticker">
@@ -1430,7 +1430,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Laptop dell
                                         </h3>
@@ -1452,7 +1452,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/21.jpg">
                                         <div class="sticker">
@@ -1461,7 +1461,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Laptop HP
                                         </h3>
@@ -1483,7 +1483,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/22.jpg">
                                         <div class="sticker">
@@ -1492,7 +1492,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Laptop asus
                                         </h3>
@@ -1514,7 +1514,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/23.jpg">
                                         <div class="sticker">
@@ -1523,7 +1523,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Laptop lenovo
                                         </h3>
@@ -1545,7 +1545,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/20.jpg">
                                         <div class="sticker">
@@ -1554,7 +1554,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Laptop dell
                                         </h3>
@@ -1576,7 +1576,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/21.jpg">
                                         <div class="sticker">
@@ -1585,7 +1585,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Laptop HP
                                         </h3>
@@ -1607,7 +1607,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/22.jpg">
                                         <div class="sticker">
@@ -1616,7 +1616,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Laptop asus
                                         </h3>
@@ -1638,7 +1638,7 @@
                         </div>
                         <div class="col l-3 m-4 c-6 product-card">
                             <div class="product-card-item">
-                                <a href="./catagory.html">
+                                <a href="/san-pham/chi-tiet">
                                     <div class="product-card-item-img">
                                         <img src="/public/assets/client/images/products/23.jpg">
                                         <div class="sticker">
@@ -1647,7 +1647,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <div class="product-card-item-content"><a href="./catagory.html">
+                                <div class="product-card-item-content"><a href="/san-pham/chi-tiet">
                                         <h3 class="title-card">
                                             Laptop lenovo
                                         </h3>
