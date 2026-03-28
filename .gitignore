@@ -6,6 +6,7 @@ config/database.php
 .vscode/
 .idea/
 *.swp
+.kiro/
 
 # OS
 .DS_Store
