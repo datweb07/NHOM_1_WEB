@@ -2,6 +2,7 @@
 <div class="footer">
     <div class="grid wide">
         <div class="row">
+
             <div class="col l-2 m-4 c-12">
                 <div class="footer-1">
                     <ul class="footer-list">
@@ -13,6 +14,7 @@
                     </ul>
                 </div>
             </div>
+
             <div class="col l-2 m-4 c-12">
                 <div class="footer-2">
                     <ul class="footer-list">
@@ -24,6 +26,7 @@
                     </ul>
                 </div>
             </div>
+
             <div class="col l-2 m-4 c-12">
                 <div class="footer-3">
                     <ul class="footer-list">
@@ -35,6 +38,7 @@
                     </ul>
                 </div>
             </div>
+
             <div class="col l-3 m-6 c-12">
                 <div class="footer-4">
                     <p class="title-footer">Tư vấn mua hàng (Miễn phí)</p>
@@ -47,23 +51,26 @@
                     </div>
                 </div>
             </div>
+
             <div class="col l-3 m-6 c-12">
                 <div class="footer-4">
                     <p class="title-footer">Góp ý, khiếu nại dịch vụ (8h00-22h00)</p>
                     <p class="footer-phone">1800 6616</p>
                     <p class="title-footer">Chứng nhận:</p>
                     <div class="img-footer footer-final">
-                        <img src="/public/assets/client/images/others/29.png">
+                        <img src="/public/assets/client/images/others/29.png" alt="">
                     </div>
                     <p class="title-footer">Website cùng tập đoàn:</p>
                     <div class="img-footer footer-final">
-                        <img src="/public/assets/client/images/others/30.jpg">
+                        <img src="/public/assets/client/images/others/30.jpg" alt="">
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
+
 <div class="footer-copyright">
     <div class="grid wide">
         <div class="row">

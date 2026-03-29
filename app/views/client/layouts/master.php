@@ -10,8 +10,10 @@
     <link rel="icon" href="/public/assets/client/images/header/1.png">
     <link rel="stylesheet" href="/public/assets/client/css/main.css">
     <link rel="stylesheet" href="/public/assets/client/css/grid.css">
+    <link rel="stylesheet" href="/public/assets/client/css/slider.css">
+    <link rel="stylesheet" href="/public/assets/client/css/slider-card.css">
     <link rel="stylesheet" href="/public/assets/client/css/reponsive.css">
-    <?php if (isset($additionalCSS)): ?>
+    <?php if (!empty($additionalCSS)): ?>
         <?php foreach ($additionalCSS as $css): ?>
             <link rel="stylesheet" href="<?php echo $css; ?>">
         <?php endforeach; ?>
@@ -22,7 +24,6 @@
     <div class="wrapper">
         <?php require_once __DIR__ . '/header.php'; ?>
 
-        <!-- Main Content -->
         <div class="main">
             <?php echo $content ?? ''; ?>
         </div>
@@ -31,7 +32,9 @@
     </div>
 
     <script src="/public/assets/client/js/main.js"></script>
-    <?php if (isset($additionalJS)): ?>
+    <script src="/public/assets/client/js/slider.js"></script>
+    <script src="/public/assets/client/js/slider-card.js"></script>
+    <?php if (!empty($additionalJS)): ?>
         <?php foreach ($additionalJS as $js): ?>
             <script src="<?php echo $js; ?>"></script>
         <?php endforeach; ?>
