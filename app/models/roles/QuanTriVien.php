@@ -10,9 +10,6 @@ class QuanTriVien extends NguoiDung
         $this->loaiTaiKhoan = 'ADMIN';
     }
 
-    /**
-     * Đăng nhập admin - check email và password
-     */
     public function dang_nhap(string $email, string $matKhau): bool
     {
         $matKhauHash = sha1(trim($matKhau));

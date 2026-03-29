@@ -44,18 +44,13 @@ class KhachHang extends NguoiDung
         return false;
     }
 
-    /**
-     * Đăng ký tài khoản mới
-     */
     public function dang_ky(string $email, string $matKhau, string $hoTen): ?int
     {
-        // Check if email exists
         $existingUser = $this->query("SELECT id FROM nguoi_dung WHERE email = '$email' LIMIT 1");
         if (!empty($existingUser)) {
-            return null; // Email already exists
+            return null; //mail đã tồn tại
         }
 
-        // Create new user
         $matKhauHash = sha1(trim($matKhau));
         $now = date('Y-m-d H:i:s');
         
@@ -70,7 +65,6 @@ class KhachHang extends NguoiDung
         ]);
 
         if ($newUserId) {
-            // Load user data
             $this->id = $newUserId;
             $this->email = $email;
             $this->hoTen = $hoTen;
@@ -91,7 +85,6 @@ class KhachHang extends NguoiDung
         
         $result = $this->update($this->id, $dataCapNhat);
         
-        // Update object properties if successful
         if ($result) {
             foreach ($dataCapNhat as $key => $value) {
                 $camelKey = str_replace('_', '', lcfirst(ucwords($key, '_')));
@@ -104,22 +97,19 @@ class KhachHang extends NguoiDung
         return $result;
     }
 
-    /**
-     * Đổi mật khẩu
-     */
     public function doi_mat_khau(string $matKhauCu, string $matKhauMoi): bool
     {
         if (!$this->id) {
             return false;
         }
 
-        // Verify old password
+        //xác nhận pass cũ
         $matKhauCuHash = sha1(trim($matKhauCu));
         if ($this->matKhau !== $matKhauCuHash) {
             return false;
         }
 
-        // Update to new password
+        //update pass mới
         $matKhauMoiHash = sha1(trim($matKhauMoi));
         $result = $this->update($this->id, ['mat_khau' => $matKhauMoiHash]);
         
