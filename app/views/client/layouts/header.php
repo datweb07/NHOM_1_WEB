@@ -2,27 +2,26 @@
 
     <div class="header-top">
         <div class="container-xl">
-            <div class="row align-items-center gy-2">
+            <div class="row align-items-center g-2">
 
-                <!-- Logo -->
-                <div class="col l-2 m-6 c-6">
-                    <div class="logo-top">
-                        <i class="fa fa-bars bar-reponsive"></i>
-                        <a class="logo f-logo" href="/index.php"></a>
-                    </div>
+                <div class="col-auto">
+                    <a href="/" style="display:inline-block; line-height:0;">
+                        <img src="/public/assets/client/images/header/3.png"
+                             alt="FPT Shop"
+                             style="height:40px; width:auto; display:block;">
+                    </a>
                 </div>
 
-
-                <div class="col-6 d-md-none text-end">
-                    <a href="/gio-hang" class="service-item d-inline-flex">
+                <div class="col d-flex d-md-none justify-content-end align-items-center">
+                    <a href="/gio-hang" class="service-item d-inline-flex flex-column align-items-center">
                         <div class="cart-wrapper">
-                            <i class="fa fa-shopping-cart"></i>
+                            <i class="fa fa-shopping-cart" style="font-size:1.4rem; color:#fff;"></i>
                             <span class="cart-badge">0</span>
                         </div>
                     </a>
                 </div>
 
-                <div class="col-12 col-md-5">
+                <div class="col-12 col-md">
                     <form class="search-form d-flex" action="/san-pham" method="GET">
                         <input class="form-control" type="search" name="keyword"
                             placeholder="Nhập tên điện thoại, máy tính, phụ kiện... cần tìm">
@@ -32,7 +31,7 @@
                     </form>
                 </div>
 
-                <div class="col-md-5 d-none d-md-flex justify-content-end align-items-center">
+                <div class="col-auto d-none d-md-flex justify-content-end align-items-center gap-1">
 
                     <div class="service-dropdown">
                         <a href="#" class="service-item">
@@ -297,11 +296,10 @@
 
     <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
         <div class="offcanvas-header">
-            <a class="fpt-logo" href="/">
-                <div class="fpt-logo-box">
-                    <span class="f">F</span><span class="p">P</span><span class="t">T</span>
-                </div>
-                <div class="fpt-logo-text">Shop<span>com.vn</span></div>
+            <a href="/" style="display:inline-block; line-height:0;">
+                <img src="/public/assets/client/images/header/3.png"
+                     alt="FPT Shop"
+                     style="height:36px; width:auto; display:block;">
             </a>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
@@ -313,16 +311,40 @@
                 <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa-brands fa-apple"></i> Apple</a></li>
                 <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-desktop"></i> PC-Linh kiện</a></li>
                 <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-headphones"></i> Phụ kiện</a></li>
-                <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-rotate-right"></i> Máy cũ giá rẻ</a>
+                <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-rotate-right"></i> Máy cũ giá rẻ</a></li>
+                <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-house-laptop"></i> Hàng gia dụng</a></li>
+                <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-sd-card"></i> Sim &amp; Thẻ cào</a></li>
+                <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-certificate"></i> Khuyến mãi</a></li>
+                <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-circle-dollar-to-slot"></i> Trả góp</a></li>
+
+                <li><div style="height:1px; background:#f0f0f0; margin:4px 0;"></div></li>
+                <li style="padding:6px 16px 4px; font-size:0.72rem; color:#999; text-transform:uppercase; font-weight:700;">Tài khoản & Dịch vụ</li>
+
+                <li class="offcanvas-menu-item">
+                    <a href="#">
+                        <i class="fa fa-file"></i> Thông tin hay
+                    </a>
                 </li>
-                <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-house-laptop"></i> Hàng gia dụng</a>
+                <li class="offcanvas-menu-item">
+                    <a href="#">
+                        <i class="fa fa-file-invoice-dollar"></i> Thanh toán &amp; Tiện ích
+                    </a>
                 </li>
-                <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-sd-card"></i> Sim &amp; Thẻ cào</a>
+                <?php
+                $isLoggedIn = \App\Core\Session::isLoggedIn();
+                $userRole = \App\Core\Session::getUserRole();
+                $accountUrl = ($isLoggedIn && $userRole === 'MEMBER') ? '/client/profile' : '/client/auth/login';
+                ?>
+                <li class="offcanvas-menu-item">
+                    <a href="<?php echo $accountUrl; ?>">
+                        <i class="fa fa-user"></i> Tài khoản của tôi
+                    </a>
                 </li>
-                <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-certificate"></i> Khuyến mãi</a>
+                <li class="offcanvas-menu-item">
+                    <a href="/gio-hang">
+                        <i class="fa fa-shopping-cart"></i> Giỏ hàng
+                    </a>
                 </li>
-                <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-circle-dollar-to-slot"></i> Trả
-                        góp</a></li>
             </ul>
         </div>
     </div>

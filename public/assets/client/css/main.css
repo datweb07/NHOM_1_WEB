@@ -15,7 +15,8 @@ a {
     color: unset;
 }
 
-ul, li {
+ul,
+li {
     padding: 0;
     list-style: none;
 }
@@ -191,7 +192,6 @@ ul, li {
 
 .header-top {
     background-color: #cd1818;
-    height: 56px;
     margin: auto;
 }
 
@@ -533,6 +533,7 @@ ul, li {
 .category-bot-item img {
     object-fit: cover;
 }
+
 /* product */
 
 .product {
