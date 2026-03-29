@@ -87,7 +87,7 @@
             <div class="col-md-6 col-lg-5 col-xl-4">
                 
                 <div class="text-center mb-4">
-                    <img src="../../../../images/fpt-shop-banner.png" alt="FPT Shop" style="height: 45px;">
+                    <img src="../../../../images/fpt-shop-banner.png" alt="FPT Shop" style="height: 100px;">
                 </div>
 
                 <div class="card login-card">
