@@ -44,7 +44,7 @@ class KhachHang extends NguoiDung
         return false;
     }
 
-    public function dang_ky(string $email, string $matKhau, string $hoTen): ?int
+    public function dang_ky(string $email, string $matKhau, string $hoTen): ?array
     {
         $existingUser = $this->query("SELECT id FROM nguoi_dung WHERE email = '$email' LIMIT 1");
         if (!empty($existingUser)) {
@@ -53,13 +53,15 @@ class KhachHang extends NguoiDung
 
         $matKhauHash = sha1(trim($matKhau));
         $now = date('Y-m-d H:i:s');
-        
+        $token = bin2hex(random_bytes(32)); // 64 ký tự hex ngẫu nhiên
+
         $newUserId = $this->create([
             'email' => $email,
             'mat_khau' => $matKhauHash,
             'ho_ten' => $hoTen,
             'loai_tai_khoan' => 'MEMBER',
-            'trang_thai' => 'ACTIVE',
+            'trang_thai' => 'UNVERIFIED',
+            'verification_token' => $token,
             'ngay_tao' => $now,
             'ngay_cap_nhat' => $now
         ]);
@@ -69,10 +71,39 @@ class KhachHang extends NguoiDung
             $this->email = $email;
             $this->hoTen = $hoTen;
             $this->loaiTaiKhoan = 'MEMBER';
-            $this->trangThai = 'ACTIVE';
+            $this->trangThai = 'UNVERIFIED';
         }
 
-        return $newUserId;
+        return $newUserId ? ['id' => $newUserId, 'token' => $token] : null;
+    }
+
+    public function xac_thuc_email(string $token): bool
+    {
+        $token = mysqli_real_escape_string($this->link, $token);
+        $result = $this->query("SELECT * FROM nguoi_dung WHERE verification_token = '$token' AND trang_thai = 'UNVERIFIED' LIMIT 1");
+
+        if (empty($result)) {
+            return false;
+        }
+
+        $user = $result[0];
+        $now = date('Y-m-d H:i:s');
+        $updated = $this->update($user['id'], [
+            'trang_thai' => 'ACTIVE',
+            'verification_token' => '',
+            'ngay_cap_nhat' => $now
+        ]);
+
+        if ($updated) {
+            $this->id = $user['id'];
+            $this->email = $user['email'];
+            $this->hoTen = $user['ho_ten'];
+            $this->loaiTaiKhoan = $user['loai_tai_khoan'];
+            $this->trangThai = 'ACTIVE';
+            $this->avatarUrl = $user['avatar_url'];
+        }
+
+        return (bool)$updated;
     }
 
     
