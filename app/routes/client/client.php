@@ -40,6 +40,31 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	// Trang thông báo "Kiểm tra email của bạn"
+	if ($path === 'client/auth/check-email') {
+		require_once dirname(__DIR__, 2) . '/views/client/auth/check_email.php';
+		return;
+	}
+
+	// Route xử lý link xác thực từ email
+	if ($path === 'client/auth/verify-email') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AuthController.php';
+		\App\Controllers\Client\AuthController::verifyEmail($_GET['token'] ?? '');
+		return;
+	}
+
+	// Trang xác thực thành công
+	if ($path === 'client/auth/verified') {
+		require_once dirname(__DIR__, 2) . '/views/client/auth/verified.php';
+		return;
+	}
+
+	// Trang xác thực thất bại
+	if ($path === 'client/auth/verify-failed') {
+		require_once dirname(__DIR__, 2) . '/views/client/auth/verify_failed.php';
+		return;
+	}
+
 	if ($path === 'client/auth/logout' || $path === 'logout.php') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/AuthController.php';
 		\App\Controllers\Client\AuthController::logout();

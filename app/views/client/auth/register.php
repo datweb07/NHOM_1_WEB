@@ -7,7 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="/public/assets/client/images/header/1.png">
     <style>
-        /* Bộ CSS đồng bộ với trang Đăng nhập */
         :root {
             --fpt-red: #cb1c22;
             --fpt-red-hover: #a8151b;
@@ -56,7 +55,6 @@
             color: var(--fpt-red-hover);
         }
 
-        /* Customize Checkbox */
         .form-check-input:checked {
             background-color: var(--fpt-red);
             border-color: var(--fpt-red);
@@ -131,7 +129,8 @@
                                     'empty_password' => 'Vui lòng nhập mật khẩu.',
                                     'empty_name' => 'Vui lòng nhập họ tên.',
                                     'email_exists' => 'Email này đã được sử dụng.',
-                                    'registration_failed' => 'Đăng ký thất bại, vui lòng thử lại.'
+                                    'registration_failed' => 'Đăng ký thất bại, vui lòng thử lại.',
+                                    'mail_failed' => 'Đã tạo tài khoản nhưng không thể gửi email xác thực. Vui lòng liên hệ hỗ trợ.',
                                 ];
                                 echo $errorMessages[$_GET['error']] ?? 'Đã có lỗi xảy ra.';
                                 ?>
