@@ -1,40 +1,55 @@
 <?php
+require_once dirname(__DIR__) . '/BaseModel.php';
 
-class Dia_Chi 
+class DiaChi extends BaseModel
 {
-    // Thuộc tính chính xác theo sơ đồ (snake_case)
-    public int $id;
-    public string $ten_nguoi_nhan;
-    public string $sdt_nhan;
-    public string $so_nha_duong;
-    public string $phuong_xa;
-    public string $quan_huyen;
-    public string $tinh_thanh;
-    public bool $mac_dinh;
+    protected ?int $id = null;
+    protected ?int $nguoiDungId = null;
+    protected ?string $tenNguoiNhan = null;
+    protected ?string $sdtNhan = null;
+    protected ?string $soNhaDuong = null;
+    protected ?string $phuongXa = null;
+    protected ?string $quanHuyen = null;
+    protected ?string $tinhThanh = null;
+    protected int $macDinh = 0;
 
-    public function __construct(
-        int $id,
-        string $ten_nguoi_nhan,
-        string $sdt_nhan,
-        string $so_nha_duong,
-        string $phuong_xa,
-        string $quan_huyen,
-        string $tinh_thanh,
-        bool $mac_dinh = false
-    ) {
-        $this->id = $id;
-        $this->ten_nguoi_nhan = $ten_nguoi_nhan;
-        $this->sdt_nhan = $sdt_nhan;
-        $this->so_nha_duong = $so_nha_duong;
-        $this->phuong_xa = $phuong_xa;
-        $this->quan_huyen = $quan_huyen;
-        $this->tinh_thanh = $tinh_thanh;
-        $this->mac_dinh = $mac_dinh;
+    public function __construct()
+    {
+        parent::__construct('dia_chi');
     }
 
-    // Logic bổ trợ: Xuất chuỗi địa chỉ định dạng chuẩn
-    public function get_full_address(): string 
+    public function layTheoNguoiDung(int $nguoiDungId): array
     {
-        return "{$this->so_nha_duong}, {$this->phuong_xa}, {$this->quan_huyen}, {$this->tinh_thanh}";
+        $sql = "SELECT * FROM {$this->table}
+                WHERE nguoi_dung_id = " . (int)$nguoiDungId . '
+                ORDER BY mac_dinh DESC, id DESC';
+        return $this->query($sql);
+    }
+
+    public function getFullAddress(array $diaChi): string
+    {
+        $parts = [
+            $diaChi['so_nha_duong'] ?? '',
+            $diaChi['phuong_xa'] ?? '',
+            $diaChi['quan_huyen'] ?? '',
+            $diaChi['tinh_thanh'] ?? '',
+        ];
+
+        return implode(', ', array_filter($parts, static fn($item) => trim((string)$item) !== ''));
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'nguoi_dung_id' => $this->nguoiDungId,
+            'ten_nguoi_nhan' => $this->tenNguoiNhan,
+            'sdt_nhan' => $this->sdtNhan,
+            'so_nha_duong' => $this->soNhaDuong,
+            'phuong_xa' => $this->phuongXa,
+            'quan_huyen' => $this->quanHuyen,
+            'tinh_thanh' => $this->tinhThanh,
+            'mac_dinh' => $this->macDinh,
+        ];
     }
 }

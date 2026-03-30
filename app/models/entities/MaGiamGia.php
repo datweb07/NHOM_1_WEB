@@ -1,94 +1,103 @@
 <?php
+require_once dirname(__DIR__) . '/BaseModel.php';
 
-class Ma_Giam_Gia 
+class MaGiamGia extends BaseModel
 {
-    public int $id;
-    public string $ma_code;
-    public string $loai_giam;
-    public float $gia_tri_giam;
-    public float $giam_toi_da;
-    public float $don_toi_thieu;
-    public int $so_luot_su_dung;
-    public int $da_su_dung;
-    public string $trang_thai;
-    public string $ngay_het_han; // Định dạng Y-m-d H:i:s
+    protected ?int $id = null;
+    protected ?string $maCode = null;
+    protected ?string $moTa = null;
+    protected ?string $loaiGiam = null;
+    protected ?float $giaTriGiam = null;
+    protected ?float $giamToiDa = null;
+    protected float $donToiThieu = 0;
+    protected int $soLuotDaDung = 0;
+    protected ?int $gioiHanSuDung = null;
+    protected ?string $ngayBatDau = null;
+    protected ?string $ngayKetThuc = null;
+    protected string $trangThai = 'HOAT_DONG';
 
-    public function __construct(
-        int $id,
-        string $ma_code,
-        string $loai_giam,
-        float $gia_tri_giam,
-        float $giam_toi_da,
-        float $don_toi_thieu,
-        int $so_luot_su_dung,
-        int $da_su_dung,
-        string $trang_thai,
-        string $ngay_het_han
-    ) {
-        $this->id = $id;
-        $this->ma_code = $ma_code;
-        $this->loai_giam = $loai_giam;
-        $this->gia_tri_giam = $gia_tri_giam;
-        $this->giam_toi_da = $giam_toi_da;
-        $this->don_toi_thieu = $don_toi_thieu;
-        $this->so_luot_su_dung = $so_luot_su_dung;
-        $this->da_su_dung = $da_su_dung;
-        $this->trang_thai = $trang_thai;
-        $this->ngay_het_han = $ngay_het_han;
+    public function __construct()
+    {
+        parent::__construct('ma_giam_gia');
     }
 
-    /**
-     * Phương thức kiem_tra_hop_le() 
-     * Logic: Kiểm tra trạng thái, thời hạn, số lượng và giá trị đơn hàng tối thiểu.
-     */
-    public function kiem_tra_hop_le(float $tong_tien_don_hang): bool 
+    public function timTheoMaCode(string $maCode): ?array
     {
-        // 1. Kiểm tra trạng thái (Ví dụ: ACTIVE)
-        if ($this->trang_thai !== 'ACTIVE') {
+        $safeCode = addslashes(trim($maCode));
+        $sql = "SELECT * FROM {$this->table} WHERE ma_code = '$safeCode' LIMIT 1";
+        $rows = $this->query($sql);
+        return $rows[0] ?? null;
+    }
+
+    public function kiemTraHopLe(array $voucher, float $tongTienDonHang): bool
+    {
+        if (($voucher['trang_thai'] ?? '') !== 'HOAT_DONG') {
             return false;
         }
 
-        // 2. Kiểm tra số lượt còn lại
-        if ($this->da_su_dung >= $this->so_luot_su_dung) {
+        if ($tongTienDonHang < (float)($voucher['don_toi_thieu'] ?? 0)) {
             return false;
         }
 
-        // 3. Kiểm tra ngày hết hạn
-        $current_time = time();
-        $expiration_time = strtotime($this->ngay_het_han);
-        if ($current_time > $expiration_time) {
+        $gioiHan = $voucher['gioi_han_su_dung'] ?? null;
+        $daDung = (int)($voucher['so_luot_da_dung'] ?? 0);
+        if ($gioiHan !== null && $daDung >= (int)$gioiHan) {
             return false;
         }
 
-        // 4. Kiểm tra điều kiện giá trị đơn hàng tối thiểu
-        if ($tong_tien_don_hang < $this->don_toi_thieu) {
+        $now = time();
+        $batDau = strtotime((string)($voucher['ngay_bat_dau'] ?? ''));
+        $ketThuc = strtotime((string)($voucher['ngay_ket_thuc'] ?? ''));
+
+        if ($batDau !== false && $now < $batDau) {
+            return false;
+        }
+
+        if ($ketThuc !== false && $now > $ketThuc) {
             return false;
         }
 
         return true;
     }
 
-    /**
-     * Logic bổ trợ: Tính toán số tiền được giảm thực tế
-     */
-    public function tinh_so_tien_giam(float $tong_tien_don_hang): float 
+    public function tinhSoTienGiam(array $voucher, float $tongTienDonHang): float
     {
-        if (!$this->kiem_tra_hop_le($tong_tien_don_hang)) {
+        if (!$this->kiemTraHopLe($voucher, $tongTienDonHang)) {
             return 0;
         }
 
-        $so_tien_giam = 0;
-        if ($this->loai_giam === 'PERCENT') {
-            $so_tien_giam = $tong_tien_don_hang * ($this->gia_tri_giam / 100);
-            // Không được vượt quá mức giảm tối đa
-            if ($so_tien_giam > $this->giam_toi_da) {
-                $so_tien_giam = $this->giam_toi_da;
+        $loaiGiam = $voucher['loai_giam'] ?? '';
+        $giaTriGiam = (float)($voucher['gia_tri_giam'] ?? 0);
+
+        if ($loaiGiam === 'PHAN_TRAM') {
+            $soTienGiam = $tongTienDonHang * $giaTriGiam / 100;
+            $giamToiDa = $voucher['giam_toi_da'] !== null ? (float)$voucher['giam_toi_da'] : null;
+
+            if ($giamToiDa !== null) {
+                $soTienGiam = min($soTienGiam, $giamToiDa);
             }
-        } else {
-            // Loại giảm cố định (FIXED)
-            $so_tien_giam = $this->gia_tri_giam;
+
+            return max(0, $soTienGiam);
         }
 
-        return $so_tien_giam;
+        return max(0, $giaTriGiam);
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'ma_code' => $this->maCode,
+            'mo_ta' => $this->moTa,
+            'loai_giam' => $this->loaiGiam,
+            'gia_tri_giam' => $this->giaTriGiam,
+            'giam_toi_da' => $this->giamToiDa,
+            'don_toi_thieu' => $this->donToiThieu,
+            'so_luot_da_dung' => $this->soLuotDaDung,
+            'gioi_han_su_dung' => $this->gioiHanSuDung,
+            'ngay_bat_dau' => $this->ngayBatDau,
+            'ngay_ket_thuc' => $this->ngayKetThuc,
+            'trang_thai' => $this->trangThai,
+        ];
     }
 }
