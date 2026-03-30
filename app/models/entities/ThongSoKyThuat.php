@@ -20,12 +20,47 @@ class ThongSoKyThuat extends BaseModel
         return $this->query($sql);
     }
 
+    // Lấy thông số theo sản phẩm (alias cho task 9.1)
+    public function layTheoSanPham(int $sanPhamId): array
+    {
+        return $this->layThongSoTheoSanPham($sanPhamId);
+    }
+
     // Xóa toàn bộ thông số của 1 sản phẩm khi update lại toàn bộ cấu hình
     public function xoaThongSoCuaSanPham(int $sanPhamId)
     {
         $sql = "DELETE FROM {$this->table} WHERE san_pham_id = $sanPhamId";
-        chayTruyVanKhongTraVeDL($this->link, $sql);
-        return mysqli_affected_rows($this->link);
+        $this->query($sql);
+        return true;
+    }
+
+    // Cập nhật hoặc tạo mới tất cả thông số của sản phẩm
+    public function capNhatHoacTao(int $sanPhamId, array $specifications): bool
+    {
+        // Xóa tất cả thông số cũ
+        $this->xoaThongSoCuaSanPham($sanPhamId);
+
+        // Thêm thông số mới
+        if (empty($specifications)) {
+            return true;
+        }
+
+        foreach ($specifications as $spec) {
+            if (empty($spec['ten_thong_so']) || empty($spec['gia_tri'])) {
+                continue;
+            }
+
+            $payload = [
+                'san_pham_id' => $sanPhamId,
+                'ten_thong_so' => addslashes(trim($spec['ten_thong_so'])),
+                'gia_tri' => addslashes(trim($spec['gia_tri'])),
+                'thu_tu' => (int)($spec['thu_tu'] ?? 0),
+            ];
+
+            $this->create($payload);
+        }
+
+        return true;
     }
 
     public function getId(): ?int { return $this->id; }

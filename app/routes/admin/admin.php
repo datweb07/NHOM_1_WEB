@@ -6,7 +6,7 @@ function adminRoute(string $uri): void
     $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
     if ($path === 'admin' || $path === 'admin/') {
-        header('Location: /admin/danh-muc');
+        header('Location: /admin/dashboard');
         exit;
     }
 
@@ -27,7 +27,9 @@ function adminRoute(string $uri): void
     }
 
     if ($path === 'admin/dashboard') {
-        require_once dirname(__DIR__, 2) . '/views/admin/dashboard/index.php';
+        require_once dirname(__DIR__, 2) . '/controllers/admin/DashboardController.php';
+        $dashboardController = new DashboardController();
+        $dashboardController->index();
         return;
     }
 
@@ -35,6 +37,10 @@ function adminRoute(string $uri): void
     $danhMucController = new DanhMucController();
     require_once dirname(__DIR__, 2) . '/controllers/admin/DonHangController.php';
     $donHangController = new DonHangController();
+    require_once dirname(__DIR__, 2) . '/controllers/admin/ThanhToanController.php';
+    $thanhToanController = new ThanhToanController();
+    require_once dirname(__DIR__, 2) . '/controllers/admin/SanPhamController.php';
+    $sanPhamController = new SanPhamController();
 
     if ($path === 'admin/danh-muc' && $method === 'GET') {
         $danhMucController->index();
@@ -86,6 +92,125 @@ function adminRoute(string $uri): void
     if ($path === 'admin/don-hang/cap-nhat-trang-thai' && $method === 'POST') {
         $id = $_GET['id'] ?? null;
         $donHangController->capNhatTrangThai($id);
+        return;
+    }
+
+    if ($path === 'admin/thanh-toan' && $method === 'GET') {
+        $thanhToanController->index();
+        return;
+    }
+
+    if ($path === 'admin/thanh-toan/chi-tiet' && $method === 'GET') {
+        $id = $_GET['id'] ?? null;
+        $thanhToanController->detail($id);
+        return;
+    }
+
+    if ($path === 'admin/thanh-toan/duyet' && $method === 'POST') {
+        $id = $_GET['id'] ?? null;
+        $thanhToanController->approve($id);
+        return;
+    }
+
+    if ($path === 'admin/thanh-toan/tu-choi' && $method === 'POST') {
+        $id = $_GET['id'] ?? null;
+        $thanhToanController->reject($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham' && $method === 'GET') {
+        $sanPhamController->index();
+        return;
+    }
+
+    if ($path === 'admin/san-pham/them') {
+        if ($method === 'POST') {
+            $sanPhamController->store();
+            return;
+        }
+        $sanPhamController->create();
+        return;
+    }
+
+    if ($path === 'admin/san-pham/sua') {
+        $id = $_GET['id'] ?? null;
+        if ($method === 'POST') {
+            $sanPhamController->update($id);
+            return;
+        }
+        $sanPhamController->edit($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham/xoa') {
+        $id = $_GET['id'] ?? null;
+        $sanPhamController->xoa($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham/mo-ban') {
+        $id = $_GET['id'] ?? null;
+        $sanPhamController->moBan($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham/phien-ban' && $method === 'GET') {
+        $id = $_GET['id'] ?? null;
+        $sanPhamController->variants($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham/phien-ban/them' && $method === 'POST') {
+        $id = $_GET['id'] ?? null;
+        $sanPhamController->createVariant($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham/phien-ban/sua' && $method === 'POST') {
+        $id = $_GET['id'] ?? null;
+        $sanPhamController->updateVariant($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham/phien-ban/xoa') {
+        $id = $_GET['id'] ?? null;
+        $sanPhamController->deleteVariant($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham/hinh-anh' && $method === 'GET') {
+        $id = $_GET['id'] ?? null;
+        $sanPhamController->images($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham/upload-anh' && $method === 'POST') {
+        $id = $_GET['id'] ?? null;
+        $sanPhamController->uploadImage($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham/xoa-anh') {
+        $id = $_GET['id'] ?? null;
+        $sanPhamController->deleteImage($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham/dat-anh-chinh') {
+        $id = $_GET['id'] ?? null;
+        $sanPhamController->setMainImage($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham/thong-so' && $method === 'GET') {
+        $id = $_GET['id'] ?? null;
+        $sanPhamController->specifications($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham/cap-nhat-thong-so' && $method === 'POST') {
+        $id = $_GET['id'] ?? null;
+        $sanPhamController->updateSpecifications($id);
         return;
     }
 

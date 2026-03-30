@@ -24,6 +24,35 @@ class HinhAnhSanPham extends BaseModel
         return $this->query($sql);
     }
 
+    // Đặt ảnh chính và bỏ đặt các ảnh khác
+    public function datAnhChinh(int $imageId, int $sanPhamId): bool
+    {
+        // Bỏ đặt tất cả ảnh chính của sản phẩm
+        $sql1 = "UPDATE {$this->table} SET la_anh_chinh = 0 WHERE san_pham_id = $sanPhamId";
+        $this->query($sql1);
+        
+        // Đặt ảnh được chọn làm ảnh chính
+        return $this->update($imageId, ['la_anh_chinh' => 1]);
+    }
+
+    // Xóa ảnh và file vật lý
+    public function xoaVaXoaFile(int $imageId): bool
+    {
+        $image = $this->getById($imageId);
+        if (!$image) {
+            return false;
+        }
+
+        // Xóa file vật lý
+        $filePath = dirname(__DIR__, 3) . '/public' . $image['url_anh'];
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        // Xóa record trong database
+        return $this->delete($imageId);
+    }
+
     public function toArray(): array
     {
         return [

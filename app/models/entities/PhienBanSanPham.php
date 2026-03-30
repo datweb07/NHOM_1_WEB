@@ -28,6 +28,12 @@ class PhienBanSanPham extends BaseModel
         return $this->query($sql);
     }
 
+    // Lấy tất cả phiên bản của một sản phẩm (alias cho task 7.1)
+    public function layTheoSanPham(int $sanPhamId): array
+    {
+        return $this->layTheoSanPhamId($sanPhamId);
+    }
+
     // Kiểm tra xem phiên bản này còn số lượng tồn kho không
     public function kiemTraKhaDung(): bool
     {
@@ -42,11 +48,30 @@ class PhienBanSanPham extends BaseModel
         }
         return 0;
     }
-    //Cập nhật số lượng tồn kho
+
+    // Cập nhật số lượng tồn kho và tự động cập nhật trạng thái
     public function capNhatTonKho(int $id, int $soLuongMoi)
     {
         $trangThaiMoi = ($soLuongMoi > 0) ? 'CON_HANG' : 'HET_HANG';
         return $this->update($id, ['so_luong_ton' => $soLuongMoi, 'trang_thai' => $trangThaiMoi]);
+    }
+
+    // Cập nhật số lượng tồn kho (alias cho task 7.1)
+    public function capNhatSoLuongTon(int $id, int $soLuongMoi): bool
+    {
+        return $this->capNhatTonKho($id, $soLuongMoi);
+    }
+
+    // Kiểm tra SKU đã tồn tại chưa (cho validation)
+    public function kiemTraSKU(string $sku, int $excludeId = 0): bool
+    {
+        $sku = addslashes($sku);
+        $sql = "SELECT id FROM {$this->table} WHERE sku = '$sku'";
+        if ($excludeId > 0) {
+            $sql .= " AND id != $excludeId";
+        }
+        $result = $this->query($sql);
+        return !empty($result);
     }
 
     public function getId(): ?int { return $this->id; }
@@ -103,4 +128,3 @@ class PhienBanSanPham extends BaseModel
         ];
     }
 }
-?>
