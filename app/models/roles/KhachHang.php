@@ -208,4 +208,105 @@ class KhachHang extends NguoiDung
         $this->lichSuTimKiem = $this->query($sql);
         return $this->lichSuTimKiem;
     }
+
+    /**
+     * Tạo reset token và lưu vào database
+     * 
+     * @param string $email Email người dùng
+     * @return string|null Reset token hoặc null nếu email không tồn tại
+     */
+    public function tao_reset_token(string $email): ?string
+    {
+        // Escape email để ngăn SQL injection
+        $email = mysqli_real_escape_string($this->link, $email);
+        
+        // Kiểm tra email có tồn tại trong database
+        $result = $this->query("SELECT id FROM nguoi_dung WHERE email = '$email' LIMIT 1");
+        
+        // Nếu email không tồn tại, return null
+        if (empty($result)) {
+            return null;
+        }
+        
+        // Tạo reset token 64 ký tự hex
+        $token = bin2hex(random_bytes(32));
+        
+        // Lưu token vào database
+        $userId = $result[0]['id'];
+        
+        $updated = $this->update($userId, [
+            'forget_token' => $token
+        ]);
+        
+        // Return token nếu update thành công, null nếu không
+        return $updated ? $token : null;
+    }
+
+    /**
+     * Xác thực reset token
+     * 
+     * @param string $token Reset token
+     * @return array|false User data nếu token hợp lệ, false nếu không
+     */
+    public function xac_thuc_reset_token(string $token)
+    {
+        // Escape token để ngăn SQL injection
+        $token = mysqli_real_escape_string($this->link, $token);
+        
+        // Query database để tìm token
+        $result = $this->query("SELECT * FROM nguoi_dung WHERE forget_token = '$token' LIMIT 1");
+        
+        // Kiểm tra token có tồn tại
+        if (empty($result)) {
+            return false;
+        }
+        
+        // Return user data nếu token hợp lệ
+        return $result[0];
+    }
+
+    /**
+     * Đặt lại mật khẩu và vô hiệu hóa token
+     * 
+     * @param string $token Reset token
+     * @param string $matKhauMoi Mật khẩu mới
+     * @return bool True nếu thành công
+     */
+    public function dat_lai_mat_khau(string $token, string $matKhauMoi): bool
+    {
+        // Validate password không rỗng
+        if (empty(trim($matKhauMoi))) {
+            return false;
+        }
+        
+        // Validate password >= 6 ký tự
+        if (strlen(trim($matKhauMoi)) < 6) {
+            return false;
+        }
+        
+        // Verify token is valid before resetting password
+        $userData = $this->xac_thuc_reset_token($token);
+        if ($userData === false) {
+            return false;
+        }
+        
+        // Escape token để ngăn SQL injection
+        $token = mysqli_real_escape_string($this->link, $token);
+        
+        // Hash password bằng SHA-1
+        $matKhauHash = sha1(trim($matKhauMoi));
+        
+        // Update mat_khau và xóa forget_token
+        $now = date('Y-m-d H:i:s');
+        $sql = "UPDATE nguoi_dung SET 
+                mat_khau = '$matKhauHash',
+                forget_token = NULL,
+                ngay_cap_nhat = '$now'
+                WHERE forget_token = '$token'";
+        
+        $result = chayTruyVanKhongTraVeDL($this->link, $sql);
+        
+        // Return true nếu update thành công
+        return $result && mysqli_affected_rows($this->link) > 0;
+    }
 }

@@ -37,10 +37,12 @@ CREATE TABLE `nguoi_dung` (
     `loai_tai_khoan` ENUM('ADMIN', 'MEMBER') COLLATE utf8mb4_unicode_ci DEFAULT 'MEMBER',
     `trang_thai` ENUM('ACTIVE', 'BLOCKED', 'UNVERIFIED') COLLATE utf8mb4_unicode_ci DEFAULT 'ACTIVE',
     `verification_token` VARCHAR(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `forget_token` VARCHAR(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Token đặt lại mật khẩu',
     `ngay_tao` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `ngay_cap_nhat` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_email` (`email`)
+    UNIQUE KEY `uk_email` (`email`),
+    KEY `idx_forget_token` (`forget_token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------

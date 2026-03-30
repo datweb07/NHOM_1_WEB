@@ -65,6 +65,39 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	// Trang quên mật khẩu (form nhập email)
+	if ($path === 'client/auth/forgot-password') {
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			require_once dirname(__DIR__, 2) . '/controllers/client/AuthController.php';
+			\App\Controllers\Client\AuthController::requestPasswordReset($_POST['email'] ?? '');
+			return;
+		}
+		require_once dirname(__DIR__, 2) . '/views/client/auth/forgot_password.php';
+		return;
+	}
+
+	// Xác thực reset token và hiển thị form đặt lại mật khẩu
+	if ($path === 'client/auth/reset-password') {
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			require_once dirname(__DIR__, 2) . '/controllers/client/AuthController.php';
+			\App\Controllers\Client\AuthController::resetPassword(
+				$_POST['token'] ?? '',
+				$_POST['new_password'] ?? '',
+				$_POST['confirm_password'] ?? ''
+			);
+			return;
+		}
+		require_once dirname(__DIR__, 2) . '/controllers/client/AuthController.php';
+		\App\Controllers\Client\AuthController::verifyResetToken($_GET['token'] ?? '');
+		return;
+	}
+
+	// Trang đặt lại mật khẩu thành công
+	if ($path === 'client/auth/reset-success') {
+		require_once dirname(__DIR__, 2) . '/views/client/auth/reset_success.php';
+		return;
+	}
+
 	if ($path === 'client/auth/logout' || $path === 'logout.php') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/AuthController.php';
 		\App\Controllers\Client\AuthController::logout();

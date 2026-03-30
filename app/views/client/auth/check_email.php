@@ -76,10 +76,12 @@
                     <div class="card-body p-4 p-sm-5">
                         
                         <div class="text-center mb-4">
-                            <h4 class="fw-bold mb-2">Kiểm tra hộp thư của bạn!</h4>
+                            <div class="icon-circle mb-3">
+                                <i class="bi bi-envelope-check"></i>
+                            </div>
+                            <h4 class="fw-bold mb-3">Kiểm tra email của bạn</h4>
                             <p class="text-muted" style="font-size: 0.95rem;">
-                                Chúng tôi đã gửi email xác thực đến:<br>
-                                <span class="mt-2 d-inline-block"><?= htmlspecialchars($_GET['email'] ?? 'email_cua_ban@example.com') ?></span>
+                                Nếu email tồn tại, bạn sẽ nhận được link đặt lại mật khẩu
                             </p>
                         </div>
 
