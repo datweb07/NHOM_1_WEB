@@ -262,19 +262,20 @@
         }
         .profile-menu li a {
             display: block;
-            color: #555;
+            color: #555 !important;
             text-decoration: none;
             padding: 10px;
             border-radius: 4px;
             transition: all 0.3s;
         }
         .profile-menu li a:hover, .profile-menu li a.active {
-            background-color: #fde8e8;
-            color: #d70018;
+            background-color: #fde8e8 !important;
+            color: #d70018 !important;
             font-weight: bold;
         }
         .profile-menu li a i {
             width: 25px;
+            margin-right: 8px;
         }
         .profile-content-box {
             background: #fff;

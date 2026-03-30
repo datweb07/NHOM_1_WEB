@@ -40,7 +40,7 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Trang thông báo "Kiểm tra email của bạn"
+	//trang kiểm tra mail
 	if ($path === 'client/auth/check-email') {
 		require_once dirname(__DIR__, 2) . '/views/client/auth/check_email.php';
 		return;
@@ -53,19 +53,19 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Trang xác thực thành công
+	//xác thực thành công
 	if ($path === 'client/auth/verified') {
 		require_once dirname(__DIR__, 2) . '/views/client/auth/verified.php';
 		return;
 	}
 
-	// Trang xác thực thất bại
+	//xác thực thất bại
 	if ($path === 'client/auth/verify-failed') {
 		require_once dirname(__DIR__, 2) . '/views/client/auth/verify_failed.php';
 		return;
 	}
 
-	// Trang quên mật khẩu (form nhập email)
+	//quên mật khẩu
 	if ($path === 'client/auth/forgot-password') {
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			require_once dirname(__DIR__, 2) . '/controllers/client/AuthController.php';
@@ -76,7 +76,7 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Xác thực reset token và hiển thị form đặt lại mật khẩu
+	//new password
 	if ($path === 'client/auth/reset-password') {
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			require_once dirname(__DIR__, 2) . '/controllers/client/AuthController.php';
@@ -92,7 +92,7 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Trang đặt lại mật khẩu thành công
+	//đặt lại mk thành công
 	if ($path === 'client/auth/reset-success') {
 		require_once dirname(__DIR__, 2) . '/views/client/auth/reset_success.php';
 		return;
@@ -120,6 +120,14 @@ function clientRoute(string $uri): void
 		require_once dirname(__DIR__, 2) . '/controllers/client/KhachHangController.php';
 		$controller = new KhachHangController();
 		$controller->doiMatKhau();
+		return;
+	}
+
+	//cập nhật avatar
+	if ($path === 'khach-hang/cap-nhat-avatar') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/KhachHangController.php';
+		$controller = new KhachHangController();
+		$controller->capNhatAvatar();
 		return;
 	}
 
