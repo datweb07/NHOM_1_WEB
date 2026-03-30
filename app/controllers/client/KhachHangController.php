@@ -169,4 +169,79 @@ class KhachHangController
         header("Location: /client/profile"); 
         exit();
     }
+
+    public function capNhatAvatar()
+    {
+        \App\Core\Session::start();
+        $userId = $_SESSION['user_id'] ?? null;
+        
+        if (!$userId || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: /client/profile");
+            exit();
+        }
+
+        //check url
+        if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
+            $_SESSION['error'] = "Vui lòng chọn ảnh để upload!";
+            header("Location: /client/profile");
+            exit();
+        }
+
+        $file = $_FILES['avatar'];
+        
+        //check size
+        $maxSize = 2 * 1024 * 1024; //MB
+        if ($file['size'] > $maxSize) {
+            $_SESSION['error'] = "Kích thước ảnh không được vượt quá 2MB!";
+            header("Location: /client/profile");
+            exit();
+        }
+
+        //check type
+        $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        $fileType = mime_content_type($file['tmp_name']);
+        if (!in_array($fileType, $allowedTypes)) {
+            $_SESSION['error'] = "Chỉ chấp nhận file JPG, JPEG hoặc PNG!";
+            header("Location: /client/profile");
+            exit();
+        }
+
+        //tạo mới uploads nếu chưa có
+        $uploadDir = dirname(__DIR__, 3) . '/public/uploads/avatars/';
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        //file unique name
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $newFileName = 'avatar_' . $userId . '_' . time() . '.' . $extension;
+        $uploadPath = $uploadDir . $newFileName;
+
+        //upload
+        if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+            //xóa ảnh cũ nếu có
+            $userData = $this->khachHangModel->getById($userId);
+            if (!empty($userData['avatar_url']) && file_exists(dirname(__DIR__, 3) . $userData['avatar_url'])) {
+                @unlink(dirname(__DIR__, 3) . $userData['avatar_url']);
+            }
+
+            //update url vào db
+            $avatarUrl = '/public/uploads/avatars/' . $newFileName;
+            $result = $this->khachHangModel->update($userId, [
+                'avatar_url' => $avatarUrl,
+                'ngay_cap_nhat' => date('Y-m-d H:i:s')
+            ]);
+
+            if ($result) {
+                $_SESSION['success'] = "Cập nhật ảnh đại diện thành công!";
+            } else {
+                $_SESSION['error'] = "Cập nhật ảnh đại diện thất bại!";
+            }
+        } else {
+            $_SESSION['error'] = "Upload ảnh thất bại!";
+        }
+
+        header("Location: /client/profile");
+        exit();
+    }
 }
