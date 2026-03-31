@@ -25,6 +25,85 @@ class KhuyenMai extends BaseModel
         return $this->query($sql);
     }
 
+    // Lấy danh sách khuyến mãi với lọc và phân trang
+    public function layDanhSach(string $trangThai = '', int $limit = 20, int $offset = 0): array
+    {
+        $where = [];
+        if ($trangThai !== '') {
+            $where[] = "trang_thai = '" . addslashes($trangThai) . "'";
+        }
+        
+        $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+        
+        $sql = "SELECT * FROM {$this->table} 
+                $whereClause
+                ORDER BY ngay_bat_dau DESC, id DESC
+                LIMIT $limit OFFSET $offset";
+        return $this->query($sql);
+    }
+
+    // Đếm số lượng khuyến mãi
+    public function demKhuyenMai(string $trangThai = ''): int
+    {
+        $where = [];
+        if ($trangThai !== '') {
+            $where[] = "trang_thai = '" . addslashes($trangThai) . "'";
+        }
+        
+        $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+        
+        $sql = "SELECT COUNT(*) as total FROM {$this->table} $whereClause";
+        $result = $this->query($sql);
+        return !empty($result) ? (int)$result[0]['total'] : 0;
+    }
+
+    // Lấy danh sách sản phẩm liên kết với khuyến mãi
+    public function layDanhSachSanPhamLienKet(int $khuyenMaiId): array
+    {
+        $sql = "SELECT sp.*, spkm.khuyen_mai_id
+                FROM san_pham sp
+                INNER JOIN san_pham_khuyen_mai spkm ON sp.id = spkm.san_pham_id
+                WHERE spkm.khuyen_mai_id = $khuyenMaiId
+                ORDER BY sp.ten_san_pham ASC";
+        return $this->query($sql);
+    }
+
+    // Xóa tất cả liên kết sản phẩm của khuyến mãi
+    public function xoaLienKetSanPham(int $khuyenMaiId): bool
+    {
+        $sql = "DELETE FROM san_pham_khuyen_mai WHERE khuyen_mai_id = $khuyenMaiId";
+        $this->query($sql);
+        return true;
+    }
+
+    // Thêm liên kết sản phẩm với khuyến mãi
+    public function themLienKetSanPham(int $khuyenMaiId, array $sanPhamIds): bool
+    {
+        if (empty($sanPhamIds)) {
+            return true;
+        }
+
+        $values = [];
+        foreach ($sanPhamIds as $sanPhamId) {
+            $values[] = "($khuyenMaiId, " . (int)$sanPhamId . ")";
+        }
+
+        $sql = "INSERT INTO san_pham_khuyen_mai (khuyen_mai_id, san_pham_id) VALUES " . implode(', ', $values);
+        $this->query($sql);
+        return true;
+    }
+
+    // Cập nhật trạng thái khuyến mãi hết hạn
+    public function capNhatTrangThaiHetHan(): int
+    {
+        $sql = "UPDATE {$this->table} 
+                SET trang_thai = 'HET_HAN'
+                WHERE trang_thai = 'HOAT_DONG' 
+                AND ngay_ket_thuc < NOW()";
+        $this->query($sql);
+        return 0; // Return affected rows if needed
+    }
+
     public function toArray(): array
     {
         return [
