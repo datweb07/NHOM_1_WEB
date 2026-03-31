@@ -26,7 +26,7 @@ This implementation plan breaks down the admin management interface into discret
     - Display monthly metrics
     - _Requirements: 2.5_
 
-- [ ] 3. Enhance Order Management module
+- [x] 3. Enhance Order Management module
   - [x] 3.1 Add search and filtering methods to DonHang model
     - Implement `timKiem()` method for searching by ma_don_hang or customer name
     - Implement `layTheoKhoangNgay()` for date range filtering
@@ -87,7 +87,7 @@ This implementation plan breaks down the admin management interface into discret
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 6. Enhance Product Management module
-  - [ ] 6.1 Add product creation methods to SanPhamController
+  - [x] 6.1 Add product creation methods to SanPhamController
     - Implement `create()` method to display product create form
     - Load categories for dropdown selection
     - Implement `store()` method to process form submission
@@ -95,21 +95,21 @@ This implementation plan breaks down the admin management interface into discret
     - Validate slug uniqueness
     - _Requirements: 7.1, 7.2, 6.2, 6.3, 6.4_
   
-  - [ ] 6.2 Add product editing methods to SanPhamController
+  - [x] 6.2 Add product editing methods to SanPhamController
     - Implement `edit($id)` method to display product edit form
     - Load product, categories, variants, images, and specifications
     - Implement `update($id)` method to process form updates
     - Cascade trang_thai updates to variants when product is set to NGUNG_BAN
     - _Requirements: 7.1, 7.2, 7.4, 7.5, 7.6, 7.7_
   
-  - [ ] 6.3 Implement product validation logic
+  - [x] 6.3 Implement product validation logic
     - Create `validatePayload()` method in SanPhamController
     - Validate ten_san_pham, slug, hang_san_xuat, danh_muc_id, trang_thai
     - Validate slug format (lowercase, alphanumeric, hyphens only)
     - Check slug uniqueness excluding current product when editing
     - _Requirements: 7.1, 7.2, 15.1, 15.2, 15.3, 15.4, 24.1, 24.2, 24.3_
   
-  - [ ] 6.4 Update product views with create and edit forms
+  - [x] 6.4 Update product views with create and edit forms
     - Update `app/views/admin/san_pham/create.php` with complete form
     - Update `app/views/admin/san_pham/edit.php` with complete form
     - Add category dropdown, status selection, noi_bat checkbox
@@ -189,8 +189,8 @@ This implementation plan breaks down the admin management interface into discret
 - [x] 10. Checkpoint - Verify product, variant, image, and specification modules
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 11. Implement Promotion Management module
-  - [ ] 11.1 Create KhuyenMai model with promotion methods
+- [-] 11. Implement Promotion Management module
+  - [x] 11.1 Create KhuyenMai model with promotion methods
     - Implement `layDanhSach()` with status filtering and pagination
     - Implement `layDanhSachSanPhamLienKet()` to get linked products
     - Implement `xoaLienKetSanPham()` to delete all product links
