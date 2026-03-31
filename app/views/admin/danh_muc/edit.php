@@ -20,26 +20,26 @@ $valueIcon = $old['icon_url'] ?? ($danhMuc['icon_url'] ?? '');
 $valueCha = (string)($old['danh_muc_cha_id'] ?? ($danhMuc['danh_muc_cha_id'] ?? ''));
 $valueThuTu = $old['thu_tu'] ?? ($danhMuc['thu_tu'] ?? '0');
 $valueTrangThai = (string)($old['trang_thai'] ?? ($danhMuc['trang_thai'] ?? '1'));
+
+require_once dirname(__DIR__) . '/layouts/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="vi">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sua danh muc</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<?php require_once dirname(__DIR__) . '/layouts/sidebar.php'; ?>
 
-<body class="bg-light">
-    <div class="container py-4 py-lg-5" style="max-width: 920px;">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3">
-                <h1 class="h4 mb-1">Sửa danh mục #<?= $danhMucId ?></h1>
-                <p class="text-secondary mb-0">Cập nhật thông tin danh mục và trạng thái hiển thị.</p>
-            </div>
-
-            <div class="card-body">
+<main class="app-main">
+    <?php 
+    $breadcrumbs = [
+        ['label' => 'Dashboard', 'url' => '/admin/dashboard'],
+        ['label' => 'Danh Mục', 'url' => '/admin/danh-muc'],
+        ['label' => 'Sửa #' . $danhMucId, 'url' => '']
+    ];
+    require_once dirname(__DIR__) . '/layouts/breadcrumb.php'; 
+    ?>
+    
+    <div class="app-content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
                 <form class="row g-3" method="POST" action="/admin/danh-muc/sua?id=<?= $danhMucId ?>">
                     <div class="col-12">
                         <label class="form-label" for="ten">Tên danh mục *</label>
@@ -86,14 +86,14 @@ $valueTrangThai = (string)($old['trang_thai'] ?? ($danhMuc['trang_thai'] ?? '1')
                     </div>
 
                     <div class="col-12 d-flex gap-2 pt-1">
-                        <button class="btn btn-primary" type="submit">ưu thay đổi</button>
+                        <button class="btn btn-primary" type="submit">Lưu thay đổi</button>
                         <a class="btn btn-outline-secondary" href="/admin/danh-muc">Quay lại danh sách</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+</div>
+</main>
 
-</html>
+<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>

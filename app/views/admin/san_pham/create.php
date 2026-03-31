@@ -9,26 +9,26 @@ class SanPhamCreateViewHelper
 
 $old = $old ?? [];
 $errors = $errors ?? [];
+
+require_once dirname(__DIR__) . '/layouts/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="vi">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thêm sản phẩm</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<?php require_once dirname(__DIR__) . '/layouts/sidebar.php'; ?>
 
-<body class="bg-light">
-    <div class="container py-4 py-lg-5" style="max-width: 920px;">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3">
-                <h1 class="h4 mb-1">Thêm sản phẩm mới</h1>
-                <p class="text-secondary mb-0">Có thể để trống slug để hệ thống tự tạo từ tên sản phẩm.</p>
-            </div>
-
-            <div class="card-body">
+<main class="app-main">
+    <?php 
+    $breadcrumbs = [
+        ['label' => 'Dashboard', 'url' => '/admin/dashboard'],
+        ['label' => 'Sản Phẩm', 'url' => '/admin/san-pham'],
+        ['label' => 'Thêm Mới', 'url' => '']
+    ];
+    require_once dirname(__DIR__) . '/layouts/breadcrumb.php'; 
+    ?>
+    
+    <div class="app-content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
                 <form class="row g-3" method="POST" action="/admin/san-pham/them">
                     <div class="col-12">
                         <label class="form-label" for="ten_san_pham">Tên sản phẩm *</label>
@@ -95,7 +95,7 @@ $errors = $errors ?? [];
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+</div>
+</main>
 
-</html>
+<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>

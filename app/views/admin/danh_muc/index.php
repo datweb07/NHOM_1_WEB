@@ -18,71 +18,93 @@ $errorMessages = [
     'invalid_id' => 'ID danh mục không hợp lệ.',
     'not_found' => 'Không tìm thấy danh mục.',
 ];
+
+require_once dirname(__DIR__) . '/layouts/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="vi">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý danh mục</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+<?php require_once dirname(__DIR__) . '/layouts/sidebar.php'; ?>
 
-<body class="bg-light">
-    <div class="container py-4 py-lg-5">
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-            <h1 class="h3 mb-0">Quản lý danh mục</h1>
-            <a class="btn btn-primary" href="/admin/danh-muc/them">Thêm danh mục</a>
-        </div>
+<main class="app-main">
+    <?php 
+    $breadcrumbs = [
+        ['label' => 'Dashboard', 'url' => '/admin/dashboard'],
+        ['label' => 'Danh Mục', 'url' => '']
+    ];
+    require_once dirname(__DIR__) . '/layouts/breadcrumb.php'; 
+    ?>
+    
+    <div class="app-content">
+        <div class="container-fluid">
+            <!-- Action Bar -->
+            <div class="d-flex justify-content-end mb-3">
+                <a href="/admin/danh-muc/them" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Thêm Danh Mục
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
 
         <?php if (!empty($success) && isset($successMessages[$success])): ?>
-            <div class="alert alert-success"><?= DanhMucViewHelper::e($successMessages[$success]) ?></div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?= DanhMucViewHelper::e($successMessages[$success]) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
         <?php endif; ?>
 
         <?php if (!empty($error) && isset($errorMessages[$error])): ?>
-            <div class="alert alert-danger"><?= DanhMucViewHelper::e($errorMessages[$error]) ?></div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?= DanhMucViewHelper::e($errorMessages[$error]) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
         <?php endif; ?>
 
-        <div class="card shadow-sm border-0">
-            <div class="card-body border-bottom">
-                <form class="row g-2" method="GET" action="/admin/danh-muc">
-                    <div class="col-12 col-lg-6">
-                        <input
-                            class="form-control"
-                            type="text"
-                            name="keyword"
-                            placeholder="Tìm theo tên hoặc slug..."
-                            value="<?= DanhMucViewHelper::e($keyword ?? '') ?>">
-                    </div>
-                    <div class="col-12 col-lg-4">
-                        <select class="form-select" name="trang_thai">
-                            <option value="all" <?= ($statusFilter ?? 'all') === 'all' ? 'selected' : '' ?>>Tất cả trạng thái</option>
-                            <option value="1" <?= ($statusFilter ?? 'all') === '1' ? 'selected' : '' ?>>Đang hiển thị</option>
-                            <option value="0" <?= ($statusFilter ?? 'all') === '0' ? 'selected' : '' ?>>Đang ẩn </option>
-                        </select>
-                    </div>
-                    <div class="col-12 col-lg-2 d-grid">
-                        <button class="btn btn-outline-secondary" type="submit">Lọc</button>
-                    </div>
-                </form>
+        <!-- Search and Filter Form -->
+        <form class="row g-3 mb-3" method="GET" action="/admin/danh-muc">
+            <div class="col-md-5">
+                <label for="keyword" class="form-label">Tìm Kiếm</label>
+                <input
+                    class="form-control"
+                    id="keyword"
+                    type="text"
+                    name="keyword"
+                    placeholder="Tên hoặc slug..."
+                    value="<?= DanhMucViewHelper::e($keyword ?? '') ?>">
             </div>
+            <div class="col-md-4">
+                <label for="trang_thai" class="form-label">Trạng Thái</label>
+                <select class="form-select" id="trang_thai" name="trang_thai">
+                    <option value="all" <?= ($statusFilter ?? 'all') === 'all' ? 'selected' : '' ?>>Tất cả</option>
+                    <option value="1" <?= ($statusFilter ?? 'all') === '1' ? 'selected' : '' ?>>Hiển thị</option>
+                    <option value="0" <?= ($statusFilter ?? 'all') === '0' ? 'selected' : '' ?>>Ẩn</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button class="btn btn-primary w-100" type="submit">
+                    <i class="bi bi-search"></i> Tìm
+                </button>
+            </div>
+        </form>
 
+        <!-- Table -->
+        <div class="table-responsive">
             <?php if (empty($danhSachDanhMuc)): ?>
-                <div class="card-body text-center text-secondary py-5">Không có dữ liệu danh mục.</div>
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                    <p class="text-muted mt-3">Không có danh mục nào</p>
+                </div>
             <?php else: ?>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
+                <table class="table table-striped table-hover">
+                        <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Tên danh mục</th>
+                                <th>Tên Danh Mục</th>
                                 <th>Slug</th>
-                                <th>Danh mục cha</th>
-                                <th>Thứ tự</th>
-                                <th>Trạng thái</th>
-                                <th>Sản phẩm</th>
-                                <th>Hành động</th>
+                                <th>Danh Mục Cha</th>
+                                <th>Thứ Tự</th>
+                                <th>Trạng Thái</th>
+                                <th>Sản Phẩm</th>
+                                <th>Thao Tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -107,29 +129,35 @@ $errorMessages = [
                                     </td>
                                     <td><?= (int)($item['tong_san_pham'] ?? 0) ?></td>
                                     <td>
-                                        <div class="d-flex flex-wrap gap-2">
-                                            <a class="btn btn-sm btn-outline-primary" href="/admin/danh-muc/sua?id=<?= (int)$item['id'] ?>">Sửa</a>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a class="btn btn-outline-primary" href="/admin/danh-muc/sua?id=<?= (int)$item['id'] ?>" title="Sửa">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
 
                                             <?php if ((int)$item['trang_thai'] === 1): ?>
-                                                <form method="POST" action="/admin/danh-muc/xoa?id=<?= (int)$item['id'] ?>" onsubmit="return confirm('Ẩn danh mục này?');">
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Ẩn</button>
+                                                <form method="POST" action="/admin/danh-muc/xoa?id=<?= (int)$item['id'] ?>" style="display: inline;" onsubmit="return confirm('Ẩn danh mục này?');">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Ẩn">
+                                                        <i class="bi bi-eye-slash"></i>
+                                                    </button>
                                                 </form>
                                             <?php else: ?>
-                                                <form method="POST" action="/admin/danh-muc/hien?id=<?= (int)$item['id'] ?>">
-                                                    <button type="submit" class="btn btn-sm btn-outline-success">Hiển thị lại</button>
+                                                <form method="POST" action="/admin/danh-muc/hien?id=<?= (int)$item['id'] ?>" style="display: inline;">
+                                                    <button type="submit" class="btn btn-outline-success btn-sm" title="Hiển thị">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
                                                 </form>
                                             <?php endif; ?>
                                         </div>
                                     </td>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             <?php endif; ?>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+</div>
+</div>
+</main>
 
-</html>
+<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
