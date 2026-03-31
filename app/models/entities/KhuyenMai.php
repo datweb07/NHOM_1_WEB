@@ -97,7 +97,7 @@ class KhuyenMai extends BaseModel
     public function capNhatTrangThaiHetHan(): int
     {
         $sql = "UPDATE {$this->table} 
-                SET trang_thai = 'HET_HAN'
+                SET trang_thai = 'DA_HET_HAN'
                 WHERE trang_thai = 'HOAT_DONG' 
                 AND ngay_ket_thuc < NOW()";
         $this->query($sql);

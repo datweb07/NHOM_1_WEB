@@ -41,6 +41,10 @@ function adminRoute(string $uri): void
     $thanhToanController = new ThanhToanController();
     require_once dirname(__DIR__, 2) . '/controllers/admin/SanPhamController.php';
     $sanPhamController = new SanPhamController();
+    require_once dirname(__DIR__, 2) . '/controllers/admin/KhuyenMaiController.php';
+    $khuyenMaiController = new KhuyenMaiController();
+    require_once dirname(__DIR__, 2) . '/controllers/admin/MaGiamGiaController.php';
+    $maGiamGiaController = new MaGiamGiaController();
 
     if ($path === 'admin/danh-muc' && $method === 'GET') {
         $danhMucController->index();
@@ -211,6 +215,76 @@ function adminRoute(string $uri): void
     if ($path === 'admin/san-pham/cap-nhat-thong-so' && $method === 'POST') {
         $id = $_GET['id'] ?? null;
         $sanPhamController->updateSpecifications($id);
+        return;
+    }
+
+    if ($path === 'admin/khuyen-mai' && $method === 'GET') {
+        $khuyenMaiController->index();
+        return;
+    }
+
+    if ($path === 'admin/khuyen-mai/them') {
+        if ($method === 'POST') {
+            $khuyenMaiController->store();
+            return;
+        }
+        $khuyenMaiController->create();
+        return;
+    }
+
+    if ($path === 'admin/khuyen-mai/sua') {
+        $id = $_GET['id'] ?? null;
+        if ($method === 'POST') {
+            $khuyenMaiController->update($id);
+            return;
+        }
+        $khuyenMaiController->edit($id);
+        return;
+    }
+
+    if ($path === 'admin/khuyen-mai/xoa') {
+        $id = $_GET['id'] ?? null;
+        $khuyenMaiController->delete($id);
+        return;
+    }
+
+    if ($path === 'admin/khuyen-mai/lien-ket-san-pham') {
+        $id = $_GET['id'] ?? null;
+        if ($method === 'POST') {
+            $khuyenMaiController->saveProductLinks($id);
+            return;
+        }
+        $khuyenMaiController->linkProducts($id);
+        return;
+    }
+
+    if ($path === 'admin/ma-giam-gia' && $method === 'GET') {
+        $maGiamGiaController->index();
+        return;
+    }
+
+    if ($path === 'admin/ma-giam-gia/them') {
+        if ($method === 'POST') {
+            $maGiamGiaController->store();
+            return;
+        }
+        $maGiamGiaController->create();
+        return;
+    }
+
+    if ($path === 'admin/ma-giam-gia/sua') {
+        $id = $_GET['id'] ?? null;
+        if ($method === 'POST') {
+            $maGiamGiaController->update($id);
+            return;
+        }
+        $maGiamGiaController->edit($id);
+        return;
+    }
+
+    if ($path === 'admin/ma-giam-gia/xoa') {
+        $id = $_GET['id'] ?? null;
+        $maGiamGiaController->delete($id);
         return;
     }
 

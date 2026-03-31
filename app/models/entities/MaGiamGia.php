@@ -83,6 +83,68 @@ class MaGiamGia extends BaseModel
         return max(0, $giaTriGiam);
     }
 
+    public function layDanhSach(?string $trangThai = null, int $limit = 20, int $offset = 0): array
+    {
+        $sql = "SELECT * FROM {$this->table}";
+        
+        if ($trangThai !== null && $trangThai !== '') {
+            $safeTrangThai = addslashes($trangThai);
+            $sql .= " WHERE trang_thai = '$safeTrangThai'";
+        }
+        
+        $sql .= " ORDER BY id DESC LIMIT $limit OFFSET $offset";
+        
+        return $this->query($sql);
+    }
+
+    public function demMaGiamGia(?string $trangThai = null): int
+    {
+        $sql = "SELECT COUNT(*) as total FROM {$this->table}";
+        
+        if ($trangThai !== null && $trangThai !== '') {
+            $safeTrangThai = addslashes($trangThai);
+            $sql .= " WHERE trang_thai = '$safeTrangThai'";
+        }
+        
+        $rows = $this->query($sql);
+        return (int)($rows[0]['total'] ?? 0);
+    }
+
+    public function kiemTraMaCode(string $maCode, int $excludeId = 0): bool
+    {
+        $safeCode = addslashes(trim($maCode));
+        $sql = "SELECT COUNT(*) as total FROM {$this->table} WHERE ma_code = '$safeCode'";
+        
+        if ($excludeId > 0) {
+            $sql .= " AND id != $excludeId";
+        }
+        
+        $rows = $this->query($sql);
+        return ((int)($rows[0]['total'] ?? 0)) > 0;
+    }
+
+    public function tangSoLuotDung(int $id): int
+    {
+        $sql = "UPDATE {$this->table} SET so_luot_da_dung = so_luot_da_dung + 1 WHERE id = $id";
+        return chayTruyVanKhongTraVeDL($this->link, $sql);
+    }
+
+    public function capNhatTrangThaiHetHan(): int
+    {
+        $sql = "UPDATE {$this->table} SET trang_thai = 'DA_HET_HAN' 
+                WHERE trang_thai = 'HOAT_DONG' AND ngay_ket_thuc < NOW()";
+        return chayTruyVanKhongTraVeDL($this->link, $sql);
+    }
+
+    public function capNhatTrangThaiHetLuot(): int
+    {
+        $sql = "UPDATE {$this->table} SET trang_thai = 'HET_LUOT' 
+                WHERE trang_thai = 'HOAT_DONG' 
+                AND gioi_han_su_dung IS NOT NULL 
+                AND so_luot_da_dung >= gioi_han_su_dung";
+        return chayTruyVanKhongTraVeDL($this->link, $sql);
+    }
+
     public function toArray(): array
     {
         return [

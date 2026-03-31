@@ -29,7 +29,7 @@
               data-accordion="false"
             >
               <li class="nav-item menu-open">
-                <a href="#" class="nav-link active">
+                <a href="/admin/dashboard" class="nav-link active">
                   <i class="nav-icon bi bi-speedometer"></i>
                   <p>
                     Dashboard
@@ -47,33 +47,78 @@
                 </a>
                 <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="./widgets/small-box.html" class="nav-link">
+                    <a href="/admin/san-pham" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Danh Sách Sản Phẩm</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/admin/san-pham/them" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Thêm Sản Phẩm</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="./widgets/info-box.html" class="nav-link">
+                    <a href="/admin/danh-muc" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
-                      <p>Sửa Sản Phẩm</p>
+                      <p>Danh Mục</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-cart-fill"></i>
+                  <p>
+                    Đơn Hàng
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/admin/don-hang" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Danh Sách Đơn Hàng</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-credit-card-fill"></i>
+                  <p>
+                    Thanh Toán
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/admin/thanh-toan" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Duyệt Thanh Toán</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-tag-fill"></i>
+                  <p>
+                    Khuyến Mãi
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/admin/khuyen-mai" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Chương Trình Khuyến Mãi</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="./widgets/cards.html" class="nav-link">
+                    <a href="/admin/ma-giam-gia" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
-                      <p>Xóa Sản Phẩm</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="./widgets/cards.html" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Danh sách</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="./widgets/cards.html" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Danh mục</p>
+                      <p>Mã Giảm Giá</p>
                     </a>
                   </li>
                 </ul>
@@ -82,22 +127,16 @@
                 <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
-                    Quản lý tài khoản
+                    Quản Lý Tài Khoản
                     
                     <i class="nav-arrow bi bi-chevron-right"></i>
                   </p>
                 </a>
                 <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="./layout/unfixed-sidebar.html" class="nav-link">
+                    <a href="/admin/nguoi-dung" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Danh Sách Tài Khoản</p>
-                    </a>
-                  </li>
-                   <li class="nav-item">
-                    <a href="./layout/unfixed-sidebar.html" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Tạo tài khoản mới</p>
                     </a>
                   </li>
                 </ul>
@@ -112,7 +151,7 @@
                 </a>
                 <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="./UI/general.html" class="nav-link">
+                    <a href="/admin/nguoi-dung" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Danh Sách</p>
                     </a>

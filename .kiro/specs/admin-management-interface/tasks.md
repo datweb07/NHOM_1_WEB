@@ -189,7 +189,7 @@ This implementation plan breaks down the admin management interface into discret
 - [x] 10. Checkpoint - Verify product, variant, image, and specification modules
   - Ensure all tests pass, ask the user if questions arise.
 
-- [-] 11. Implement Promotion Management module
+- [x] 11. Implement Promotion Management module
   - [x] 11.1 Create KhuyenMai model with promotion methods
     - Implement `layDanhSach()` with status filtering and pagination
     - Implement `layDanhSachSanPhamLienKet()` to get linked products
@@ -198,7 +198,7 @@ This implementation plan breaks down the admin management interface into discret
     - Implement `capNhatTrangThaiHetHan()` to auto-update expired promotions
     - _Requirements: 11.6, 11.7, 19.3, 19.4, 19.6_
   
-  - [ ] 11.2 Create KhuyenMaiController
+  - [x] 11.2 Create KhuyenMaiController
     - Implement `index()` method with status filtering
     - Implement `create()` and `store()` methods
     - Implement `edit($id)` and `update($id)` methods
@@ -207,21 +207,21 @@ This implementation plan breaks down the admin management interface into discret
     - Implement `saveProductLinks($id)` to save product selections
     - _Requirements: 11.1, 11.6, 19.1, 19.2, 19.3, 19.4, 19.5_
   
-  - [ ] 11.3 Implement promotion validation logic
+  - [x] 11.3 Implement promotion validation logic
     - Validate ten_chuong_trinh, loai_giam, gia_tri_giam, ngay_bat_dau, ngay_ket_thuc
     - Validate gia_tri_giam is 0-100 when loai_giam = PHAN_TRAM
     - Require giam_toi_da when loai_giam = PHAN_TRAM
     - Validate ngay_bat_dau < ngay_ket_thuc
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5_
   
-  - [ ] 11.4 Create promotion views
+  - [x] 11.4 Create promotion views
     - Create `app/views/admin/khuyen_mai/index.php` for promotion listing
     - Create `app/views/admin/khuyen_mai/create.php` for promotion create form
     - Create `app/views/admin/khuyen_mai/edit.php` for promotion edit form
     - Create `app/views/admin/khuyen_mai/link_products.php` for product linking interface
     - _Requirements: 11.1, 19.1, 19.5_
   
-  - [ ] 11.5 Add promotion routes
+  - [x] 11.5 Add promotion routes
     - Add GET `/admin/khuyen-mai` route
     - Add GET/POST `/admin/khuyen-mai/them` routes
     - Add GET/POST `/admin/khuyen-mai/sua` routes
@@ -229,8 +229,8 @@ This implementation plan breaks down the admin management interface into discret
     - Add GET/POST `/admin/khuyen-mai/lien-ket-san-pham` routes
     - _Requirements: 11.1, 19.2_
 
-- [ ] 12. Implement Discount Code Management module
-  - [ ] 12.1 Create MaGiamGia model with discount code methods
+- [x] 12. Implement Discount Code Management module
+  - [x] 12.1 Create MaGiamGia model with discount code methods
     - Implement `layDanhSach()` with status filtering and pagination
     - Implement `kiemTraMaCode()` for code uniqueness validation
     - Implement `tangSoLuotDung()` to increment usage and update status
@@ -238,7 +238,7 @@ This implementation plan breaks down the admin management interface into discret
     - Implement `capNhatTrangThaiHetLuot()` to auto-update codes at usage limit
     - _Requirements: 12.2, 12.5, 12.7_
   
-  - [ ] 12.2 Create MaGiamGiaController
+  - [x] 12.2 Create MaGiamGiaController
     - Implement `index()` method with status filtering
     - Implement `create()` and `store()` methods
     - Implement `edit($id)` and `update($id)` methods
@@ -246,28 +246,28 @@ This implementation plan breaks down the admin management interface into discret
     - Add code generation helper method
     - _Requirements: 12.1, 12.6_
   
-  - [ ] 12.3 Implement discount code validation logic
+  - [x] 12.3 Implement discount code validation logic
     - Validate ma_code uniqueness and format (uppercase letters and numbers only)
     - Validate loai_giam, gia_tri_giam, don_toi_thieu, gioi_han_su_dung
     - Validate gia_tri_giam is 0-100 when loai_giam = PHAN_TRAM
     - Validate ngay_bat_dau < ngay_ket_thuc
     - _Requirements: 12.1, 12.2, 12.3, 12.4_
   
-  - [ ] 12.4 Create discount code views
+  - [x] 12.4 Create discount code views
     - Create `app/views/admin/ma_giam_gia/index.php` for code listing
     - Create `app/views/admin/ma_giam_gia/create.php` for code create form
     - Create `app/views/admin/ma_giam_gia/edit.php` for code edit form
     - Display so_luot_da_dung and remaining usage count
     - _Requirements: 12.1, 12.7_
   
-  - [ ] 12.5 Add discount code routes
+  - [x] 12.5 Add discount code routes
     - Add GET `/admin/ma-giam-gia` route
     - Add GET/POST `/admin/ma-giam-gia/them` routes
     - Add GET/POST `/admin/ma-giam-gia/sua` routes
     - Add POST `/admin/ma-giam-gia/xoa` route
     - _Requirements: 12.1_
 
-- [ ] 13. Checkpoint - Verify promotion and discount code modules
+- [x] 13. Checkpoint - Verify promotion and discount code modules
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 14. Implement User Management module

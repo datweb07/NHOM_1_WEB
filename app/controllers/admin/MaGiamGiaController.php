@@ -1,16 +1,16 @@
 <?php
 
-class KhuyenMaiController
+class MaGiamGiaController
 {
-    private $khuyenMaiModel;
+    private $maGiamGiaModel;
     private $baseModel;
 
     public function __construct()
     {
-        require_once dirname(__DIR__, 2) . '/models/entities/KhuyenMai.php';
+        require_once dirname(__DIR__, 2) . '/models/entities/MaGiamGia.php';
         require_once dirname(__DIR__, 2) . '/models/BaseModel.php';
-        $this->khuyenMaiModel = new KhuyenMai();
-        $this->baseModel = new BaseModel('khuyen_mai');
+        $this->maGiamGiaModel = new MaGiamGia();
+        $this->baseModel = new BaseModel('ma_giam_gia');
     }
 
     public function index(): void
@@ -24,17 +24,17 @@ class KhuyenMaiController
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
-        $danhSachKhuyenMai = $this->khuyenMaiModel->layDanhSach($trangThai, $limit, $offset);
-        $totalKhuyenMai = $this->khuyenMaiModel->demKhuyenMai($trangThai);
-        $totalPages = ceil($totalKhuyenMai / $limit);
+        $danhSachMaGiamGia = $this->maGiamGiaModel->layDanhSach($trangThai, $limit, $offset);
+        $totalMaGiamGia = $this->maGiamGiaModel->demMaGiamGia($trangThai);
+        $totalPages = ceil($totalMaGiamGia / $limit);
 
         $success = $_GET['success'] ?? '';
         $error = $_GET['error'] ?? '';
 
         $data = [
             'trangThai' => $trangThai,
-            'danhSachKhuyenMai' => $danhSachKhuyenMai,
-            'totalKhuyenMai' => $totalKhuyenMai,
+            'danhSachMaGiamGia' => $danhSachMaGiamGia,
+            'totalMaGiamGia' => $totalMaGiamGia,
             'currentPage' => $page,
             'totalPages' => $totalPages,
             'limit' => $limit,
@@ -43,7 +43,7 @@ class KhuyenMaiController
         ];
 
         extract($data);
-        require_once dirname(__DIR__, 2) . '/views/admin/khuyen_mai/index.php';
+        require_once dirname(__DIR__, 2) . '/views/admin/ma_giam_gia/index.php';
     }
 
     public function create(array $old = [], array $errors = []): void
@@ -54,13 +54,13 @@ class KhuyenMaiController
         ];
 
         extract($data);
-        require_once dirname(__DIR__, 2) . '/views/admin/khuyen_mai/create.php';
+        require_once dirname(__DIR__, 2) . '/views/admin/ma_giam_gia/create.php';
     }
 
     public function store(): void
     {
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
-            header('Location: /admin/khuyen-mai/them');
+            header('Location: /admin/ma-giam-gia/them');
             exit;
         }
 
@@ -72,7 +72,7 @@ class KhuyenMaiController
         }
 
         $this->baseModel->create($payload);
-        header('Location: /admin/khuyen-mai?success=created');
+        header('Location: /admin/ma-giam-gia?success=created');
         exit;
     }
 
@@ -80,42 +80,42 @@ class KhuyenMaiController
     {
         $id = (int)$id;
         if ($id <= 0) {
-            header('Location: /admin/khuyen-mai?error=invalid_id');
+            header('Location: /admin/ma-giam-gia?error=invalid_id');
             exit;
         }
 
-        $khuyenMai = $this->baseModel->getById($id);
-        if (!$khuyenMai) {
-            header('Location: /admin/khuyen-mai?error=not_found');
+        $maGiamGia = $this->baseModel->getById($id);
+        if (!$maGiamGia) {
+            header('Location: /admin/ma-giam-gia?error=not_found');
             exit;
         }
 
         $data = [
-            'khuyenMai' => $khuyenMai,
+            'maGiamGia' => $maGiamGia,
             'old' => $old,
             'errors' => $errors,
         ];
 
         extract($data);
-        require_once dirname(__DIR__, 2) . '/views/admin/khuyen_mai/edit.php';
+        require_once dirname(__DIR__, 2) . '/views/admin/ma_giam_gia/edit.php';
     }
 
     public function update($id): void
     {
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
-            header('Location: /admin/khuyen-mai');
+            header('Location: /admin/ma-giam-gia');
             exit;
         }
 
         $id = (int)$id;
         if ($id <= 0) {
-            header('Location: /admin/khuyen-mai?error=invalid_id');
+            header('Location: /admin/ma-giam-gia?error=invalid_id');
             exit;
         }
 
-        $khuyenMai = $this->baseModel->getById($id);
-        if (!$khuyenMai) {
-            header('Location: /admin/khuyen-mai?error=not_found');
+        $maGiamGia = $this->baseModel->getById($id);
+        if (!$maGiamGia) {
+            header('Location: /admin/ma-giam-gia?error=not_found');
             exit;
         }
 
@@ -127,7 +127,7 @@ class KhuyenMaiController
         }
 
         $this->baseModel->update($id, $payload);
-        header('Location: /admin/khuyen-mai?success=updated');
+        header('Location: /admin/ma-giam-gia?success=updated');
         exit;
     }
 
@@ -135,97 +135,19 @@ class KhuyenMaiController
     {
         $id = (int)$id;
         if ($id <= 0) {
-            header('Location: /admin/khuyen-mai?error=invalid_id');
+            header('Location: /admin/ma-giam-gia?error=invalid_id');
             exit;
         }
 
-        $khuyenMai = $this->baseModel->getById($id);
-        if (!$khuyenMai) {
-            header('Location: /admin/khuyen-mai?error=not_found');
+        $maGiamGia = $this->baseModel->getById($id);
+        if (!$maGiamGia) {
+            header('Location: /admin/ma-giam-gia?error=not_found');
             exit;
         }
 
-        // Delete product links first
-        $this->khuyenMaiModel->xoaLienKetSanPham($id);
-        
-        // Delete promotion
         $this->baseModel->delete($id);
         
-        header('Location: /admin/khuyen-mai?success=deleted');
-        exit;
-    }
-
-    public function linkProducts($id): void
-    {
-        $id = (int)$id;
-        if ($id <= 0) {
-            header('Location: /admin/khuyen-mai?error=invalid_id');
-            exit;
-        }
-
-        $khuyenMai = $this->baseModel->getById($id);
-        if (!$khuyenMai) {
-            header('Location: /admin/khuyen-mai?error=not_found');
-            exit;
-        }
-
-        // Get all products
-        require_once dirname(__DIR__, 2) . '/models/entities/SanPham.php';
-        $sanPhamModel = new SanPham();
-        $allProducts = $sanPhamModel->layDanhSachPhanTrang(null, 0, null, null, 1000, 0);
-
-        // Get linked products
-        $linkedProducts = $this->khuyenMaiModel->layDanhSachSanPhamLienKet($id);
-        $linkedProductIds = array_column($linkedProducts, 'id');
-
-        $success = $_GET['success'] ?? '';
-        $error = $_GET['error'] ?? '';
-
-        $data = [
-            'khuyenMai' => $khuyenMai,
-            'allProducts' => $allProducts,
-            'linkedProductIds' => $linkedProductIds,
-            'success' => $success,
-            'error' => $error,
-        ];
-
-        extract($data);
-        require_once dirname(__DIR__, 2) . '/views/admin/khuyen_mai/link_products.php';
-    }
-
-    public function saveProductLinks($id): void
-    {
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
-            header('Location: /admin/khuyen-mai/lien-ket-san-pham?id=' . $id);
-            exit;
-        }
-
-        $id = (int)$id;
-        if ($id <= 0) {
-            header('Location: /admin/khuyen-mai?error=invalid_id');
-            exit;
-        }
-
-        $khuyenMai = $this->baseModel->getById($id);
-        if (!$khuyenMai) {
-            header('Location: /admin/khuyen-mai?error=not_found');
-            exit;
-        }
-
-        // Get selected product IDs
-        $sanPhamIds = isset($_POST['san_pham_ids']) && is_array($_POST['san_pham_ids']) 
-            ? array_map('intval', $_POST['san_pham_ids']) 
-            : [];
-
-        // Delete existing links
-        $this->khuyenMaiModel->xoaLienKetSanPham($id);
-
-        // Add new links
-        if (!empty($sanPhamIds)) {
-            $this->khuyenMaiModel->themLienKetSanPham($id, $sanPhamIds);
-        }
-
-        header('Location: /admin/khuyen-mai/lien-ket-san-pham?id=' . $id . '&success=links_saved');
+        header('Location: /admin/ma-giam-gia?success=deleted');
         exit;
     }
 
@@ -233,18 +155,25 @@ class KhuyenMaiController
     {
         $errors = [];
 
-        $tenChuongTrinh = trim((string)($input['ten_chuong_trinh'] ?? ''));
+        $maCode = trim((string)($input['ma_code'] ?? ''));
+        $moTa = trim((string)($input['mo_ta'] ?? ''));
         $loaiGiam = trim((string)($input['loai_giam'] ?? ''));
         $giaTriGiamRaw = trim((string)($input['gia_tri_giam'] ?? ''));
         $giamToiDaRaw = trim((string)($input['giam_toi_da'] ?? ''));
+        $donToiThieuRaw = trim((string)($input['don_toi_thieu'] ?? ''));
+        $gioiHanSuDungRaw = trim((string)($input['gioi_han_su_dung'] ?? ''));
         $ngayBatDau = trim((string)($input['ngay_bat_dau'] ?? ''));
         $ngayKetThuc = trim((string)($input['ngay_ket_thuc'] ?? ''));
 
-        // Validate ten_chuong_trinh
-        if ($tenChuongTrinh === '') {
-            $errors['ten_chuong_trinh'] = 'Tên chương trình không được để trống.';
-        } elseif (mb_strlen($tenChuongTrinh) > 255) {
-            $errors['ten_chuong_trinh'] = 'Tên chương trình không được vượt quá 255 ký tự.';
+        // Validate ma_code
+        if ($maCode === '') {
+            $errors['ma_code'] = 'Mã code không được để trống.';
+        } elseif (!preg_match('/^[A-Z0-9]+$/', $maCode)) {
+            $errors['ma_code'] = 'Mã code chỉ được chứa chữ in hoa và số.';
+        } elseif (mb_strlen($maCode) > 50) {
+            $errors['ma_code'] = 'Mã code không được vượt quá 50 ký tự.';
+        } elseif ($this->maGiamGiaModel->kiemTraMaCode($maCode, $editingId)) {
+            $errors['ma_code'] = 'Mã code đã tồn tại.';
         }
 
         // Validate loai_giam
@@ -272,12 +201,10 @@ class KhuyenMaiController
             }
         }
 
-        // Validate giam_toi_da (required if loai_giam is PHAN_TRAM)
+        // Validate giam_toi_da (optional for percentage)
         $giamToiDa = null;
-        if ($loaiGiam === 'PHAN_TRAM') {
-            if ($giamToiDaRaw === '') {
-                $errors['giam_toi_da'] = 'Giảm tối đa không được để trống khi loại giảm là phần trăm.';
-            } elseif (!is_numeric($giamToiDaRaw)) {
+        if ($giamToiDaRaw !== '') {
+            if (!is_numeric($giamToiDaRaw)) {
                 $errors['giam_toi_da'] = 'Giảm tối đa phải là số.';
             } else {
                 $giamToiDa = (float)$giamToiDaRaw;
@@ -285,8 +212,32 @@ class KhuyenMaiController
                     $errors['giam_toi_da'] = 'Giảm tối đa phải lớn hơn 0.';
                 }
             }
-        } elseif ($giamToiDaRaw !== '' && is_numeric($giamToiDaRaw)) {
-            $giamToiDa = (float)$giamToiDaRaw;
+        }
+
+        // Validate don_toi_thieu (optional)
+        $donToiThieu = 0;
+        if ($donToiThieuRaw !== '') {
+            if (!is_numeric($donToiThieuRaw)) {
+                $errors['don_toi_thieu'] = 'Đơn tối thiểu phải là số.';
+            } else {
+                $donToiThieu = (float)$donToiThieuRaw;
+                if ($donToiThieu < 0) {
+                    $errors['don_toi_thieu'] = 'Đơn tối thiểu phải lớn hơn hoặc bằng 0.';
+                }
+            }
+        }
+
+        // Validate gioi_han_su_dung (optional, NULL = unlimited)
+        $gioiHanSuDung = null;
+        if ($gioiHanSuDungRaw !== '') {
+            if (!is_numeric($gioiHanSuDungRaw)) {
+                $errors['gioi_han_su_dung'] = 'Giới hạn sử dụng phải là số.';
+            } else {
+                $gioiHanSuDung = (int)$gioiHanSuDungRaw;
+                if ($gioiHanSuDung <= 0) {
+                    $errors['gioi_han_su_dung'] = 'Giới hạn sử dụng phải lớn hơn 0.';
+                }
+            }
         }
 
         // Validate ngay_bat_dau
@@ -307,19 +258,25 @@ class KhuyenMaiController
         }
 
         $payload = [
-            'ten_chuong_trinh' => addslashes($tenChuongTrinh),
+            'ma_code' => addslashes($maCode),
+            'mo_ta' => addslashes($moTa),
             'loai_giam' => $loaiGiam,
             'gia_tri_giam' => $giaTriGiam,
             'giam_toi_da' => $giamToiDa,
+            'don_toi_thieu' => $donToiThieu,
+            'gioi_han_su_dung' => $gioiHanSuDung,
             'ngay_bat_dau' => $ngayBatDau,
             'ngay_ket_thuc' => $ngayKetThuc,
         ];
 
         $old = [
-            'ten_chuong_trinh' => $tenChuongTrinh,
+            'ma_code' => $maCode,
+            'mo_ta' => $moTa,
             'loai_giam' => $loaiGiam,
             'gia_tri_giam' => $giaTriGiamRaw,
             'giam_toi_da' => $giamToiDaRaw,
+            'don_toi_thieu' => $donToiThieuRaw,
+            'gioi_han_su_dung' => $gioiHanSuDungRaw,
             'ngay_bat_dau' => $ngayBatDau,
             'ngay_ket_thuc' => $ngayKetThuc,
         ];
