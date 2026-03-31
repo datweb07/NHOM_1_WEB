@@ -270,8 +270,8 @@ This implementation plan breaks down the admin management interface into discret
 - [x] 13. Checkpoint - Verify promotion and discount code modules
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 14. Implement User Management module
-  - [ ] 14.1 Add user management methods to NguoiDung model
+- [x] 14. Implement User Management module
+  - [x] 14.1 Add user management methods to NguoiDung model
     - Implement `layDanhSach()` with loai_tai_khoan and trang_thai filtering
     - Implement `timKiem()` for searching by email, ho_ten, or sdt
     - Implement `layTheoKhoangNgay()` for registration date filtering
@@ -280,7 +280,7 @@ This implementation plan breaks down the admin management interface into discret
     - Implement `demNguoiDung()` for pagination counts
     - _Requirements: 13.1, 13.6, 22.3_
   
-  - [ ] 14.2 Create NguoiDungController
+  - [x] 14.2 Create NguoiDungController
     - Implement `index()` method with filtering by loai_tai_khoan, trang_thai, date range
     - Implement search functionality
     - Implement pagination with 20 records per page
@@ -290,7 +290,7 @@ This implementation plan breaks down the admin management interface into discret
     - Implement `bulkUpdateStatus()` for bulk operations
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.7, 20.3, 20.4, 22.3, 22.5_
   
-  - [ ] 14.3 Create user management views
+  - [x] 14.3 Create user management views
     - Update `app/views/admin/nguoi_dung/index.php` with user listing table
     - Create `app/views/admin/nguoi_dung/detail.php` for user detail view
     - Add filtering controls for loai_tai_khoan, trang_thai, date range
@@ -299,7 +299,7 @@ This implementation plan breaks down the admin management interface into discret
     - Add bulk selection checkboxes
     - _Requirements: 13.1, 13.2, 13.3, 13.6, 20.3, 22.3_
   
-  - [ ] 14.4 Add user management routes
+  - [x] 14.4 Add user management routes
     - Update GET `/admin/nguoi-dung` route
     - Add GET `/admin/nguoi-dung/chi-tiet` route
     - Add POST `/admin/nguoi-dung/chan` route

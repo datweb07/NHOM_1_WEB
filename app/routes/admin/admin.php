@@ -45,6 +45,8 @@ function adminRoute(string $uri): void
     $khuyenMaiController = new KhuyenMaiController();
     require_once dirname(__DIR__, 2) . '/controllers/admin/MaGiamGiaController.php';
     $maGiamGiaController = new MaGiamGiaController();
+    require_once dirname(__DIR__, 2) . '/controllers/admin/NguoiDungController.php';
+    $nguoiDungController = new NguoiDungController();
 
     if ($path === 'admin/danh-muc' && $method === 'GET') {
         $danhMucController->index();
@@ -285,6 +287,35 @@ function adminRoute(string $uri): void
     if ($path === 'admin/ma-giam-gia/xoa') {
         $id = $_GET['id'] ?? null;
         $maGiamGiaController->delete($id);
+        return;
+    }
+
+    // Users
+    if ($path === 'admin/nguoi-dung' && $method === 'GET') {
+        $nguoiDungController->index();
+        return;
+    }
+
+    if ($path === 'admin/nguoi-dung/chi-tiet' && $method === 'GET') {
+        $id = $_GET['id'] ?? null;
+        $nguoiDungController->detail($id);
+        return;
+    }
+
+    if ($path === 'admin/nguoi-dung/chan') {
+        $id = $_GET['id'] ?? null;
+        $nguoiDungController->block($id);
+        return;
+    }
+
+    if ($path === 'admin/nguoi-dung/mo-chan') {
+        $id = $_GET['id'] ?? null;
+        $nguoiDungController->unblock($id);
+        return;
+    }
+
+    if ($path === 'admin/nguoi-dung/cap-nhat-hang-loat' && $method === 'POST') {
+        $nguoiDungController->bulkUpdateStatus();
         return;
     }
 

@@ -83,6 +83,7 @@ class MaGiamGia extends BaseModel
         return max(0, $giaTriGiam);
     }
 
+    // Fixed: Changed ORDER BY from ngay_tao to id (ngay_tao column doesn't exist)
     public function layDanhSach(?string $trangThai = null, int $limit = 20, int $offset = 0): array
     {
         $sql = "SELECT * FROM {$this->table}";
