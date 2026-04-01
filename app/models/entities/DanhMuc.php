@@ -123,6 +123,21 @@ class DanhMuc extends BaseModel
         return !empty($result) && (int)$result[0]['total'] > 0;
     }
 
+    /**
+     * Lấy danh mục hiển thị cho client (trang_thai = 1)
+     */
+    public function layDanhMucHienThi(int $limit = 12): array
+    {
+        $limit = max(1, (int)$limit);
+        $sql = "SELECT id, ten, slug, icon_url, danh_muc_cha_id
+                FROM {$this->table}
+                WHERE trang_thai = 1
+                ORDER BY thu_tu ASC, ten ASC
+                LIMIT $limit";
+        
+        return $this->query($sql);
+    }
+
     public function toArray(): array
     {
         return [

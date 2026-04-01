@@ -5,7 +5,9 @@ function clientRoute(string $uri): void
 	$path = trim(parse_url($uri, PHP_URL_PATH) ?? '/', '/');
 
 	if ($path === '' || $path === 'index.php') {
-		require_once dirname(__DIR__, 2) . '/views/client/home/index.php';
+		require_once dirname(__DIR__, 2) . '/controllers/client/HomeController.php';
+		$controller = new \App\Controllers\Client\HomeController();
+		$controller->index();
 		return;
 	}
 

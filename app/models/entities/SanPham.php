@@ -287,6 +287,107 @@ class SanPham extends BaseModel
         $this->noiBat = $noiBat;
     }
 
+    // ===== Method cho client =====
+
+    /**
+     * Lấy sản phẩm nổi bật
+     */
+    public function laySanPhamNoiBat(int $limit = 8): array
+    {
+        $limit = max(1, (int)$limit);
+        $sql = "SELECT sp.*, 
+                       (SELECT url_anh FROM hinh_anh_san_pham 
+                        WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
+                        LIMIT 1) as anh_chinh
+                FROM {$this->table} sp
+                WHERE sp.noi_bat = 1 AND sp.trang_thai = 'CON_BAN'
+                ORDER BY sp.ngay_tao DESC
+                LIMIT $limit";
+        
+        return parent::query($sql);
+    }
+
+    /**
+     * Lấy sản phẩm có khuyến mãi
+     */
+    public function laySanPhamKhuyenMai(int $limit = 8): array
+    {
+        $limit = max(1, (int)$limit);
+        $sql = "SELECT sp.*, 
+                       km.loai_giam, 
+                       km.gia_tri_giam, 
+                       km.giam_toi_da,
+                       (SELECT url_anh FROM hinh_anh_san_pham 
+                        WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
+                        LIMIT 1) as anh_chinh
+                FROM {$this->table} sp
+                INNER JOIN san_pham_khuyen_mai spkm ON sp.id = spkm.san_pham_id
+                INNER JOIN khuyen_mai km ON spkm.khuyen_mai_id = km.id
+                WHERE sp.trang_thai = 'CON_BAN' 
+                  AND km.trang_thai = 'HOAT_DONG'
+                  AND (km.ngay_bat_dau IS NULL OR km.ngay_bat_dau <= NOW())
+                  AND (km.ngay_ket_thuc IS NULL OR km.ngay_ket_thuc >= NOW())
+                ORDER BY sp.ngay_tao DESC
+                LIMIT $limit";
+        
+        return parent::query($sql);
+    }
+
+    /**
+     * Lấy sản phẩm theo danh mục (slug)
+     */
+    public function laySanPhamTheoDanhMuc(string $slugDanhMuc, int $limit = 8): array
+    {
+        $limit = max(1, (int)$limit);
+        $slugDanhMuc = mysqli_real_escape_string($this->link, $slugDanhMuc);
+        
+        $sql = "SELECT sp.*, 
+                       (SELECT url_anh FROM hinh_anh_san_pham 
+                        WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
+                        LIMIT 1) as anh_chinh
+                FROM {$this->table} sp
+                INNER JOIN danh_muc dm ON sp.danh_muc_id = dm.id
+                WHERE dm.slug = '$slugDanhMuc' 
+                  AND sp.trang_thai = 'CON_BAN'
+                ORDER BY sp.ngay_tao DESC
+                LIMIT $limit";
+        
+        return parent::query($sql);
+    }
+
+    /**
+     * Tính giá sau khuyến mãi
+     */
+    public function tinhGiaSauKhuyenMai(float $giaGoc, string $loaiGiam, float $giaTriGiam, ?float $giamToiDa = null): float
+    {
+        if ($loaiGiam === 'PHAN_TRAM') {
+            $tienGiam = $giaGoc * ($giaTriGiam / 100);
+            if ($giamToiDa !== null && $tienGiam > $giamToiDa) {
+                $tienGiam = $giamToiDa;
+            }
+            return $giaGoc - $tienGiam;
+        }
+        
+        // SO_TIEN
+        return max(0, $giaGoc - $giaTriGiam);
+    }
+
+    /**
+     * Lấy chi tiết sản phẩm theo slug
+     */
+    public function layChiTietTheoSlug(string $slug): ?array
+    {
+        $slug = mysqli_real_escape_string($this->link, $slug);
+        $sql = "SELECT sp.*, dm.ten AS ten_danh_muc, dm.slug AS slug_danh_muc
+                FROM {$this->table} sp
+                LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.id
+                WHERE sp.slug = '$slug'
+                LIMIT 1";
+        
+        $result = parent::query($sql);
+        return !empty($result) ? $result[0] : null;
+    }
+
     // ===== Method hiển thị =====
 
     public function hienThiThongTin()

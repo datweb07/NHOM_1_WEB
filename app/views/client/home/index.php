@@ -14,9 +14,13 @@ ob_start();
 
 <!-- Banner top -->
 <div class="slider">
-    <div class="grid wide">
-        <img src="/public/assets/client/images/header/2.png" style="width: 100%">
-    </div>
+    <?php if (!empty($bannerHero)): ?>
+        <div class="grid wide">
+            <img src="<?php echo htmlspecialchars($bannerHero[0]['hinh_anh_desktop']); ?>" 
+                 alt="<?php echo htmlspecialchars($bannerHero[0]['tieu_de']); ?>" 
+                 style="width: 100%">
+        </div>
+    <?php endif; ?>
 
     <!-- Slider chính + banner nhỏ bên phải -->
     <div class="grid wide">
@@ -27,46 +31,45 @@ ob_start();
                 <div class="grid">
                     <div class="wapper-slider">
                         <div class="row no-warp main-slider">
-                            <div class="col l-12 m-12 c-12 wrapper-item-slider">
-                                <div class="item-slider"><img src="/public/assets/client/images/others/1.png"></div>
-                            </div>
-                            <div class="col l-12 m-12 c-12 wrapper-item-slider">
-                                <div class="item-slider"><img src="/public/assets/client/images/others/2.png"></div>
-                            </div>
-                            <div class="col l-12 m-12 c-12 wrapper-item-slider">
-                                <div class="item-slider"><img src="/public/assets/client/images/others/3.png"></div>
-                            </div>
-                            <div class="col l-12 m-12 c-12 wrapper-item-slider">
-                                <div class="item-slider"><img src="/public/assets/client/images/others/1.png"></div>
-                            </div>
-                            <div class="col l-12 m-12 c-12 wrapper-item-slider">
-                                <div class="item-slider"><img src="/public/assets/client/images/others/2.png"></div>
-                            </div>
-                            <div class="col l-12 m-12 c-12 wrapper-item-slider">
-                                <div class="item-slider"><img src="/public/assets/client/images/others/3.png"></div>
-                            </div>
+                            <?php if (!empty($bannerHero)): ?>
+                                <?php foreach ($bannerHero as $banner): ?>
+                                    <div class="col l-12 m-12 c-12 wrapper-item-slider">
+                                        <div class="item-slider">
+                                            <a href="<?php echo htmlspecialchars($banner['link_dich']); ?>">
+                                                <img src="<?php echo htmlspecialchars($banner['hinh_anh_desktop']); ?>" 
+                                                     alt="<?php echo htmlspecialchars($banner['tieu_de']); ?>">
+                                            </a>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                         <button class="back-slider-card" type="button"><i class="fa fa-chevron-left"></i></button>
                         <button class="next-slider-card" type="button"><i class="fa fa-chevron-right"></i></button>
                     </div>
                 </div>
                 <ul class="slider-content">
-                    <li>Iphone 14</li>
-                    <li>Iphone 13</li>
-                    <li>Samsung</li>
-                    <li>Zeno</li>
-                    <li>Apple</li>
-                    <li>Redmi</li>
+                    <?php if (!empty($danhMucList)): ?>
+                        <?php foreach (array_slice($danhMucList, 0, 6) as $dm): ?>
+                            <li><a href="/danh-muc/<?php echo htmlspecialchars($dm['slug']); ?>"><?php echo htmlspecialchars($dm['ten']); ?></a></li>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </ul>
             </div>
 
             <!-- Banner nhỏ bên phải -->
             <div class="col l-3 c-12 m-12">
                 <div class="banner-top">
-                    <div class="banner-img-item"><img src="/public/assets/client/images/others/4.png"></div>
-                    <div class="banner-img-item"><img src="/public/assets/client/images/others/5.png"></div>
-                    <div class="banner-img-item"><img src="/public/assets/client/images/others/6.png"></div>
-                    <div class="banner-img-item"><img src="/public/assets/client/images/others/7.png"></div>
+                    <?php if (!empty($bannerSide)): ?>
+                        <?php foreach (array_slice($bannerSide, 0, 4) as $banner): ?>
+                            <div class="banner-img-item">
+                                <a href="<?php echo htmlspecialchars($banner['link_dich']); ?>">
+                                    <img src="<?php echo htmlspecialchars($banner['hinh_anh_desktop']); ?>" 
+                                         alt="<?php echo htmlspecialchars($banner['tieu_de']); ?>">
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -78,33 +81,26 @@ ob_start();
 <div class="category-wapper">
     <div class="grid wide category">
         <div class="row no-gutters">
-            <?php
-            $categories = [
-                ['img' => 'phone.png',   'title' => 'Điện thoại'],
-                ['img' => 'lap.png',     'title' => 'Laptop'],
-                ['img' => 'apple.png',   'title' => 'Apple'],
-                ['img' => 'samsung.png', 'title' => 'Samsung'],
-                ['img' => 'tablet.png',  'title' => 'Máy tính bảng'],
-                ['img' => 'xiaomi.png',  'title' => 'Xiaomi'],
-                ['img' => 'phone.png',   'title' => 'Điện thoại'],
-                ['img' => 'lap.png',     'title' => 'Laptop'],
-                ['img' => 'apple.png',   'title' => 'Apple'],
-                ['img' => 'samsung.png', 'title' => 'Samsung'],
-                ['img' => 'tablet.png',  'title' => 'Máy tính bảng'],
-                ['img' => 'xiaomi.png',  'title' => 'Xiaomi'],
-            ];
-            foreach ($categories as $cat): ?>
-                <div class="col l-2 m-3 c-3">
-                    <div class="category-item">
-                        <a href="#">
-                            <div class="img-category">
-                                <img src="/public/assets/client/images/icon/<?php echo $cat['img']; ?>">
-                            </div>
-                            <p class="title-category"><?php echo $cat['title']; ?></p>
-                        </a>
+            <?php if (!empty($danhMucList)): ?>
+                <?php foreach ($danhMucList as $dm): ?>
+                    <div class="col l-2 m-3 c-3">
+                        <div class="category-item">
+                            <a href="/danh-muc/<?php echo htmlspecialchars($dm['slug']); ?>">
+                                <div class="img-category">
+                                    <?php if (!empty($dm['icon_url'])): ?>
+                                        <img src="<?php echo htmlspecialchars($dm['icon_url']); ?>" 
+                                             alt="<?php echo htmlspecialchars($dm['ten']); ?>">
+                                    <?php else: ?>
+                                        <img src="/public/assets/client/images/icon/phone.png" 
+                                             alt="<?php echo htmlspecialchars($dm['ten']); ?>">
+                                    <?php endif; ?>
+                                </div>
+                                <p class="title-category"><?php echo htmlspecialchars($dm['ten']); ?></p>
+                            </a>
+                        </div>
                     </div>
-                </div>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -118,45 +114,53 @@ ob_start();
             </div>
         </div>
         <div class="slider-wapper">
-            <div class="row slider-main" style="transform: translateX(-1212px);">
-                <?php
-                $promoProducts = [
-                    ['img' => '14.png', 'name' => 'Iphone 13 128GB',  'new' => '20.000.000đ', 'old' => '25.000.000đ'],
-                    ['img' => '15.jpg', 'name' => 'Iphone 13 256GB',  'new' => '25.000.000đ', 'old' => '30.000.000đ'],
-                    ['img' => '16.jpg', 'name' => 'Samsung A50',       'new' => '8.000.000đ',  'old' => '10.000.000đ'],
-                    ['img' => '17.jpg', 'name' => 'Vivo V23e',         'new' => '9.000.000đ',  'old' => '11.000.000đ'],
-                    ['img' => '14.png', 'name' => 'Iphone 13 128GB',  'new' => '20.000.000đ', 'old' => '25.000.000đ'],
-                    ['img' => '15.jpg', 'name' => 'Iphone 13 256GB',  'new' => '25.000.000đ', 'old' => '30.000.000đ'],
-                    ['img' => '16.jpg', 'name' => 'Samsung A50',       'new' => '8.000.000đ',  'old' => '10.000.000đ'],
-                    ['img' => '17.jpg', 'name' => 'Vivo V23e',         'new' => '9.000.000đ',  'old' => '11.000.000đ'],
-                ];
-                foreach ($promoProducts as $p): ?>
-                    <div class="col l-3 m-6 c-6 card-slider">
-                        <div class="product-card-item">
-                            <a href="/san-pham/chi-tiet">
-                                <div class="product-card-item-img">
-                                    <img src="/public/assets/client/images/products/<?php echo $p['img']; ?>">
-                                    <div class="sticker">
-                                        <span class="sticker-sale">Ưu đãi 5.000.000đ</span><br>
-                                        <span class="sticker-event">Trả góp 0%</span>
-                                    </div>
-                                </div>
-                            </a>
-                            <div class="product-card-item-content">
-                                <a href="/san-pham/chi-tiet">
-                                    <h3 class="title-card"><?php echo $p['name']; ?></h3>
-                                    <div class="price">
-                                        <span class="new-price"><?php echo $p['new']; ?></span>
-                                        <span class="old-price"><?php echo $p['old']; ?></span>
-                                    </div>
-                                    <div class="card-item-info">
-                                        <span class="text-info-card">Giảm thêm 150.000đ khi thanh toán online 100% qua thẻ Mastercard</span>
+            <div class="row slider-main">
+                <?php if (!empty($sanPhamKhuyenMai)): ?>
+                    <?php 
+                    require_once dirname(__DIR__, 3) . '/models/entities/SanPham.php';
+                    $spModel = new SanPham();
+                    foreach ($sanPhamKhuyenMai as $sp): 
+                        $giaSauGiam = $spModel->tinhGiaSauKhuyenMai(
+                            $sp['gia_hien_thi'], 
+                            $sp['loai_giam'], 
+                            $sp['gia_tri_giam'], 
+                            $sp['giam_toi_da']
+                        );
+                        $tienGiam = $sp['gia_hien_thi'] - $giaSauGiam;
+                    ?>
+                        <div class="col l-3 m-6 c-6 card-slider">
+                            <div class="product-card-item">
+                                <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>">
+                                    <div class="product-card-item-img">
+                                        <?php if (!empty($sp['anh_chinh'])): ?>
+                                            <img src="<?php echo htmlspecialchars($sp['anh_chinh']); ?>" 
+                                                 alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>">
+                                        <?php else: ?>
+                                            <img src="/public/assets/client/images/products/14.png" 
+                                                 alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>">
+                                        <?php endif; ?>
+                                        <div class="sticker">
+                                            <span class="sticker-sale">Ưu đãi <?php echo number_format($tienGiam, 0, ',', '.'); ?>đ</span><br>
+                                            <span class="sticker-event">Trả góp 0%</span>
+                                        </div>
                                     </div>
                                 </a>
+                                <div class="product-card-item-content">
+                                    <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>">
+                                        <h3 class="title-card"><?php echo htmlspecialchars($sp['ten_san_pham']); ?></h3>
+                                        <div class="price">
+                                            <span class="new-price"><?php echo number_format($giaSauGiam, 0, ',', '.'); ?>đ</span>
+                                            <span class="old-price"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
+                                        </div>
+                                        <div class="card-item-info">
+                                            <span class="text-info-card">Giảm thêm 150.000đ khi thanh toán online 100% qua thẻ Mastercard</span>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
         <button class="next-slider-card" type="button"><i class="fa fa-chevron-right"></i></button>
@@ -185,44 +189,39 @@ ob_start();
                 </div>
             </div>
             <div class="row">
-                <?php
-                $phones = [
-                    ['img' => '14.png', 'name' => 'Iphone 13 128GB',  'new' => '20.000.000đ', 'old' => '25.000.000đ'],
-                    ['img' => '15.jpg', 'name' => 'Iphone 13 256GB',  'new' => '25.000.000đ', 'old' => '30.000.000đ'],
-                    ['img' => '16.jpg', 'name' => 'Samsung A50',       'new' => '8.000.000đ',  'old' => '10.000.000đ'],
-                    ['img' => '17.jpg', 'name' => 'Vivo V23e',         'new' => '9.000.000đ',  'old' => '11.000.000đ'],
-                    ['img' => '14.png', 'name' => 'Iphone 13 128GB',  'new' => '20.000.000đ', 'old' => '25.000.000đ'],
-                    ['img' => '15.jpg', 'name' => 'Iphone 13 256GB',  'new' => '25.000.000đ', 'old' => '30.000.000đ'],
-                    ['img' => '16.jpg', 'name' => 'Samsung A50',       'new' => '8.000.000đ',  'old' => '10.000.000đ'],
-                    ['img' => '17.jpg', 'name' => 'Vivo V23e',         'new' => '9.000.000đ',  'old' => '11.000.000đ'],
-                ];
-                foreach ($phones as $p): ?>
-                    <div class="col l-3 m-4 c-6 product-card">
-                        <div class="product-card-item">
-                            <a href="/san-pham/chi-tiet">
-                                <div class="product-card-item-img">
-                                    <img src="/public/assets/client/images/products/<?php echo $p['img']; ?>">
-                                    <div class="sticker">
-                                        <span class="sticker-sale">Ưu đãi 5.000.000đ</span><br>
-                                        <span class="sticker-event">Trả góp 0%</span>
-                                    </div>
-                                </div>
-                            </a>
-                            <div class="product-card-item-content">
-                                <a href="/san-pham/chi-tiet">
-                                    <h3 class="title-card"><?php echo $p['name']; ?></h3>
-                                    <div class="price">
-                                        <span class="new-price"><?php echo $p['new']; ?></span>
-                                        <span class="old-price"><?php echo $p['old']; ?></span>
-                                    </div>
-                                    <div class="card-item-info">
-                                        <span class="text-info-card">Giảm thêm 150.000đ khi thanh toán online 100% qua thẻ Mastercard</span>
+                <?php if (!empty($sanPhamDienThoai)): ?>
+                    <?php foreach ($sanPhamDienThoai as $sp): ?>
+                        <div class="col l-3 m-4 c-6 product-card">
+                            <div class="product-card-item">
+                                <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>">
+                                    <div class="product-card-item-img">
+                                        <?php if (!empty($sp['anh_chinh'])): ?>
+                                            <img src="<?php echo htmlspecialchars($sp['anh_chinh']); ?>" 
+                                                 alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>">
+                                        <?php else: ?>
+                                            <img src="/public/assets/client/images/products/14.png" 
+                                                 alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>">
+                                        <?php endif; ?>
+                                        <div class="sticker">
+                                            <span class="sticker-event">Trả góp 0%</span>
+                                        </div>
                                     </div>
                                 </a>
+                                <div class="product-card-item-content">
+                                    <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>">
+                                        <h3 class="title-card"><?php echo htmlspecialchars($sp['ten_san_pham']); ?></h3>
+                                        <div class="price">
+                                            <span class="new-price"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
+                                        </div>
+                                        <div class="card-item-info">
+                                            <span class="text-info-card">Giảm thêm 150.000đ khi thanh toán online 100% qua thẻ Mastercard</span>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -249,44 +248,39 @@ ob_start();
                 </div>
             </div>
             <div class="row">
-                <?php
-                $laptops = [
-                    ['img' => '20.jpg', 'name' => 'Laptop Dell',   'new' => '20.000.000đ', 'old' => '25.000.000đ'],
-                    ['img' => '21.jpg', 'name' => 'Laptop HP',     'new' => '25.000.000đ', 'old' => '30.000.000đ'],
-                    ['img' => '22.jpg', 'name' => 'Laptop Asus',   'new' => '8.000.000đ',  'old' => '10.000.000đ'],
-                    ['img' => '23.jpg', 'name' => 'Laptop Lenovo', 'new' => '9.000.000đ',  'old' => '11.000.000đ'],
-                    ['img' => '20.jpg', 'name' => 'Laptop Dell',   'new' => '20.000.000đ', 'old' => '25.000.000đ'],
-                    ['img' => '21.jpg', 'name' => 'Laptop HP',     'new' => '25.000.000đ', 'old' => '30.000.000đ'],
-                    ['img' => '22.jpg', 'name' => 'Laptop Asus',   'new' => '8.000.000đ',  'old' => '10.000.000đ'],
-                    ['img' => '23.jpg', 'name' => 'Laptop Lenovo', 'new' => '9.000.000đ',  'old' => '11.000.000đ'],
-                ];
-                foreach ($laptops as $p): ?>
-                    <div class="col l-3 m-4 c-6 product-card">
-                        <div class="product-card-item">
-                            <a href="/san-pham/chi-tiet">
-                                <div class="product-card-item-img">
-                                    <img src="/public/assets/client/images/products/<?php echo $p['img']; ?>">
-                                    <div class="sticker">
-                                        <span class="sticker-sale">Ưu đãi 5.000.000đ</span><br>
-                                        <span class="sticker-event">Trả góp 0%</span>
-                                    </div>
-                                </div>
-                            </a>
-                            <div class="product-card-item-content">
-                                <a href="/san-pham/chi-tiet">
-                                    <h3 class="title-card"><?php echo $p['name']; ?></h3>
-                                    <div class="price">
-                                        <span class="new-price"><?php echo $p['new']; ?></span>
-                                        <span class="old-price"><?php echo $p['old']; ?></span>
-                                    </div>
-                                    <div class="card-item-info">
-                                        <span class="text-info-card">Giảm thêm 150.000đ khi thanh toán online 100% qua thẻ Mastercard</span>
+                <?php if (!empty($sanPhamLaptop)): ?>
+                    <?php foreach ($sanPhamLaptop as $sp): ?>
+                        <div class="col l-3 m-4 c-6 product-card">
+                            <div class="product-card-item">
+                                <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>">
+                                    <div class="product-card-item-img">
+                                        <?php if (!empty($sp['anh_chinh'])): ?>
+                                            <img src="<?php echo htmlspecialchars($sp['anh_chinh']); ?>" 
+                                                 alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>">
+                                        <?php else: ?>
+                                            <img src="/public/assets/client/images/products/20.jpg" 
+                                                 alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>">
+                                        <?php endif; ?>
+                                        <div class="sticker">
+                                            <span class="sticker-event">Trả góp 0%</span>
+                                        </div>
                                     </div>
                                 </a>
+                                <div class="product-card-item-content">
+                                    <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>">
+                                        <h3 class="title-card"><?php echo htmlspecialchars($sp['ten_san_pham']); ?></h3>
+                                        <div class="price">
+                                            <span class="new-price"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
+                                        </div>
+                                        <div class="card-item-info">
+                                            <span class="text-info-card">Giảm thêm 150.000đ khi thanh toán online 100% qua thẻ Mastercard</span>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
     </div>
