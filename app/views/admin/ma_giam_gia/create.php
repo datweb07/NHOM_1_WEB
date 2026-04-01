@@ -1,25 +1,31 @@
-<?php require_once dirname(__DIR__) . '/layouts/header.php'; ?>
+<?php
+require_once dirname(__DIR__) . '/layouts/header.php';
+require_once dirname(__DIR__) . '/layouts/sidebar.php';
+?>
 
-<div class="app-wrapper">
-    <?php require_once dirname(__DIR__) . '/layouts/sidebar.php'; ?>
-    
-    <main class="app-main">
-        <?php 
-        $breadcrumbs = [
-            ['label' => 'Dashboard', 'url' => '/admin/dashboard'],
-            ['label' => 'Mã Giảm Giá', 'url' => '/admin/ma-giam-gia'],
-            ['label' => 'Thêm Mã Giảm Giá', 'url' => '']
-        ];
-        require_once dirname(__DIR__) . '/layouts/breadcrumb.php'; 
-        ?>
-        
-        <div class="app-content">
-            <div class="container-fluid">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title mb-0">Thêm Mã Giảm Giá</h3>
-                    </div>
-                    <div class="card-body">
+<main class="app-main">
+    <div class="app-content-header">
+        <div class="container-fluid">
+            <?php
+            $breadcrumbs = [
+                ['url' => '/admin/dashboard', 'label' => 'Dashboard'],
+                ['url' => '/admin/ma-giam-gia', 'label' => 'Mã Giảm Giá'],
+                ['url' => '', 'label' => 'Thêm Mới']
+            ];
+            require_once dirname(__DIR__) . '/layouts/breadcrumb.php';
+            ?>
+        </div>
+    </div>
+
+    <div class="app-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title mb-0">Thêm mã giảm giá</h3>
+                        </div>
+                        <div class="card-body">
                         <form method="POST" action="/admin/ma-giam-gia/them">
                             <div class="row">
                                 <div class="col-md-6">
@@ -202,10 +208,10 @@
 
                             <div class="d-flex justify-content-between">
                                 <a href="/admin/ma-giam-gia" class="btn btn-secondary">
-                                    <i class="bi bi-arrow-left"></i> Quay Lại
+                                    <i class="bi bi-x-circle me-1"></i>Hủy
                                 </a>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-save"></i> Lưu Mã Giảm Giá
+                                    <i class="bi bi-check-circle me-1"></i>Lưu mã giảm giá
                                 </button>
                             </div>
                         </form>
@@ -213,7 +219,8 @@
                 </div>
             </div>
         </div>
-    </main>
-</div>
+        </div>
+    </div>
+</main>
 
 <?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>

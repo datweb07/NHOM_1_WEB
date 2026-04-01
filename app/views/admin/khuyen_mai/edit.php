@@ -12,28 +12,34 @@ class KhuyenMaiEditViewHelper
         return date('Y-m-d\TH:i', strtotime($date));
     }
 }
+
+require_once dirname(__DIR__) . '/layouts/header.php';
+require_once dirname(__DIR__) . '/layouts/sidebar.php';
 ?>
-<!DOCTYPE html>
-<html lang="vi">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sửa khuyến mãi</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body class="bg-light">
-    <div class="container py-4 py-lg-5">
-        <div class="mb-3">
-            <a href="/admin/khuyen-mai" class="btn btn-outline-secondary btn-sm">← Quay lại</a>
+<main class="app-main">
+    <div class="app-content-header">
+        <div class="container-fluid">
+            <?php
+            $breadcrumbs = [
+                ['url' => '/admin/dashboard', 'label' => 'Dashboard'],
+                ['url' => '/admin/khuyen-mai', 'label' => 'Khuyến Mãi'],
+                ['url' => '', 'label' => 'Chỉnh Sửa']
+            ];
+            require_once dirname(__DIR__) . '/layouts/breadcrumb.php';
+            ?>
         </div>
+    </div>
 
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-white">
-                <h1 class="h4 mb-0">Sửa khuyến mãi</h1>
-            </div>
-            <div class="card-body">
+    <div class="app-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Sửa khuyến mãi</h3>
+                        </div>
+                        <div class="card-body">
                 <form method="POST" action="/admin/khuyen-mai/sua?id=<?= (int)$khuyenMai['id'] ?>">
                     <div class="mb-3">
                         <label for="ten_chuong_trinh" class="form-label">Tên chương trình <span class="text-danger">*</span></label>
@@ -141,14 +147,20 @@ class KhuyenMaiEditViewHelper
                     </div>
 
                     <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">Cập nhật</button>
-                        <a href="/admin/khuyen-mai" class="btn btn-secondary">Hủy</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i>Cập nhật
+                        </button>
+                        <a href="/admin/khuyen-mai" class="btn btn-secondary">
+                            <i class="bi bi-x-circle me-1"></i>Hủy
+                        </a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+</div>
+        </div>
+    </div>
+</main>
 
-</html>
+<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
