@@ -1,24 +1,30 @@
-<?php require_once dirname(__DIR__) . '/layouts/header.php'; ?>
+<?php
+require_once dirname(__DIR__) . '/layouts/header.php';
+require_once dirname(__DIR__) . '/layouts/sidebar.php';
+?>
 
-<div class="app-wrapper">
-    <?php require_once dirname(__DIR__) . '/layouts/sidebar.php'; ?>
-    
-    <main class="app-main">
-        <?php 
-        $breadcrumbs = [
-            ['label' => 'Dashboard', 'url' => '/admin/dashboard'],
-            ['label' => 'Người Dùng', 'url' => '']
-        ];
-        require_once dirname(__DIR__) . '/layouts/breadcrumb.php'; 
-        ?>
-        
-        <div class="app-content">
-            <div class="container-fluid">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title mb-0">Quản Lý Người Dùng</h3>
-                    </div>
-                    <div class="card-body">
+<main class="app-main">
+    <div class="app-content-header">
+        <div class="container-fluid">
+            <?php
+            $breadcrumbs = [
+                ['url' => '/admin/dashboard', 'label' => 'Dashboard'],
+                ['url' => '', 'label' => 'Người Dùng']
+            ];
+            require_once dirname(__DIR__) . '/layouts/breadcrumb.php';
+            ?>
+        </div>
+    </div>
+
+    <div class="app-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title mb-0">Quản lý người dùng</h3>
+                        </div>
+                        <div class="card-body">
                         <?php if (!empty($success)): ?>
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 <?php
@@ -205,12 +211,13 @@
                                 trong tổng số <?= $totalNguoiDung ?> người dùng
                             </p>
                         <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
-</div>
+    </div>
+</main>
 
 <script>
 // Select all checkboxes
