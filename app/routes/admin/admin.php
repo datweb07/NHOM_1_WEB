@@ -49,6 +49,8 @@ function adminRoute(string $uri): void
     $nguoiDungController = new NguoiDungController();
     require_once dirname(__DIR__, 2) . '/controllers/admin/DanhGiaController.php';
     $danhGiaController = new DanhGiaController();
+    require_once dirname(__DIR__, 2) . '/controllers/admin/BannerController.php';
+    $bannerController = new BannerController();
 
     if ($path === 'admin/danh-muc' && $method === 'GET') {
         $danhMucController->index();
@@ -344,6 +346,37 @@ function adminRoute(string $uri): void
 
     if ($path === 'admin/danh-gia/xoa' && $method === 'POST') {
         $danhGiaController->delete();
+        return;
+    }
+
+    // Banner
+    if ($path === 'admin/banner' && $method === 'GET') {
+        $bannerController->index();
+        return;
+    }
+
+    if ($path === 'admin/banner/them') {
+        if ($method === 'POST') {
+            $bannerController->store();
+            return;
+        }
+        $bannerController->create();
+        return;
+    }
+
+    if ($path === 'admin/banner/sua') {
+        $id = $_GET['id'] ?? null;
+        if ($method === 'POST') {
+            $bannerController->update($id);
+            return;
+        }
+        $bannerController->edit($id);
+        return;
+    }
+
+    if ($path === 'admin/banner/xoa' && $method === 'POST') {
+        $id = $_GET['id'] ?? null;
+        $bannerController->delete($id);
         return;
     }
 
