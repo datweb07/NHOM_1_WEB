@@ -135,6 +135,12 @@ class DanhMucController
             exit;
         }
 
+        // Check if category has products
+        if ($this->danhMucModel->kiemTraCoSanPham($id)) {
+            header('Location: /admin/danh-muc?error=has_products');
+            exit;
+        }
+
         $this->danhMucModel->anDanhMuc($id);
         header('Location: /admin/danh-muc?success=hidden');
         exit;
@@ -155,6 +161,53 @@ class DanhMucController
 
         $this->danhMucModel->hienDanhMuc($id);
         header('Location: /admin/danh-muc?success=shown');
+        exit;
+    }
+
+    public function bulkUpdateStatus(): void
+    {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            header('Location: /admin/danh-muc');
+            exit;
+        }
+
+        $ids = $_POST['ids'] ?? [];
+        $action = $_POST['action'] ?? '';
+
+        if (empty($ids) || !is_array($ids)) {
+            header('Location: /admin/danh-muc?error=no_selection');
+            exit;
+        }
+
+        if (!in_array($action, ['hide', 'show'], true)) {
+            header('Location: /admin/danh-muc?error=invalid_action');
+            exit;
+        }
+
+        $successCount = 0;
+        $failedCount = 0;
+
+        foreach ($ids as $id) {
+            $id = (int)$id;
+            if ($id <= 0 || !$this->danhMucModel->tonTaiDanhMuc($id)) {
+                $failedCount++;
+                continue;
+            }
+
+            if ($action === 'hide') {
+                $this->danhMucModel->anDanhMuc($id);
+            } else {
+                $this->danhMucModel->hienDanhMuc($id);
+            }
+            $successCount++;
+        }
+
+        $message = "Đã cập nhật $successCount danh mục";
+        if ($failedCount > 0) {
+            $message .= ", $failedCount thất bại";
+        }
+
+        header("Location: /admin/danh-muc?success=bulk_updated&message=" . urlencode($message));
         exit;
     }
 

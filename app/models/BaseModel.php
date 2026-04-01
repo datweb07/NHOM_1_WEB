@@ -41,6 +41,11 @@ class BaseModel
     //insert
     public function create($data)
     {
+        // Auto-add ngay_tao if not present
+        if (!isset($data['ngay_tao'])) {
+            $data['ngay_tao'] = date('Y-m-d H:i:s');
+        }
+
         //lấy key và nối chuỗi
         $arrayKeys = array_keys($data);
         $columns = implode(', ', $arrayKeys);
@@ -59,6 +64,11 @@ class BaseModel
     //update
     public function update($id, $data)
     {
+        // Auto-add ngay_cap_nhat if not present
+        if (!isset($data['ngay_cap_nhat'])) {
+            $data['ngay_cap_nhat'] = date('Y-m-d H:i:s');
+        }
+
         $updates = [];
         foreach ($data as $key => $value) {
             $updates[] = "$key = '$value'";

@@ -96,6 +96,14 @@ class SanPhamController
             header("Location: /admin/san-pham?error=invalid_id");
             exit;
         }
+
+        // Check if product has orders
+        require_once dirname(__DIR__, 2) . '/models/entities/SanPham.php';
+        $sanPhamModel = new SanPham();
+        if ($sanPhamModel->kiemTraCoDonHang($id)) {
+            header("Location: /admin/san-pham?error=has_orders");
+            exit;
+        }
         
         $this->baseModel->update($id, ['trang_thai' => 'NGUNG_BAN']);
         $sqlPhienBan = "UPDATE phien_ban_san_pham SET trang_thai = 'NGUNG_BAN' WHERE san_pham_id = $id";
@@ -119,6 +127,59 @@ class SanPhamController
         $this->baseModel->query($sqlPhienBan);
 
         header("Location: /admin/san-pham?success=restored");
+        exit;
+    }
+
+    public function bulkUpdateStatus(): void
+    {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            header('Location: /admin/san-pham');
+            exit;
+        }
+
+        $ids = $_POST['ids'] ?? [];
+        $action = $_POST['action'] ?? '';
+
+        if (empty($ids) || !is_array($ids)) {
+            header('Location: /admin/san-pham?error=no_selection');
+            exit;
+        }
+
+        if (!in_array($action, ['stop', 'resume'], true)) {
+            header('Location: /admin/san-pham?error=invalid_action');
+            exit;
+        }
+
+        $successCount = 0;
+        $failedCount = 0;
+
+        foreach ($ids as $id) {
+            $id = (int)$id;
+            if ($id <= 0) {
+                $failedCount++;
+                continue;
+            }
+
+            if ($action === 'stop') {
+                $this->baseModel->update($id, ['trang_thai' => 'NGUNG_BAN']);
+                $sqlPhienBan = "UPDATE phien_ban_san_pham SET trang_thai = 'NGUNG_BAN' WHERE san_pham_id = $id";
+                $this->baseModel->query($sqlPhienBan);
+            } else {
+                $this->baseModel->update($id, ['trang_thai' => 'CON_BAN']);
+                $sqlPhienBan = "UPDATE phien_ban_san_pham 
+                                SET trang_thai = CASE WHEN so_luong_ton > 0 THEN 'CON_HANG' ELSE 'HET_HANG' END 
+                                WHERE san_pham_id = $id";
+                $this->baseModel->query($sqlPhienBan);
+            }
+            $successCount++;
+        }
+
+        $message = "Đã cập nhật $successCount sản phẩm";
+        if ($failedCount > 0) {
+            $message .= ", $failedCount thất bại";
+        }
+
+        header("Location: /admin/san-pham?success=bulk_updated&message=" . urlencode($message));
         exit;
     }
 

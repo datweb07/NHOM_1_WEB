@@ -9,12 +9,24 @@ class DonHang extends BaseModel
         parent::__construct('don_hang');
     }
 
-    public function layDanhSach(?string $trangThai = null): array
+    public function layDanhSach(?string $trangThai = null, string $sortBy = 'ngay_tao', string $sortOrder = 'DESC'): array
     {
         $where = '';
         if ($trangThai !== null && $trangThai !== '') {
             $safeTrangThai = addslashes($trangThai);
             $where = "WHERE dh.trang_thai = '$safeTrangThai'";
+        }
+
+        // Validate sort column
+        $allowedColumns = ['id', 'ma_don_hang', 'tong_tien', 'ngay_tao', 'trang_thai'];
+        if (!in_array($sortBy, $allowedColumns, true)) {
+            $sortBy = 'ngay_tao';
+        }
+
+        // Validate sort order
+        $sortOrder = strtoupper($sortOrder);
+        if (!in_array($sortOrder, ['ASC', 'DESC'], true)) {
+            $sortOrder = 'DESC';
         }
 
         $sql = "SELECT dh.*, nd.ho_ten, nd.email,
@@ -24,7 +36,7 @@ class DonHang extends BaseModel
 				LEFT JOIN chi_tiet_don ct ON ct.don_hang_id = dh.id
 				$where
 				GROUP BY dh.id
-				ORDER BY dh.ngay_tao DESC";
+				ORDER BY dh.$sortBy $sortOrder";
 
         return $this->query($sql);
     }

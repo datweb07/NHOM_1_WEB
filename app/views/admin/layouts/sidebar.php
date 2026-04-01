@@ -162,6 +162,23 @@ function isMenuOpen($paths) {
                   </li>
                 </ul>
               </li>
+              <li class="nav-item <?= isMenuOpen(['/admin/danh-gia']) ?>">
+                <a href="#" class="nav-link <?= isActive('/admin/danh-gia') ? 'active' : '' ?>">
+                  <i class="nav-icon bi bi-star-fill"></i>
+                  <p>
+                    Đánh Giá
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/admin/danh-gia" class="nav-link <?= isActive('/admin/danh-gia') ?>">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Danh Sách</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
             </ul>
             <!--end::Sidebar Menu-->
           </nav>

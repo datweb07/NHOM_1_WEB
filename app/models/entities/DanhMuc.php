@@ -47,14 +47,40 @@ class DanhMuc extends BaseModel
             $whereSql = 'WHERE ' . implode(' AND ', $where);
         }
 
+        // Hierarchical ordering: parent categories first, then children
         $sql = "SELECT dm.*, cha.ten AS ten_danh_muc_cha,
-                       (SELECT COUNT(*) FROM san_pham sp WHERE sp.danh_muc_id = dm.id) AS tong_san_pham
+                       (SELECT COUNT(*) FROM san_pham sp WHERE sp.danh_muc_id = dm.id) AS tong_san_pham,
+                       CASE 
+                           WHEN dm.danh_muc_cha_id IS NULL THEN dm.thu_tu
+                           ELSE (SELECT cha2.thu_tu FROM {$this->table} cha2 WHERE cha2.id = dm.danh_muc_cha_id) + 0.001 * dm.thu_tu
+                       END AS sort_order
                 FROM {$this->table} dm
                 LEFT JOIN {$this->table} cha ON dm.danh_muc_cha_id = cha.id
                 $whereSql
-                ORDER BY dm.thu_tu ASC, dm.id DESC";
+                ORDER BY sort_order ASC, dm.danh_muc_cha_id IS NULL DESC, dm.thu_tu ASC, dm.id ASC";
 
         return $this->query($sql);
+    }
+
+    public function layDuongDanDayDu(int $id): string
+    {
+        $path = [];
+        $currentId = $id;
+        $visited = [];
+
+        while ($currentId !== null && !in_array($currentId, $visited, true)) {
+            $visited[] = $currentId;
+            $category = $this->getById($currentId);
+            
+            if (!$category) {
+                break;
+            }
+
+            array_unshift($path, $category['ten']);
+            $currentId = $category['danh_muc_cha_id'];
+        }
+
+        return implode(' > ', $path);
     }
 
     public function layDanhMucCha(int $excludeId = 0): array
@@ -88,6 +114,13 @@ class DanhMuc extends BaseModel
     public function hienDanhMuc(int $id): int
     {
         return $this->update($id, ['trang_thai' => 1]);
+    }
+
+    public function kiemTraCoSanPham(int $id): bool
+    {
+        $sql = "SELECT COUNT(*) as total FROM san_pham WHERE danh_muc_id = " . (int)$id;
+        $result = $this->query($sql);
+        return !empty($result) && (int)$result[0]['total'] > 0;
     }
 
     public function toArray(): array

@@ -88,17 +88,29 @@ class SanPham extends BaseModel
         return !empty($result) ? (int)$result[0]['total'] : 0;
     }
 
-    public function layDanhSachPhanTrang(?string $keyword = null, int $danhMucId = 0, ?float $giaMin = null, ?float $giaMax = null, int $limit = 15, int $offset = 0): array
+    public function layDanhSachPhanTrang(?string $keyword = null, int $danhMucId = 0, ?float $giaMin = null, ?float $giaMax = null, int $limit = 15, int $offset = 0, string $sortBy = 'ngay_tao', string $sortOrder = 'DESC'): array
     {
         $whereClause = $this->buildWhereClause($keyword, $danhMucId, $giaMin, $giaMax);
         $limit = max(1, (int)$limit);
         $offset = max(0, (int)$offset);
 
+        // Validate sort column
+        $allowedColumns = ['id', 'ten_san_pham', 'hang_san_xuat', 'gia_hien_thi', 'ngay_tao', 'trang_thai'];
+        if (!in_array($sortBy, $allowedColumns, true)) {
+            $sortBy = 'ngay_tao';
+        }
+
+        // Validate sort order
+        $sortOrder = strtoupper($sortOrder);
+        if (!in_array($sortOrder, ['ASC', 'DESC'], true)) {
+            $sortOrder = 'DESC';
+        }
+
         $sql = "SELECT sp.*, dm.ten AS ten_danh_muc
                 FROM {$this->table} sp
                 LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.id
                 $whereClause
-                ORDER BY sp.ngay_tao DESC
+                ORDER BY sp.$sortBy $sortOrder
                 LIMIT $limit OFFSET $offset";
 
         return parent::query($sql);
@@ -108,6 +120,21 @@ class SanPham extends BaseModel
     {
         $sql = 'SELECT id, ten FROM danh_muc WHERE trang_thai = 1 ORDER BY thu_tu ASC, ten ASC';
         return parent::query($sql);
+    }
+
+    public function layTatCa(): array
+    {
+        $sql = "SELECT id, ten_san_pham FROM {$this->table} ORDER BY ten_san_pham ASC";
+        return parent::query($sql);
+    }
+
+    public function kiemTraCoDonHang(int $id): bool
+    {
+        $sql = "SELECT COUNT(*) as total FROM chi_tiet_don ctd
+                INNER JOIN phien_ban_san_pham pbsp ON ctd.phien_ban_id = pbsp.id
+                WHERE pbsp.san_pham_id = " . (int)$id;
+        $result = parent::query($sql);
+        return !empty($result) && (int)$result[0]['total'] > 0;
     }
 
     public function ngungBan(int $id): int

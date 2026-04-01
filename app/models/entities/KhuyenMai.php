@@ -26,11 +26,19 @@ class KhuyenMai extends BaseModel
     }
 
     // Lấy danh sách khuyến mãi với lọc và phân trang
-    public function layDanhSach(string $trangThai = '', int $limit = 20, int $offset = 0): array
+    public function layDanhSach(string $trangThai = '', ?string $tuNgay = null, ?string $denNgay = null, int $limit = 20, int $offset = 0): array
     {
         $where = [];
         if ($trangThai !== '') {
             $where[] = "trang_thai = '" . addslashes($trangThai) . "'";
+        }
+        
+        if ($tuNgay !== null && $tuNgay !== '') {
+            $where[] = "ngay_bat_dau >= '" . addslashes($tuNgay) . "'";
+        }
+        
+        if ($denNgay !== null && $denNgay !== '') {
+            $where[] = "ngay_ket_thuc <= '" . addslashes($denNgay) . "'";
         }
         
         $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
@@ -43,11 +51,19 @@ class KhuyenMai extends BaseModel
     }
 
     // Đếm số lượng khuyến mãi
-    public function demKhuyenMai(string $trangThai = ''): int
+    public function demKhuyenMai(string $trangThai = '', ?string $tuNgay = null, ?string $denNgay = null): int
     {
         $where = [];
         if ($trangThai !== '') {
             $where[] = "trang_thai = '" . addslashes($trangThai) . "'";
+        }
+        
+        if ($tuNgay !== null && $tuNgay !== '') {
+            $where[] = "ngay_bat_dau >= '" . addslashes($tuNgay) . "'";
+        }
+        
+        if ($denNgay !== null && $denNgay !== '') {
+            $where[] = "ngay_ket_thuc <= '" . addslashes($denNgay) . "'";
         }
         
         $whereClause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';

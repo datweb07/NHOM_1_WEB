@@ -47,6 +47,8 @@ function adminRoute(string $uri): void
     $maGiamGiaController = new MaGiamGiaController();
     require_once dirname(__DIR__, 2) . '/controllers/admin/NguoiDungController.php';
     $nguoiDungController = new NguoiDungController();
+    require_once dirname(__DIR__, 2) . '/controllers/admin/DanhGiaController.php';
+    $danhGiaController = new DanhGiaController();
 
     if ($path === 'admin/danh-muc' && $method === 'GET') {
         $danhMucController->index();
@@ -81,6 +83,11 @@ function adminRoute(string $uri): void
     if ($path === 'admin/danh-muc/hien') {
         $id = $_GET['id'] ?? null;
         $danhMucController->hien($id);
+        return;
+    }
+
+    if ($path === 'admin/danh-muc/cap-nhat-hang-loat' && $method === 'POST') {
+        $danhMucController->bulkUpdateStatus();
         return;
     }
 
@@ -157,6 +164,11 @@ function adminRoute(string $uri): void
     if ($path === 'admin/san-pham/mo-ban') {
         $id = $_GET['id'] ?? null;
         $sanPhamController->moBan($id);
+        return;
+    }
+
+    if ($path === 'admin/san-pham/cap-nhat-hang-loat' && $method === 'POST') {
+        $sanPhamController->bulkUpdateStatus();
         return;
     }
 
@@ -316,6 +328,22 @@ function adminRoute(string $uri): void
 
     if ($path === 'admin/nguoi-dung/cap-nhat-hang-loat' && $method === 'POST') {
         $nguoiDungController->bulkUpdateStatus();
+        return;
+    }
+
+    // Reviews
+    if ($path === 'admin/danh-gia' && $method === 'GET') {
+        $danhGiaController->index();
+        return;
+    }
+
+    if ($path === 'admin/danh-gia/chi-tiet' && $method === 'GET') {
+        $danhGiaController->detail();
+        return;
+    }
+
+    if ($path === 'admin/danh-gia/xoa' && $method === 'POST') {
+        $danhGiaController->delete();
         return;
     }
 

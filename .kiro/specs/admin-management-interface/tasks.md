@@ -307,15 +307,15 @@ This implementation plan breaks down the admin management interface into discret
     - Add POST `/admin/nguoi-dung/cap-nhat-hang-loat` route
     - _Requirements: 13.4, 13.5, 20.3_
 
-- [ ] 15. Implement Review Moderation module
-  - [ ] 15.1 Add review moderation methods to DanhGia model
+- [x] 15. Implement Review Moderation module
+  - [x] 15.1 Add review moderation methods to DanhGia model
     - Implement `layDanhSach()` with so_sao and san_pham_id filtering
     - Implement `timKiem()` for searching by review content or user name
     - Implement `demDanhGia()` for pagination counts
     - Join with nguoi_dung and san_pham tables for display
     - _Requirements: 14.1, 14.2, 14.3, 22.4_
   
-  - [ ] 15.2 Create DanhGiaController
+  - [x] 15.2 Create DanhGiaController
     - Implement `index()` method with filtering by so_sao and san_pham_id
     - Implement search functionality
     - Implement pagination with 20 records per page
@@ -324,7 +324,7 @@ This implementation plan breaks down the admin management interface into discret
     - Order reviews by ngay_viet DESC
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 22.4_
   
-  - [ ] 15.3 Create review moderation views
+  - [x] 15.3 Create review moderation views
     - Create `app/views/admin/danh_gia/index.php` for review listing
     - Create `app/views/admin/danh_gia/detail.php` for review detail view
     - Display user name, product name, so_sao, noi_dung, ngay_viet
@@ -333,40 +333,40 @@ This implementation plan breaks down the admin management interface into discret
     - Add delete buttons with confirmation
     - _Requirements: 14.1, 14.2, 14.3_
   
-  - [ ] 15.4 Add review moderation routes
+  - [x] 15.4 Add review moderation routes
     - Add GET `/admin/danh-gia` route
     - Add GET `/admin/danh-gia/chi-tiet` route
     - Add POST `/admin/danh-gia/xoa` route
     - _Requirements: 14.4_
 
-- [ ] 16. Update sidebar navigation
+- [x] 16. Update sidebar navigation
   - Update `app/views/admin/layouts/sidebar.php` with all module links
   - Add Dashboard, Orders, Payments, Products, Categories, Promotions, Discount Codes, Users, Reviews menu items
   - Organize related functions into collapsible menu groups
   - Implement active menu highlighting based on current route
   - _Requirements: 17.1, 17.2, 17.3, 17.5_
 
-- [ ] 17. Implement breadcrumb navigation
+- [x] 17. Implement breadcrumb navigation
   - Update `app/views/admin/layouts/breadcrumb.php` to display dynamic breadcrumbs
   - Generate breadcrumb hierarchy based on current route
   - Make all breadcrumb items except current page clickable
   - _Requirements: 18.1, 18.2, 18.3, 18.4_
 
-- [ ] 18. Add bulk operations functionality
+- [x] 18. Add bulk operations functionality
   - Implement bulk status toggle for categories in DanhMucController
   - Implement bulk status update for products in SanPhamController
   - Implement bulk status update for users in NguoiDungController (already added in task 14.2)
   - Display success count and failed records for bulk operations
   - _Requirements: 20.1, 20.2, 20.3, 20.4, 20.5_
 
-- [ ] 19. Implement data integrity constraints
+- [x] 19. Implement data integrity constraints
   - Add category deletion prevention when products exist
   - Add product deletion prevention when orders exist
   - Implement transaction rollback on constraint violations
   - Display user-friendly error messages for constraint violations
   - _Requirements: 21.1, 21.2, 21.3, 21.4, 21.5_
 
-- [ ] 20. Add comprehensive search and filtering
+- [x] 20. Add comprehensive search and filtering
   - Implement product filtering by danh_muc_id, hang_san_xuat, trang_thai, price range (enhance existing)
   - Implement order filtering by trang_thai, date range, payment method (already added in task 3.2)
   - Implement user filtering by loai_tai_khoan, trang_thai, date range (already added in task 14.2)
@@ -375,28 +375,28 @@ This implementation plan breaks down the admin management interface into discret
   - Display filtered result counts
   - _Requirements: 22.1, 22.2, 22.3, 22.4, 22.5, 22.6_
 
-- [ ] 21. Enhance data tables with sorting
+- [x] 21. Enhance data tables with sorting
   - Add sortable column headers to all listing tables
   - Implement sort by clicking column headers
   - Indicate current sort column and direction with visual indicators
   - Preserve sort state across pagination
   - _Requirements: 23.5, 23.6_
 
-- [ ] 22. Implement session timeout handling
+- [x] 22. Implement session timeout handling
   - Update Session class with 2-hour timeout configuration
   - Add last_activity tracking
   - Implement automatic logout on timeout
   - Redirect to login page with timeout message
   - _Requirements: 25.1, 25.2, 25.3, 25.4, 25.5_
 
-- [ ] 23. Add audit trail timestamps
+- [x] 23. Add audit trail timestamps
   - Ensure ngay_tao is set on record creation in all models
   - Ensure ngay_cap_nhat is updated on record modification in all models
   - Display timestamps in detail views with consistent format (YYYY-MM-DD HH:MM:SS)
   - Use server timezone for all timestamp operations
   - _Requirements: 26.1, 26.2, 26.3, 26.4, 26.5_
 
-- [ ] 24. Implement hierarchical category display
+- [x] 24. Implement hierarchical category display
   - Update category listing to display parent categories before children
   - Add visual indentation for child categories
   - Display full category path in breadcrumb format
@@ -404,7 +404,7 @@ This implementation plan breaks down the admin management interface into discret
   - Allow category movement by changing danh_muc_cha_id
   - _Requirements: 29.1, 29.2, 29.3, 29.4, 29.5_
 
-- [ ] 25. Final checkpoint - Integration testing
+- [x] 25. Final checkpoint - Integration testing
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

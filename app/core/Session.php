@@ -4,11 +4,42 @@ namespace App\Core;
 
 class Session
 {
+    // Session timeout in seconds (2 hours)
+    private const TIMEOUT_DURATION = 7200;
+
     public static function start(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+
+        // Check for session timeout
+        self::checkTimeout();
+    }
+
+    private static function checkTimeout(): void
+    {
+        $lastActivity = self::get('last_activity');
+        
+        if ($lastActivity !== null) {
+            $elapsed = time() - $lastActivity;
+            
+            if ($elapsed > self::TIMEOUT_DURATION) {
+                // Session has timed out
+                self::destroy();
+                
+                // Redirect to login with timeout message
+                if (self::isAdmin()) {
+                    header('Location: /admin/auth/login?timeout=1');
+                } else {
+                    header('Location: /auth/login?timeout=1');
+                }
+                exit;
+            }
+        }
+        
+        // Update last activity timestamp
+        self::set('last_activity', time());
     }
 
     public static function set(string $key, $value): void
@@ -55,6 +86,7 @@ class Session
         self::set('user_email', $user['email']);
         self::set('user_name', $user['ho_ten']);
         self::set('user_role', $user['loai_tai_khoan']); 
+        self::set('last_activity', time());
         
         if (isset($user['avatar_url'])) {
             self::set('user_avatar', $user['avatar_url']);
