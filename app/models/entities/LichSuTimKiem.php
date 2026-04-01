@@ -1,35 +1,68 @@
 <?php
+
 require_once dirname(__DIR__) . '/BaseModel.php';
 
 class LichSuTimKiem extends BaseModel
 {
-    protected ?int $id = null;
-    protected ?int $nguoiDungId = null;
-    protected ?string $tuKhoa = null;
-    protected ?string $thoiGianTim = null;
-
     public function __construct()
     {
         parent::__construct('lich_su_tim_kiem');
     }
 
-    public function layGanDayTheoNguoiDung(int $nguoiDungId, int $limit = 10): array
+    /**
+     * Lưu lịch sử tìm kiếm
+     */
+    public function luuLichSu(int $nguoiDungId, string $tuKhoa): int
     {
+        return $this->insert([
+            'nguoi_dung_id' => $nguoiDungId,
+            'tu_khoa' => $tuKhoa
+        ]);
+    }
+
+    /**
+     * Lấy lịch sử tìm kiếm của user
+     */
+    public function layLichSuTheoUser(int $nguoiDungId, int $limit = 10): array
+    {
+        $nguoiDungId = (int)$nguoiDungId;
         $limit = max(1, (int)$limit);
-        $sql = "SELECT * FROM {$this->table}
-				WHERE nguoi_dung_id = " . (int)$nguoiDungId . "
-				ORDER BY thoi_gian_tim DESC
-				LIMIT $limit";
+        
+        $sql = "SELECT DISTINCT tu_khoa, MAX(thoi_gian_tim) as thoi_gian_gan_nhat
+                FROM {$this->table}
+                WHERE nguoi_dung_id = $nguoiDungId
+                GROUP BY tu_khoa
+                ORDER BY thoi_gian_gan_nhat DESC
+                LIMIT $limit";
+        
         return $this->query($sql);
     }
 
-    public function toArray(): array
+    /**
+     * Xóa lịch sử tìm kiếm
+     */
+    public function xoaLichSu(int $nguoiDungId): bool
     {
-        return [
-            'id' => $this->id,
-            'nguoi_dung_id' => $this->nguoiDungId,
-            'tu_khoa' => $this->tuKhoa,
-            'thoi_gian_tim' => $this->thoiGianTim,
-        ];
+        $nguoiDungId = (int)$nguoiDungId;
+        $sql = "DELETE FROM {$this->table} WHERE nguoi_dung_id = $nguoiDungId";
+        $this->query($sql);
+        return true;
+    }
+
+    /**
+     * Lấy từ khóa phổ biến
+     */
+    public function layTuKhoaPhoBien(int $limit = 10): array
+    {
+        $limit = max(1, (int)$limit);
+        
+        $sql = "SELECT tu_khoa, COUNT(*) as so_lan_tim
+                FROM {$this->table}
+                WHERE thoi_gian_tim >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                GROUP BY tu_khoa
+                ORDER BY so_lan_tim DESC
+                LIMIT $limit";
+        
+        return $this->query($sql);
     }
 }
