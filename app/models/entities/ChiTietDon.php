@@ -1,33 +1,45 @@
 <?php
+
 require_once dirname(__DIR__) . '/BaseModel.php';
 
 class ChiTietDon extends BaseModel
 {
-    protected ?int $id = null;
-    protected ?int $donHangId = null;
-    protected ?int $phienBanId = null;
-    protected int $soLuong = 1;
-    protected ?float $giaTaiThoiDiemMua = null;
-
     public function __construct()
     {
         parent::__construct('chi_tiet_don');
     }
 
-    public function layTheoDonHang(int $donHangId): array
+    /**
+     * Lấy chi tiết đơn hàng
+     */
+    public function layChiTietDonHang(int $donHangId): array
     {
-        $sql = "SELECT * FROM {$this->table} WHERE don_hang_id = " . (int)$donHangId . ' ORDER BY id ASC';
+        $donHangId = (int)$donHangId;
+        
+        $sql = "SELECT ctd.*, 
+                       pbsp.ten_phien_ban, pbsp.mau_sac, pbsp.dung_luong, pbsp.ram,
+                       sp.ten_san_pham, sp.slug,
+                       (SELECT url_anh FROM hinh_anh_san_pham 
+                        WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
+                        LIMIT 1) as anh_chinh
+                FROM {$this->table} ctd
+                INNER JOIN phien_ban_san_pham pbsp ON ctd.phien_ban_id = pbsp.id
+                INNER JOIN san_pham sp ON pbsp.san_pham_id = sp.id
+                WHERE ctd.don_hang_id = $donHangId";
+        
         return $this->query($sql);
     }
 
-    public function toArray(): array
+    /**
+     * Thêm chi tiết đơn hàng
+     */
+    public function themChiTiet(int $donHangId, int $phienBanId, int $soLuong, float $giaTaiThoiDiemMua): int
     {
-        return [
-            'id' => $this->id,
-            'don_hang_id' => $this->donHangId,
-            'phien_ban_id' => $this->phienBanId,
-            'so_luong' => $this->soLuong,
-            'gia_tai_thoi_diem_mua' => $this->giaTaiThoiDiemMua,
-        ];
+        return $this->insert([
+            'don_hang_id' => $donHangId,
+            'phien_ban_id' => $phienBanId,
+            'so_luong' => $soLuong,
+            'gia_tai_thoi_diem_mua' => $giaTaiThoiDiemMua
+        ]);
     }
 }

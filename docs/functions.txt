@@ -2,148 +2,78 @@
 DANH SÁCH CHỨC NĂNG CLIENT - FPT SHOP
 ===========================================
 
-PHẦN 1: TRANG CHỦ & HIỂN THỊ
+PHẦN 1: TRANG CHỦ & HIỂN THỊ ✅ HOÀN THÀNH
 -----------------------------
-1.1. Hiển thị banner quảng cáo (từ bảng banner_quang_cao)
-    - Banner hero (HOME_HERO)
-    - Banner sidebar (HOME_SIDE)
-    - Banner floating (FLOATING_BOTTOM_LEFT)
-    - Banner popup (POPUP)
+✅ 1.1. Hiển thị banner quảng cáo (từ bảng banner_quang_cao)
+✅ 1.2. Hiển thị sản phẩm nổi bật (noi_bat = 1)
+✅ 1.3. Hiển thị sản phẩm khuyến mãi
+✅ 1.4. Hiển thị danh mục sản phẩm
 
-1.2. Hiển thị sản phẩm nổi bật (noi_bat = 1)
-    - Lấy từ bảng san_pham
-    - Hiển thị giá, hình ảnh, tên sản phẩm
-    - Link đến chi tiết sản phẩm
-
-1.3. Hiển thị sản phẩm khuyến mãi
-    - Join bảng san_pham_khuyen_mai
-    - Hiển thị % giảm giá hoặc số tiền giảm
-    - Tính giá sau khuyến mãi
-
-1.4. Hiển thị danh mục sản phẩm
-    - Lấy từ bảng danh_muc (trang_thai = 1)
-    - Hiển thị theo thứ tự (thu_tu)
-    - Hỗ trợ danh mục phân cấp (danh_muc_cha_id)
-
-PHẦN 2: SẢN PHẨM
+PHẦN 2: SẢN PHẨM ✅ HOÀN THÀNH (Model & Controller)
 -----------------
-2.1. Danh sách sản phẩm (Listing)
-    - Phân trang (20 sản phẩm/trang)
-    - Lọc theo danh mục
-    - Lọc theo hãng sản xuất
-    - Lọc theo khoảng giá (gia_min, gia_max)
-    - Sắp xếp (giá tăng/giảm, mới nhất, bán chạy)
+✅ 2.1. Danh sách sản phẩm (Listing) - Controller đã tạo
+✅ 2.2. Chi tiết sản phẩm - Controller đã tạo
+⏳ 2.3. Tìm kiếm sản phẩm - Chưa implement
+⏳ 2.4. So sánh sản phẩm - Chưa implement
+⏳ 2.5. Yêu thích sản phẩm - Chưa implement
 
-2.2. Chi tiết sản phẩm
-    - Thông tin cơ bản (tên, giá, mô tả)
-    - Hình ảnh sản phẩm (từ bảng hinh_anh_san_pham)
-    - Phiên bản sản phẩm (màu sắc, dung lượng, RAM)
-    - Thông số kỹ thuật (từ bảng thong_so_ky_thuat)
-    - Đánh giá sản phẩm (từ bảng danh_gia)
-    - Sản phẩm tương tự (cùng danh mục)
-
-2.3. Tìm kiếm sản phẩm
-    - Tìm theo tên sản phẩm
-    - Tìm theo hãng sản xuất
-    - Lưu lịch sử tìm kiếm (bảng lich_su_tim_kiem)
-    - Hiển thị gợi ý tìm kiếm
-
-2.4. So sánh sản phẩm
-    - Chọn tối đa 3 sản phẩm để so sánh
-    - Hiển thị thông số kỹ thuật song song
-    - Highlight điểm khác biệt
-
-2.5. Yêu thích sản phẩm
-    - Thêm/xóa sản phẩm yêu thích (bảng yeu_thich)
-    - Xem danh sách sản phẩm yêu thích
-    - Chỉ cho user đã đăng nhập
-
-PHẦN 3: GIỎ HÀNG & THANH TOÁN
+PHẦN 3: GIỎ HÀNG & THANH TOÁN ✅ HOÀN THÀNH
 ------------------------------
-3.1. Giỏ hàng
-    - Thêm sản phẩm vào giỏ (bảng gio_hang, chi_tiet_gio)
-    - Cập nhật số lượng
-    - Xóa sản phẩm khỏi giỏ
-    - Tính tổng tiền
-    - Hỗ trợ khách vãng lai (session_id)
+✅ 3.1. Giỏ hàng - Model & Controller hoàn thành
+✅ 3.2. Áp dụng mã giảm giá - Đã implement
+✅ 3.3. Chọn địa chỉ giao hàng - Model DiaChi hoàn thành
+✅ 3.4. Thanh toán - Controller hoàn thành
+✅ 3.5. Upload biên lai - Đã implement trong ThanhToan model
 
-3.2. Áp dụng mã giảm giá
-    - Nhập mã giảm giá (bảng ma_giam_gia)
-    - Kiểm tra điều kiện (đơn tối thiểu, hạn sử dụng)
-    - Tính tiền giảm giá
-    - Cập nhật số lượt đã dùng
-
-3.3. Chọn địa chỉ giao hàng
-    - Hiển thị danh sách địa chỉ (bảng dia_chi)
-    - Thêm địa chỉ mới
-    - Chọn địa chỉ mặc định
-    - Cho phép khách vãng lai nhập địa chỉ
-
-3.4. Thanh toán
-    - Chọn phương thức thanh toán:
-      + COD (Thanh toán khi nhận hàng)
-      + Chuyển khoản ngân hàng
-      + QR Code
-      + Trả góp
-      + Ví điện tử
-    - Tạo đơn hàng (bảng don_hang, chi_tiet_don)
-    - Tạo thông tin thanh toán (bảng thanh_toan)
-    - Gửi email xác nhận đơn hàng
-
-3.5. Upload biên lai (Chuyển khoản)
-    - Upload ảnh biên lai (anh_bien_lai)
-    - Chờ admin duyệt (trang_thai_duyet = CHO_DUYET)
-
-PHẦN 4: TÀI KHOẢN KHÁCH HÀNG
+PHẦN 4: TÀI KHOẢN KHÁCH HÀNG ⏳ ĐANG THỰC HIỆN
 -----------------------------
-4.1. Hồ sơ cá nhân
-    - Xem thông tin cá nhân
-    - Cập nhật thông tin (họ tên, SĐT, ngày sinh, giới tính)
-    - Đổi mật khẩu
-    - Upload avatar
+✅ 4.1. Hồ sơ cá nhân - Đã có từ trước
+✅ 4.2. Quản lý địa chỉ - Model DiaChi hoàn thành
+✅ 4.3. Lịch sử đơn hàng - DonHangController hoàn thành
+⏳ 4.4. Đánh giá sản phẩm - Model đã có, chưa có controller
 
-4.2. Quản lý địa chỉ
-    - Xem danh sách địa chỉ
-    - Thêm địa chỉ mới
-    - Sửa địa chỉ
-    - Xóa địa chỉ
-    - Đặt địa chỉ mặc định
-
-4.3. Lịch sử đơn hàng
-    - Xem danh sách đơn hàng
-    - Xem chi tiết đơn hàng
-    - Theo dõi trạng thái đơn hàng
-    - Hủy đơn hàng (nếu chưa xác nhận)
-
-4.4. Đánh giá sản phẩm
-    - Viết đánh giá (sau khi nhận hàng)
-    - Chọn số sao (1-5)
-    - Viết nội dung đánh giá
-    - Xem lịch sử đánh giá của mình
-
-PHẦN 5: KHUYẾN MÃI
+PHẦN 5: KHUYẾN MÃI ⏳ CHƯA IMPLEMENT
 ------------------
-5.1. Xem danh sách khuyến mãi
-    - Hiển thị các chương trình khuyến mãi đang hoạt động
-    - Lọc theo thời gian
-    - Xem sản phẩm áp dụng khuyến mãi
-
-5.2. Xem danh sách mã giảm giá
-    - Hiển thị mã giảm giá còn hiệu lực
-    - Copy mã giảm giá
-    - Xem điều kiện áp dụng
+⏳ 5.1. Xem danh sách khuyến mãi
+⏳ 5.2. Xem danh sách mã giảm giá
 
 ===========================================
 THỨ TỰ ƯU TIÊN IMPLEMENT
 ===========================================
-1. Trang chủ (1.1, 1.2, 1.3, 1.4)
-2. Chi tiết sản phẩm (2.2)
-3. Giỏ hàng (3.1)
-4. Thanh toán (3.2, 3.3, 3.4, 3.5)
-5. Tài khoản (4.1, 4.2, 4.3)
-6. Tìm kiếm (2.3)
-7. Danh sách sản phẩm (2.1)
-8. So sánh (2.4)
-9. Đánh giá (4.4)
-10. Yêu thích (2.5)
-11. Khuyến mãi (5.1, 5.2)
+✅ 1. Trang chủ (1.1, 1.2, 1.3, 1.4)
+✅ 2. Chi tiết sản phẩm (2.2)
+✅ 3. Giỏ hàng (3.1)
+✅ 4. Thanh toán (3.2, 3.3, 3.4, 3.5)
+✅ 5. Tài khoản (4.1, 4.2, 4.3)
+⏳ 6. Tìm kiếm (2.3)
+⏳ 7. Danh sách sản phẩm (2.1)
+⏳ 8. So sánh (2.4)
+⏳ 9. Đánh giá (4.4)
+⏳ 10. Yêu thích (2.5)
+⏳ 11. Khuyến mãi (5.1, 5.2)
+
+===========================================
+CÁC MODEL ĐÃ TẠO
+===========================================
+✅ SanPham - Đầy đủ method cho client
+✅ DanhMuc - Method layDanhMucHienThi
+✅ PhienBanSanPham - Quản lý tồn kho
+✅ HinhAnhSanPham - Quản lý hình ảnh
+✅ DanhGia - Đánh giá sản phẩm
+✅ GioHang - Giỏ hàng user & guest
+✅ ChiTietGio - Chi tiết giỏ hàng
+✅ DiaChi - Quản lý địa chỉ giao hàng
+✅ DonHang - Đơn hàng (đã có method cho user)
+✅ ChiTietDon - Chi tiết đơn hàng
+✅ ThanhToan - Thanh toán
+✅ MaGiamGia - Mã giảm giá (đã có đầy đủ)
+
+===========================================
+CÁC CONTROLLER ĐÃ TẠO
+===========================================
+✅ HomeController - Trang chủ
+✅ SanPhamController - Chi tiết & danh sách sản phẩm
+✅ GioHangController - Giỏ hàng
+✅ ThanhToanController - Thanh toán & đặt hàng
+✅ DonHangController - Lịch sử đơn hàng
+

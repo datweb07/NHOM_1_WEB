@@ -133,6 +133,94 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	// Giỏ hàng routes
+	if ($path === 'gio-hang') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/GioHangController.php';
+		$controller = new \App\Controllers\Client\GioHangController();
+		$controller->index();
+		return;
+	}
+
+	if ($path === 'gio-hang/them') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/GioHangController.php';
+		$controller = new \App\Controllers\Client\GioHangController();
+		$controller->them();
+		return;
+	}
+
+	if ($path === 'gio-hang/cap-nhat') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/GioHangController.php';
+		$controller = new \App\Controllers\Client\GioHangController();
+		$controller->capNhat();
+		return;
+	}
+
+	if ($path === 'gio-hang/xoa') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/GioHangController.php';
+		$controller = new \App\Controllers\Client\GioHangController();
+		$controller->xoa();
+		return;
+	}
+
+	if ($path === 'gio-hang/dem-san-pham') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/GioHangController.php';
+		$controller = new \App\Controllers\Client\GioHangController();
+		$controller->demSanPham();
+		return;
+	}
+
+	// Sản phẩm routes
+	if (preg_match('#^san-pham/([a-z0-9-]+)$#', $path, $matches)) {
+		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
+		$controller = new \App\Controllers\Client\SanPhamController();
+		$controller->chiTiet($matches[1]);
+		return;
+	}
+
+	if ($path === 'san-pham') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
+		$controller = new \App\Controllers\Client\SanPhamController();
+		$controller->danhSach();
+		return;
+	}
+
+	// Thanh toán routes
+	if ($path === 'thanh-toan') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
+		$controller = new \App\Controllers\Client\ThanhToanController();
+		$controller->index();
+		return;
+	}
+
+	if ($path === 'thanh-toan/dat-hang') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
+		$controller = new \App\Controllers\Client\ThanhToanController();
+		$controller->datHang();
+		return;
+	}
+
+	if ($path === 'thanh-toan/kiem-tra-ma-giam-gia') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
+		$controller = new \App\Controllers\Client\ThanhToanController();
+		$controller->kiemTraMaGiamGia();
+		return;
+	}
+
+	// Đơn hàng routes
+	if (preg_match('#^don-hang/(\d+)$#', $path, $matches)) {
+		require_once dirname(__DIR__, 2) . '/controllers/client/DonHangController.php';
+		$controller = new \App\Controllers\Client\DonHangController();
+		$controller->chiTiet((int)$matches[1]);
+		return;
+	}
+
+	if ($path === 'don-hang') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/DonHangController.php';
+		$controller = new \App\Controllers\Client\DonHangController();
+		$controller->danhSach();
+		return;
+	}
+
 	require_once dirname(__DIR__, 2) . '/views/client/home/index.php';
 }
 

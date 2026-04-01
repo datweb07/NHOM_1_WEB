@@ -1,46 +1,87 @@
 <?php
+
 require_once dirname(__DIR__) . '/BaseModel.php';
 
 class GioHang extends BaseModel
 {
-    protected ?int $id = null;
-    protected ?int $nguoiDungId = null;
-    protected ?string $sessionId = null;
-    protected ?string $ngayTao = null;
-    protected ?string $ngayCapNhat = null;
-
     public function __construct()
     {
         parent::__construct('gio_hang');
     }
 
-    public function layTheoNguoiDung(?int $nguoiDungId): ?array
+    /**
+     * Lấy hoặc tạo giỏ hàng cho user đã đăng nhập
+     */
+    public function layHoacTaoGioHangUser(int $nguoiDungId): array
     {
-        if ($nguoiDungId === null) {
-            return null;
+        $nguoiDungId = (int)$nguoiDungId;
+        
+        // Kiểm tra giỏ hàng đã tồn tại
+        $sql = "SELECT * FROM {$this->table} WHERE nguoi_dung_id = $nguoiDungId LIMIT 1";
+        $result = $this->query($sql);
+        
+        if (!empty($result)) {
+            return $result[0];
         }
-
-        $sql = "SELECT * FROM {$this->table} WHERE nguoi_dung_id = " . (int)$nguoiDungId . ' LIMIT 1';
-        $rows = $this->query($sql);
-        return $rows[0] ?? null;
+        
+        // Tạo giỏ hàng mới
+        $id = $this->insert(['nguoi_dung_id' => $nguoiDungId]);
+        return $this->getById($id);
     }
 
-    public function layTheoSession(string $sessionId): ?array
+    /**
+     * Lấy hoặc tạo giỏ hàng cho khách vãng lai
+     */
+    public function layHoacTaoGioHangGuest(string $sessionId): array
     {
-        $safeSessionId = addslashes($sessionId);
-        $sql = "SELECT * FROM {$this->table} WHERE session_id = '$safeSessionId' LIMIT 1";
-        $rows = $this->query($sql);
-        return $rows[0] ?? null;
+        $sessionId = mysqli_real_escape_string($this->link, $sessionId);
+        
+        // Kiểm tra giỏ hàng đã tồn tại
+        $sql = "SELECT * FROM {$this->table} WHERE session_id = '$sessionId' LIMIT 1";
+        $result = $this->query($sql);
+        
+        if (!empty($result)) {
+            return $result[0];
+        }
+        
+        // Tạo giỏ hàng mới
+        $id = $this->insert(['session_id' => $sessionId]);
+        return $this->getById($id);
     }
 
-    public function toArray(): array
+    /**
+     * Chuyển giỏ hàng từ guest sang user khi đăng nhập
+     */
+    public function chuyenGioHangGuestSangUser(string $sessionId, int $nguoiDungId): bool
     {
-        return [
-            'id' => $this->id,
-            'nguoi_dung_id' => $this->nguoiDungId,
-            'session_id' => $this->sessionId,
-            'ngay_tao' => $this->ngayTao,
-            'ngay_cap_nhat' => $this->ngayCapNhat,
-        ];
+        $sessionId = mysqli_real_escape_string($this->link, $sessionId);
+        $nguoiDungId = (int)$nguoiDungId;
+        
+        // Lấy giỏ hàng guest
+        $gioHangGuest = $this->layHoacTaoGioHangGuest($sessionId);
+        
+        // Lấy hoặc tạo giỏ hàng user
+        $gioHangUser = $this->layHoacTaoGioHangUser($nguoiDungId);
+        
+        // Chuyển các sản phẩm từ giỏ guest sang giỏ user
+        $sql = "UPDATE chi_tiet_gio 
+                SET gio_hang_id = {$gioHangUser['id']}
+                WHERE gio_hang_id = {$gioHangGuest['id']}
+                ON DUPLICATE KEY UPDATE so_luong = so_luong + VALUES(so_luong)";
+        
+        $this->query($sql);
+        
+        // Xóa giỏ hàng guest
+        $this->delete($gioHangGuest['id']);
+        
+        return true;
+    }
+
+    /**
+     * Xóa giỏ hàng
+     */
+    public function xoaGioHang(int $id): int
+    {
+        return $this->delete($id);
     }
 }

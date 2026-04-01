@@ -1,124 +1,153 @@
 <?php
 
+namespace App\Controllers\Client;
+
+require_once dirname(__DIR__, 2) . '/models/entities/GioHang.php';
+require_once dirname(__DIR__, 2) . '/models/entities/ChiTietGio.php';
+require_once dirname(__DIR__, 2) . '/models/entities/PhienBanSanPham.php';
 require_once dirname(__DIR__, 2) . '/core/Session.php';
+
+use GioHang;
+use ChiTietGio;
+use PhienBanSanPham;
+use Session;
 
 class GioHangController
 {
-    public function addToCart($id): void
+    private GioHang $gioHangModel;
+    private ChiTietGio $chiTietGioModel;
+    private PhienBanSanPham $phienBanModel;
+
+    public function __construct()
     {
-        \App\Core\Session::start();
-        $this->initCart();
-
-        $productId = (int)$id;
-        if ($productId <= 0) {
-            return;
-        }
-
-        $ten = trim((string)($_POST['ten'] ?? 'San pham #' . $productId));
-        $gia = (float)($_POST['gia'] ?? 0);
-        $soLuong = (int)($_POST['so_luong'] ?? 1);
-
-        if ($soLuong <= 0) {
-            $soLuong = 1;
-        }
-
-        if (isset($_SESSION['cart'][$productId])) {
-            $_SESSION['cart'][$productId]['so_luong'] += $soLuong;
-            return;
-        }
-
-        $_SESSION['cart'][$productId] = [
-            'ten' => $ten,
-            'gia' => $gia,
-            'so_luong' => $soLuong,
-        ];
+        $this->gioHangModel = new GioHang();
+        $this->chiTietGioModel = new ChiTietGio();
+        $this->phienBanModel = new PhienBanSanPham();
     }
 
-    public function remove($id): void
+    /**
+     * Lấy giỏ hàng hiện tại
+     */
+    private function layGioHangHienTai(): array
     {
-        \App\Core\Session::start();
-        $this->initCart();
-
-        $productId = (int)$id;
-        if ($productId <= 0) {
-            return;
+        if (Session::has('user_id')) {
+            return $this->gioHangModel->layHoacTaoGioHangUser(Session::get('user_id'));
         }
-
-        unset($_SESSION['cart'][$productId]);
+        
+        // Khách vãng lai
+        if (!Session::has('cart_session_id')) {
+            Session::set('cart_session_id', session_id());
+        }
+        
+        return $this->gioHangModel->layHoacTaoGioHangGuest(Session::get('cart_session_id'));
     }
 
-    public function update($id, $qty): void
+    /**
+     * Hiển thị giỏ hàng
+     */
+    public function index(): void
     {
-        \App\Core\Session::start();
-        $this->initCart();
-
-        $productId = (int)$id;
-        $soLuongMoi = (int)$qty;
-
-        if ($productId <= 0 || !isset($_SESSION['cart'][$productId])) {
-            return;
-        }
-
-        if ($soLuongMoi <= 0) {
-            unset($_SESSION['cart'][$productId]);
-            return;
-        }
-
-        $_SESSION['cart'][$productId]['so_luong'] = $soLuongMoi;
+        $gioHang = $this->layGioHangHienTai();
+        $chiTietGioList = $this->chiTietGioModel->layChiTietGioHang($gioHang['id']);
+        $tongTien = $this->chiTietGioModel->tinhTongTien($gioHang['id']);
+        
+        require_once dirname(__DIR__, 2) . '/views/client/gio_hang/index.php';
     }
 
-    public function clear(): void
+    /**
+     * Thêm sản phẩm vào giỏ
+     */
+    public function them(): void
     {
-        \App\Core\Session::start();
-        unset($_SESSION['cart']);
-    }
-
-    public function getCart(): array
-    {
-        \App\Core\Session::start();
-        $this->initCart();
-
-        return $_SESSION['cart'];
-    }
-
-    public function tinhTongTien(): float
-    {
-        \App\Core\Session::start();
-        $this->initCart();
-
-        $tongTien = 0;
-        foreach ($_SESSION['cart'] as $item) {
-            $gia = (float)($item['gia'] ?? 0);
-            $soLuong = (int)($item['so_luong'] ?? 0);
-            if ($gia < 0) {
-                $gia = 0;
-            }
-            if ($soLuong < 0) {
-                $soLuong = 0;
-            }
-            $tongTien += $gia * $soLuong;
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /');
+            exit;
         }
 
-        return $tongTien;
-    }
+        $phienBanId = isset($_POST['phien_ban_id']) ? (int)$_POST['phien_ban_id'] : 0;
+        $soLuong = isset($_POST['so_luong']) ? max(1, (int)$_POST['so_luong']) : 1;
 
-    public function tinhTongSoLuong(): int
-    {
-        \App\Core\Session::start();
-        $this->initCart();
-
-        $tongSoLuong = 0;
-        foreach ($_SESSION['cart'] as $item) {
-            $tongSoLuong += (int)($item['so_luong'] ?? 0);
+        if ($phienBanId <= 0) {
+            Session::flash('error', 'Vui lòng chọn phiên bản sản phẩm');
+            header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
+            exit;
         }
 
-        return $tongSoLuong;
+        // Kiểm tra tồn kho
+        if (!$this->phienBanModel->kiemTraTonKho($phienBanId, $soLuong)) {
+            Session::flash('error', 'Sản phẩm không đủ số lượng trong kho');
+            header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
+            exit;
+        }
+
+        // Thêm vào giỏ
+        $gioHang = $this->layGioHangHienTai();
+        $success = $this->chiTietGioModel->themVaoGio($gioHang['id'], $phienBanId, $soLuong);
+
+        if ($success) {
+            Session::flash('success', 'Đã thêm sản phẩm vào giỏ hàng');
+        } else {
+            Session::flash('error', 'Không thể thêm sản phẩm vào giỏ hàng');
+        }
+
+        header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
+        exit;
     }
 
-    private function initCart(): void
+    /**
+     * Cập nhật số lượng
+     */
+    public function capNhat(): void
     {
-        if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
-            $_SESSION['cart'] = [];
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /gio-hang');
+            exit;
         }
+
+        $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+        $soLuong = isset($_POST['so_luong']) ? max(1, (int)$_POST['so_luong']) : 1;
+
+        if ($id > 0) {
+            $this->chiTietGioModel->capNhatSoLuong($id, $soLuong);
+            Session::flash('success', 'Đã cập nhật số lượng');
+        }
+
+        header('Location: /gio-hang');
+        exit;
+    }
+
+    /**
+     * Xóa sản phẩm khỏi giỏ
+     */
+    public function xoa(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /gio-hang');
+            exit;
+        }
+
+        $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+
+        if ($id > 0) {
+            $this->chiTietGioModel->xoaKhoiGio($id);
+            Session::flash('success', 'Đã xóa sản phẩm khỏi giỏ hàng');
+        }
+
+        header('Location: /gio-hang');
+        exit;
+    }
+
+    /**
+     * Lấy số lượng sản phẩm trong giỏ (AJAX)
+     */
+    public function demSanPham(): void
+    {
+        header('Content-Type: application/json');
+        
+        $gioHang = $this->layGioHangHienTai();
+        $soLuong = $this->chiTietGioModel->demSanPham($gioHang['id']);
+        
+        echo json_encode(['count' => $soLuong]);
+        exit;
     }
 }

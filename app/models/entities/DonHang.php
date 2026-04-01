@@ -221,3 +221,35 @@ class DonHang extends BaseModel
         return (int)($result[0]['total'] ?? 0);
     }
 }
+
+    /**
+     * Lấy đơn hàng theo user
+     */
+    public function layDonHangTheoUser(int $nguoiDungId, int $limit = 10, int $offset = 0): array
+    {
+        $nguoiDungId = (int)$nguoiDungId;
+        $limit = max(1, (int)$limit);
+        $offset = max(0, (int)$offset);
+
+        $sql = "SELECT * FROM {$this->table}
+                WHERE nguoi_dung_id = $nguoiDungId
+                ORDER BY ngay_tao DESC
+                LIMIT $limit OFFSET $offset";
+
+        return $this->query($sql);
+    }
+
+    /**
+     * Đếm đơn hàng theo user
+     */
+    public function demDonHangTheoUser(int $nguoiDungId): int
+    {
+        $nguoiDungId = (int)$nguoiDungId;
+        
+        $sql = "SELECT COUNT(*) as total FROM {$this->table}
+                WHERE nguoi_dung_id = $nguoiDungId";
+        
+        $result = $this->query($sql);
+        return !empty($result) ? (int)$result[0]['total'] : 0;
+    }
+}

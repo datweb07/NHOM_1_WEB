@@ -163,4 +163,24 @@ class MaGiamGia extends BaseModel
             'trang_thai' => $this->trangThai,
         ];
     }
+
+    /**
+     * Kiểm tra mã giảm giá (alias cho timTheoMaCode + kiemTraHopLe)
+     */
+    public function kiemTraMaGiamGia(string $maCode, float $tongTien): ?array
+    {
+        $voucher = $this->timTheoMaCode($maCode);
+        if (!$voucher || !$this->kiemTraHopLe($voucher, $tongTien)) {
+            return null;
+        }
+        return $voucher;
+    }
+
+    /**
+     * Tính tiền giảm (alias cho tinhSoTienGiam)
+     */
+    public function tinhTienGiam(array $maGiamGia, float $tongTien): float
+    {
+        return $this->tinhSoTienGiam($maGiamGia, $tongTien);
+    }
 }
