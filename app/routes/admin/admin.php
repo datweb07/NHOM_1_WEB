@@ -52,6 +52,35 @@ function adminRoute(string $uri): void
     require_once dirname(__DIR__, 2) . '/controllers/admin/BannerController.php';
     $bannerController = new BannerController();
 
+    // Profile routes
+    if ($path === 'admin/profile' && $method === 'GET') {
+        require_once dirname(__DIR__, 2) . '/controllers/admin/ProfileController.php';
+        $profileController = new ProfileController();
+        $profileController->index();
+        return;
+    }
+
+    if ($path === 'admin/profile/update' && $method === 'POST') {
+        require_once dirname(__DIR__, 2) . '/controllers/admin/ProfileController.php';
+        $profileController = new ProfileController();
+        $profileController->update();
+        return;
+    }
+
+    if ($path === 'admin/profile/update-avatar' && $method === 'POST') {
+        require_once dirname(__DIR__, 2) . '/controllers/admin/ProfileController.php';
+        $profileController = new ProfileController();
+        $profileController->updateAvatar();
+        return;
+    }
+
+    if ($path === 'admin/profile/change-password' && $method === 'POST') {
+        require_once dirname(__DIR__, 2) . '/controllers/admin/ProfileController.php';
+        $profileController = new ProfileController();
+        $profileController->changePassword();
+        return;
+    }
+
     if ($path === 'admin/danh-muc' && $method === 'GET') {
         $danhMucController->index();
         return;
