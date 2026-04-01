@@ -221,6 +221,115 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	// Tìm kiếm routes
+	if ($path === 'tim-kiem') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/TimKiemController.php';
+		$controller = new \App\Controllers\Client\TimKiemController();
+		$controller->timKiem();
+		return;
+	}
+
+	if ($path === 'tim-kiem/lich-su') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/TimKiemController.php';
+		$controller = new \App\Controllers\Client\TimKiemController();
+		$controller->layLichSu();
+		return;
+	}
+
+	if ($path === 'tim-kiem/xoa-lich-su') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/TimKiemController.php';
+		$controller = new \App\Controllers\Client\TimKiemController();
+		$controller->xoaLichSu();
+		return;
+	}
+
+	if ($path === 'tim-kiem/tu-khoa-pho-bien') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/TimKiemController.php';
+		$controller = new \App\Controllers\Client\TimKiemController();
+		$controller->layTuKhoaPhoBien();
+		return;
+	}
+
+	// Yêu thích routes
+	if ($path === 'yeu-thich') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/YeuThichController.php';
+		$controller = new \App\Controllers\Client\YeuThichController();
+		$controller->index();
+		return;
+	}
+
+	if ($path === 'yeu-thich/them') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/YeuThichController.php';
+		$controller = new \App\Controllers\Client\YeuThichController();
+		$controller->them();
+		return;
+	}
+
+	if ($path === 'yeu-thich/xoa') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/YeuThichController.php';
+		$controller = new \App\Controllers\Client\YeuThichController();
+		$controller->xoa();
+		return;
+	}
+
+	if ($path === 'yeu-thich/kiem-tra') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/YeuThichController.php';
+		$controller = new \App\Controllers\Client\YeuThichController();
+		$controller->kiemTra();
+		return;
+	}
+
+	if ($path === 'yeu-thich/dem') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/YeuThichController.php';
+		$controller = new \App\Controllers\Client\YeuThichController();
+		$controller->dem();
+		return;
+	}
+
+	// Đánh giá routes
+	if ($path === 'danh-gia/danh-sach') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/DanhGiaController.php';
+		$controller = new \App\Controllers\Client\DanhGiaController();
+		$controller->layDanhSach();
+		return;
+	}
+
+	if ($path === 'danh-gia/them') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/DanhGiaController.php';
+		$controller = new \App\Controllers\Client\DanhGiaController();
+		$controller->them();
+		return;
+	}
+
+	if ($path === 'danh-gia/kiem-tra') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/DanhGiaController.php';
+		$controller = new \App\Controllers\Client\DanhGiaController();
+		$controller->kiemTra();
+		return;
+	}
+
+	// Khuyến mãi routes
+	if ($path === 'khuyen-mai') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/KhuyenMaiController.php';
+		$controller = new \App\Controllers\Client\KhuyenMaiController();
+		$controller->danhSachKhuyenMai();
+		return;
+	}
+
+	if ($path === 'khuyen-mai/chi-tiet') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/KhuyenMaiController.php';
+		$controller = new \App\Controllers\Client\KhuyenMaiController();
+		$controller->chiTietKhuyenMai();
+		return;
+	}
+
+	if ($path === 'ma-giam-gia') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/KhuyenMaiController.php';
+		$controller = new \App\Controllers\Client\KhuyenMaiController();
+		$controller->danhSachMaGiamGia();
+		return;
+	}
+
 	require_once dirname(__DIR__, 2) . '/views/client/home/index.php';
 }
 

@@ -9,13 +9,13 @@ PHẦN 1: TRANG CHỦ & HIỂN THỊ ✅ HOÀN THÀNH
 ✅ 1.3. Hiển thị sản phẩm khuyến mãi
 ✅ 1.4. Hiển thị danh mục sản phẩm
 
-PHẦN 2: SẢN PHẨM ✅ HOÀN THÀNH (Model & Controller)
+PHẦN 2: SẢN PHẨM ⏳ ĐANG THỰC HIỆN
 -----------------
 ✅ 2.1. Danh sách sản phẩm (Listing) - Controller đã tạo
 ✅ 2.2. Chi tiết sản phẩm - Controller đã tạo
-⏳ 2.3. Tìm kiếm sản phẩm - Chưa implement
+✅ 2.3. Tìm kiếm sản phẩm - TimKiemController hoàn thành
 ⏳ 2.4. So sánh sản phẩm - Chưa implement
-⏳ 2.5. Yêu thích sản phẩm - Chưa implement
+✅ 2.5. Yêu thích sản phẩm - YeuThichController hoàn thành
 
 PHẦN 3: GIỎ HÀNG & THANH TOÁN ✅ HOÀN THÀNH
 ------------------------------
@@ -25,17 +25,17 @@ PHẦN 3: GIỎ HÀNG & THANH TOÁN ✅ HOÀN THÀNH
 ✅ 3.4. Thanh toán - Controller hoàn thành
 ✅ 3.5. Upload biên lai - Đã implement trong ThanhToan model
 
-PHẦN 4: TÀI KHOẢN KHÁCH HÀNG ⏳ ĐANG THỰC HIỆN
+PHẦN 4: TÀI KHOẢN KHÁCH HÀNG ✅ HOÀN THÀNH
 -----------------------------
 ✅ 4.1. Hồ sơ cá nhân - Đã có từ trước
 ✅ 4.2. Quản lý địa chỉ - Model DiaChi hoàn thành
 ✅ 4.3. Lịch sử đơn hàng - DonHangController hoàn thành
-⏳ 4.4. Đánh giá sản phẩm - Model đã có, chưa có controller
+✅ 4.4. Đánh giá sản phẩm - DanhGiaController hoàn thành
 
-PHẦN 5: KHUYẾN MÃI ⏳ CHƯA IMPLEMENT
+PHẦN 5: KHUYẾN MÃI ✅ HOÀN THÀNH
 ------------------
-⏳ 5.1. Xem danh sách khuyến mãi
-⏳ 5.2. Xem danh sách mã giảm giá
+✅ 5.1. Xem danh sách khuyến mãi - KhuyenMaiController hoàn thành
+✅ 5.2. Xem danh sách mã giảm giá - KhuyenMaiController hoàn thành
 
 ===========================================
 THỨ TỰ ƯU TIÊN IMPLEMENT
@@ -45,12 +45,12 @@ THỨ TỰ ƯU TIÊN IMPLEMENT
 ✅ 3. Giỏ hàng (3.1)
 ✅ 4. Thanh toán (3.2, 3.3, 3.4, 3.5)
 ✅ 5. Tài khoản (4.1, 4.2, 4.3)
-⏳ 6. Tìm kiếm (2.3)
-⏳ 7. Danh sách sản phẩm (2.1)
-⏳ 8. So sánh (2.4)
-⏳ 9. Đánh giá (4.4)
-⏳ 10. Yêu thích (2.5)
-⏳ 11. Khuyến mãi (5.1, 5.2)
+✅ 6. Tìm kiếm (2.3)
+✅ 7. Danh sách sản phẩm (2.1)
+⏳ 8. So sánh (2.4) - Chưa có bảng trong database
+✅ 9. Đánh giá (4.4)
+✅ 10. Yêu thích (2.5)
+✅ 11. Khuyến mãi (5.1, 5.2)
 
 ===========================================
 CÁC MODEL ĐÃ TẠO
@@ -67,6 +67,8 @@ CÁC MODEL ĐÃ TẠO
 ✅ ChiTietDon - Chi tiết đơn hàng
 ✅ ThanhToan - Thanh toán
 ✅ MaGiamGia - Mã giảm giá (đã có đầy đủ)
+✅ LichSuTimKiem - Lịch sử tìm kiếm
+✅ YeuThich - Yêu thích sản phẩm
 
 ===========================================
 CÁC CONTROLLER ĐÃ TẠO
@@ -76,4 +78,8 @@ CÁC CONTROLLER ĐÃ TẠO
 ✅ GioHangController - Giỏ hàng
 ✅ ThanhToanController - Thanh toán & đặt hàng
 ✅ DonHangController - Lịch sử đơn hàng
+✅ TimKiemController - Tìm kiếm sản phẩm
+✅ YeuThichController - Yêu thích sản phẩm
+✅ DanhGiaController - Đánh giá sản phẩm
+✅ KhuyenMaiController - Khuyến mãi & mã giảm giá
 
