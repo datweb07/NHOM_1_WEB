@@ -179,6 +179,29 @@ function isMenuOpen($paths) {
                   </li>
                 </ul>
               </li>
+              <li class="nav-item <?= isMenuOpen(['/admin/banner']) ?>">
+                <a href="#" class="nav-link <?= isActive('/admin/banner') ? 'active' : '' ?>">
+                  <i class="nav-icon bi bi-image-fill"></i>
+                  <p>
+                    Banner Quảng Cáo
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="/admin/banner" class="nav-link <?= isActive('/admin/banner') ?>">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Danh Sách</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/admin/banner/them" class="nav-link <?= isActive('/admin/banner/them') ?>">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Thêm Banner</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
             </ul>
             <!--end::Sidebar Menu-->
           </nav>
