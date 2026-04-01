@@ -26,7 +26,7 @@ class KhuyenMai extends BaseModel
     }
 
     // Lấy danh sách khuyến mãi với lọc và phân trang
-    public function layDanhSach(string $trangThai = '', ?string $tuNgay = null, ?string $denNgay = null, int $limit = 20, int $offset = 0): array
+    public function layDanhSach(string $trangThai = '', int $limit = 20, int $offset = 0, ?string $tuNgay = null, ?string $denNgay = null): array
     {
         $where = [];
         if ($trangThai !== '') {
