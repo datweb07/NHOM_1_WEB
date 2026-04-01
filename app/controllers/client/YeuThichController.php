@@ -19,7 +19,7 @@ class YeuThichController
      */
     public function index(): void
     {
-        if (!\Session::get('user_id')) {
+        if (!\App\Core\Session::get('user_id')) {
             header('Location: /client/auth/login');
             exit;
         }
@@ -28,8 +28,8 @@ class YeuThichController
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
-        $sanPhams = $this->yeuThichModel->layDanhSachTheoUser(\Session::get('user_id'), $limit, $offset);
-        $tongSanPham = $this->yeuThichModel->demTheoUser(\Session::get('user_id'));
+        $sanPhams = $this->yeuThichModel->layDanhSachTheoUser(\App\Core\Session::get('user_id'), $limit, $offset);
+        $tongSanPham = $this->yeuThichModel->demTheoUser(\App\Core\Session::get('user_id'));
         $tongTrang = ceil($tongSanPham / $limit);
 
         require_once dirname(__DIR__, 2) . '/views/client/yeu_thich/index.php';
@@ -46,7 +46,7 @@ class YeuThichController
             return;
         }
 
-        if (!\Session::get('user_id')) {
+        if (!\App\Core\Session::get('user_id')) {
             echo json_encode(['success' => false, 'message' => 'Vui lòng đăng nhập']);
             return;
         }
@@ -58,7 +58,7 @@ class YeuThichController
             return;
         }
 
-        $result = $this->yeuThichModel->them(\Session::get('user_id'), $sanPhamId);
+        $result = $this->yeuThichModel->them(\App\Core\Session::get('user_id'), $sanPhamId);
 
         if ($result) {
             echo json_encode(['success' => true, 'message' => 'Đã thêm vào yêu thích']);
@@ -78,7 +78,7 @@ class YeuThichController
             return;
         }
 
-        if (!\Session::get('user_id')) {
+        if (!\App\Core\Session::get('user_id')) {
             echo json_encode(['success' => false, 'message' => 'Vui lòng đăng nhập']);
             return;
         }
@@ -90,7 +90,7 @@ class YeuThichController
             return;
         }
 
-        $result = $this->yeuThichModel->xoa(\Session::get('user_id'), $sanPhamId);
+        $result = $this->yeuThichModel->xoa(\App\Core\Session::get('user_id'), $sanPhamId);
 
         echo json_encode([
             'success' => $result,
@@ -109,7 +109,7 @@ class YeuThichController
             return;
         }
 
-        if (!\Session::get('user_id')) {
+        if (!\App\Core\Session::get('user_id')) {
             echo json_encode(['success' => false, 'is_favorite' => false]);
             return;
         }
@@ -121,7 +121,7 @@ class YeuThichController
             return;
         }
 
-        $isFavorite = $this->yeuThichModel->kiemTraDaTonTai(\Session::get('user_id'), $sanPhamId);
+        $isFavorite = $this->yeuThichModel->kiemTraDaTonTai(\App\Core\Session::get('user_id'), $sanPhamId);
 
         echo json_encode(['success' => true, 'is_favorite' => $isFavorite]);
     }
@@ -131,12 +131,12 @@ class YeuThichController
      */
     public function dem(): void
     {
-        if (!\Session::get('user_id')) {
+        if (!\App\Core\Session::get('user_id')) {
             echo json_encode(['success' => false, 'count' => 0]);
             return;
         }
 
-        $count = $this->yeuThichModel->demTheoUser(\Session::get('user_id'));
+        $count = $this->yeuThichModel->demTheoUser(\App\Core\Session::get('user_id'));
 
         echo json_encode(['success' => true, 'count' => $count]);
     }

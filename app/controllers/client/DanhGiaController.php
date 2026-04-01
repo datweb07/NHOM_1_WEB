@@ -59,7 +59,7 @@ class DanhGiaController
             return;
         }
 
-        if (!\Session::get('user_id')) {
+        if (!\App\Core\Session::get('user_id')) {
             echo json_encode(['success' => false, 'message' => 'Vui lòng đăng nhập']);
             return;
         }
@@ -85,14 +85,14 @@ class DanhGiaController
         }
 
         // Kiểm tra đã đánh giá chưa
-        if ($this->danhGiaModel->kiemTraDaDanhGia(\Session::get('user_id'), $sanPhamId)) {
+        if ($this->danhGiaModel->kiemTraDaDanhGia(\App\Core\Session::get('user_id'), $sanPhamId)) {
             echo json_encode(['success' => false, 'message' => 'Bạn đã đánh giá sản phẩm này rồi']);
             return;
         }
 
         // Thêm đánh giá
         $result = $this->danhGiaModel->themDanhGia(
-            \Session::get('user_id'),
+            \App\Core\Session::get('user_id'),
             $sanPhamId,
             $soSao,
             $noiDung
@@ -120,7 +120,7 @@ class DanhGiaController
             return;
         }
 
-        if (!\Session::get('user_id')) {
+        if (!\App\Core\Session::get('user_id')) {
             echo json_encode(['success' => false, 'has_reviewed' => false]);
             return;
         }
@@ -132,11 +132,11 @@ class DanhGiaController
             return;
         }
 
-        $hasReviewed = $this->danhGiaModel->kiemTraDaDanhGia(\Session::get('user_id'), $sanPhamId);
+        $hasReviewed = $this->danhGiaModel->kiemTraDaDanhGia(\App\Core\Session::get('user_id'), $sanPhamId);
         $review = null;
 
         if ($hasReviewed) {
-            $review = $this->danhGiaModel->layDanhGiaCuaUser(\Session::get('user_id'), $sanPhamId);
+            $review = $this->danhGiaModel->layDanhGiaCuaUser(\App\Core\Session::get('user_id'), $sanPhamId);
         }
 
         echo json_encode([

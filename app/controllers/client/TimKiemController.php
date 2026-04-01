@@ -31,8 +31,8 @@ class TimKiemController
         $offset = ($page - 1) * $limit;
 
         // Lưu lịch sử tìm kiếm nếu user đã đăng nhập
-        if (!empty($keyword) && \Session::get('user_id')) {
-            $this->lichSuModel->luuLichSu(\Session::get('user_id'), $keyword);
+        if (!empty($keyword) && \App\Core\Session::get('user_id')) {
+            $this->lichSuModel->luuLichSu(\App\Core\Session::get('user_id'), $keyword);
         }
 
         // Lấy danh sách sản phẩm
@@ -66,13 +66,13 @@ class TimKiemController
             return;
         }
 
-        if (!\Session::get('user_id')) {
+        if (!\App\Core\Session::get('user_id')) {
             echo json_encode(['success' => false, 'message' => 'Chưa đăng nhập']);
             return;
         }
 
         $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
-        $lichSu = $this->lichSuModel->layLichSuTheoUser(\Session::get('user_id'), $limit);
+        $lichSu = $this->lichSuModel->layLichSuTheoUser(\App\Core\Session::get('user_id'), $limit);
 
         echo json_encode(['success' => true, 'data' => $lichSu]);
     }
@@ -88,12 +88,12 @@ class TimKiemController
             return;
         }
 
-        if (!\Session::get('user_id')) {
+        if (!\App\Core\Session::get('user_id')) {
             echo json_encode(['success' => false, 'message' => 'Chưa đăng nhập']);
             return;
         }
 
-        $result = $this->lichSuModel->xoaLichSu(\Session::get('user_id'));
+        $result = $this->lichSuModel->xoaLichSu(\App\Core\Session::get('user_id'));
 
         echo json_encode(['success' => $result, 'message' => $result ? 'Đã xóa lịch sử' : 'Xóa thất bại']);
     }

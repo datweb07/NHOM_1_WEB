@@ -220,7 +220,6 @@ class DonHang extends BaseModel
         $result = $this->query($sql);
         return (int)($result[0]['total'] ?? 0);
     }
-}
 
     /**
      * Lấy đơn hàng theo user

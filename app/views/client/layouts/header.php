@@ -22,8 +22,8 @@
                 </div>
 
                 <div class="col-12 col-md">
-                    <form class="search-form d-flex" action="/san-pham" method="GET">
-                        <input class="form-control" type="search" name="keyword"
+                    <form class="search-form d-flex" action="/tim-kiem" method="GET">
+                        <input class="form-control" type="search" name="q"
                             placeholder="Nhập tên điện thoại, máy tính, phụ kiện... cần tìm">
                         <button class="btn-search" type="submit">
                             <i class="fa fa-magnifying-glass"></i>
@@ -65,10 +65,17 @@
                         Tài khoản của tôi
                     </a>
 
+                    <?php if ($isLoggedIn && $userRole === 'MEMBER'): ?>
+                    <a href="/yeu-thich" class="service-item">
+                        <i class="fa fa-heart"></i>
+                        Yêu thích
+                    </a>
+                    <?php endif; ?>
+
                     <a href="/gio-hang" class="service-item">
                         <div class="cart-wrapper">
                             <i class="fa fa-shopping-cart"></i>
-                            <span class="cart-badge">0</span>
+                            <span class="cart-badge" id="cart-count">0</span>
                         </div>
                         Giỏ hàng
                     </a>
@@ -272,10 +279,10 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="/san-pham"><i class="fa fa-certificate"></i> Khuyến mãi</a>
+                    <a class="nav-link" href="/khuyen-mai"><i class="fa fa-certificate"></i> Khuyến mãi</a>
                     <div class="simple-dropdown">
-                        <a href="#">Thông tin trao thưởng</a>
-                        <a href="#">Tất cả khuyến mại</a>
+                        <a href="/khuyen-mai">Tất cả khuyến mãi</a>
+                        <a href="/ma-giam-gia">Mã giảm giá</a>
                     </div>
                 </li>
 
@@ -314,7 +321,8 @@
                 <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-rotate-right"></i> Máy cũ giá rẻ</a></li>
                 <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-house-laptop"></i> Hàng gia dụng</a></li>
                 <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-sd-card"></i> Sim &amp; Thẻ cào</a></li>
-                <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-certificate"></i> Khuyến mãi</a></li>
+                <li class="offcanvas-menu-item"><a href="/khuyen-mai"><i class="fa fa-certificate"></i> Khuyến mãi</a></li>
+                <li class="offcanvas-menu-item"><a href="/ma-giam-gia"><i class="fa fa-ticket"></i> Mã giảm giá</a></li>
                 <li class="offcanvas-menu-item"><a href="/san-pham"><i class="fa fa-circle-dollar-to-slot"></i> Trả góp</a></li>
 
                 <li><div style="height:1px; background:#f0f0f0; margin:4px 0;"></div></li>
@@ -340,6 +348,13 @@
                         <i class="fa fa-user"></i> Tài khoản của tôi
                     </a>
                 </li>
+                <?php if ($isLoggedIn && $userRole === 'MEMBER'): ?>
+                <li class="offcanvas-menu-item">
+                    <a href="/yeu-thich">
+                        <i class="fa fa-heart"></i> Yêu thích
+                    </a>
+                </li>
+                <?php endif; ?>
                 <li class="offcanvas-menu-item">
                     <a href="/gio-hang">
                         <i class="fa fa-shopping-cart"></i> Giỏ hàng

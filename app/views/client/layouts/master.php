@@ -329,6 +329,26 @@
     
     <script src="/public/assets/client/js/main.js"></script>
     
+    <script>
+    // Cập nhật số lượng giỏ hàng
+    function updateCartCount() {
+        fetch('/gio-hang/dem-san-pham')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const badges = document.querySelectorAll('.cart-badge, #cart-count');
+                    badges.forEach(badge => {
+                        badge.textContent = data.count || 0;
+                    });
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Gọi khi trang load
+    document.addEventListener('DOMContentLoaded', updateCartCount);
+    </script>
+    
     <?php if (isset($additionalJS) && is_array($additionalJS)): ?>
         <?php foreach ($additionalJS as $js): ?>
             <script src="<?php echo $js; ?>"></script>
