@@ -1,527 +1,246 @@
 <?php
-function e($value): string
-{
-    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
-}
-
-$successMessages = [
-    'status_updated' => 'Cap nhat trang thai thanh cong.',
-];
-
-$errorMessages = [
-    'invalid_id' => 'ID don hang khong hop le.',
-    'not_found' => 'Khong tim thay don hang.',
-];
+require_once dirname(__DIR__) . '/layouts/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="vi">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý đơn hàng</title>
-    <script src="https://kit.fontawesome.com/1f55434e39.js" crossorigin="anonymous"></script>
-    <link rel="icon" href="/public/assets/client/images/header/1.png">
-    <link rel="stylesheet" href="/public/assets/client/css/main.css">
-    <link rel="stylesheet" href="/public/assets/client/css/grid.css">
-    <link rel="stylesheet" href="/public/assets/client/css/reponsive.css">
-    <style>
-        .admin-order-page {
-            background: linear-gradient(180deg, #f7f8fb 0%, #eef1f7 100%);
-            min-height: 100vh;
-            padding: 24px 0 40px;
-        }
+<?php require_once dirname(__DIR__) . '/layouts/sidebar.php'; ?>
 
-        .order-page-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
+<main class="app-main">
+    <?php 
+    $breadcrumbs = [
+        ['label' => 'Dashboard', 'url' => '/admin/dashboard'],
+        ['label' => 'Đơn Hàng', 'url' => '']
+    ];
+    require_once dirname(__DIR__) . '/layouts/breadcrumb.php'; 
+    ?>
+    
+    <div class="app-content">
+        <div class="container-fluid">
 
-        .order-page-head h1 {
-            font-size: 26px;
-            margin: 0;
-            color: #1f2937;
-            font-weight: 700;
-        }
+<!-- Action Bar -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div></div>
+    <div>
+        <!-- Có thể thêm nút export hoặc các action khác ở đây -->
+    </div>
+</div>
 
-        .order-page-head .head-sub {
-            margin: 4px 0 0;
-            color: #6b7280;
-            font-size: 14px;
-        }
+<!-- Success/Error Messages -->
+<?php if (!empty($_GET['success'])): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <?php
+        $successMessages = [
+            'status_updated' => 'Cập nhật trạng thái thành công.',
+        ];
+        echo htmlspecialchars($successMessages[$_GET['success']] ?? 'Thao tác thành công.');
+        ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
 
-        .fpt-pill {
-            background: #cb1c22;
-            color: #fff;
-            border-radius: 99px;
-            padding: 7px 14px;
-            font-size: 13px;
-            font-weight: 600;
-        }
+<?php if (!empty($_GET['error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?php
+        $errorMessages = [
+            'invalid_id' => 'ID đơn hàng không hợp lệ.',
+            'not_found' => 'Không tìm thấy đơn hàng.',
+            'invalid_status' => 'Trạng thái không hợp lệ.',
+        ];
+        echo htmlspecialchars($errorMessages[$_GET['error']] ?? 'Có lỗi xảy ra.');
+        ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
 
-        .fpt-alert {
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            font-size: 14px;
-            border: 1px solid transparent;
-        }
-
-        .fpt-alert.success {
-            background: #ecfdf3;
-            color: #027a48;
-            border-color: #abefc6;
-        }
-
-        .fpt-alert.error {
-            background: #fff1f3;
-            color: #b42318;
-            border-color: #fecdca;
-        }
-
-        .fpt-card {
-            background: #fff;
-            border-radius: 18px;
-            border: 1px solid #eceff4;
-            box-shadow: 0 14px 38px rgba(15, 23, 42, 0.08);
-            overflow: hidden;
-        }
-
-        .filter-wrap {
-            padding: 16px;
-            border-bottom: 1px solid #edf1f6;
-            background: #fcfdff;
-        }
-
-        .filter-form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .filter-form select,
-        .filter-form input[type="text"],
-        .filter-form input[type="date"] {
-            min-width: 180px;
-            border-radius: 10px;
-            border: 1px solid #d0d5dd;
-            padding: 10px 12px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .filter-form input[type="text"] {
-            min-width: 250px;
-        }
-
-        .btn-filter {
-            border: 1px solid #cb1c22;
-            color: #cb1c22;
-            background: #fff;
-            border-radius: 10px;
-            padding: 10px 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-
-        .btn-filter:hover {
-            background: #cb1c22;
-            color: #fff;
-        }
-
-        .btn-reset {
-            border: 1px solid #d0d5dd;
-            color: #667085;
-            background: #fff;
-            border-radius: 10px;
-            padding: 10px 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-reset:hover {
-            border-color: #98a2b3;
-            color: #344054;
-        }
-
-        .pagination-wrap {
-            padding: 16px;
-            border-top: 1px solid #edf1f6;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .pagination-info {
-            font-size: 14px;
-            color: #667085;
-        }
-
-        .pagination-controls {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .page-btn {
-            border: 1px solid #d0d5dd;
-            color: #344054;
-            background: #fff;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .page-btn:hover:not(.disabled):not(.active) {
-            border-color: #cb1c22;
-            color: #cb1c22;
-        }
-
-        .page-btn.active {
-            background: #cb1c22;
-            color: #fff;
-            border-color: #cb1c22;
-        }
-
-        .page-btn.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .order-table-wrap {
-            overflow-x: auto;
-        }
-
-        .order-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 980px;
-        }
-
-        .order-table thead th {
-            background: #f8fafc;
-            color: #667085;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-            font-weight: 700;
-            text-align: left;
-            padding: 14px;
-            border-bottom: 1px solid #edf1f6;
-        }
-
-        .order-table tbody td {
-            padding: 14px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 14px;
-            color: #344054;
-            vertical-align: top;
-        }
-
-        .order-table tbody tr:hover {
-            background: #fcfcfd;
-        }
-
-        .customer-name {
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 3px;
-        }
-
-        .customer-email {
-            font-size: 12px;
-            color: #667085;
-            word-break: break-word;
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border-radius: 999px;
-            padding: 6px 10px;
-            font-size: 12px;
-            font-weight: 700;
-            border: 1px solid;
-            white-space: nowrap;
-        }
-
-        .status-cho-duyet {
-            color: #b54708;
-            background: #fffaeb;
-            border-color: #fedf89;
-        }
-
-        .status-dang-giao {
-            color: #175cd3;
-            background: #eff8ff;
-            border-color: #b2ddff;
-        }
-
-        .status-hoan-thanh {
-            color: #027a48;
-            background: #ecfdf3;
-            border-color: #abefc6;
-        }
-
-        .status-da-huy {
-            color: #b42318;
-            background: #fff1f3;
-            border-color: #fecdca;
-        }
-
-        .btn-view {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border: 1px solid #d0d5dd;
-            color: #344054;
-            border-radius: 9px;
-            padding: 7px 10px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            transition: .2s ease;
-        }
-
-        .btn-view:hover {
-            border-color: #cb1c22;
-            color: #cb1c22;
-            background: #fff5f5;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: #667085;
-            padding: 26px 10px;
-            font-size: 14px;
-        }
-
-        @media (max-width: 768px) {
-            .admin-order-page {
-                padding-top: 14px;
-            }
-
-            .order-page-head {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .filter-form select,
-            .filter-form input[type="text"],
-            .filter-form input[type="date"],
-            .btn-filter,
-            .btn-reset {
-                width: 100%;
-                min-width: 100%;
-            }
-
-            .pagination-wrap {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .pagination-controls {
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="admin-order-page">
-        <div class="grid wide">
-            <div class="order-page-head">
-                <div>
-                    <h1>Danh sách đơn hàng</h1>
-                    <p class="head-sub">Quản lý trạng thái và theo dõi thông tin đơn hàng nhanh chóng.</p>
-                </div>
-                <div class="fpt-pill"><i class="fa fa-truck"></i> Đơn hàng online</div>
+<!-- Main Card -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">Danh Sách Đơn Hàng</div>
+    </div>
+    <div class="card-body">
+        <!-- Filter Form -->
+        <form method="GET" action="/admin/don-hang" class="row g-3 mb-4">
+            <div class="col-md-3">
+                <input 
+                    type="text" 
+                    name="search" 
+                    class="form-control" 
+                    placeholder="Tìm theo mã đơn hoặc tên KH..." 
+                    value="<?= htmlspecialchars($searchFilter ?? '') ?>"
+                >
             </div>
+            <div class="col-md-2">
+                <select name="trang_thai" class="form-select">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="CHO_DUYET" <?= ($trangThaiFilter ?? '') === 'CHO_DUYET' ? 'selected' : '' ?>>Chờ duyệt</option>
+                    <option value="DA_XAC_NHAN" <?= ($trangThaiFilter ?? '') === 'DA_XAC_NHAN' ? 'selected' : '' ?>>Đã xác nhận</option>
+                    <option value="DANG_GIAO" <?= ($trangThaiFilter ?? '') === 'DANG_GIAO' ? 'selected' : '' ?>>Đang giao</option>
+                    <option value="DA_GIAO" <?= ($trangThaiFilter ?? '') === 'DA_GIAO' ? 'selected' : '' ?>>Đã giao</option>
+                    <option value="HOAN_THANH" <?= ($trangThaiFilter ?? '') === 'HOAN_THANH' ? 'selected' : '' ?>>Hoàn thành</option>
+                    <option value="DA_HUY" <?= ($trangThaiFilter ?? '') === 'DA_HUY' ? 'selected' : '' ?>>Đã hủy</option>
+                    <option value="TRA_HANG" <?= ($trangThaiFilter ?? '') === 'TRA_HANG' ? 'selected' : '' ?>>Trả hàng</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="phuong_thuc" class="form-select">
+                    <option value="">Tất cả phương thức</option>
+                    <option value="COD" <?= ($phuongThucFilter ?? '') === 'COD' ? 'selected' : '' ?>>COD</option>
+                    <option value="CHUYEN_KHOAN" <?= ($phuongThucFilter ?? '') === 'CHUYEN_KHOAN' ? 'selected' : '' ?>>Chuyển khoản</option>
+                    <option value="QR" <?= ($phuongThucFilter ?? '') === 'QR' ? 'selected' : '' ?>>QR Code</option>
+                    <option value="TRA_GOP" <?= ($phuongThucFilter ?? '') === 'TRA_GOP' ? 'selected' : '' ?>>Trả góp</option>
+                    <option value="VI_DIEN_TU" <?= ($phuongThucFilter ?? '') === 'VI_DIEN_TU' ? 'selected' : '' ?>>Ví điện tử</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input 
+                    type="date" 
+                    name="date_from" 
+                    class="form-control" 
+                    value="<?= htmlspecialchars($dateFromFilter ?? '') ?>"
+                >
+            </div>
+            <div class="col-md-2">
+                <input 
+                    type="date" 
+                    name="date_to" 
+                    class="form-control" 
+                    value="<?= htmlspecialchars($dateToFilter ?? '') ?>"
+                >
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-funnel"></i> Lọc
+                </button>
+            </div>
+        </form>
 
-            <?php if (!empty($success) && isset($successMessages[$success])): ?>
-                <div class="fpt-alert success"><i class="fa fa-circle-check"></i> <?= e($successMessages[$success]) ?></div>
-            <?php endif; ?>
-            <?php if (!empty($error) && isset($errorMessages[$error])): ?>
-                <div class="fpt-alert error"><i class="fa fa-triangle-exclamation"></i> <?= e($errorMessages[$error]) ?></div>
-            <?php endif; ?>
-
-            <div class="fpt-card">
-                <div class="filter-wrap">
-                    <form class="filter-form" method="GET" action="/admin/don-hang">
-                        <input 
-                            type="text" 
-                            name="search" 
-                            placeholder="Tìm theo mã đơn hoặc tên khách hàng..." 
-                            value="<?= e($searchFilter ?? '') ?>"
-                        >
-                        <select name="trang_thai">
-                            <option value="" <?= ($trangThaiFilter ?? '') === '' ? 'selected' : '' ?>>Tất cả trạng thái</option>
-                            <option value="CHO_DUYET" <?= ($trangThaiFilter ?? '') === 'CHO_DUYET' ? 'selected' : '' ?>>Chờ duyệt</option>
-                            <option value="DANG_GIAO" <?= ($trangThaiFilter ?? '') === 'DANG_GIAO' ? 'selected' : '' ?>>Đang giao</option>
-                            <option value="HOAN_THANH" <?= ($trangThaiFilter ?? '') === 'HOAN_THANH' ? 'selected' : '' ?>>Hoàn thành</option>
-                            <option value="DA_HUY" <?= ($trangThaiFilter ?? '') === 'DA_HUY' ? 'selected' : '' ?>>Đã hủy</option>
-                        </select>
-                        <select name="phuong_thuc">
-                            <option value="" <?= ($phuongThucFilter ?? '') === '' ? 'selected' : '' ?>>Tất cả phương thức</option>
-                            <option value="COD" <?= ($phuongThucFilter ?? '') === 'COD' ? 'selected' : '' ?>>COD</option>
-                            <option value="CHUYEN_KHOAN" <?= ($phuongThucFilter ?? '') === 'CHUYEN_KHOAN' ? 'selected' : '' ?>>Chuyển khoản</option>
-                            <option value="QR" <?= ($phuongThucFilter ?? '') === 'QR' ? 'selected' : '' ?>>QR Code</option>
-                            <option value="TRA_GOP" <?= ($phuongThucFilter ?? '') === 'TRA_GOP' ? 'selected' : '' ?>>Trả góp</option>
-                            <option value="VI_DIEN_TU" <?= ($phuongThucFilter ?? '') === 'VI_DIEN_TU' ? 'selected' : '' ?>>Ví điện tử</option>
-                        </select>
-                        <input 
-                            type="date" 
-                            name="date_from" 
-                            placeholder="Từ ngày" 
-                            value="<?= e($dateFromFilter ?? '') ?>"
-                        >
-                        <input 
-                            type="date" 
-                            name="date_to" 
-                            placeholder="Đến ngày" 
-                            value="<?= e($dateToFilter ?? '') ?>"
-                        >
-                        <button class="btn-filter" type="submit"><i class="fa fa-filter"></i> Lọc</button>
-                        <a class="btn-reset" href="/admin/don-hang"><i class="fa fa-rotate-right"></i> Đặt lại</a>
-                    </form>
-                </div>
-
-                <div class="order-table-wrap">
-                    <table class="order-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Mã đơn</th>
-                                <th>Khách hàng</th>
-                                <th>Trạng thái</th>
-                                <th>Tổng thanh toán</th>
-                                <th>Ngày tạo</th>
-                                <th>Chi tiết</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (empty($danhSachDonHang)): ?>
-                                <tr>
-                                    <td colspan="7" class="empty-state">Không có đơn hàng.</td>
-                                </tr>
-                            <?php else: ?>
-                                <?php foreach ($danhSachDonHang as $item): ?>
-                                    <?php
-                                    $statusClass = 'status-cho-duyet';
-                                    if (($item['trang_thai'] ?? '') === 'DANG_GIAO') {
-                                        $statusClass = 'status-dang-giao';
-                                    } elseif (($item['trang_thai'] ?? '') === 'HOAN_THANH') {
-                                        $statusClass = 'status-hoan-thanh';
-                                    } elseif (($item['trang_thai'] ?? '') === 'DA_HUY') {
-                                        $statusClass = 'status-da-huy';
-                                    }
-                                    ?>
-                                    <tr>
-                                        <td>#<?= (int)$item['id'] ?></td>
-                                        <td><strong><?= e($item['ma_don_hang'] ?? '-') ?></strong></td>
-                                        <td>
-                                            <div class="customer-name"><?= e($item['ho_ten'] ?? 'Khach vang lai') ?></div>
-                                            <div class="customer-email"><?= e($item['email'] ?? '') ?></div>
-                                        </td>
-                                        <td><span class="status-badge <?= $statusClass ?>"><i class="fa fa-circle"></i> <?= e($item['trang_thai']) ?></span></td>
-                                        <td><strong><?= number_format((float)($item['tong_thanh_toan'] ?? 0), 0, ',', '.') ?> VND</strong></td>
-                                        <td><?= e($item['ngay_tao'] ?? '-') ?></td>
-                                        <td>
-                                            <a class="btn-view" href="/admin/don-hang/chi-tiet?id=<?= (int)$item['id'] ?>"><i class="fa fa-eye"></i> Xem</a>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
-
-                <?php if (($totalPages ?? 1) > 1): ?>
-                    <div class="pagination-wrap">
-                        <div class="pagination-info">
-                            Hiển thị <?= count($danhSachDonHang) ?> / <?= $totalRecords ?? 0 ?> đơn hàng
-                        </div>
-                        <div class="pagination-controls">
+        <!-- Orders Table -->
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Mã đơn</th>
+                        <th>Khách hàng</th>
+                        <th>Trạng thái</th>
+                        <th>Tổng tiền</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($danhSachDonHang)): ?>
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                Không có đơn hàng nào.
+                            </td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($danhSachDonHang as $item): ?>
                             <?php
-                            // Build query string for pagination links
-                            $queryParams = [];
-                            if (!empty($searchFilter)) $queryParams['search'] = $searchFilter;
-                            if (!empty($trangThaiFilter)) $queryParams['trang_thai'] = $trangThaiFilter;
-                            if (!empty($phuongThucFilter)) $queryParams['phuong_thuc'] = $phuongThucFilter;
-                            if (!empty($dateFromFilter)) $queryParams['date_from'] = $dateFromFilter;
-                            if (!empty($dateToFilter)) $queryParams['date_to'] = $dateToFilter;
-                            
-                            $buildUrl = function($page) use ($queryParams) {
-                                $queryParams['page'] = $page;
-                                return '/admin/don-hang?' . http_build_query($queryParams);
-                            };
-                            
-                            $currentPage = $currentPage ?? 1;
-                            $totalPages = $totalPages ?? 1;
+                            $statusBadge = [
+                                'CHO_DUYET' => '<span class="badge bg-warning">Chờ duyệt</span>',
+                                'DA_XAC_NHAN' => '<span class="badge bg-info">Đã xác nhận</span>',
+                                'DANG_GIAO' => '<span class="badge bg-primary">Đang giao</span>',
+                                'DA_GIAO' => '<span class="badge bg-success">Đã giao</span>',
+                                'HOAN_THANH' => '<span class="badge bg-success">Hoàn thành</span>',
+                                'DA_HUY' => '<span class="badge bg-danger">Đã hủy</span>',
+                                'TRA_HANG' => '<span class="badge bg-secondary">Trả hàng</span>',
+                            ];
                             ?>
-                            
-                            <?php if ($currentPage > 1): ?>
-                                <a class="page-btn" href="<?= $buildUrl($currentPage - 1) ?>"><i class="fa fa-chevron-left"></i> Trước</a>
-                            <?php else: ?>
-                                <span class="page-btn disabled"><i class="fa fa-chevron-left"></i> Trước</span>
-                            <?php endif; ?>
-                            
-                            <?php
-                            // Show page numbers
-                            $startPage = max(1, $currentPage - 2);
-                            $endPage = min($totalPages, $currentPage + 2);
-                            
-                            if ($startPage > 1): ?>
-                                <a class="page-btn" href="<?= $buildUrl(1) ?>">1</a>
-                                <?php if ($startPage > 2): ?>
-                                    <span class="page-btn disabled">...</span>
-                                <?php endif; ?>
-                            <?php endif; ?>
-                            
-                            <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
-                                <?php if ($i == $currentPage): ?>
-                                    <span class="page-btn active"><?= $i ?></span>
-                                <?php else: ?>
-                                    <a class="page-btn" href="<?= $buildUrl($i) ?>"><?= $i ?></a>
-                                <?php endif; ?>
-                            <?php endfor; ?>
-                            
-                            <?php if ($endPage < $totalPages): ?>
-                                <?php if ($endPage < $totalPages - 1): ?>
-                                    <span class="page-btn disabled">...</span>
-                                <?php endif; ?>
-                                <a class="page-btn" href="<?= $buildUrl($totalPages) ?>"><?= $totalPages ?></a>
-                            <?php endif; ?>
-                            
-                            <?php if ($currentPage < $totalPages): ?>
-                                <a class="page-btn" href="<?= $buildUrl($currentPage + 1) ?>">Sau <i class="fa fa-chevron-right"></i></a>
-                            <?php else: ?>
-                                <span class="page-btn disabled">Sau <i class="fa fa-chevron-right"></i></span>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
+                            <tr>
+                                <td>#<?= (int)$item['id'] ?></td>
+                                <td><strong><?= htmlspecialchars($item['ma_don_hang'] ?? '-') ?></strong></td>
+                                <td>
+                                    <div><?= htmlspecialchars($item['ho_ten'] ?? 'Khách vãng lai') ?></div>
+                                    <?php if (!empty($item['email'])): ?>
+                                        <small class="text-muted"><?= htmlspecialchars($item['email']) ?></small>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= $statusBadge[$item['trang_thai']] ?? htmlspecialchars($item['trang_thai']) ?></td>
+                                <td><strong><?= number_format((float)($item['tong_thanh_toan'] ?? 0), 0, ',', '.') ?> ₫</strong></td>
+                                <td><?= htmlspecialchars($item['ngay_tao'] ?? '-') ?></td>
+                                <td>
+                                    <a href="/admin/don-hang/chi-tiet?id=<?= (int)$item['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> Xem
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <?php if (($totalPages ?? 1) > 1): ?>
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <?php
+                    // Build query string for pagination links
+                    $queryParams = [];
+                    if (!empty($searchFilter)) $queryParams['search'] = $searchFilter;
+                    if (!empty($trangThaiFilter)) $queryParams['trang_thai'] = $trangThaiFilter;
+                    if (!empty($phuongThucFilter)) $queryParams['phuong_thuc'] = $phuongThucFilter;
+                    if (!empty($dateFromFilter)) $queryParams['date_from'] = $dateFromFilter;
+                    if (!empty($dateToFilter)) $queryParams['date_to'] = $dateToFilter;
+                    
+                    $buildUrl = function($page) use ($queryParams) {
+                        $queryParams['page'] = $page;
+                        return '/admin/don-hang?' . http_build_query($queryParams);
+                    };
+                    
+                    $currentPage = $currentPage ?? 1;
+                    $totalPages = $totalPages ?? 1;
+                    ?>
+                    
+                    <!-- Previous Button -->
+                    <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
+                        <a class="page-link" href="<?= $currentPage > 1 ? $buildUrl($currentPage - 1) : '#' ?>">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    
+                    <?php
+                    // Show page numbers
+                    $startPage = max(1, $currentPage - 2);
+                    $endPage = min($totalPages, $currentPage + 2);
+                    
+                    if ($startPage > 1): ?>
+                        <li class="page-item"><a class="page-link" href="<?= $buildUrl(1) ?>">1</a></li>
+                        <?php if ($startPage > 2): ?>
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    
+                    <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                        <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
+                            <a class="page-link" href="<?= $buildUrl($i) ?>"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
+                    
+                    <?php if ($endPage < $totalPages): ?>
+                        <?php if ($endPage < $totalPages - 1): ?>
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        <?php endif; ?>
+                        <li class="page-item"><a class="page-link" href="<?= $buildUrl($totalPages) ?>"><?= $totalPages ?></a></li>
+                    <?php endif; ?>
+                    
+                    <!-- Next Button -->
+                    <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
+                        <a class="page-link" href="<?= $currentPage < $totalPages ? $buildUrl($currentPage + 1) : '#' ?>">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="text-center text-muted mt-2">
+                <small>Hiển thị <?= count($danhSachDonHang) ?> / <?= $totalRecords ?? 0 ?> đơn hàng</small>
             </div>
+        <?php endif; ?>
         </div>
     </div>
-</body>
+</main>
 
-</html>
+<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
