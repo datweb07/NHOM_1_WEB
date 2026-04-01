@@ -125,25 +125,48 @@
             <!--end::Fullscreen Toggle-->
             <!--begin::User Menu Dropdown-->
             <li class="nav-item dropdown user-menu">
+              <?php
+              use App\Core\Session;
+              Session::start();
+              $adminName = Session::getUserName() ?? 'Admin';
+              $adminEmail = Session::getUserEmail() ?? '';
+              $adminAvatar = Session::getUserAvatar();
+              
+              // Generate avatar URL
+              if ($adminAvatar && file_exists(__DIR__ . '/../../../../public/uploads/avatars/' . $adminAvatar)) {
+                  $avatarUrl = '/public/uploads/avatars/' . $adminAvatar;
+              } else {
+                  // Use UI Avatars as fallback with admin's initials
+                  $initials = '';
+                  $nameParts = explode(' ', $adminName);
+                  foreach ($nameParts as $part) {
+                      if (!empty($part)) {
+                          $initials .= mb_substr($part, 0, 1);
+                      }
+                  }
+                  $initials = mb_strtoupper(mb_substr($initials, 0, 2));
+                  $avatarUrl = 'https://ui-avatars.com/api/?name=' . urlencode($initials) . '&background=0d6efd&color=fff&size=160';
+              }
+              ?>
               <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <img
-                  src="../../dist/assets/img/user2-160x160.jpg"
+                  src="<?= htmlspecialchars($avatarUrl) ?>"
                   class="user-image rounded-circle shadow"
                   alt="User Image"
                 />
-                <span class="d-none d-md-inline">Alexander Pierce</span>
+                <span class="d-none d-md-inline"><?= htmlspecialchars($adminName) ?></span>
               </a>
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <!--begin::User Image-->
                 <li class="user-header text-bg-primary">
                   <img
-                    src="../../dist/assets/img/user2-160x160.jpg"
+                    src="<?= htmlspecialchars($avatarUrl) ?>"
                     class="rounded-circle shadow"
                     alt="User Image"
                   />
                   <p>
-                    Alexander Pierce - Web Developer
-                    <small>Member since Nov. 2023</small>
+                    <?= htmlspecialchars($adminName) ?>
+                    <small><?= htmlspecialchars($adminEmail) ?></small>
                   </p>
                 </li>
                 <!--end::User Image-->
@@ -153,8 +176,8 @@
                 <!--end::Menu Body-->
                 <!--begin::Menu Footer-->
                 <li class="user-footer">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
-                  <a href="#" class="btn btn-default btn-flat float-end">Sign out</a>
+                  <a href="/admin/profile" class="btn btn-default btn-flat">Hồ sơ</a>
+                  <a href="/admin/auth/logout" class="btn btn-default btn-flat float-end">Đăng xuất</a>
                 </li>
                 <!--end::Menu Footer-->
               </ul>
