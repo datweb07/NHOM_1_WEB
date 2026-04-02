@@ -415,7 +415,7 @@ class SanPhamController
 
         require_once dirname(__DIR__, 2) . '/models/entities/PhienBanSanPham.php';
         $phienBanModel = new PhienBanSanPham();
-        $variants = $phienBanModel->layTheoSanPham($sanPhamId);
+        $variants = $phienBanModel->layPhienBanTheoSanPham($sanPhamId);
 
         $data = [
             'sanPham' => $sanPham,
@@ -611,11 +611,11 @@ class SanPhamController
 
         require_once dirname(__DIR__, 2) . '/models/entities/HinhAnhSanPham.php';
         $hinhAnhModel = new HinhAnhSanPham();
-        $images = $hinhAnhModel->layTheoSanPham($sanPhamId);
+        $images = $hinhAnhModel->layHinhAnhTheoSanPham($sanPhamId);
 
         require_once dirname(__DIR__, 2) . '/models/entities/PhienBanSanPham.php';
         $phienBanModel = new PhienBanSanPham();
-        $variants = $phienBanModel->layTheoSanPham($sanPhamId);
+        $variants = $phienBanModel->layPhienBanTheoSanPham($sanPhamId);
 
         $data = [
             'sanPham' => $sanPham,
