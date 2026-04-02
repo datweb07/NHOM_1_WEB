@@ -98,8 +98,8 @@ class ThanhToanController
 
         // Get current admin user ID from session
         require_once dirname(__DIR__, 2) . '/core/Session.php';
-        Session::start();
-        $adminId = Session::getUserId();
+        \App\Core\Session::start();
+        $adminId = \App\Core\Session::getUserId();
         
         if ($adminId === null) {
             header('Location: /admin/auth/login');
@@ -141,8 +141,8 @@ class ThanhToanController
 
         // Get current admin user ID from session
         require_once dirname(__DIR__, 2) . '/core/Session.php';
-        Session::start();
-        $adminId = Session::getUserId();
+        \App\Core\Session::start();
+        $adminId = \App\Core\Session::getUserId();
         
         if ($adminId === null) {
             header('Location: /admin/auth/login');

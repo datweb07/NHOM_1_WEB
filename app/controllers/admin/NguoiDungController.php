@@ -100,8 +100,8 @@ class NguoiDungController
 
         // Prevent self-blocking
         require_once dirname(__DIR__, 2) . '/core/Session.php';
-        Session::start();
-        $currentUserId = Session::get('user_id');
+        \App\Core\Session::start();
+        $currentUserId = \App\Core\Session::get('user_id');
         
         if ($id === $currentUserId) {
             header('Location: /admin/nguoi-dung?error=cannot_block_self');
@@ -152,8 +152,8 @@ class NguoiDungController
 
         // Prevent self-blocking
         require_once dirname(__DIR__, 2) . '/core/Session.php';
-        Session::start();
-        $currentUserId = Session::get('user_id');
+        \App\Core\Session::start();
+        $currentUserId = \App\Core\Session::get('user_id');
         
         $successCount = 0;
         foreach ($userIds as $userId) {
