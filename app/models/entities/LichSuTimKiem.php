@@ -14,7 +14,7 @@ class LichSuTimKiem extends BaseModel
      */
     public function luuLichSu(int $nguoiDungId, string $tuKhoa): int
     {
-        return $this->insert([
+        return $this->create([
             'nguoi_dung_id' => $nguoiDungId,
             'tu_khoa' => $tuKhoa
         ]);

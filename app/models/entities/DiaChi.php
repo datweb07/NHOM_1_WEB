@@ -48,7 +48,7 @@ class DiaChi extends BaseModel
             $this->boMacDinhTatCa($data['nguoi_dung_id']);
         }
         
-        return $this->insert($data);
+        return $this->create($data);
     }
 
     /**

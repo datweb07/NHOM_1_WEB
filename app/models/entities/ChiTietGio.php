@@ -53,7 +53,7 @@ class ChiTietGio extends BaseModel
         }
         
         // Thêm mới
-        return $this->insert([
+        return $this->create([
             'gio_hang_id' => $gioHangId,
             'phien_ban_id' => $phienBanId,
             'so_luong' => $soLuong
