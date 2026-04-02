@@ -22,7 +22,7 @@ class ThanhToanController
 
         // Get pending payments
         $danhSachThanhToan = $this->thanhToanModel->layDanhSachChoDuyet($limit, $offset);
-        
+
         // Count total for pagination
         $totalRecords = $this->thanhToanModel->demChoDuyet();
         $totalPages = ceil($totalRecords / $limit);
@@ -98,9 +98,9 @@ class ThanhToanController
 
         // Get current admin user ID from session
         require_once dirname(__DIR__, 2) . '/core/Session.php';
-        Session::start();
-        $adminId = Session::getUserId();
-        
+        \App\Core\Session::start();
+        $adminId = \App\Core\Session::getUserId();
+
         if ($adminId === null) {
             header('Location: /admin/auth/login');
             exit;
@@ -108,10 +108,10 @@ class ThanhToanController
 
         // Get optional note
         $ghiChu = trim((string)($_POST['ghi_chu'] ?? ''));
-        
+
         // Approve payment
         $this->thanhToanModel->duyetThanhToan($id, $adminId, $ghiChu !== '' ? $ghiChu : null);
-        
+
         header('Location: /admin/thanh-toan/chi-tiet?id=' . $id . '&success=approved');
         exit;
     }
@@ -141,9 +141,9 @@ class ThanhToanController
 
         // Get current admin user ID from session
         require_once dirname(__DIR__, 2) . '/core/Session.php';
-        Session::start();
-        $adminId = Session::getUserId();
-        
+        \App\Core\Session::start();
+        $adminId = \App\Core\Session::getUserId();
+
         if ($adminId === null) {
             header('Location: /admin/auth/login');
             exit;
@@ -151,10 +151,10 @@ class ThanhToanController
 
         // Get optional note
         $ghiChu = trim((string)($_POST['ghi_chu'] ?? ''));
-        
+
         // Reject payment
         $this->thanhToanModel->tuChoiThanhToan($id, $adminId, $ghiChu !== '' ? $ghiChu : null);
-        
+
         header('Location: /admin/thanh-toan/chi-tiet?id=' . $id . '&success=rejected');
         exit;
     }

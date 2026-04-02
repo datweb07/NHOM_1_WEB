@@ -16,14 +16,14 @@ class DanhGia extends BaseModel
     {
         $sanPhamId = (int)$sanPhamId;
         $limit = max(1, (int)$limit);
-        
+
         $sql = "SELECT dg.*, nd.ho_ten, nd.avatar_url
                 FROM {$this->table} dg
                 INNER JOIN nguoi_dung nd ON dg.nguoi_dung_id = nd.id
                 WHERE dg.san_pham_id = $sanPhamId
                 ORDER BY dg.ngay_viet DESC
                 LIMIT $limit";
-        
+
         return $this->query($sql);
     }
 
@@ -35,7 +35,7 @@ class DanhGia extends BaseModel
         $sanPhamId = (int)$sanPhamId;
         $sql = "SELECT COUNT(*) as total FROM {$this->table}
                 WHERE san_pham_id = $sanPhamId";
-        
+
         $result = $this->query($sql);
         return !empty($result) ? (int)$result[0]['total'] : 0;
     }
@@ -48,10 +48,10 @@ class DanhGia extends BaseModel
         $sanPhamId = (int)$sanPhamId;
         $sql = "SELECT AVG(so_sao) as diem_tb FROM {$this->table}
                 WHERE san_pham_id = $sanPhamId";
-        
+
         $result = $this->query($sql);
-        return !empty($result) && $result[0]['diem_tb'] !== null 
-            ? (float)$result[0]['diem_tb'] 
+        return !empty($result) && $result[0]['diem_tb'] !== null
+            ? (float)$result[0]['diem_tb']
             : 0;
     }
 
@@ -66,7 +66,7 @@ class DanhGia extends BaseModel
             'so_sao' => $soSao,
             'noi_dung' => $noiDung
         ];
-        
+
         return $this->insert($data);
     }
 
@@ -77,11 +77,11 @@ class DanhGia extends BaseModel
     {
         $nguoiDungId = (int)$nguoiDungId;
         $sanPhamId = (int)$sanPhamId;
-        
+
         $sql = "SELECT id FROM {$this->table}
                 WHERE nguoi_dung_id = $nguoiDungId AND san_pham_id = $sanPhamId
                 LIMIT 1";
-        
+
         $result = $this->query($sql);
         return !empty($result);
     }
@@ -93,12 +93,91 @@ class DanhGia extends BaseModel
     {
         $nguoiDungId = (int)$nguoiDungId;
         $sanPhamId = (int)$sanPhamId;
-        
+
         $sql = "SELECT * FROM {$this->table}
                 WHERE nguoi_dung_id = $nguoiDungId AND san_pham_id = $sanPhamId
                 LIMIT 1";
-        
+
         $result = $this->query($sql);
         return !empty($result) ? $result[0] : null;
+    }
+
+    public function layDanhSach(?int $soSao = null, ?int $sanPhamId = null, int $limit = 20, int $offset = 0): array
+    {
+        $where = [];
+
+        if ($soSao !== null) {
+            $where[] = 'dg.so_sao = ' . (int)$soSao;
+        }
+
+        if ($sanPhamId !== null) {
+            $where[] = 'dg.san_pham_id = ' . (int)$sanPhamId;
+        }
+
+        $whereSql = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+        $limit = max(1, (int)$limit);
+        $offset = max(0, (int)$offset);
+
+        $sql = "SELECT dg.*, nd.ho_ten, nd.email, sp.ten_san_pham
+                FROM {$this->table} dg
+                LEFT JOIN nguoi_dung nd ON dg.nguoi_dung_id = nd.id
+                LEFT JOIN san_pham sp ON dg.san_pham_id = sp.id
+                $whereSql
+                ORDER BY dg.ngay_viet DESC
+                LIMIT $limit OFFSET $offset";
+
+        return $this->query($sql);
+    }
+
+    public function timKiem(string $keyword, int $limit = 20, int $offset = 0): array
+    {
+        $keyword = addslashes(trim($keyword));
+        $limit = max(1, (int)$limit);
+        $offset = max(0, (int)$offset);
+
+        $sql = "SELECT dg.*, nd.ho_ten, nd.email, sp.ten_san_pham
+                FROM {$this->table} dg
+                LEFT JOIN nguoi_dung nd ON dg.nguoi_dung_id = nd.id
+                LEFT JOIN san_pham sp ON dg.san_pham_id = sp.id
+                WHERE nd.ho_ten LIKE '%$keyword%'
+                   OR nd.email LIKE '%$keyword%'
+                   OR sp.ten_san_pham LIKE '%$keyword%'
+                   OR dg.noi_dung LIKE '%$keyword%'
+                ORDER BY dg.ngay_viet DESC
+                LIMIT $limit OFFSET $offset";
+
+        return $this->query($sql);
+    }
+
+    public function demDanhGia(?int $soSao = null, ?int $sanPhamId = null, ?string $keyword = null): int
+    {
+        $where = [];
+
+        if ($soSao !== null) {
+            $where[] = 'dg.so_sao = ' . (int)$soSao;
+        }
+
+        if ($sanPhamId !== null) {
+            $where[] = 'dg.san_pham_id = ' . (int)$sanPhamId;
+        }
+
+        if ($keyword !== null && trim($keyword) !== '') {
+            $safeKeyword = addslashes(trim($keyword));
+            $where[] = "(nd.ho_ten LIKE '%$safeKeyword%'
+                       OR nd.email LIKE '%$safeKeyword%'
+                       OR sp.ten_san_pham LIKE '%$safeKeyword%'
+                       OR dg.noi_dung LIKE '%$safeKeyword%')";
+        }
+
+        $whereSql = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+
+        $sql = "SELECT COUNT(*) as total
+                FROM {$this->table} dg
+                LEFT JOIN nguoi_dung nd ON dg.nguoi_dung_id = nd.id
+                LEFT JOIN san_pham sp ON dg.san_pham_id = sp.id
+                $whereSql";
+
+        $result = $this->query($sql);
+        return (int)($result[0]['total'] ?? 0);
     }
 }

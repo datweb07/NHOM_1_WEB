@@ -18,7 +18,7 @@ class NguoiDungController
         $loaiTaiKhoan = isset($_GET['loai_tai_khoan']) ? trim($_GET['loai_tai_khoan']) : '';
         $trangThai = isset($_GET['trang_thai']) ? trim($_GET['trang_thai']) : '';
         $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-        
+
         $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
         if ($page < 1) {
             $page = 1;
@@ -34,7 +34,7 @@ class NguoiDungController
             $danhSachNguoiDung = $this->nguoiDungModel->layDanhSach($loaiTaiKhoan, $trangThai, $limit, $offset);
             $totalNguoiDung = $this->nguoiDungModel->demNguoiDung($loaiTaiKhoan, $trangThai);
         }
-        
+
         $totalPages = ceil($totalNguoiDung / $limit);
 
         $success = $_GET['success'] ?? '';
@@ -100,9 +100,9 @@ class NguoiDungController
 
         // Prevent self-blocking
         require_once dirname(__DIR__, 2) . '/core/Session.php';
-        Session::start();
-        $currentUserId = Session::get('user_id');
-        
+        \App\Core\Session::start();
+        $currentUserId = \App\Core\Session::get('user_id');
+
         if ($id === $currentUserId) {
             header('Location: /admin/nguoi-dung?error=cannot_block_self');
             exit;
@@ -139,10 +139,10 @@ class NguoiDungController
             exit;
         }
 
-        $userIds = isset($_POST['user_ids']) && is_array($_POST['user_ids']) 
-            ? array_map('intval', $_POST['user_ids']) 
+        $userIds = isset($_POST['user_ids']) && is_array($_POST['user_ids'])
+            ? array_map('intval', $_POST['user_ids'])
             : [];
-        
+
         $action = isset($_POST['action']) ? trim($_POST['action']) : '';
 
         if (empty($userIds) || !in_array($action, ['block', 'unblock'], true)) {
@@ -152,9 +152,9 @@ class NguoiDungController
 
         // Prevent self-blocking
         require_once dirname(__DIR__, 2) . '/core/Session.php';
-        Session::start();
-        $currentUserId = Session::get('user_id');
-        
+        \App\Core\Session::start();
+        $currentUserId = \App\Core\Session::get('user_id');
+
         $successCount = 0;
         foreach ($userIds as $userId) {
             if ($userId === $currentUserId && $action === 'block') {
@@ -173,4 +173,3 @@ class NguoiDungController
         exit;
     }
 }
-

@@ -13,14 +13,14 @@ class BaseModel
         taoKetNoi($this->link);
     }
 
-    
+
     //select *
     public function getAll()
     {
         $sql = "SELECT * FROM {$this->table}";
 
         $result = chayTruyVanTraVeDL($this->link, $sql);
-        
+
         $data = [];
         while ($row = mysqli_fetch_assoc($result)) {
             $data[] = $row;
@@ -55,12 +55,18 @@ class BaseModel
             }
         }
         $valuesString = implode(', ', $values);
-        
+
         $sql = "INSERT INTO {$this->table} ($columns) VALUES ($valuesString)";
 
         chayTruyVanKhongTraVeDL($this->link, $sql);
-        
+
         return mysqli_insert_id($this->link);
+    }
+
+    // Tương thích ngược với tên hàm cũ đang được dùng ở một số model/controller.
+    public function insert($data)
+    {
+        return $this->create($data);
     }
 
     //update
@@ -74,34 +80,43 @@ class BaseModel
                 $updates[] = "$key = '$value'";
             }
         }
-        
+
         $sql = "UPDATE {$this->table} SET " . implode(', ', $updates) . " WHERE id = '$id'";
 
         chayTruyVanKhongTraVeDL($this->link, $sql);
-        
+
         return mysqli_affected_rows($this->link);
     }
 
     //delete
     public function delete($id)
     {
-        if (!empty($id)){
+        if (!empty($id)) {
             $sql = "DELETE FROM {$this->table} WHERE id = '$id'";   //xóa có điều kiện
-        }
-        else {
+        } else {
             $sql = "DELETE FROM {$this->table}";                    //xóa hết
         }
-        
+
         chayTruyVanKhongTraVeDL($this->link, $sql);
-        
+
         return mysqli_affected_rows($this->link);
     }
-    
+
+    public function layTheoId($id)
+    {
+        return $this->getById($id);
+    }
+
+    public function xoa($id)
+    {
+        return $this->delete($id);
+    }
+
     //dùng cho SELECT phức tạp (có JOIN, WHERE...)
     public function query($sql)
     {
         $result = chayTruyVanTraVeDL($this->link, $sql);
-        
+
         $data = [];
         while ($row = mysqli_fetch_assoc($result)) {
             $data[] = $row;
@@ -123,4 +138,3 @@ class BaseModel
         }
     }
 }
-?>

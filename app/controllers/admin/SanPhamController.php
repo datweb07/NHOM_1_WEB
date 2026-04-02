@@ -1,11 +1,11 @@
 <?php
 
-class SanPhamController 
+class SanPhamController
 {
     private $baseModel;
     private $sanPhamModel;
 
-    public function __construct() 
+    public function __construct()
     {
         require_once dirname(__DIR__, 2) . '/models/BaseModel.php';
         require_once dirname(__DIR__, 2) . '/models/entities/SanPham.php';
@@ -13,13 +13,13 @@ class SanPhamController
         $this->sanPhamModel = new SanPham();
     }
 
-    public function index() 
+    public function index()
     {
-       
+
         $keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
         $safeKeyword = htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8');
 
-        
+
         $danhMucId = isset($_GET['danh_muc_id']) && is_numeric($_GET['danh_muc_id']) ? (int)$_GET['danh_muc_id'] : 0;
         $giaMin = isset($_GET['gia_min']) && is_numeric($_GET['gia_min']) ? (float)$_GET['gia_min'] : null;
         $giaMax = isset($_GET['gia_max']) && is_numeric($_GET['gia_max']) ? (float)$_GET['gia_max'] : null;
@@ -28,12 +28,12 @@ class SanPhamController
         if ($page < 1) {
             $page = 1;
         }
-        $limit = 15; 
+        $limit = 15;
         $offset = ($page - 1) * $limit;
 
         $dbKeyword = addslashes($keyword);
-        
-        
+
+
         $whereConditions = [];
         if ($keyword !== '') {
             $whereConditions[] = "(sp.ten_san_pham LIKE '%$dbKeyword%' 
@@ -63,10 +63,10 @@ class SanPhamController
                       $whereClause
                       ORDER BY sp.ngay_tao DESC
                       LIMIT $limit OFFSET $offset";
-        
+
         $danhSachSanPham = $this->baseModel->query($sqlSearch);
 
-        
+
         $sqlDanhMuc = "SELECT id, ten FROM danh_muc WHERE trang_thai = 1 ORDER BY thu_tu ASC, ten ASC";
         $danhSachDanhMuc = $this->baseModel->query($sqlDanhMuc);
 
@@ -87,11 +87,11 @@ class SanPhamController
         require_once dirname(__DIR__, 2) . '/views/admin/san_pham/index.php';
     }
 
-    
-     
-    public function xoa($id) 
+
+
+    public function xoa($id)
     {
-        $id = (int)$id; 
+        $id = (int)$id;
         if ($id <= 0) {
             header("Location: /admin/san-pham?error=invalid_id");
             exit;
@@ -104,7 +104,7 @@ class SanPhamController
             header("Location: /admin/san-pham?error=has_orders");
             exit;
         }
-        
+
         $this->baseModel->update($id, ['trang_thai' => 'NGUNG_BAN']);
         $sqlPhienBan = "UPDATE phien_ban_san_pham SET trang_thai = 'NGUNG_BAN' WHERE san_pham_id = $id";
         $this->baseModel->query($sqlPhienBan);
@@ -112,14 +112,14 @@ class SanPhamController
         header("Location: /admin/san-pham?success=deleted");
         exit;
     }
-    public function moBan($id) 
+    public function moBan($id)
     {
-        $id = (int)$id; 
+        $id = (int)$id;
         if ($id <= 0) {
             header("Location: /admin/san-pham?error=invalid_id");
             exit;
         }
-        
+
         $this->baseModel->update($id, ['trang_thai' => 'CON_BAN']);
         $sqlPhienBan = "UPDATE phien_ban_san_pham 
                         SET trang_thai = CASE WHEN so_luong_ton > 0 THEN 'CON_HANG' ELSE 'HET_HANG' END 
@@ -471,7 +471,7 @@ class SanPhamController
 
         require_once dirname(__DIR__, 2) . '/models/entities/PhienBanSanPham.php';
         $phienBanModel = new PhienBanSanPham();
-        
+
         $variant = $phienBanModel->getById($variantId);
         if (!$variant) {
             header('Location: /admin/san-pham?error=not_found');
@@ -504,7 +504,7 @@ class SanPhamController
 
         require_once dirname(__DIR__, 2) . '/models/entities/PhienBanSanPham.php';
         $phienBanModel = new PhienBanSanPham();
-        
+
         $variant = $phienBanModel->getById($variantId);
         if (!$variant) {
             header('Location: /admin/san-pham?error=not_found');
@@ -643,7 +643,6 @@ class SanPhamController
         require_once dirname(__DIR__, 2) . '/core/FileUpload.php';
         require_once dirname(__DIR__, 2) . '/models/entities/HinhAnhSanPham.php';
 
-        $fileUpload = new FileUpload();
         $hinhAnhModel = new HinhAnhSanPham();
 
         // Validate file upload
@@ -653,9 +652,10 @@ class SanPhamController
         }
 
         // Upload file
-        $uploadResult = $fileUpload->uploadImage($_FILES['image'], 'products');
-        if (!$uploadResult['success']) {
-            $_SESSION['image_error'] = $uploadResult['error'];
+        $uploadDir = dirname(__DIR__, 3) . '/public/uploads/products/';
+        $filename = \App\Core\FileUpload::uploadImage($_FILES['image'], $uploadDir);
+        if ($filename === null) {
+            $_SESSION['image_error'] = 'Upload ảnh thất bại.';
             header('Location: /admin/san-pham/hinh-anh?id=' . $sanPhamId . '&error=upload_failed');
             exit;
         }
@@ -674,7 +674,7 @@ class SanPhamController
         $payload = [
             'san_pham_id' => $sanPhamId,
             'phien_ban_id' => $phienBanId,
-            'url_anh' => $uploadResult['url'],
+            'url_anh' => '/uploads/products/' . $filename,
             'alt_text' => addslashes($altText),
             'la_anh_chinh' => $laAnhChinh,
             'thu_tu' => $thuTu,
@@ -695,7 +695,7 @@ class SanPhamController
 
         require_once dirname(__DIR__, 2) . '/models/entities/HinhAnhSanPham.php';
         $hinhAnhModel = new HinhAnhSanPham();
-        
+
         $image = $hinhAnhModel->getById($imageId);
         if (!$image) {
             header('Location: /admin/san-pham?error=not_found');
@@ -719,7 +719,7 @@ class SanPhamController
 
         require_once dirname(__DIR__, 2) . '/models/entities/HinhAnhSanPham.php';
         $hinhAnhModel = new HinhAnhSanPham();
-        
+
         $image = $hinhAnhModel->getById($imageId);
         if (!$image) {
             header('Location: /admin/san-pham?error=not_found');

@@ -15,7 +15,7 @@ class ChiTietDon extends BaseModel
     public function layChiTietDonHang(int $donHangId): array
     {
         $donHangId = (int)$donHangId;
-        
+
         $sql = "SELECT ctd.*, 
                        pbsp.ten_phien_ban, pbsp.mau_sac, pbsp.dung_luong, pbsp.ram,
                        sp.ten_san_pham, sp.slug,
@@ -26,7 +26,7 @@ class ChiTietDon extends BaseModel
                 INNER JOIN phien_ban_san_pham pbsp ON ctd.phien_ban_id = pbsp.id
                 INNER JOIN san_pham sp ON pbsp.san_pham_id = sp.id
                 WHERE ctd.don_hang_id = $donHangId";
-        
+
         return $this->query($sql);
     }
 
@@ -41,5 +41,10 @@ class ChiTietDon extends BaseModel
             'so_luong' => $soLuong,
             'gia_tai_thoi_diem_mua' => $giaTaiThoiDiemMua
         ]);
+    }
+
+    public function layTheoDonHang(int $donHangId): array
+    {
+        return $this->layChiTietDonHang($donHangId);
     }
 }
