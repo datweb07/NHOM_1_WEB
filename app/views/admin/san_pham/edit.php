@@ -10,45 +10,41 @@ class SanPhamEditViewHelper
 $old = $old ?? [];
 $errors = $errors ?? [];
 $sanPham = $sanPham ?? [];
+$sanPhamId = (int)($sanPham['id'] ?? 0);
+
+require_once dirname(__DIR__) . '/layouts/header.php';
+require_once dirname(__DIR__) . '/layouts/sidebar.php';
 ?>
-<!DOCTYPE html>
-<html lang="vi">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sửa sản phẩm</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-</head>
-
-<body class="bg-light">
-    <div class="container py-4 py-lg-5" style="max-width: 920px;">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h1 class="h4 mb-0">Sửa sản phẩm</h1>
-            <div class="btn-group btn-group-sm">
-                <a href="/admin/san-pham/phien-ban?id=<?= (int)$sanPham['id'] ?>" class="btn btn-outline-info">
-                    <i class="bi bi-box"></i> Phiên bản
-                </a>
-                <a href="/admin/san-pham/hinh-anh?id=<?= (int)$sanPham['id'] ?>" class="btn btn-outline-secondary">
-                    <i class="bi bi-image"></i> Hình ảnh
-                </a>
-                <a href="/admin/san-pham/thong-so?id=<?= (int)$sanPham['id'] ?>" class="btn btn-outline-warning">
-                    <i class="bi bi-list-ul"></i> Thông số
-                </a>
-                <a href="/admin/san-pham" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left"></i> Quay lại
-                </a>
-            </div>
-        </div>
-        
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3">
-                <p class="text-secondary mb-0">Cập nhật thông tin sản phẩm.</p>
+<main class="app-main">
+    <?php 
+    $breadcrumbs = [
+        ['label' => 'Dashboard', 'url' => '/admin/dashboard'],
+        ['label' => 'Sản Phẩm', 'url' => '/admin/san-pham'],
+        ['label' => 'Sửa ID = ' . $sanPhamId, 'url' => '']
+    ];
+    require_once dirname(__DIR__) . '/layouts/breadcrumb.php'; 
+    ?>
+    
+    <div class="app-content">
+        <div class="container-fluid">
+            <div class="mb-3">
+                <div class="btn-group btn-group-sm">
+                    <a href="/admin/san-pham/phien-ban?id=<?= $sanPhamId ?>" class="btn btn-outline-info">
+                        <i class="bi bi-box"></i> Phiên bản
+                    </a>
+                    <a href="/admin/san-pham/hinh-anh?id=<?= $sanPhamId ?>" class="btn btn-outline-secondary">
+                        <i class="bi bi-image"></i> Hình ảnh
+                    </a>
+                    <a href="/admin/san-pham/thong-so?id=<?= $sanPhamId ?>" class="btn btn-outline-warning">
+                        <i class="bi bi-list-ul"></i> Thông số
+                    </a>
+                </div>
             </div>
 
-            <div class="card-body">
-                <form class="row g-3" method="POST" action="/admin/san-pham/sua?id=<?= (int)$sanPham['id'] ?>">
+            <div class="card">
+                <div class="card-body">
+                <form class="row g-3" method="POST" action="/admin/san-pham/sua?id=<?= $sanPhamId ?>">
                     <div class="col-12">
                         <label class="form-label" for="ten_san_pham">Tên sản phẩm *</label>
                         <input class="form-control" id="ten_san_pham" name="ten_san_pham" type="text" value="<?= SanPhamEditViewHelper::e($old['ten_san_pham'] ?? $sanPham['ten_san_pham'] ?? '') ?>" required>
@@ -122,10 +118,10 @@ $sanPham = $sanPham ?? [];
                         <a class="btn btn-outline-secondary" href="/admin/san-pham">Quay lại danh sách</a>
                     </div>
                 </form>
+                </div>
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+</main>
 
-</html>
+<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
