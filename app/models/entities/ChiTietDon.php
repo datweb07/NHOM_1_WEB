@@ -35,11 +35,19 @@ class ChiTietDon extends BaseModel
      */
     public function themChiTiet(int $donHangId, int $phienBanId, int $soLuong, float $giaTaiThoiDiemMua): int
     {
-        return $this->insert([
+        return $this->create([
             'don_hang_id' => $donHangId,
             'phien_ban_id' => $phienBanId,
             'so_luong' => $soLuong,
             'gia_tai_thoi_diem_mua' => $giaTaiThoiDiemMua
         ]);
+    }
+
+    /**
+     * Lấy chi tiết theo đơn hàng (alias cho layChiTietDonHang)
+     */
+    public function layTheoDonHang(int $donHangId): array
+    {
+        return $this->layChiTietDonHang($donHangId);
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+require_once dirname(__DIR__, 2) . '/core/FileUpload.php';
+
+use App\Core\FileUpload;
+
 class SanPhamController 
 {
     private $baseModel;

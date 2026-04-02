@@ -56,7 +56,7 @@ class HinhAnhSanPham extends BaseModel
             'thu_tu' => $thuTu
         ];
         
-        return $this->insert($data);
+        return $this->create($data);
     }
 
     /**
@@ -65,5 +65,57 @@ class HinhAnhSanPham extends BaseModel
     public function xoaHinhAnh(int $id): int
     {
         return $this->delete($id);
+    }
+
+    /**
+     * Đặt ảnh chính cho sản phẩm
+     */
+    public function datAnhChinh(int $sanPhamId, int $anhId): bool
+    {
+        $sanPhamId = (int)$sanPhamId;
+        $anhId = (int)$anhId;
+        
+        // Bỏ đánh dấu ảnh chính cũ
+        $sql1 = "UPDATE {$this->table} 
+                 SET la_anh_chinh = 0 
+                 WHERE san_pham_id = $sanPhamId";
+        $this->query($sql1);
+        
+        // Đánh dấu ảnh mới là ảnh chính
+        $sql2 = "UPDATE {$this->table} 
+                 SET la_anh_chinh = 1 
+                 WHERE id = $anhId AND san_pham_id = $sanPhamId";
+        $this->query($sql2);
+        
+        return mysqli_affected_rows($this->link) > 0;
+    }
+
+    /**
+     * Xóa ảnh và xóa file
+     */
+    public function xoaVaXoaFile(int $id): bool
+    {
+        // Lấy thông tin ảnh trước khi xóa
+        $anh = $this->getById($id);
+        if (!$anh) {
+            return false;
+        }
+        
+        // Xóa record trong database
+        $deleted = $this->delete($id) > 0;
+        
+        // Xóa file nếu là local file (không phải URL từ CDN)
+        if ($deleted && !empty($anh['url_anh'])) {
+            $urlAnh = $anh['url_anh'];
+            // Chỉ xóa nếu là file local (bắt đầu bằng /uploads/)
+            if (strpos($urlAnh, '/uploads/') === 0) {
+                $filePath = dirname(__DIR__, 3) . $urlAnh;
+                if (file_exists($filePath)) {
+                    @unlink($filePath);
+                }
+            }
+        }
+        
+        return $deleted;
     }
 }

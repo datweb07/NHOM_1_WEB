@@ -76,4 +76,31 @@ class PhienBanSanPham extends BaseModel
         $this->query($sql);
         return mysqli_affected_rows($this->link) > 0;
     }
+
+    /**
+     * Cập nhật tồn kho trực tiếp
+     */
+    public function capNhatTonKho(int $phienBanId, int $soLuongMoi): int
+    {
+        return $this->update($phienBanId, ['so_luong_ton' => $soLuongMoi]);
+    }
+
+    /**
+     * Kiểm tra SKU đã tồn tại chưa
+     */
+    public function kiemTraSKU(string $sku, ?int $excludeId = null): bool
+    {
+        $sku = mysqli_real_escape_string($this->link, $sku);
+        $sql = "SELECT id FROM {$this->table} WHERE sku = '$sku'";
+        
+        if ($excludeId !== null) {
+            $excludeId = (int)$excludeId;
+            $sql .= " AND id != $excludeId";
+        }
+        
+        $sql .= " LIMIT 1";
+        $result = $this->query($sql);
+        
+        return !empty($result);
+    }
 }

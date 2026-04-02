@@ -39,11 +39,15 @@ class DanhGiaController
         $totalPages = ceil($totalReviews / $limit);
 
         // Get all products for filter dropdown
-        $danhSachSanPham = $this->sanPhamModel->layTatCa();
+        $danhSachSanPham = $this->sanPhamModel->getAll();
 
         // Get success/error messages
         $success = $_GET['success'] ?? '';
         $error = $_GET['error'] ?? '';
+
+        // Pass variables to view using extract
+        $data = compact('danhSachDanhGia', 'totalReviews', 'totalPages', 'danhSachSanPham', 'success', 'error', 'soSao', 'sanPhamId', 'keyword', 'page');
+        extract($data);
 
         // Load view
         require_once dirname(dirname(__DIR__)) . '/views/admin/danh_gia/index.php';
@@ -61,14 +65,7 @@ class DanhGiaController
             exit;
         }
 
-        $danhGia = $this->danhGiaModel->layTheoId($id);
-
-        if (!$danhGia) {
-            header('Location: /admin/danh-gia?error=not_found');
-            exit;
-        }
-
-        // Get additional info
+        // Get review with user and product info
         $sql = "SELECT dg.*, nd.ho_ten, nd.email, nd.sdt, sp.ten_san_pham, sp.slug
                 FROM danh_gia dg
                 LEFT JOIN nguoi_dung nd ON dg.nguoi_dung_id = nd.id
@@ -82,6 +79,14 @@ class DanhGiaController
             header('Location: /admin/danh-gia?error=not_found');
             exit;
         }
+
+        // Get success/error messages
+        $success = $_GET['success'] ?? '';
+        $error = $_GET['error'] ?? '';
+
+        // Pass variables to view
+        $data = compact('danhGia', 'success', 'error');
+        extract($data);
 
         // Load view
         require_once dirname(dirname(__DIR__)) . '/views/admin/danh_gia/detail.php';
