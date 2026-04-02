@@ -7,7 +7,7 @@ require_once '../app/routes/admin/admin.php';
 require_once '../app/service/mailer/Exception.php';
 require_once '../app/service/mailer/PHPMailer.php';
 require_once '../app/service/mailer/SMTP.php';
-require_once '../app/core/functions.php';
+require_once '../app/core/Functions.php';
 
 // sendMail('dattruong.31241024873@st.ueh.edu.vn', 'Test', 'Test');
 
