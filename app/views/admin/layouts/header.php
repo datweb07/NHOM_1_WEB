@@ -58,6 +58,19 @@
       integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4="
       crossorigin="anonymous"
     />
+    <style>
+      /* Đảm bảo menu-open luôn hiển thị dù AdminLTE reset */
+      .nav-sidebar .nav-item.menu-open > .nav-treeview {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+      
+      /* Prevent AdminLTE from hiding menu */
+      .sidebar-menu .nav-item.menu-open > .nav-treeview {
+        display: block !important;
+      }
+    </style>
   </head>
   <!--end::Head-->
   <!--begin::Body-->

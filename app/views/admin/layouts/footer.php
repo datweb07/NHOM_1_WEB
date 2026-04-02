@@ -138,11 +138,11 @@
         },
       };
 
-      const sales_chart = new ApexCharts(
-        document.querySelector('#revenue-chart'),
-        sales_chart_options,
-      );
-      sales_chart.render();
+      const revenueChartEl = document.querySelector('#revenue-chart');
+if (revenueChartEl) {
+  const sales_chart = new ApexCharts(revenueChartEl, sales_chart_options);
+  sales_chart.render();
+}
     </script>
     <!-- jsvectormap -->
     <!-- <script
@@ -262,6 +262,34 @@
       const sparkline3 = new ApexCharts(document.querySelector('#sparkline-3'), option_sparkline3);
       sparkline3.render();
     </script> -->
+    
+    <!-- Custom script to keep sidebar menu open -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+          const currentPath = window.location.pathname;
+          
+          // Tìm link active trong treeview
+          document.querySelectorAll('.nav-treeview .nav-link').forEach(function (link) {
+            const href = link.getAttribute('href');
+            if (href && (currentPath === href || currentPath.startsWith(href + '/') || currentPath.startsWith(href))) {
+              // Đánh dấu link này active
+              link.classList.add('active');
+              
+              // Mở menu cha chứa link này
+              const parentNavItem = link.closest('.nav-treeview')?.closest('.nav-item');
+              if (parentNavItem) {
+                parentNavItem.classList.add('menu-open');
+                const treeview = parentNavItem.querySelector('.nav-treeview');
+                if (treeview) {
+                  treeview.style.display = 'block';
+                }
+              }
+            }
+          });
+        }, 50); // Đợi AdminLTE init xong
+      });
+    </script>
     <!--end::Script-->
   </body>
   <!--end::Body-->
