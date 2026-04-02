@@ -25,7 +25,7 @@ class GioHang extends BaseModel
         }
         
         // Tạo giỏ hàng mới
-        $id = $this->insert(['nguoi_dung_id' => $nguoiDungId]);
+        $id = $this->create(['nguoi_dung_id' => $nguoiDungId]);
         return $this->getById($id);
     }
 
@@ -45,7 +45,7 @@ class GioHang extends BaseModel
         }
         
         // Tạo giỏ hàng mới
-        $id = $this->insert(['session_id' => $sessionId]);
+        $id = $this->create(['session_id' => $sessionId]);
         return $this->getById($id);
     }
 
