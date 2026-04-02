@@ -10,7 +10,7 @@ require_once dirname(__DIR__, 2) . '/core/Session.php';
 use GioHang;
 use ChiTietGio;
 use PhienBanSanPham;
-use Session;
+use App\Core\Session;
 
 class GioHangController
 {

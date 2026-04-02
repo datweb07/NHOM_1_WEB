@@ -20,7 +20,7 @@ use ThanhToan;
 use DiaChi;
 use MaGiamGia;
 use PhienBanSanPham;
-use Session;
+use \App\Core\Session;
 
 class ThanhToanController
 {
@@ -146,7 +146,7 @@ class ThanhToanController
         $phuongThucThanhToan = $_POST['phuong_thuc_thanh_toan'] ?? 'COD';
         $ghiChu = $_POST['ghi_chu'] ?? '';
 
-        $donHangId = $this->donHangModel->insert([
+        $donHangId = $this->donHangModel->create([
             'ma_don_hang' => $maDonHang,
             'nguoi_dung_id' => Session::has('user_id') ? Session::get('user_id') : null,
             'dia_chi_id' => $diaChiId,

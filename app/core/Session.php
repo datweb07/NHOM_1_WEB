@@ -51,6 +51,24 @@ class Session
     {
         return $_SESSION[$key] ?? $default;
     }
+
+    public static function has(string $key): bool
+    {
+        return isset($_SESSION[$key]);
+    }
+
+    public static function flash(string $key, $value = null)
+    {
+        if ($value === null) {
+            // Get flash message and remove it
+            $message = self::get($key);
+            self::remove($key);
+            return $message;
+        } else {
+            // Set flash message
+            self::set($key, $value);
+        }
+    }
     
     //xóa key
     public static function remove(string $key): void

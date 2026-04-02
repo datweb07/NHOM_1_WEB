@@ -10,7 +10,7 @@ require_once dirname(__DIR__, 2) . '/core/Session.php';
 use DonHang;
 use ChiTietDon;
 use ThanhToan;
-use Session;
+use App\Core\Session;
 
 class DonHangController
 {
