@@ -110,7 +110,7 @@ class ThanhToanController
         $ghiChu = trim((string)($_POST['ghi_chu'] ?? ''));
         
         // Approve payment
-        $this->thanhToanModel->duyetThanhToan($id, $adminId, $ghiChu !== '' ? $ghiChu : null);
+        $this->thanhToanModel->duyetThanhToan($id, $adminId, 'THANH_CONG', $ghiChu !== '' ? $ghiChu : null);
         
         header('Location: /admin/thanh-toan/chi-tiet?id=' . $id . '&success=approved');
         exit;

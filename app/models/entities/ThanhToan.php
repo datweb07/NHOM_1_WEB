@@ -29,7 +29,7 @@ class ThanhToan extends BaseModel
      */
     public function taoThanhToan(int $donHangId, string $phuongThuc, float $soTien): int
     {
-        return $this->insert([
+        return $this->create([
             'don_hang_id' => $donHangId,
             'phuong_thuc' => $phuongThuc,
             'so_tien' => $soTien,
@@ -54,6 +54,58 @@ class ThanhToan extends BaseModel
         return $this->update($id, [
             'nguoi_duyet_id' => $nguoiDuyetId,
             'trang_thai_duyet' => $trangThai,
+            'ghi_chu_duyet' => $ghiChu,
+            'ngay_duyet' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    /**
+     * Lấy danh sách thanh toán chờ duyệt
+     */
+    public function layDanhSachChoDuyet(int $limit, int $offset): array
+    {
+        $limit = (int)$limit;
+        $offset = (int)$offset;
+        
+        $sql = "SELECT 
+                    tt.*,
+                    dh.ma_don_hang,
+                    dh.tong_thanh_toan,
+                    dh.ngay_tao as ngay_tao_don,
+                    nd.ho_ten,
+                    nd.email,
+                    nd.sdt
+                FROM {$this->table} tt
+                INNER JOIN don_hang dh ON tt.don_hang_id = dh.id
+                LEFT JOIN nguoi_dung nd ON dh.nguoi_dung_id = nd.id
+                WHERE tt.trang_thai_duyet = 'CHO_DUYET'
+                ORDER BY tt.ngay_thanh_toan DESC
+                LIMIT $limit OFFSET $offset";
+        
+        return $this->query($sql);
+    }
+
+    /**
+     * Đếm tổng số thanh toán chờ duyệt
+     */
+    public function demChoDuyet(): int
+    {
+        $sql = "SELECT COUNT(*) as total 
+                FROM {$this->table} 
+                WHERE trang_thai_duyet = 'CHO_DUYET'";
+        
+        $result = $this->query($sql);
+        return !empty($result) ? (int)$result[0]['total'] : 0;
+    }
+
+    /**
+     * Từ chối thanh toán
+     */
+    public function tuChoiThanhToan(int $id, int $nguoiDuyetId, ?string $ghiChu = null): int
+    {
+        return $this->update($id, [
+            'nguoi_duyet_id' => $nguoiDuyetId,
+            'trang_thai_duyet' => 'THAT_BAI',
             'ghi_chu_duyet' => $ghiChu,
             'ngay_duyet' => date('Y-m-d H:i:s')
         ]);
