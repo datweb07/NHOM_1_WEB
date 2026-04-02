@@ -41,20 +41,22 @@ class BaseModel
     //insert
     public function create($data)
     {
-        // Auto-add ngay_tao if not present
-        if (!isset($data['ngay_tao'])) {
-            $data['ngay_tao'] = date('Y-m-d H:i:s');
-        }
-
         //lấy key và nối chuỗi
         $arrayKeys = array_keys($data);
         $columns = implode(', ', $arrayKeys);
 
-        //lấy value và nối chuỗi
-        $arrayValues = array_values($data);
-        $values = "'" . implode("', '", $arrayValues) . "'";
+        //xử lý value - NULL không được bọc trong dấu nháy
+        $values = [];
+        foreach ($data as $value) {
+            if ($value === null) {
+                $values[] = 'NULL';
+            } else {
+                $values[] = "'" . $value . "'";
+            }
+        }
+        $valuesString = implode(', ', $values);
         
-        $sql = "INSERT INTO {$this->table} ($columns) VALUES ($values)";
+        $sql = "INSERT INTO {$this->table} ($columns) VALUES ($valuesString)";
 
         chayTruyVanKhongTraVeDL($this->link, $sql);
         
@@ -64,14 +66,13 @@ class BaseModel
     //update
     public function update($id, $data)
     {
-        // Auto-add ngay_cap_nhat if not present
-        if (!isset($data['ngay_cap_nhat'])) {
-            $data['ngay_cap_nhat'] = date('Y-m-d H:i:s');
-        }
-
         $updates = [];
         foreach ($data as $key => $value) {
-            $updates[] = "$key = '$value'";
+            if ($value === null) {
+                $updates[] = "$key = NULL";
+            } else {
+                $updates[] = "$key = '$value'";
+            }
         }
         
         $sql = "UPDATE {$this->table} SET " . implode(', ', $updates) . " WHERE id = '$id'";
