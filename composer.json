@@ -1,0 +1,17 @@
+{
+    "name": "administrator/nhom_1_web",
+    "autoload": {
+        "psr-4": {
+            "Administrator\\Nhom1Web\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "datweb07",
+            "email": "dat82770@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    }
+}

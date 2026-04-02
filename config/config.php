@@ -1,14 +1,18 @@
 <?php
 
-define("HOST", "localhost");
-define("DB", "db_web");
-define("USER", "root");
-define("PASSWORD", "123456");
+// require_once __DIR__ . '/vendor/autoload.php';
 
-// define('HOST', (string) env('HOST', 'localhost'));
-// define('DB', (string) env('DB', 'db_web'));
-// define('PORT', (string) env('DB_PORT', '3306'));
-// define('USER', (string) env('USER', 'root'));
-// define('PASSWORD', (string) env('PASSWORD', '123456'));
+// $envConfig = EnvSetup::env(__DIR__);
+
+// define('DB_HOST', $envConfig['DB_HOST']);
+// define('DB_NAME', $envConfig['db_web']);
+// define('DB_PORT', $envConfig['3307']);
+// define('DB_USER', $envConfig['root']);
+// define('DB_PASSWORD', $envConfig['123456']);
+
+define("DB_HOST", "localhost");
+define("DB_NAME", "db_web");
+define("DB_USER", "root");
+define("DB_PASSWORD", "123456");
 
 ?>
