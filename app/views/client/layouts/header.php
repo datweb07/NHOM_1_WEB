@@ -1,4 +1,19 @@
-<header>
+<style>
+  /* Sticky header - giữ nguyên khi cuộn trang */
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 1030; /* cao hơn các thành phần khác nhưng thấp hơn offcanvas (1040) */
+    background-color: #03224c; /* màu nền chính của header (có thể điều chỉnh theo thiết kế của bạn) */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* đổ bóng nhẹ khi sticky */
+  }
+ 
+  /* Offcanvas (menu mobile) cần z-index cao hơn header để hiển thị đè lên */
+  .offcanvas {
+    z-index: 1050 !important;
+  }
+</style>
+<header class="sticky-header">
 
     <div class="header-top">
         <div class="container-xl">
