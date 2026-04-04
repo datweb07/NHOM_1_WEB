@@ -24,7 +24,8 @@
 .item-slider {
     width: 100%;
     transition: 2s;
-    border: 1px solid #ccc;
+    /* Đã xóa border: 1px solid #ccc; để banner không bị viền xấu */
+    border: none; 
 }
 
 .item-slider.product-detail {
@@ -43,7 +44,6 @@
     height: 100%;
     width: 100%;
     object-fit: cover;
-
 }
 
 .next-slider-card,
@@ -55,8 +55,9 @@
     line-height: 40px;
     position: absolute;
     top: 40%;
-    background-color: #ccc;
+    background-color: rgba(204, 204, 204, 0.7); /* Thêm độ trong suốt nhẹ cho nút */
     font-size: 16px;
+    cursor: pointer; /* Thêm con trỏ chuột khi hover */
 }
 
 .next-slider-card {
