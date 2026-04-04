@@ -33,12 +33,12 @@ class GioHangController
         if (Session::has('user_id')) {
             return $this->gioHangModel->layHoacTaoGioHangUser(Session::get('user_id'));
         }
-        
+
         // Khách vãng lai
         if (!Session::has('cart_session_id')) {
             Session::set('cart_session_id', session_id());
         }
-        
+
         return $this->gioHangModel->layHoacTaoGioHangGuest(Session::get('cart_session_id'));
     }
 
@@ -50,7 +50,7 @@ class GioHangController
         $gioHang = $this->layGioHangHienTai();
         $chiTietGioList = $this->chiTietGioModel->layChiTietGioHang($gioHang['id']);
         $tongTien = $this->chiTietGioModel->tinhTongTien($gioHang['id']);
-        
+
         require_once dirname(__DIR__, 2) . '/views/client/gio_hang/index.php';
     }
 
@@ -143,11 +143,11 @@ class GioHangController
     public function demSanPham(): void
     {
         header('Content-Type: application/json');
-        
+
         $gioHang = $this->layGioHangHienTai();
         $soLuong = $this->chiTietGioModel->demSanPham($gioHang['id']);
-        
-        echo json_encode(['count' => $soLuong]);
+
+        echo json_encode(['success' => true, 'count' => $soLuong]);
         exit;
     }
 }

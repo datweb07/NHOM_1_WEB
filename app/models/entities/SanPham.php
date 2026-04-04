@@ -152,7 +152,7 @@ class SanPham extends BaseModel
         $sanPhamId = (int)$sanPhamId;
         $sql = "UPDATE phien_ban_san_pham SET trang_thai = 'NGUNG_BAN' WHERE san_pham_id = $sanPhamId";
         $this->query($sql);
-        return mysqli_affected_rows($this -> link);
+        return mysqli_affected_rows($this->link);
     }
 
     public function capNhatTrangThaiPhienBanKhiMoBan(int $sanPhamId): int
@@ -161,8 +161,8 @@ class SanPham extends BaseModel
         $sql = "UPDATE phien_ban_san_pham
                 SET trang_thai = CASE WHEN so_luong_ton > 0 THEN 'CON_HANG' ELSE 'HET_HANG' END
                 WHERE san_pham_id = $sanPhamId";
-              $this->query($sql);
-              return mysqli_affected_rows($this -> link);
+        $this->query($sql);
+        return mysqli_affected_rows($this->link);
     }
 
     // public function query($sql)
@@ -303,7 +303,7 @@ class SanPham extends BaseModel
                 WHERE sp.noi_bat = 1 AND sp.trang_thai = 'CON_BAN'
                 ORDER BY sp.ngay_tao DESC
                 LIMIT $limit";
-        
+
         return parent::query($sql);
     }
 
@@ -317,6 +317,10 @@ class SanPham extends BaseModel
                        km.loai_giam, 
                        km.gia_tri_giam, 
                        km.giam_toi_da,
+                       COALESCE(sp.gia_hien_thi, 
+                                (SELECT MIN(gia_ban) FROM phien_ban_san_pham 
+                                 WHERE san_pham_id = sp.id AND trang_thai = 'CON_HANG'),
+                                0) as gia_hien_thi,
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
                         LIMIT 1) as anh_chinh
@@ -329,7 +333,7 @@ class SanPham extends BaseModel
                   AND (km.ngay_ket_thuc IS NULL OR km.ngay_ket_thuc >= NOW())
                 ORDER BY sp.ngay_tao DESC
                 LIMIT $limit";
-        
+
         return parent::query($sql);
     }
 
@@ -340,7 +344,7 @@ class SanPham extends BaseModel
     {
         $limit = max(1, (int)$limit);
         $slugDanhMuc = mysqli_real_escape_string($this->link, $slugDanhMuc);
-        
+
         $sql = "SELECT sp.*, 
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
@@ -351,7 +355,7 @@ class SanPham extends BaseModel
                   AND sp.trang_thai = 'CON_BAN'
                 ORDER BY sp.ngay_tao DESC
                 LIMIT $limit";
-        
+
         return parent::query($sql);
     }
 
@@ -367,7 +371,7 @@ class SanPham extends BaseModel
             }
             return $giaGoc - $tienGiam;
         }
-        
+
         // SO_TIEN
         return max(0, $giaGoc - $giaTriGiam);
     }
@@ -383,7 +387,7 @@ class SanPham extends BaseModel
                 LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.id
                 WHERE sp.slug = '$slug'
                 LIMIT 1";
-        
+
         $result = parent::query($sql);
         return !empty($result) ? $result[0] : null;
     }

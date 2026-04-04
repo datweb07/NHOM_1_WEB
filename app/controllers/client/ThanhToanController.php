@@ -53,7 +53,7 @@ class ThanhToanController
         // Kiểm tra giỏ hàng
         $gioHang = $this->layGioHangHienTai();
         $chiTietGioList = $this->chiTietGioModel->layChiTietGioHang($gioHang['id']);
-        
+
         if (empty($chiTietGioList)) {
             Session::flash('error', 'Giỏ hàng trống');
             header('Location: /gio-hang');
@@ -63,7 +63,7 @@ class ThanhToanController
         // Lấy danh sách địa chỉ nếu user đã đăng nhập
         $diaChiList = [];
         $diaChiMacDinh = null;
-        
+
         if (Session::has('user_id')) {
             $diaChiList = $this->diaChiModel->layDanhSachTheoUser(Session::get('user_id'));
             $diaChiMacDinh = $this->diaChiModel->layDiaChiMacDinh(Session::get('user_id'));
@@ -88,7 +88,7 @@ class ThanhToanController
         // Lấy giỏ hàng
         $gioHang = $this->layGioHangHienTai();
         $chiTietGioList = $this->chiTietGioModel->layChiTietGioHang($gioHang['id']);
-        
+
         if (empty($chiTietGioList)) {
             Session::flash('error', 'Giỏ hàng trống');
             header('Location: /gio-hang');
@@ -127,17 +127,51 @@ class ThanhToanController
 
         if (Session::has('user_id')) {
             $diaChiId = isset($_POST['dia_chi_id']) ? (int)$_POST['dia_chi_id'] : null;
-            if (!$diaChiId) {
+            if (!$diaChiId || $diaChiId <= 0) {
                 Session::flash('error', 'Vui lòng chọn địa chỉ giao hàng');
                 header('Location: /thanh-toan');
                 exit;
             }
         } else {
-            // Khách vãng lai
+            // Khách vãng lai - Kiểm tra các trường bắt buộc
+            $tenNguoiNhan = trim($_POST['ten_nguoi_nhan'] ?? '');
+            $sdtNhan = trim($_POST['sdt_nhan'] ?? '');
+            $tinhThanh = trim($_POST['tinh_thanh'] ?? '');
+            $quanHuyen = trim($_POST['quan_huyen'] ?? '');
+            $xaPhuong = trim($_POST['xa_phuong'] ?? '');
+            $diaChiChiTiet = trim($_POST['dia_chi_chi_tiet'] ?? '');
+
+            if (empty($tenNguoiNhan)) {
+                Session::flash('error', 'Vui lòng nhập họ và tên');
+                header('Location: /thanh-toan');
+                exit;
+            }
+            if (empty($sdtNhan)) {
+                Session::flash('error', 'Vui lòng nhập số điện thoại');
+                header('Location: /thanh-toan');
+                exit;
+            }
+            if (empty($tinhThanh) || empty($quanHuyen) || empty($xaPhuong)) {
+                Session::flash('error', 'Vui lòng chọn đầy đủ Tỉnh/Thành, Quận/Huyện, Xã/Phường');
+                header('Location: /thanh-toan');
+                exit;
+            }
+            if (empty($diaChiChiTiet)) {
+                Session::flash('error', 'Vui lòng nhập số nhà, ngõ, đường');
+                header('Location: /thanh-toan');
+                exit;
+            }
+
+            $diaChi = $diaChiChiTiet . ', ' . $xaPhuong . ', ' . $quanHuyen . ', ' . $tinhThanh;
+
             $thongTinGuest = json_encode([
-                'ten' => $_POST['ten_nguoi_nhan'] ?? '',
-                'sdt' => $_POST['sdt_nhan'] ?? '',
-                'dia_chi' => $_POST['dia_chi'] ?? ''
+                'ten' => $tenNguoiNhan,
+                'sdt' => $sdtNhan,
+                'dia_chi' => $diaChi,
+                'dia_chi_chi_tiet' => $diaChiChiTiet,
+                'xa_phuong' => $xaPhuong,
+                'quan_huyen' => $quanHuyen,
+                'tinh_thanh' => $tinhThanh
             ]);
         }
 
@@ -230,11 +264,11 @@ class ThanhToanController
         if (Session::has('user_id')) {
             return $this->gioHangModel->layHoacTaoGioHangUser(Session::get('user_id'));
         }
-        
+
         if (!Session::has('cart_session_id')) {
             Session::set('cart_session_id', session_id());
         }
-        
+
         return $this->gioHangModel->layHoacTaoGioHangGuest(Session::get('cart_session_id'));
     }
 }
