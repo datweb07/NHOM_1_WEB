@@ -45,32 +45,38 @@ ob_start();
     </div>
 </div>
 
-<div class="category-wapper" style="position: relative; z-index: 10; margin-top: -200px;">
-    <div class="container-xl category"
-        style="background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: none; padding: 15px 0;">
-        <div class="row g-0">
-            <?php if (!empty($danhMucList)): ?>
-                <?php foreach ($danhMucList as $dm): ?>
-                    <div class="col-lg-2 col-md-3 col-3">
-                        <div class="category-item" style="border: none;">
-                            <a href="/danh-muc/<?php echo htmlspecialchars($dm['slug']); ?>">
-                                <div class="img-category" style="background: transparent;">
-                                    <?php if (!empty($dm['icon_url'])): ?>
-                                        <img src="<?php echo htmlspecialchars($dm['icon_url']); ?>"
-                                            alt="<?php echo htmlspecialchars($dm['ten']); ?>">
-                                    <?php else: ?>
-                                        <img src="/public/assets/client/images/icon/phone.png"
-                                            alt="<?php echo htmlspecialchars($dm['ten']); ?>">
-                                    <?php endif; ?>
-                                </div>
-                                <p class="title-category"><?php echo htmlspecialchars($dm['ten']); ?></p>
-                            </a>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
+<div class="category-wapper" style="position: relative; z-index: 10; margin-top: -300px;">
+  <div class="container-xl category"
+    style="background: #fff; border-radius: 12px; border: none; padding: 15px 0;">
+
+    <div class="px-4 pb-4 pt-2">
+      <h3 class="fw-bold mb-0" style="font-size: 1.3rem; color: #333;">Danh mục nổi bật</h3>
     </div>
+    <div class="row g-2">
+      <?php if (!empty($danhMucList)): ?>
+        <?php foreach ($danhMucList as $dm): ?>
+          <div class="col-lg-2 col-md-3 col-3">
+            <div class="category-item" style="border: none; text-align: center;">
+              <a href="/danh-muc/<?php echo htmlspecialchars($dm['slug']); ?>" class="text-decoration-none">
+                <div class="img-category" style="background: transparent;">
+                  <?php if (!empty($dm['icon_url'])): ?>
+                    <img src="<?php echo htmlspecialchars($dm['icon_url']); ?>"
+                         alt="<?php echo htmlspecialchars($dm['ten']); ?>"
+                         style="width: 60px; height: 60px; object-fit: contain; display: inline-block;">
+                  <?php else: ?>
+                    <img src="/public/assets/client/images/icon/phone.png"
+                         alt="<?php echo htmlspecialchars($dm['ten']); ?>"
+                         style="width: 60px; height: 60px; object-fit: contain; display: inline-block;">
+                  <?php endif; ?>
+                </div>
+                <p class="title-category mb-0" style="font-size: 0.85rem; font-weight: bold; color: #333;"><?php echo htmlspecialchars($dm['ten']); ?></p>
+              </a>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </div>
+  </div>
 </div>
 
 <style>
@@ -131,6 +137,16 @@ ob_start();
     .custom-hover-card:hover .custom-hover-zoom {
         transform: scale(1.05);
     }
+
+  .category-item {
+    transition: all 0.2s ease;
+  }
+  .category-item .img-category img {
+    transition: transform 1s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  }
+  .category-item:hover .img-category img {
+    transform: scale(1);
+  }
 </style>
 
 <div class="slider-card mt-4">
