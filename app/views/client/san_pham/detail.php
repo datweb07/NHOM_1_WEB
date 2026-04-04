@@ -1,795 +1,365 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
+$pageTitle = htmlspecialchars($sanPham['ten_san_pham'] ?? 'Chi tiết sản phẩm') . ' - FPT Shop';
+ob_start();
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <title>FPT Shop</title>
-    <script src="https://kit.fontawesome.com/1f55434e39.js" crossorigin="anonymous"></script>
-    <link rel="icon" href="/public/assets/client/images/header/1.png">
-    <link rel="stylesheet" href="/public/assets/client/css/main.css">
-    <link rel="stylesheet" href="/public/assets/client/css/grid.css">
-    <link rel="stylesheet" href="/public/assets/client/css/slider.css">
-    <link rel="stylesheet" href="/public/assets/client/css/reponsive.css">
-</head>
+// Ảnh chính
+$anhChinh = !empty($hinhAnhList) ? $hinhAnhList[0]['url_anh'] : ($sanPham['anh_chinh'] ?? '/public/assets/client/images/products/14.png');
 
-<body>
-    <div class="wrapper">
-        <!-- header -->
-        <!-- header -->
-        <div class="wrapper">
-            <div class="header">
-                <div class="header-top">
-                    <div class="grid wide">
-                        <div class="row header-top">
-                            <div class="col l-2 m-6 c-6">
-                                <div class="logo-top">
-                                    <i class="fa fa-bars bar-reponsive" aria-hidden="true"></i>
-                                    <a class="logo f-logo" href="/index.php"></a>
-                                </div>
-                            </div>
-                            <!-- cart for mobile and tablet -->
-                            <div class="col l-0 m-6 c-6">
-                                <div class="cart mobile-tablet">
-                                    <i class="fa fa-cart-shopping" aria-hidden="true"></i> <br>
-                                </div>
-                            </div>
-                            <!-- end cart for mobile and tablet -->
-                            <div class="col l-5 m-6 c-12">
-                                <form class="search-top">
-                                    <input type="search"
-                                        placeholder="Nhập tên điện thoại, máy tính, phụ kiện... cần tìm">
-                                    <button class="button-search">
-                                        <i class="fa fa-magnifying-glass" aria-hidden="true"></i>
-                                    </button>
-                                    <ul class="history-search">
-                                        <span class="title-history-search">Lịch sử tìm</span>
-                                        <li class="history-item"><a href="#">Iphone</a></li>
-                                        <li class="history-item"><a href="#">Samsung</a></li>
-                                        <li class="history-item"><a href="#">Tai nghe</a></li>
-                                    </ul>
-                                </form>
-                            </div>
-                            <div class="col l-5 m-6 c-6">
-                                <div class="service">
-                                    <div class="service-inf">
-                                        <a href="#">
-                                            <i class="fa fa-file" aria-hidden="true"></i>
-                                            <p>Thông tin hay</p>
-                                        </a>
-                                        <ul class="news">
-                                            <li><a href="#">Tin mới</a></li>
-                                            <li><a href="#">Khuyến mãi</a></li>
-                                            <li><a href="#">Thủ thuật</a></li>
-                                            <li><a href="#">For games</a></li>
-                                            <li><a href="#">Video hot</a></li>
-                                            <li><a href="#">Đánh giá - tư vấn</a></li>
-                                            <li><a href="#">App &amp; Game</a></li>
-                                            <li><a href="#">Sự kiện</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="service-pee">
-                                        <a href="#">
-                                            <i class="fa fa-file-invoice-dollar" aria-hidden="true"></i>
-                                            <p>Thanh toán &amp; Tiện ích</p>
-                                        </a>
-                                    </div>
-                                    <div class="service-personal-account">
-                                        <a href="#">
-                                            <i class="fa fa-user" aria-hidden="true"></i>
-                                            <p>Tài khoản của tôi</p>
-                                        </a>
-                                    </div>
-                                    <div class="service-cart">
-                                        <a href="#">
-                                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                                            <p>Giỏ hàng</p>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+// Tính điểm trung bình
+$diemTB = 0;
+if (!empty($danhGiaList)) {
+    $diemTB = array_sum(array_column($danhGiaList, 'so_sao')) / count($danhGiaList);
+}
+
+$isLoggedIn = \App\Core\Session::isLoggedIn();
+?>
+
+<div class="container-xl py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a href="/" class="text-danger text-decoration-none">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="/san-pham" class="text-danger text-decoration-none">Sản phẩm</a></li>
+            <li class="breadcrumb-item active"><?= htmlspecialchars($sanPham['ten_san_pham']) ?></li>
+        </ol>
+    </nav>
+
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success alert-dismissible fade show">
+            <?= $_SESSION['success']; unset($_SESSION['success']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show">
+            <?= $_SESSION['error']; unset($_SESSION['error']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
+    <div class="row g-4">
+
+        <!-- Hình ảnh sản phẩm -->
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm p-3">
+                <img id="main-img" src="<?= htmlspecialchars($anhChinh) ?>"
+                     alt="<?= htmlspecialchars($sanPham['ten_san_pham']) ?>"
+                     class="img-fluid mx-auto d-block mb-3"
+                     style="max-height:320px;object-fit:contain;">
+                <?php if (count($hinhAnhList) > 1): ?>
+                    <div class="d-flex gap-2 flex-wrap justify-content-center">
+                        <?php foreach ($hinhAnhList as $img): ?>
+                            <img src="<?= htmlspecialchars($img['url_anh']) ?>"
+                                 alt="" class="thumb-img border rounded"
+                                 style="width:60px;height:60px;object-fit:contain;cursor:pointer;border:2px solid transparent;"
+                                 onclick="document.getElementById('main-img').src=this.src; document.querySelectorAll('.thumb-img').forEach(t=>t.style.borderColor='transparent'); this.style.borderColor='#d70018';">
+                        <?php endforeach; ?>
                     </div>
-                </div>
-            </div>
-            <div class="header-bottom">
-                <div class="grid wide">
-                    <div class="row">
-                        <div class="col l-12 m-0 c-0">
-                            <ul class="menu-top">
-                                <li class="menu-top-item">
-                                    <a href="/san-pham">
-                                        <i class="fa fa-mobile" aria-hidden="true"></i> Điện thoại </a>
-                                    <div class="nav-box">
-                                        <table class="nav-company">
-                                            <tbody>
-                                                <tr>
-                                                    <td colspan="3" class="nav-box-bold">Hàng sản xuất</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Apple (iphone)</a></td>
-                                                    <td><a href="#">Samsung</a></td>
-                                                    <td><a href="#">Oppo</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Xiaomi</a></td>
-                                                    <td><a href="#">Vivo</a></td>
-                                                    <td><a href="#">Tecno</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Nokia</a></td>
-                                                    <td><a href="#">Asus</a></td>
-                                                    <td><a href="#">Masstel</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Realme</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="3" class="nav-box-bold">Đồng hồ thông minh</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Apple Watch</a></td>
-                                                    <td><a href="#">Samsung</a></td>
-                                                    <td><a href="#">Oppo</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Masstel</a></td>
-                                                    <td><a href="#">Xiaomi</a></td>
-                                                    <td><a href="#">Garmin</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Huawei</a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <table class="level">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="nav-box-bold">Mức giá</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Dưới 2 triệu</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Từ 2 - 4 triệu</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Từ 4 - 7 triệu</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Từ 7 - 13 triệu</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Trên 13 triệu</a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <table class="hot-selling">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="nav-box-bold" colspan="2">bán chạy nhất</td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <a href="#">
-                                                            <img src="/assets/client/images/navbar/hot selling/1.png">
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <a href="#">Samsung Galaxy A53 5G 256GB <p
-                                                                class="hot-selling-price">10.990.000 ₫</p>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <a href="#">
-                                                            <img src="/assets/client/images/navbar/2.png">
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <a href="#">OPPO A55 4GB-64GB <p class="hot-selling-price">
-                                                                4.990.000 ₫</p>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <div class="nav-box-banner">
-                                            <a href="#">
-                                                <img src="/assets/client/images/navbar/3.png">
-                                            </a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="menu-top-item">
-                                    <a href="/san-pham">
-                                        <i class="fa fa-laptop" aria-hidden="true"></i> Laptop </a>
-                                    <div class="nav-box">
-                                        <table class="nav-company">
-                                            <tbody>
-                                                <tr>
-                                                    <td colspan="3" class="nav-box-bold">Hàng sản xuất</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Apple (MacBook)</a></td>
-                                                    <td><a href="#">Asus</a></td>
-                                                    <td><a href="#">HP</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Acer</a></td>
-                                                    <td><a href="#">MSI</a></td>
-                                                    <td><a href="#">Lenovo</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Dell</a></td>
-                                                    <td><a href="#">Microsoft (Surface)</a></td>
-                                                    <td><a href="#">Gigabyte</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Fujitsu</a></td>
-                                                    <td><a href="#">Chuwi</a></td>
-                                                    <td><a href="#">Avita</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Masstel</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="3" class="nav-box-bold">Phần mềm</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Diệt Virus</a></td>
-                                                    <td><a href="#">Microsoft Office</a></td>
-                                                    <td><a href="#">Windows</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Phần mềm khác</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="3" class="nav-box-bold">Máy in</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">HP</a></td>
-                                                    <td><a href="#">Canon</a></td>
-                                                    <td><a href="#">Brother</a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <table class="level wlp-2">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="nav-box-bold">Mức giá</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Dưới 5 triệu</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Từ 5 - 10 triệu</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Từ 10 - 15 triệu</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Từ 15 - 20 triệu</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Từ 20 - 25 triệu</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Từ 25 - 30 triệu</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Trên 30 triệu</a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <div class="nav-box-banner">
-                                            <a href="#">
-                                                <img src="/public/assets/client/images/navbar/4.png">
-                                            </a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="menu-top-item">
-                                    <a href="/san-pham">
-                                        <i class="fa fa-tablet" aria-hidden="true"></i> Máy tính bảng </a>
-                                    <div class="nav-box">
-                                        <table class="nav-company htablet">
-                                            <tbody>
-                                                <tr>
-                                                    <td colspan="3" class="nav-box-bold">Hàng sản xuất</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Apple (iPad)</a></td>
-                                                    <td><a href="#">Samsung</a></td>
-                                                    <td><a href="#">Masstel</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Lenovo</a></td>
-                                                    <td><a href="#">Xiaomi</a></td>
-                                                    <td><a href="#">Coolpad</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Nexta</a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <table class="level">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="nav-box-bold">Mức giá</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Dưới 2 triệu</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Từ 2 - 5 triệu</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Từ 5 - 8 triệu</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Trên 8 triệu</a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <table class="hot-selling">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="nav-box-bold" colspan="2">bán chạy nhất</td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <a href="#">
-                                                            <img src="/public/assets/client/images/navbar/5.png">
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <a href="#">iPad Pro 11 2021 M1 Wi-Fi 128GB <p
-                                                                class="hot-selling-price">19.999.000 ₫</p>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <a href="#">
-                                                            <img src="/public/assets/client/images/navbar/6.png">
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <a href="#">Samsung Galaxy Tab S6 Lite 2022 <p
-                                                                class="hot-selling-price">7.990.000 ₫</p>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <div class="nav-box-banner">
-                                            <a href="#">
-                                                <img src="/public/assets/client/images/navbar/7.png">
-                                            </a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="menu-top-item">
-                                    <a href="/san-pham">
-                                        <i class="fa fa-apple" aria-hidden="true"></i> Apple </a>
-                                    <div class="nav-box">
-                                        <table class="nav-company">
-                                            <tbody>
-                                                <tr>
-                                                    <td colspan="3" class="nav-box-bold">Các sản phẩm Apple</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">iPhone</a></td>
-                                                    <td><a href="#">iPad</a></td>
-                                                    <td><a href="#">MacBook</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Apple Watch</a></td>
-                                                    <td><a href="#">Apple Tai nghe</a></td>
-                                                    <td><a href="#">iMac</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Mac Mini</a></td>
-                                                    <td><a href="#">Ốp lưng &amp; Bao da</a></td>
-                                                    <td><a href="#">Apple TV</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Chuột &amp; Trackpad</a></td>
-                                                    <td><a href="#">Bàn phím</a></td>
-                                                    <td><a href="#">AirTag</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Hàng dự án</a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <table class="hot-selling">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="nav-box-bold" colspan="2">bán chạy nhất</td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <a href="#">
-                                                            <img src="/public/assets/client/images/navbar/8.png">
-                                                        </a>
-                                                    </td>
-                                                    <td><a href="#">iPhone 13 Pro Max 128GB <p
-                                                                class="hot-selling-price">27.990.000 ₫</p>
-                                                        </a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <a href="#">
-                                                            <img src="/public/assets/client/images/navbar/9.png">
-                                                        </a>
-                                                    </td>
-                                                    <td><a href="#">iPhone 13 128GB <p class="hot-selling-price">
-                                                                19.490.000 ₫</p>
-                                                        </a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <div class="nav-box-banner">
-                                            <a href="#">
-                                                <img src="/public/assets/client/images/navbar/10.png">
-                                            </a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="menu-top-item">
-                                    <a href="/san-pham">
-                                        <i class="fa fa-desktop" aria-hidden="true"></i> PC-Linh kiện </a>
-                                    <ul class="news">
-                                        <li><a href="#">PC</a></li>
-                                        <li><a href="#">Linh kiện</a></li>
-                                        <li><a href="#">Màn hình</a></li>
-                                        <li><a href="#">Xây dựng PC</a></li>
-                                    </ul>
-                                </li>
-                                <li class="menu-top-item">
-                                    <a href="/san-pham">
-                                        <i class="fa fa-headphones" aria-hidden="true"></i> Phụ kiện </a>
-                                    <div class="nav-box">
-                                        <table class="nav-company">
-                                            <tbody>
-                                                <tr>
-                                                    <td colspan="3" class="nav-box-bold">Các sản phẩm phụ kiện</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Bao da ốp lưng</a></td>
-                                                    <td><a href="#">Sạc dự phòng</a></td>
-                                                    <td><a href="#">Thẻ nhớ</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Phụ kiện Apple</a></td>
-                                                    <td><a href="#">Miếng dán màn hình</a></td>
-                                                    <td><a href="#">Loa</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">USB - Ổ cứng</a></td>
-                                                    <td><a href="#">Sạc cáp</a></td>
-                                                    <td><a href="#">Tai nghe</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Chuột</a></td>
-                                                    <td><a href="#">Bàn ghế gaming</a></td>
-                                                    <td><a href="#">Balo - Túi xách</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Balo - Túi xách</a></td>
-                                                    <td><a href="#">TV BOX</a></td>
-                                                    <td><a href="#">Phụ kiện khác</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="#">Phụ kiện khẩu trang lọc khí</a></td>
-                                                    <td><a href="#">Bàn phím</a></td>
-                                                    <td><a href="#"></a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <table class="hot-selling">
-                                            <tbody>
-                                                <tr>
-                                                    <td class="nav-box-bold" colspan="2">bán chạy nhất</td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <a href="#">
-                                                            <img src="/public/assets/client/images/navbar/11.png">
-                                                        </a>
-                                                    </td>
-                                                    <td><a href="#">Combo Loa Bluetooth Karaoke kèm Mic không dây ivalue
-                                                            F12-65N <p class="hot-selling-price">1.953.000 ₫</p>
-                                                        </a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <a href="#">
-                                                            <img src="/public/assets/client/images/navbar/12.png">
-                                                        </a>
-                                                    </td>
-                                                    <td><a href="#">Pin sạc dự phòng UmeTravel 10000mAh TRIP10000 Quick
-                                                            Charge <p class="hot-selling-price">809.000 ₫</p>
-                                                        </a></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <div class="nav-box-banner">
-                                            <a href="#">
-                                                <img src="/public/assets/client/images/navbar/13.png">
-                                            </a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="menu-top-item">
-                                    <a href="/san-pham">
-                                        <i class="fa fa-rotate-right" aria-hidden="true"></i> Máy cũ giá rẻ </a>
-                                </li>
-                                <li class="menu-top-item">
-                                    <a href="/san-pham">
-                                        <i class="fa fa-house-laptop" aria-hidden="true"></i> Hàng gia dụng </a>
-                                </li>
-                                <li class="menu-top-item">
-                                    <a href="/san-pham">
-                                        <i class="fa fa-sd-card" aria-hidden="true"></i> Sim&amp;Thẻ cào </a>
-                                </li>
-                                <li class="menu-top-item">
-                                    <a href="/san-pham">
-                                        <i class="fa fa-certificate" aria-hidden="true"></i> Khuyến mãi </a>
-                                    <ul class="news">
-                                        <li><a href="#">Thông tin trao thưởng</a></li>
-                                        <li><a href="#">Tất cả khuyến mại</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
-        <!-- menu-mobile and tablet -->
-        <div class="modal-menu"></div>
-        <div class="menu-mobile-tablet">
-            <ul class="menu-mobile-tablet-list">
-                <li class="menu-mobile-tablet-list-item">
-                    <a href="/san-pham">
-                        <i class="fa fa-mobile" aria-hidden="true"></i> Điện thoại </a>
-                </li>
-                <li class="menu-mobile-tablet-list-item">
-                    <a href="/san-pham">
-                        <i class="fa fa-laptop" aria-hidden="true"></i> Laptop </a>
-                </li>
-                <li class="menu-mobile-tablet-list-item">
-                    <a href="/san-pham">
-                        <i class="fa fa-apple" aria-hidden="true"></i> Apple </a>
-                </li>
-                <li class="menu-mobile-tablet-list-item">
-                    <a href="/san-pham">
-                        <i class="fa fa-desktop" aria-hidden="true"></i> PC phụ kiện </a>
-                </li>
-                <li class="menu-mobile-tablet-list-item">
-                    <a href="/san-pham">
-                        <i class="fa fa-headphones" aria-hidden="true"></i> Tai nghe </a>
-                </li>
-                <li class="menu-mobile-tablet-list-item">
-                    <a href="/san-pham">
-                        <i class="fa fa-arrow-rotate-right" aria-hidden="true"></i> Máy cũ giá rẻ </a>
-                </li>
-                <li class="menu-mobile-tablet-list-item">
-                    <a href="/san-pham">
-                        <i class="fa fa-house-laptop" aria-hidden="true"></i> Hàng gia dụng </a>
-                </li>
-                <li class="menu-mobile-tablet-list-item">
-                    <a href="/san-pham">
-                        <i class="fa fa-sim-card" aria-hidden="true"></i> Sim&amp;Thẻ cào </a>
-                </li>
-                <li class="menu-mobile-tablet-list-item">
-                    <a href="/san-pham">
-                        <i class="fa fa-certificate" aria-hidden="true"></i> Khuyến mãi </a>
-                </li>
-                <li class="menu-mobile-tablet-list-item">
-                    <a href="/san-pham">
-                        <i class="fa fa-circle-dollar-to-slot" aria-hidden="true"></i> Trả góp </a>
-                </li>
-            </ul>
-            <div class="close-menu">
-                <i class="fa fa-xmark" aria-hidden="true"></i>
+
+        <!-- Thông tin sản phẩm -->
+        <div class="col-md-7">
+            <h1 class="h4 fw-bold mb-2"><?= htmlspecialchars($sanPham['ten_san_pham']) ?></h1>
+
+            <!-- Đánh giá -->
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <div class="text-warning">
+                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                        <i class="fa<?= $i <= round($diemTB) ? 's' : 'r' ?> fa-star" style="font-size:0.85rem;"></i>
+                    <?php endfor; ?>
+                </div>
+                <span class="text-muted small"><?= $tongDanhGia ?> đánh giá</span>
             </div>
-        </div>
-        <!-- end-header -->
-        <!-- main -->
-        <div class="main">
-            <div class="grid wide">
-                <div class="row">
-                    <div class="col l-12 m-12 c-12">
-                        <div class="breadcrumbs">
-                            <ul>
-                                <li><a href="/index.php">Home</a></li>
-                                <li><a href="#">Pictures</a></li>
-                                <li><a href="#">Summer 15</a></li>
-                            </ul>
-                        </div>
+
+            <!-- Giá -->
+            <div class="mb-3">
+                <?php
+                $giaBan = $sanPham['gia_hien_thi'];
+                // Nếu có phiên bản chọn thì lấy giá phiên bản
+                $phienBanDauTien = $phienBanList[0] ?? null;
+                if ($phienBanDauTien) $giaBan = $phienBanDauTien['gia_ban'];
+                ?>
+                <span class="text-danger fw-bold fs-3" id="current-price">
+                    <?= number_format($giaBan, 0, ',', '.') ?>đ
+                </span>
+                <?php if (!empty($sanPham['gia_goc']) && $sanPham['gia_goc'] > $giaBan): ?>
+                    <span class="text-muted text-decoration-line-through ms-2">
+                        <?= number_format($sanPham['gia_goc'], 0, ',', '.') ?>đ
+                    </span>
+                <?php endif; ?>
+            </div>
+
+            <!-- Phiên bản -->
+            <?php if (!empty($phienBanList)): ?>
+                <div class="mb-3">
+                    <p class="fw-medium small mb-2">Chọn phiên bản:</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <?php foreach ($phienBanList as $idx => $pb): ?>
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-secondary variant-btn <?= $idx === 0 ? 'active border-danger text-danger' : '' ?>"
+                                    data-id="<?= $pb['id'] ?>"
+                                    data-price="<?= $pb['gia_ban'] ?>"
+                                    data-stock="<?= $pb['ton_kho'] ?>">
+                                <?= htmlspecialchars($pb['ten_phien_ban']) ?>
+                            </button>
+                        <?php endforeach; ?>
+                    </div>
+                    <small class="text-muted mt-1 d-block" id="stock-info">
+                        Còn lại: <?= $phienBanDauTien['ton_kho'] ?? 0 ?> sản phẩm
+                    </small>
+                </div>
+            <?php endif; ?>
+
+            <!-- Form thêm giỏ -->
+            <form action="/gio-hang/them" method="POST" class="mb-3">
+                <input type="hidden" name="phien_ban_id" id="selected-variant"
+                       value="<?= $phienBanDauTien['id'] ?? 0 ?>">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <label class="small fw-medium">Số lượng:</label>
+                    <div class="input-group" style="width:110px;">
+                        <button class="btn btn-outline-secondary btn-sm" type="button"
+                                onclick="changeQty(-1)">-</button>
+                        <input type="number" name="so_luong" id="qty-input" class="form-control text-center"
+                               value="1" min="1" max="99" style="font-size:0.88rem;">
+                        <button class="btn btn-outline-secondary btn-sm" type="button"
+                                onclick="changeQty(1)">+</button>
                     </div>
                 </div>
-            </div>
-            <div class="product">
-                <div class="grid wide">
-                    <div class="row">
-                        <div class="col l-12 m-12 c-12">
-                            <div class="product-title">
-                                <div class="product-name">iPhone 14 Pro Max 128GB</div>
-                                <div class="product-rate">
-                                    <span>5 sao</span>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                    <i class="fa fa-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col l-6 m-12 c-12">
-                            <div class="product-img">
-                                <img src="/public/assets/client/images/products/31.jpg" alt="">
-                            </div>
-                            <ul class="product-info">
-                                <li class="product-info-item">
-                                    <i class="fa fa-mobile"></i>
-                                    <span>6.7 inch, Super Retina XDR, 2796 x 1290 Pixels</span>
-                                </li>
-                                <li class="product-info-item">
-                                    <i class="fa fa-gear"></i>
-                                    <span>48.0 MP + 12.0 MP</span>
-                                </li>
-                                <li class="product-info-item">
-                                    <i class="fa fa-user"></i>
-                                    <span>12.0 MP</span>
-                                </li>
-                                <li class="product-info-item">
-                                    <i class="fa fa-laptop"></i>
-                                    <span>Apple A16 Bionic</span>
-                                </li>
-                                <li class="product-info-item">
-                                    <i class="fa fa-memory"></i>
-                                    <span>128 GB</span>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col l-6 m-12 c-12">
-                            <div class="price">
-                                <div class="new-price">Giá: 30.000.000đ</div>
-                                <div class="old-price">Giá cũ: 35.000.000đ</div>
-                                <div class="price-info">Trả góp chỉ từ 3.000.000₫/tháng</div>
-                            </div>
-                            <div class="product-desc">
-                                <div class="product-desc-title">Chính sách bảo hành</div>
-                                <div class="product-desc-info">
-                                    <i class="fa fa-shield"></i>
-                                    Bảo hành lên đến 2 năm chính hãng
-                                </div>
-                            </div>
-                            <div class="product-desc">
-                                <div class="product-desc-title">Miễn phí đổi trả</div>
-                                <div class="product-desc-info">
-                                    <i class="fa fa-exchange"></i>
-                                    Thu cũ đổi mới trợ giá ngay 15%
-                                </div>
-                            </div>
-                            <div class="product-desc">
-                                <div class="product-desc-title">Giao hàng tận nơi</div>
-                                <div class="product-desc-info">
-                                    <i class="fa fa-truck-fast"></i>
-                                    Miễn phí vận chuyển
-                                </div>
-                            </div>
-                            <div class="product-desc">
-                                <div class="product-desc-title">Số lượng</div>
-                                <div class="product-count">
-                                    <input type="number" value="1" name="count">
-                                </div>
-                            </div>
-                            <div class="product-buy">
-                                <input type="submit" name="buy-now" class="product-buy-btn" value="Mua ngay">
-                                <input type="submit" name="add-to-cart" class="product-buy-btn"
-                                    value="Thêm vào giỏ hàng">
-                            </div>
-                        </div>
-                    </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-danger fw-medium flex-grow-1">
+                        <i class="fa fa-cart-plus me-1"></i>Thêm vào giỏ hàng
+                    </button>
+                    <?php if ($isLoggedIn): ?>
+                        <button type="button" class="btn btn-outline-danger btn-wishlist"
+                                data-id="<?= $sanPham['id'] ?>">
+                            <i class="fa fa-heart"></i>
+                        </button>
+                    <?php endif; ?>
                 </div>
-            </div>
-        </div>
-        <!-- end-main -->
-        <div class="footer">
-            <div class="grid wide">
-                <div class="row">
-                    <div class="col l-2 m-4 c-12">
-                        <div class="footer-1">
-                            <ul class="footer-list">
-                                <li class="footer-list-item"><a href="#">Giới thiệu về công ty</a></li>
-                                <li class="footer-list-item"><a href="#">Câu hỏi thường gặp mua hàng</a></li>
-                                <li class="footer-list-item"><a href="#">Chính sách bảo mật</a></li>
-                                <li class="footer-list-item"><a href="#"> Quy chế hoạt động</a></li>
-                                <li class="footer-list-item"><a href="#">Kiểm tra hóa đơn điện tử</a></li>
-                            </ul>
+            </form>
+
+            <!-- Dịch vụ -->
+            <div class="border rounded p-3 mt-2">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa fa-shield text-success"></i>
+                            <small>Bảo hành 12 tháng</small>
                         </div>
                     </div>
-                    <div class="col l-2 m-4 c-12">
-                        <div class="footer-2">
-                            <ul class="footer-list">
-                                <li class="footer-list-item"><a href="#">Tin tuyển dụng</a></li>
-                                <li class="footer-list-item"><a href="#">Tin khuyến mãi</a></li>
-                                <li class="footer-list-item"><a href="#">Hướng dẫn mua online</a></li>
-                                <li class="footer-list-item"><a href="#">Hướng dẫn mua trả góp</a></li>
-                                <li class="footer-list-item"><a href="#">Chính sách trả góp</a></li>
-                            </ul>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa fa-truck-fast text-primary"></i>
+                            <small>Giao hàng toàn quốc</small>
                         </div>
                     </div>
-                    <div class="col l-2 m-4 c-12">
-                        <div class="footer-3">
-                            <ul class="footer-list">
-                                <li class="footer-list-item"><a href="#">Hệ thống cửa hàng</a></li>
-                                <li class="footer-list-item"><a href="#">Bán hàng doanh nghiệp</a></li>
-                                <li class="footer-list-item"><a href="#">Hệ thống bảo hành</a></li>
-                                <li class="footer-list-item"><a href="#">Giới thiệu máy đổi trả </a></li>
-                                <li class="footer-list-item"><a href="#">Chính sách đổi trả</a></li>
-                            </ul>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa fa-rotate-right text-warning"></i>
+                            <small>Đổi trả 30 ngày</small>
                         </div>
                     </div>
-                    <div class="col l-3 m-6 c-12">
-                        <div class="footer-4">
-                            <p class="title-footer">Tư vấn mua hàng (Miễn phí)</p>
-                            <p class="footer-phone">1800 6601</p>
-                            <p class="title-footer">Hỗ trợ kỹ thuật</p>
-                            <p class="footer-phone">1800 6601</p>
-                            <p class="title-footer">Hỗ trợ thanh toán</p>
-                            <div class="img-footer">
-                                <img src="/public/assets/client/images/others/28.png" alt="">
-                            </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fa fa-credit-card text-danger"></i>
+                            <small>Trả góp 0%</small>
                         </div>
-                    </div>
-                    <div class="col l-3 m-6 c-12">
-                        <div class="footer-4">
-                            <p class="title-footer">Góp ý, khiếu nại dịch vụ (8h00-22h00)</p>
-                            <p class="footer-phone">1800 6616</p>
-                            <p class="title-footer">Chứng nhận:</p>
-                            <div class="img-footer footer-final">
-                                <img src="/public/assets/client/images/others/29.png">
-                            </div>
-                            <p class="title-footer">Website cùng tập đoàn:</p>
-                            <div class="img-footer footer-final">
-                                <img src="/public/assets/client/images/others/30.jpg">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="footer-copyright">
-            <div class="grid wide">
-                <div class="row">
-                    <div class="col l-12 m-12 c-12">
-                        <p>© 2007 - 2022 Công Ty Cổ Phần Bán Lẻ Kỹ Thuật Số FPT / Địa chỉ: 261 - 263 Khánh Hội, P2, Q4,
-                            TP. Hồ Chí Minh / GPĐKKD số 0311609355 do Sở KHĐT TP.HCM cấp ngày 08/03/2012. GP số
-                            47/GP-TTĐT do sở TTTT TP HCM cấp ngày 02/07/2018. Điện thoại: (028)73023456. Email:
-                            fptshop@fpt.com.vn. Chịu trách nhiệm nội dung: Nguyễn Trịnh Nhật Linh.
-                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="/public/assets/client/js/main.js"></script>
-</body>
 
-</html>
+    <!-- Tabs thông số & đánh giá -->
+    <div class="mt-4">
+        <ul class="nav nav-tabs" id="productTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-specs" data-bs-toggle="tab"
+                        data-bs-target="#pane-specs" type="button">Thông số kỹ thuật</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-reviews" data-bs-toggle="tab"
+                        data-bs-target="#pane-reviews" type="button">
+                    Đánh giá (<?= $tongDanhGia ?>)
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content border border-top-0 rounded-bottom p-3 bg-white shadow-sm">
+
+            <!-- Thông số -->
+            <div class="tab-pane fade show active" id="pane-specs" role="tabpanel">
+                <?php if (empty($thongSoList)): ?>
+                    <p class="text-muted small mb-0">Chưa có thông số kỹ thuật.</p>
+                <?php else: ?>
+                    <table class="table table-sm table-striped mb-0">
+                        <tbody>
+                            <?php foreach ($thongSoList as $ts): ?>
+                                <tr>
+                                    <td class="fw-medium small" style="width:40%;"><?= htmlspecialchars($ts['ten_thong_so']) ?></td>
+                                    <td class="small"><?= htmlspecialchars($ts['gia_tri']) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
+
+            <!-- Đánh giá -->
+            <div class="tab-pane fade" id="pane-reviews" role="tabpanel">
+                <?php if (empty($danhGiaList)): ?>
+                    <p class="text-muted small">Chưa có đánh giá nào.</p>
+                <?php else: ?>
+                    <?php foreach ($danhGiaList as $dg): ?>
+                        <div class="border-bottom pb-3 mb-3">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <strong class="small"><?= htmlspecialchars($dg['ho_ten'] ?? 'Ẩn danh') ?></strong>
+                                <div class="text-warning" style="font-size:0.75rem;">
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                        <i class="fa<?= $i <= $dg['so_sao'] ? 's' : 'r' ?> fa-star"></i>
+                                    <?php endfor; ?>
+                                </div>
+                                <span class="text-muted" style="font-size:0.72rem;"><?= date('d/m/Y', strtotime($dg['ngay_tao'])) ?></span>
+                            </div>
+                            <p class="small mb-0"><?= htmlspecialchars($dg['noi_dung']) ?></p>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+
+                <!-- Form gửi đánh giá -->
+                <?php if ($isLoggedIn): ?>
+                    <div class="border rounded p-3 bg-light mt-3">
+                        <h6 class="fw-bold mb-3">Gửi đánh giá của bạn</h6>
+                        <div id="review-msg"></div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-medium">Điểm đánh giá</label>
+                            <select id="so_sao" class="form-select form-select-sm" style="width:120px;">
+                                <option value="5">★★★★★ (5)</option>
+                                <option value="4">★★★★☆ (4)</option>
+                                <option value="3">★★★☆☆ (3)</option>
+                                <option value="2">★★☆☆☆ (2)</option>
+                                <option value="1">★☆☆☆☆ (1)</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-medium">Nội dung</label>
+                            <textarea id="noi_dung" class="form-control form-control-sm" rows="3"
+                                      placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
+                        </div>
+                        <button type="button" class="btn btn-danger btn-sm" id="btn-review" data-id="<?= $sanPham['id'] ?>">Gửi đánh giá</button>
+                    </div>
+                <?php else: ?>
+                    <p class="text-muted small mt-3">
+                        <a href="/client/auth/login" class="text-danger">Đăng nhập</a> để gửi đánh giá.
+                    </p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sản phẩm tương tự -->
+    <?php if (!empty($sanPhamTuongTu)): ?>
+        <div class="mt-5">
+            <h5 class="fw-bold mb-3 border-start border-danger border-3 ps-2">Sản phẩm tương tự</h5>
+            <div class="row g-3">
+                <?php foreach ($sanPhamTuongTu as $sp): ?>
+                    <?php if ($sp['id'] == $sanPham['id']) continue; ?>
+                    <div class="col-6 col-md-3">
+                        <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
+                            <div class="card border-0 shadow-sm h-100">
+                                <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? '/public/assets/client/images/products/14.png') ?>"
+                                     class="card-img-top p-2" alt=""
+                                     style="height:130px;object-fit:contain;">
+                                <div class="card-body pt-0 px-3 pb-3">
+                                    <p class="small mb-1 text-dark" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                        <?= htmlspecialchars($sp['ten_san_pham']) ?>
+                                    </p>
+                                    <p class="text-danger fw-bold mb-0 small"><?= number_format($sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>
+
+<script>
+let selectedVariantId = document.getElementById('selected-variant')?.value;
+
+// Chọn phiên bản
+document.querySelectorAll('.variant-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.variant-btn').forEach(b => {
+            b.classList.remove('active', 'border-danger', 'text-danger');
+        });
+        this.classList.add('active', 'border-danger', 'text-danger');
+        
+        const price = parseInt(this.dataset.price);
+        const stock = parseInt(this.dataset.stock);
+        selectedVariantId = this.dataset.id;
+        
+        document.getElementById('selected-variant').value = selectedVariantId;
+        document.getElementById('current-price').textContent = price.toLocaleString('vi-VN') + 'đ';
+        document.getElementById('stock-info').textContent = 'Còn lại: ' + stock + ' sản phẩm';
+    });
+});
+
+function changeQty(delta) {
+    const inp = document.getElementById('qty-input');
+    let val = parseInt(inp.value) + delta;
+    if (val < 1) val = 1;
+    if (val > 99) val = 99;
+    inp.value = val;
+}
+
+// Yêu thích
+document.querySelector('.btn-wishlist')?.addEventListener('click', function() {
+    const id = this.dataset.id;
+    fetch('/yeu-thich/them', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'san_pham_id=' + id
+    })
+    .then(r => r.json())
+    .then(data => {
+        const icon = this.querySelector('i');
+        if (data.success) {
+            icon.className = 'fas fa-heart text-danger';
+        } else {
+            alert(data.message || 'Đã có trong danh sách yêu thích');
+        }
+    });
+});
+
+// Đánh giá
+document.getElementById('btn-review')?.addEventListener('click', function() {
+    const sanPhamId = this.dataset.id;
+    const soSao = document.getElementById('so_sao').value;
+    const noiDung = document.getElementById('noi_dung').value.trim();
+    const msg = document.getElementById('review-msg');
+
+    if (!noiDung) { msg.innerHTML = '<div class="alert alert-warning py-1 small">Vui lòng nhập nội dung đánh giá</div>'; return; }
+
+    fetch('/danh-gia/them', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'san_pham_id=' + sanPhamId + '&so_sao=' + soSao + '&noi_dung=' + encodeURIComponent(noiDung)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            msg.innerHTML = '<div class="alert alert-success py-1 small"><i class="fa fa-check me-1"></i>' + data.message + '</div>';
+            document.getElementById('noi_dung').value = '';
+        } else {
+            msg.innerHTML = '<div class="alert alert-danger py-1 small">' + data.message + '</div>';
+        }
+    });
+});
+</script>
+
+<?php
+$content = ob_get_clean();
+require_once __DIR__ . '/../layouts/master.php';
+?>

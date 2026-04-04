@@ -1,62 +1,54 @@
 <?php
-require_once dirname(__DIR__) . '/layouts/header.php';
+$pageTitle = 'Mã giảm giá - FPT Shop';
+ob_start();
 ?>
 
-<div class="container mt-4">
-    <h2 class="mb-4">Mã giảm giá</h2>
+<div class="container-xl py-4">
+    <h1 class="h4 mb-4 fw-bold"><i class="fa fa-ticket text-danger me-2"></i>Mã giảm giá</h1>
 
     <?php if (empty($maGiamGias)): ?>
-        <div class="alert alert-info">
-            Hiện tại chưa có mã giảm giá nào.
+        <div class="text-center py-5">
+            <i class="fa fa-ticket text-muted" style="font-size:4rem;"></i>
+            <p class="mt-3 text-muted fs-5">Hiện tại chưa có mã giảm giá nào</p>
         </div>
     <?php else: ?>
-        <div class="row">
+        <div class="row g-3">
             <?php foreach ($maGiamGias as $mgg): ?>
-                <div class="col-md-6 mb-3">
-                    <div class="card">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
                         <div class="card-body">
-                            <div class="row align-items-center">
-                                <div class="col-md-8">
-                                    <h5 class="card-title"><?= htmlspecialchars($mgg['ten_ma']) ?></h5>
-                                    <p class="card-text text-muted"><?= htmlspecialchars($mgg['mo_ta'] ?? '') ?></p>
-                                    
-                                    <div class="mb-2">
+                            <div class="row align-items-center g-3">
+                                <div class="col-8">
+                                    <h6 class="fw-bold mb-1"><?= htmlspecialchars($mgg['ten_ma']) ?></h6>
+                                    <p class="text-muted small mb-2"><?= htmlspecialchars($mgg['mo_ta'] ?? '') ?></p>
+                                    <div class="mb-1">
                                         <?php if ($mgg['loai_giam'] === 'PHAN_TRAM'): ?>
                                             <span class="badge bg-danger">Giảm <?= $mgg['gia_tri_giam'] ?>%</span>
                                             <?php if ($mgg['giam_toi_da']): ?>
-                                                <span class="badge bg-secondary">Tối đa <?= number_format($mgg['giam_toi_da']) ?>đ</span>
+                                                <span class="badge bg-secondary">Tối đa <?= number_format($mgg['giam_toi_da'], 0, ',', '.') ?>đ</span>
                                             <?php endif; ?>
                                         <?php else: ?>
-                                            <span class="badge bg-danger">Giảm <?= number_format($mgg['gia_tri_giam']) ?>đ</span>
+                                            <span class="badge bg-danger">Giảm <?= number_format($mgg['gia_tri_giam'], 0, ',', '.') ?>đ</span>
                                         <?php endif; ?>
                                     </div>
-
                                     <?php if ($mgg['gia_tri_don_toi_thieu']): ?>
-                                        <p class="text-muted small mb-1">
-                                            Đơn tối thiểu: <?= number_format($mgg['gia_tri_don_toi_thieu']) ?>đ
-                                        </p>
+                                        <p class="small text-muted mb-1">Đơn tối thiểu: <?= number_format($mgg['gia_tri_don_toi_thieu'], 0, ',', '.') ?>đ</p>
                                     <?php endif; ?>
-
                                     <?php if ($mgg['ngay_het_han']): ?>
-                                        <p class="text-muted small mb-0">
-                                            HSD: <?= date('d/m/Y', strtotime($mgg['ngay_het_han'])) ?>
-                                        </p>
+                                        <p class="small text-muted mb-0"><i class="fa fa-clock me-1"></i>HSD: <?= date('d/m/Y', strtotime($mgg['ngay_het_han'])) ?></p>
                                     <?php endif; ?>
-
                                     <?php if ($mgg['so_luong_con_lai']): ?>
-                                        <p class="text-warning small mb-0">
-                                            Còn lại: <?= $mgg['so_luong_con_lai'] ?> mã
-                                        </p>
+                                        <p class="small text-warning mb-0">Còn lại: <?= $mgg['so_luong_con_lai'] ?> mã</p>
                                     <?php endif; ?>
                                 </div>
-                                <div class="col-md-4 text-center">
-                                    <div class="border border-dashed border-primary p-3 rounded">
-                                        <code class="fs-5 fw-bold text-primary"><?= htmlspecialchars($mgg['ma_code']) ?></code>
-                                        <button class="btn btn-sm btn-outline-primary mt-2 w-100 btn-copy-code" 
-                                                data-code="<?= htmlspecialchars($mgg['ma_code']) ?>">
-                                            <i class="bi bi-clipboard"></i> Sao chép
-                                        </button>
+                                <div class="col-4 text-center">
+                                    <div class="border border-2 border-danger border-dashed rounded p-2 mb-2">
+                                        <code class="fs-6 fw-bold text-danger d-block"><?= htmlspecialchars($mgg['ma_code']) ?></code>
                                     </div>
+                                    <button class="btn btn-outline-danger btn-sm w-100 btn-copy-code"
+                                            data-code="<?= htmlspecialchars($mgg['ma_code']) ?>">
+                                        <i class="fa fa-copy me-1"></i>Sao chép
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -65,9 +57,8 @@ require_once dirname(__DIR__) . '/layouts/header.php';
             <?php endforeach; ?>
         </div>
 
-        <!-- Pagination -->
-        <?php if ($tongTrang > 1): ?>
-            <nav>
+        <?php if (($tongTrang ?? 1) > 1): ?>
+            <nav class="mt-4">
                 <ul class="pagination justify-content-center">
                     <?php for ($i = 1; $i <= $tongTrang; $i++): ?>
                         <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
@@ -81,21 +72,18 @@ require_once dirname(__DIR__) . '/layouts/header.php';
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Sao chép mã
-    document.querySelectorAll('.btn-copy-code').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const code = this.dataset.code;
-            navigator.clipboard.writeText(code).then(() => {
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="bi bi-check"></i> Đã sao chép';
-                setTimeout(() => {
-                    this.innerHTML = originalText;
-                }, 2000);
-            });
+document.querySelectorAll('.btn-copy-code').forEach(btn => {
+    btn.addEventListener('click', function() {
+        navigator.clipboard.writeText(this.dataset.code).then(() => {
+            const orig = this.innerHTML;
+            this.innerHTML = '<i class="fa fa-check me-1"></i>Đã sao chép';
+            setTimeout(() => this.innerHTML = orig, 2000);
         });
     });
 });
 </script>
 
-<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
+<?php
+$content = ob_get_clean();
+require_once __DIR__ . '/../layouts/master.php';
+?>

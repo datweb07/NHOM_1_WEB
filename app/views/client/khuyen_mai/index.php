@@ -1,47 +1,43 @@
 <?php
-require_once dirname(__DIR__) . '/layouts/header.php';
+$pageTitle = 'Khuyến mãi hot - FPT Shop';
+ob_start();
 ?>
 
-<div class="container mt-4">
-    <h2 class="mb-4">Khuyến mãi hot</h2>
+<div class="container-xl py-4">
+    <h1 class="h4 mb-4 fw-bold"><i class="fa fa-certificate text-danger me-2"></i>Khuyến mãi hot</h1>
 
     <?php if (empty($khuyenMais)): ?>
-        <div class="alert alert-info">
-            Hiện tại chưa có chương trình khuyến mãi nào.
+        <div class="text-center py-5">
+            <i class="fa fa-certificate text-muted" style="font-size:4rem;"></i>
+            <p class="mt-3 text-muted fs-5">Hiện tại chưa có chương trình khuyến mãi nào</p>
         </div>
     <?php else: ?>
-        <div class="row">
+        <div class="row g-3">
             <?php foreach ($khuyenMais as $km): ?>
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
                         <div class="card-body">
-                            <h5 class="card-title"><?= htmlspecialchars($km['ten_khuyen_mai']) ?></h5>
-                            <p class="card-text"><?= htmlspecialchars($km['mo_ta'] ?? '') ?></p>
-                            
-                            <div class="mb-2">
+                            <div class="d-flex align-items-start justify-content-between mb-2">
+                                <h6 class="fw-bold mb-0"><?= htmlspecialchars($km['ten_khuyen_mai']) ?></h6>
                                 <?php if ($km['loai_giam'] === 'PHAN_TRAM'): ?>
-                                    <span class="badge bg-danger">Giảm <?= $km['gia_tri_giam'] ?>%</span>
-                                    <?php if ($km['giam_toi_da']): ?>
-                                        <span class="badge bg-secondary">Tối đa <?= number_format($km['giam_toi_da']) ?>đ</span>
-                                    <?php endif; ?>
+                                    <span class="badge bg-danger ms-2 text-nowrap">-<?= $km['gia_tri_giam'] ?>%</span>
                                 <?php else: ?>
-                                    <span class="badge bg-danger">Giảm <?= number_format($km['gia_tri_giam']) ?>đ</span>
+                                    <span class="badge bg-danger ms-2 text-nowrap">-<?= number_format($km['gia_tri_giam'], 0, ',', '.') ?>đ</span>
                                 <?php endif; ?>
                             </div>
-
+                            <p class="text-muted small mb-2"><?= htmlspecialchars($km['mo_ta'] ?? '') ?></p>
+                            <?php if ($km['giam_toi_da'] && $km['loai_giam'] === 'PHAN_TRAM'): ?>
+                                <p class="small text-secondary mb-2">Giảm tối đa: <?= number_format($km['giam_toi_da'], 0, ',', '.') ?>đ</p>
+                            <?php endif; ?>
                             <?php if ($km['ngay_bat_dau'] || $km['ngay_ket_thuc']): ?>
-                                <p class="text-muted small mb-2">
-                                    <?php if ($km['ngay_bat_dau']): ?>
-                                        Từ: <?= date('d/m/Y', strtotime($km['ngay_bat_dau'])) ?>
-                                    <?php endif; ?>
-                                    <?php if ($km['ngay_ket_thuc']): ?>
-                                        - Đến: <?= date('d/m/Y', strtotime($km['ngay_ket_thuc'])) ?>
-                                    <?php endif; ?>
+                                <p class="small text-muted mb-3">
+                                    <i class="fa fa-clock me-1"></i>
+                                    <?php if ($km['ngay_bat_dau']): ?>Từ <?= date('d/m/Y', strtotime($km['ngay_bat_dau'])) ?> <?php endif; ?>
+                                    <?php if ($km['ngay_ket_thuc']): ?>- Đến <?= date('d/m/Y', strtotime($km['ngay_ket_thuc'])) ?><?php endif; ?>
                                 </p>
                             <?php endif; ?>
-
-                            <a href="/khuyen-mai/chi-tiet?id=<?= $km['id'] ?>" class="btn btn-primary btn-sm">
-                                Xem sản phẩm
+                            <a href="/khuyen-mai/chi-tiet?id=<?= $km['id'] ?>" class="btn btn-outline-danger btn-sm">
+                                Xem sản phẩm <i class="fa fa-arrow-right ms-1"></i>
                             </a>
                         </div>
                     </div>
@@ -49,9 +45,8 @@ require_once dirname(__DIR__) . '/layouts/header.php';
             <?php endforeach; ?>
         </div>
 
-        <!-- Pagination -->
-        <?php if ($tongTrang > 1): ?>
-            <nav>
+        <?php if (($tongTrang ?? 1) > 1): ?>
+            <nav class="mt-4">
                 <ul class="pagination justify-content-center">
                     <?php for ($i = 1; $i <= $tongTrang; $i++): ?>
                         <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
@@ -64,4 +59,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
     <?php endif; ?>
 </div>
 
-<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
+<?php
+$content = ob_get_clean();
+require_once __DIR__ . '/../layouts/master.php';
+?>

@@ -1,23 +1,22 @@
 <?php
-require_once dirname(__DIR__) . '/layouts/header.php';
+$pageTitle = 'Tìm kiếm sản phẩm - FPT Shop';
+ob_start();
 ?>
 
-<div class="container mt-4">
-    <div class="row">
-        <!-- Sidebar Filter -->
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Bộ lọc</h5>
-                </div>
+<div class="container-xl py-4">
+    <div class="row g-4">
+
+        <!-- Sidebar lọc -->
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body">
+                    <h6 class="fw-bold mb-3"><i class="fa fa-filter text-danger me-2"></i>Bộ lọc</h6>
                     <form method="GET" action="/tim-kiem">
                         <input type="hidden" name="q" value="<?= htmlspecialchars($keyword ?? '') ?>">
-                        
-                        <!-- Danh mục -->
+
                         <div class="mb-3">
-                            <label class="form-label">Danh mục</label>
-                            <select name="danh_muc" class="form-select">
+                            <label class="form-label small fw-medium">Danh mục</label>
+                            <select name="danh_muc" class="form-select form-select-sm">
                                 <option value="0">Tất cả</option>
                                 <?php foreach ($danhMucs as $dm): ?>
                                     <option value="<?= $dm['id'] ?>" <?= ($danhMucId == $dm['id']) ? 'selected' : '' ?>>
@@ -27,58 +26,66 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                             </select>
                         </div>
 
-                        <!-- Khoảng giá -->
                         <div class="mb-3">
-                            <label class="form-label">Khoảng giá</label>
-                            <div class="row g-2">
+                            <label class="form-label small fw-medium">Khoảng giá</label>
+                            <div class="row g-1">
                                 <div class="col-6">
-                                    <input type="number" name="gia_min" class="form-control" placeholder="Từ" value="<?= $giaMin ?? '' ?>">
+                                    <input type="number" name="gia_min" class="form-control form-control-sm" placeholder="Từ" value="<?= $giaMin ?? '' ?>">
                                 </div>
                                 <div class="col-6">
-                                    <input type="number" name="gia_max" class="form-control" placeholder="Đến" value="<?= $giaMax ?? '' ?>">
+                                    <input type="number" name="gia_max" class="form-control form-control-sm" placeholder="Đến" value="<?= $giaMax ?? '' ?>">
                                 </div>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100">Áp dụng</button>
+                        <button type="submit" class="btn btn-danger btn-sm w-100">Áp dụng</button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Kết quả tìm kiếm -->
-        <div class="col-md-9">
-            <div class="mb-3">
-                <h4>Kết quả tìm kiếm: "<?= htmlspecialchars($keyword ?? '') ?>"</h4>
-                <p class="text-muted">Tìm thấy <?= $tongSanPham ?> sản phẩm</p>
+        <!-- Kết quả -->
+        <div class="col-lg-9">
+            <div class="mb-3 d-flex align-items-center justify-content-between">
+                <div>
+                    <h1 class="h5 fw-bold mb-0">
+                        Kết quả: "<?= htmlspecialchars($keyword ?? '') ?>"
+                    </h1>
+                    <p class="text-muted small mb-0">Tìm thấy <?= $tongSanPham ?> sản phẩm</p>
+                </div>
             </div>
 
             <?php if (empty($sanPhams)): ?>
-                <div class="alert alert-info">
-                    Không tìm thấy sản phẩm nào phù hợp.
+                <div class="text-center py-5">
+                    <i class="fa fa-search text-muted" style="font-size:3rem;"></i>
+                    <p class="mt-3 text-muted">Không tìm thấy sản phẩm nào phù hợp</p>
+                    <a href="/san-pham" class="btn btn-danger btn-sm">Xem tất cả sản phẩm</a>
                 </div>
             <?php else: ?>
-                <div class="row">
+                <div class="row g-3">
                     <?php foreach ($sanPhams as $sp): ?>
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100">
-                                <img src="<?= $sp['anh_chinh'] ?? '/assets/images/no-image.png' ?>" 
-                                     class="card-img-top" 
-                                     alt="<?= htmlspecialchars($sp['ten_san_pham']) ?>"
-                                     style="height: 200px; object-fit: cover;">
-                                <div class="card-body">
-                                    <h6 class="card-title"><?= htmlspecialchars($sp['ten_san_pham']) ?></h6>
-                                    <p class="text-danger fw-bold"><?= number_format($sp['gia_hien_thi']) ?>đ</p>
-                                    <a href="/san-pham/<?= $sp['slug'] ?>" class="btn btn-primary btn-sm w-100">Xem chi tiết</a>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? '/public/assets/client/images/products/14.png') ?>"
+                                         class="card-img-top p-2"
+                                         alt="<?= htmlspecialchars($sp['ten_san_pham']) ?>"
+                                         style="height:150px;object-fit:contain;">
+                                    <div class="card-body pt-0 px-3 pb-3">
+                                        <p class="small mb-1 text-dark" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                            <?= htmlspecialchars($sp['ten_san_pham']) ?>
+                                        </p>
+                                        <p class="text-danger fw-bold mb-0 small"><?= number_format($sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     <?php endforeach; ?>
                 </div>
 
-                <!-- Pagination -->
-                <?php if ($tongTrang > 1): ?>
-                    <nav>
+                <!-- Phân trang -->
+                <?php if (($tongTrang ?? 1) > 1): ?>
+                    <nav class="mt-4">
                         <ul class="pagination justify-content-center">
                             <?php for ($i = 1; $i <= $tongTrang; $i++): ?>
                                 <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
@@ -95,4 +102,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
     </div>
 </div>
 
-<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
+<?php
+$content = ob_get_clean();
+require_once __DIR__ . '/../layouts/master.php';
+?>

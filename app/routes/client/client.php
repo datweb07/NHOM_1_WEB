@@ -12,7 +12,9 @@ function clientRoute(string $uri): void
 	}
 
 	if ($path === 'san-pham' || $path === 'san-pham/list') {
-		require_once dirname(__DIR__, 2) . '/views/client/san_pham/list.php';
+		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
+		$controller = new \App\Controllers\Client\SanPhamController();
+		$controller->danhSach();
 		return;
 	}
 
@@ -177,13 +179,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	if ($path === 'san-pham') {
-		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
-		$controller = new \App\Controllers\Client\SanPhamController();
-		$controller->danhSach();
-		return;
-	}
-
 	// Thanh toán routes
 	if ($path === 'thanh-toan') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
@@ -207,6 +202,13 @@ function clientRoute(string $uri): void
 	}
 
 	// Đơn hàng routes
+	if ($path === 'don-hang/huy') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/DonHangController.php';
+		$controller = new \App\Controllers\Client\DonHangController();
+		$controller->huy();
+		return;
+	}
+
 	if (preg_match('#^don-hang/(\d+)$#', $path, $matches)) {
 		require_once dirname(__DIR__, 2) . '/controllers/client/DonHangController.php';
 		$controller = new \App\Controllers\Client\DonHangController();
