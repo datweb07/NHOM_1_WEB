@@ -114,12 +114,14 @@ ob_start();
             </div>
         </div>
         <div class="slider-wapper">
+            <?php 
+            // Tạo instance SanPham model một lần duy nhất
+            require_once dirname(__DIR__, 3) . '/models/entities/SanPham.php';
+            $spModel = new SanPham();
+            ?>
             <div class="row slider-main">
                 <?php if (!empty($sanPhamKhuyenMai)): ?>
-                    <?php 
-                    require_once dirname(__DIR__, 3) . '/models/entities/SanPham.php';
-                    $spModel = new SanPham();
-                    foreach ($sanPhamKhuyenMai as $sp): 
+                    <?php foreach ($sanPhamKhuyenMai as $sp): 
                         $giaSauGiam = $spModel->tinhGiaSauKhuyenMai(
                             $sp['gia_hien_thi'], 
                             $sp['loai_giam'], 
@@ -168,16 +170,20 @@ ob_start();
     </div>
 </div>
 
-<!-- Banner 1 -->
+<!-- Banner giữa 1 -->
+<?php if (!empty($bannerMid[0])): ?>
 <div class="banner-1">
     <div class="grid wide">
         <div class="row">
             <div class="col l-12 banner">
-                <img src="/public/assets/client/images/others/18.jpg">
+                <a href="<?php echo htmlspecialchars($bannerMid[0]['link_dich'] ?? '#'); ?>">
+                    <img src="<?php echo htmlspecialchars($bannerMid[0]['hinh_anh_desktop']); ?>" style="width:100%">
+                </a>
             </div>
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <!-- Sản phẩm Điện thoại -->
 <div class="product">
@@ -227,16 +233,20 @@ ob_start();
     </div>
 </div>
 
-<!-- Banner 2 -->
+<!-- Banner giữa 2 -->
+<?php if (!empty($bannerMid[1])): ?>
 <div class="banner-2">
     <div class="grid wide">
         <div class="row">
             <div class="col l-12 banner">
-                <img src="/public/assets/client/images/others/19.jpg">
+                <a href="<?php echo htmlspecialchars($bannerMid[1]['link_dich'] ?? '#'); ?>">
+                    <img src="<?php echo htmlspecialchars($bannerMid[1]['hinh_anh_desktop']); ?>" style="width:100%">
+                </a>
             </div>
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <!-- Sản phẩm Laptop -->
 <div class="product">
@@ -286,16 +296,20 @@ ob_start();
     </div>
 </div>
 
-<!-- Banner 3 -->
+<!-- Banner giữa 3 -->
+<?php if (!empty($bannerMid[2])): ?>
 <div class="banner-3">
     <div class="grid wide">
         <div class="row">
             <div class="col l-12 banner">
-                <img src="/public/assets/client/images/others/24.jpg">
+                <a href="<?php echo htmlspecialchars($bannerMid[2]['link_dich'] ?? '#'); ?>">
+                    <img src="<?php echo htmlspecialchars($bannerMid[2]['hinh_anh_desktop']); ?>" style="width:100%">
+                </a>
             </div>
         </div>
     </div>
 </div>
+<?php endif; ?>
 
 <!-- Danh mục Phụ kiện -->
 <div class="category-wapper">
@@ -306,29 +320,38 @@ ob_start();
             </div>
         </div>
         <div class="row no-gutters">
-            <?php
-            $accessories = [
-                ['icon' => 'fa-bahai',            'title' => 'Phụ kiện hot'],
-                ['icon' => 'fa-apple',            'title' => 'Apple'],
-                ['icon' => 'fa-battery-full',     'title' => 'Pin dự phòng'],
-                ['icon' => 'fa-headphones-simple','title' => 'Tai nghe'],
-                ['icon' => 'fa-keyboard',         'title' => 'Bàn phím'],
-                ['icon' => 'fa-computer-mouse',   'title' => 'Chuột'],
-                ['icon' => 'fa-bahai',            'title' => 'Phụ kiện hot'],
-                ['icon' => 'fa-apple',            'title' => 'Apple'],
-                ['icon' => 'fa-battery-full',     'title' => 'Pin dự phòng'],
-                ['icon' => 'fa-headphones-simple','title' => 'Tai nghe'],
-                ['icon' => 'fa-keyboard',         'title' => 'Bàn phím'],
-                ['icon' => 'fa-computer-mouse',   'title' => 'Chuột'],
-            ];
-            foreach ($accessories as $acc): ?>
-                <div class="col l-2 m-4 c-4">
-                    <div class="category-item">
-                        <a href="#">
-                            <div class="category-icon">
-                                <i class="fa <?php echo $acc['icon']; ?>"></i>
-                            </div>
-                            <p class="title-category"><?php echo $acc['title']; ?></p>
+            <?php if (!empty($sanPhamPhuKien)): ?>
+                <?php foreach (array_slice($sanPhamPhuKien, 0, 12) as $sp): ?>
+                    <div class="col l-2 m-4 c-4">
+                        <div class="category-item">
+                            <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>">
+                                <div class="img-category">
+                                    <img src="<?php echo htmlspecialchars($sp['anh_chinh'] ?? '/public/assets/client/images/products/14.png'); ?>"
+                                         alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
+                                         style="width:60px;height:60px;object-fit:contain;">
+                                </div>
+                                <p class="title-category" style="font-size:0.78rem;"><?php echo htmlspecialchars($sp['ten_san_pham']); ?></p>
+                            </a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col l-12"><p class="text-muted small p-3">Chưa có sản phẩm phụ kiện.</p></div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<!-- Banner bottom -->
+<?php if (!empty($bannerMid) && count($bannerMid) >= 3): ?>
+<div class="category-bottom">
+    <div class="grid wide">
+        <div class="row">
+            <?php foreach (array_slice($bannerMid, 3, 3) as $b): ?>
+                <div class="col l-4 m-12 c-12">
+                    <div class="category-bot-item">
+                        <a href="<?php echo htmlspecialchars($b['link_dich'] ?? '#'); ?>">
+                            <img src="<?php echo htmlspecialchars($b['hinh_anh_desktop']); ?>">
                         </a>
                     </div>
                 </div>
@@ -336,23 +359,7 @@ ob_start();
         </div>
     </div>
 </div>
-
-<!-- Banner bottom -->
-<div class="category-bottom">
-    <div class="grid wide">
-        <div class="row">
-            <div class="col l-4 m-12 c-12">
-                <div class="category-bot-item"><img src="/public/assets/client/images/others/25.jpg"></div>
-            </div>
-            <div class="col l-4 m-12 c-12">
-                <div class="category-bot-item"><img src="/public/assets/client/images/others/26.jpg"></div>
-            </div>
-            <div class="col l-4 m-12 c-12">
-                <div class="category-bot-item"><img src="/public/assets/client/images/others/27.jpg"></div>
-            </div>
-        </div>
-    </div>
-</div>
+<?php endif; ?>
 
 <?php
 $content = ob_get_clean();

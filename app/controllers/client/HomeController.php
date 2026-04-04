@@ -32,6 +32,7 @@ class HomeController
         // Lấy banner theo vị trí
         $bannerHero = $this->bannerModel->layBannerTheoViTri('HOME_HERO');
         $bannerSide = $this->bannerModel->layBannerTheoViTri('HOME_SIDE');
+        $bannerMid  = $this->bannerModel->layBannerTheoViTri('HOME_MID');
         
         // Lấy sản phẩm nổi bật
         $sanPhamNoiBat = $this->sanPhamModel->laySanPhamNoiBat(8);
@@ -42,9 +43,10 @@ class HomeController
         // Lấy danh mục hoạt động
         $danhMucList = $this->danhMucModel->layDanhMucHienThi(12);
         
-        // Lấy sản phẩm theo danh mục (Điện thoại, Laptop)
+        // Lấy sản phẩm theo danh mục (Điện thoại, Laptop, Phụ kiện)
         $sanPhamDienThoai = $this->sanPhamModel->laySanPhamTheoDanhMuc('dien-thoai', 8);
-        $sanPhamLaptop = $this->sanPhamModel->laySanPhamTheoDanhMuc('laptop', 8);
+        $sanPhamLaptop    = $this->sanPhamModel->laySanPhamTheoDanhMuc('laptop', 8);
+        $sanPhamPhuKien   = $this->sanPhamModel->laySanPhamTheoDanhMuc('phu-kien', 12);
 
         // Load view
         require_once dirname(__DIR__, 2) . '/views/client/home/index.php';
