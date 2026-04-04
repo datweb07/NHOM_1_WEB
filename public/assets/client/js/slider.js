@@ -1,47 +1,124 @@
 window.addEventListener("load", function () {
-    // slider card
-    const mainslider = document.querySelector('.main-slider')
-    const itemslider = document.querySelectorAll('.wrapper-item-slider')
+    const heroWrapper = document.querySelector('.hero-carousel');
+    if (!heroWrapper) return;
 
-    var withItem = itemslider[0].offsetWidth;
+    const mainslider = heroWrapper.querySelector('.main-slider');
+    const itemslider = heroWrapper.querySelectorAll('.wrapper-item-slider');
 
-    var lenghtItem = itemslider.length;
+    if (itemslider.length === 0) return;
+
+    let withItem = itemslider[0].offsetWidth;
+    let lenghtItem = itemslider.length;
     let tranX = 0;
-    const back = document.querySelector('.back-slider-card');
-    const next = document.querySelector('.next-slider-card');
     let index = 1;
-    // console.log(lenghtItem);
+    let isHovered = false; // Biến theo dõi xem chuột có đang nằm trong slider không
 
-    changeNext = function () {
+    const back = heroWrapper.querySelector('.back-slider-card');
+    const next = heroWrapper.querySelector('.next-slider-card');
+
+    // 1. CÀI ĐẶT HIỆU ỨNG ẨN/HIỆN CHO CẢ 2 NÚT
+    const setupButton = (btn) => {
+        if (btn) {
+            btn.style.opacity = '0';
+            btn.style.visibility = 'hidden';
+            btn.style.transition = 'all 0.3s ease';
+        }
+    };
+    setupButton(back);
+    setupButton(next);
+
+    // 2. HÀM ĐIỀU KHIỂN NÚT THÔNG MINH
+    const updateArrows = () => {
+        // Nếu chuột không nằm trong slider -> Ẩn cả 2
+        if (!isHovered) {
+            if (back) { back.style.opacity = '0'; back.style.visibility = 'hidden'; }
+            if (next) { next.style.opacity = '0'; next.style.visibility = 'hidden'; }
+            return;
+        }
+
+        // Đang ở slide đầu tiên -> Chỉ hiện Next, ẩn Back
+        if (index === 1) {
+            if (back) { back.style.opacity = '0'; back.style.visibility = 'hidden'; }
+            if (next) { next.style.opacity = '1'; next.style.visibility = 'visible'; }
+        } 
+        // Đang ở slide cuối cùng -> Chỉ hiện Back, ẩn Next
+        else if (index === lenghtItem) {
+            if (back) { back.style.opacity = '1'; back.style.visibility = 'visible'; }
+            if (next) { next.style.opacity = '0'; next.style.visibility = 'hidden'; }
+        } 
+        // Nằm ở các slide giữa -> Hiện cả 2
+        else {
+            if (back) { back.style.opacity = '1'; back.style.visibility = 'visible'; }
+            if (next) { next.style.opacity = '1'; next.style.visibility = 'visible'; }
+        }
+    };
+
+    // 3. BẮT SỰ KIỆN RÊ CHUỘT (HOVER)
+    heroWrapper.addEventListener('mouseenter', () => {
+        isHovered = true;
+        updateArrows();
+    });
+
+    heroWrapper.addEventListener('mouseleave', () => {
+        isHovered = false;
+        updateArrows();
+    });
+
+    window.addEventListener('resize', () => {
+        withItem = itemslider[0].offsetWidth;
+        tranX = -(index - 1) * withItem;
+        mainslider.style.transform = `translateX(${tranX}px)`;
+    });
+
+    // 4. HÀM CHUYỂN SLIDE TỚI
+    const changeNext = function () {
         if (index >= lenghtItem) {
+            // Tự động đẩy về đầu khi đang ở slide cuối (Dành cho Auto Slide)
             index = 1;
-            mainslider.style = `transform: translateX(0px)`;
             tranX = 0;
-            return;
+            mainslider.style.transition = "transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)";
+        } else {
+            // Trượt bình thường
+            index++;
+            tranX = -(index - 1) * withItem;
+            mainslider.style.transition = "transform 0.5s ease-in-out";
         }
-        tranX = tranX - withItem;
-        mainslider.style = `transform: translateX(${tranX}px)`;
-        index++;
-        // console.log(tranX)
+        mainslider.style.transform = `translateX(${tranX}px)`;
+        updateArrows(); // Xét lại việc hiển thị nút sau khi chuyển
     }
-    next.onclick = function () {
-        changeNext();
-    }
-    changeback = function () {
-        if (index <= 1) {
-            index = 1;
-            return;
-        }
-        tranX = tranX + withItem;
-        mainslider.style = `transform: translateX(${tranX}px)`;
+
+    // 5. HÀM CHUYỂN SLIDE LÙI
+    const changeback = function () {
+        if (index <= 1) return; // Không cho lùi nếu đang ở slide đầu
         index--;
-        // console.log(index)
-
+        tranX = -(index - 1) * withItem;
+        mainslider.style.transition = "transform 0.5s ease-in-out";
+        mainslider.style.transform = `translateX(${tranX}px)`;
+        updateArrows(); // Xét lại việc hiển thị nút sau khi chuyển
     }
-    back.onclick = function () {
-        changeback();
-    }
-    setInterval(changeNext, 2000);
 
+    let autoSlide = setInterval(changeNext, 4000);
+
+    const resetInterval = () => {
+        clearInterval(autoSlide);
+        autoSlide = setInterval(changeNext, 4000);
+    };
+
+    if (next) {
+        next.onclick = function() {
+            if (index < lenghtItem) { // Chỉ cho bấm nếu chưa tới cuối
+                changeNext();
+                resetInterval();
+            }
+        };
+    }
+
+    if (back) {
+        back.onclick = function() {
+            if (index > 1) { // Chỉ cho bấm nếu không ở đầu
+                changeback();
+                resetInterval();
+            }
+        };
+    }
 });
-

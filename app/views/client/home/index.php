@@ -13,86 +13,46 @@ ob_start();
 ?>
 
 <!-- Banner top -->
-<div class="slider">
-    <?php if (!empty($bannerHero)): ?>
-        <div class="grid wide">
-            <img src="<?php echo htmlspecialchars($bannerHero[0]['hinh_anh_desktop']); ?>" 
-                 alt="<?php echo htmlspecialchars($bannerHero[0]['tieu_de']); ?>" 
-                 style="width: 100%">
-        </div>
-    <?php endif; ?>
-
-    <!-- Slider chính + banner nhỏ bên phải -->
-    <div class="grid wide">
-        <div class="row">
-
-            <!-- Slider ảnh -->
-            <div class="col l-9 m-12 c-12">
-                <div class="grid">
-                    <div class="wapper-slider">
-                        <div class="row no-warp main-slider">
-                            <?php if (!empty($bannerHero)): ?>
-                                <?php foreach ($bannerHero as $banner): ?>
-                                    <div class="col l-12 m-12 c-12 wrapper-item-slider">
-                                        <div class="item-slider">
-                                            <a href="<?php echo htmlspecialchars($banner['link_dich']); ?>">
-                                                <img src="<?php echo htmlspecialchars($banner['hinh_anh_desktop']); ?>" 
-                                                     alt="<?php echo htmlspecialchars($banner['tieu_de']); ?>">
-                                            </a>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+<div class="full-width-hero" style="position: relative; width: 100%; overflow: hidden;">
+    
+    <div class="wapper-slider hero-carousel" style="width: 100%; border: none; box-shadow: none;">
+        
+        <div class="row no-warp main-slider" style="margin: 0;">
+            <?php if (!empty($bannerHero)): ?>
+                <?php foreach ($bannerHero as $banner): ?>
+                    <div class="col l-12 m-12 c-12 wrapper-item-slider" style="padding: 0; flex: 0 0 100%; max-width: 100%;">
+                        <div class="item-slider" style="border: none;">
+                            <a href="<?php echo htmlspecialchars($banner['link_dich']); ?>" style="display: block;">
+                                <img src="<?php echo htmlspecialchars($banner['hinh_anh_desktop']); ?>" 
+                                     alt="<?php echo htmlspecialchars($banner['tieu_de']); ?>"
+                                     style="width: 100%; min-height: 450px; max-height: 800px; object-fit: cover; display: block; border-radius: 0;">
+                            </a>
                         </div>
-                        <button class="back-slider-card" type="button"><i class="fa fa-chevron-left"></i></button>
-                        <button class="next-slider-card" type="button"><i class="fa fa-chevron-right"></i></button>
                     </div>
-                </div>
-                <ul class="slider-content">
-                    <?php if (!empty($danhMucList)): ?>
-                        <?php foreach (array_slice($danhMucList, 0, 6) as $dm): ?>
-                            <li><a href="/danh-muc/<?php echo htmlspecialchars($dm['slug']); ?>"><?php echo htmlspecialchars($dm['ten']); ?></a></li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </ul>
-            </div>
-
-            <!-- Banner nhỏ bên phải -->
-            <div class="col l-3 c-12 m-12">
-                <div class="banner-top">
-                    <?php if (!empty($bannerSide)): ?>
-                        <?php foreach (array_slice($bannerSide, 0, 4) as $banner): ?>
-                            <div class="banner-img-item">
-                                <a href="<?php echo htmlspecialchars($banner['link_dich']); ?>">
-                                    <img src="<?php echo htmlspecialchars($banner['hinh_anh_desktop']); ?>" 
-                                         alt="<?php echo htmlspecialchars($banner['tieu_de']); ?>">
-                                </a>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
-            </div>
-
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
+        
+        <button class="back-slider-card" type="button" style="background-color: rgba(255,255,255,0.7); left: 15px; z-index: 20;"><i class="fa fa-chevron-left"></i></button>
+        <button class="next-slider-card" type="button" style="background-color: rgba(255,255,255,0.7); right: 15px; z-index: 20;"><i class="fa fa-chevron-right"></i></button>
     </div>
+
+    <div class="hero-fade-overlay" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 280px; background: linear-gradient(to bottom, transparent 0%, #f8f9fa 100%); pointer-events: none; z-index: 5;"></div>
 </div>
 
-<!-- Danh mục nhanh -->
-<div class="category-wapper">
-    <div class="grid wide category">
+<div class="category-wapper" style="position: relative; z-index: 10; margin-top: -200px;"> 
+    <div class="grid wide category" style="background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: none; padding: 15px 0;">
         <div class="row no-gutters">
             <?php if (!empty($danhMucList)): ?>
                 <?php foreach ($danhMucList as $dm): ?>
                     <div class="col l-2 m-3 c-3">
-                        <div class="category-item">
+                        <div class="category-item" style="border: none;">
                             <a href="/danh-muc/<?php echo htmlspecialchars($dm['slug']); ?>">
-                                <div class="img-category">
+                                <div class="img-category" style="background: transparent;">
                                     <?php if (!empty($dm['icon_url'])): ?>
-                                        <img src="<?php echo htmlspecialchars($dm['icon_url']); ?>" 
-                                             alt="<?php echo htmlspecialchars($dm['ten']); ?>">
+                                        <img src="<?php echo htmlspecialchars($dm['icon_url']); ?>" alt="<?php echo htmlspecialchars($dm['ten']); ?>">
                                     <?php else: ?>
-                                        <img src="/public/assets/client/images/icon/phone.png" 
-                                             alt="<?php echo htmlspecialchars($dm['ten']); ?>">
+                                        <img src="/public/assets/client/images/icon/phone.png" alt="<?php echo htmlspecialchars($dm['ten']); ?>">
                                     <?php endif; ?>
                                 </div>
                                 <p class="title-category"><?php echo htmlspecialchars($dm['ten']); ?></p>
