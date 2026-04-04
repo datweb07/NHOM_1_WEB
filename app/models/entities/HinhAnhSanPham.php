@@ -16,16 +16,16 @@ class HinhAnhSanPham extends BaseModel
     {
         $sanPhamId = (int)$sanPhamId;
         $where = "san_pham_id = $sanPhamId";
-        
+
         if ($phienBanId !== null) {
             $phienBanId = (int)$phienBanId;
             $where .= " AND (phien_ban_id = $phienBanId OR phien_ban_id IS NULL)";
         }
-        
+
         $sql = "SELECT * FROM {$this->table}
                 WHERE $where
                 ORDER BY la_anh_chinh DESC, thu_tu ASC";
-        
+
         return $this->query($sql);
     }
 
@@ -38,7 +38,7 @@ class HinhAnhSanPham extends BaseModel
         $sql = "SELECT * FROM {$this->table}
                 WHERE san_pham_id = $sanPhamId AND la_anh_chinh = 1
                 LIMIT 1";
-        
+
         $result = $this->query($sql);
         return !empty($result) ? $result[0] : null;
     }
@@ -55,7 +55,7 @@ class HinhAnhSanPham extends BaseModel
             'la_anh_chinh' => $laAnhChinh ? 1 : 0,
             'thu_tu' => $thuTu
         ];
-        
+
         return $this->create($data);
     }
 
@@ -70,23 +70,38 @@ class HinhAnhSanPham extends BaseModel
     /**
      * Đặt ảnh chính cho sản phẩm
      */
+    public function boDatAnhChinh(int $sanPhamId): bool
+    {
+        $sanPhamId = (int)$sanPhamId;
+        $sql = "UPDATE {$this->table} SET la_anh_chinh = 0 WHERE san_pham_id = $sanPhamId";
+
+        return mysqli_query($this->link, $sql) !== false;
+    }
+
+    /**
+     * Đặt ảnh chính cho sản phẩm
+     */
     public function datAnhChinh(int $sanPhamId, int $anhId): bool
     {
         $sanPhamId = (int)$sanPhamId;
         $anhId = (int)$anhId;
-        
+
         // Bỏ đánh dấu ảnh chính cũ
         $sql1 = "UPDATE {$this->table} 
                  SET la_anh_chinh = 0 
                  WHERE san_pham_id = $sanPhamId";
-        $this->query($sql1);
-        
+        if (mysqli_query($this->link, $sql1) === false) {
+            return false;
+        }
+
         // Đánh dấu ảnh mới là ảnh chính
         $sql2 = "UPDATE {$this->table} 
                  SET la_anh_chinh = 1 
                  WHERE id = $anhId AND san_pham_id = $sanPhamId";
-        $this->query($sql2);
-        
+        if (mysqli_query($this->link, $sql2) === false) {
+            return false;
+        }
+
         return mysqli_affected_rows($this->link) > 0;
     }
 
@@ -100,10 +115,10 @@ class HinhAnhSanPham extends BaseModel
         if (!$anh) {
             return false;
         }
-        
+
         // Xóa record trong database
         $deleted = $this->delete($id) > 0;
-        
+
         // Xóa file nếu là local file (không phải URL từ CDN)
         if ($deleted && !empty($anh['url_anh'])) {
             $urlAnh = $anh['url_anh'];
@@ -115,7 +130,7 @@ class HinhAnhSanPham extends BaseModel
                 }
             }
         }
-        
+
         return $deleted;
     }
 }
