@@ -2,10 +2,8 @@
 require_once __DIR__ . '/../../../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../../../models/BaseModel.php';
 
-//check quyền
 AuthMiddleware::checkMember();
 
-//lấy data user từ db
 $userId = \App\Core\Session::getUserId();
 if (!$userId) {
     header('Location: /client/auth/login');
@@ -24,6 +22,9 @@ $pageTitle = 'Hồ sơ cá nhân - FPT Shop';
 
 ob_start();
 ?>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
 <style>
     .btn-submit {
@@ -62,7 +63,7 @@ ob_start();
         margin-bottom: 0;
         font-size: 14px;
     }
-    
+
     .profile-menu .nav-link {
         color: #555 !important;
         padding: 12px 16px;
@@ -80,11 +81,7 @@ ob_start();
         color: #d70018 !important;
         font-weight: 600;
     }
-    .profile-menu .nav-link i {
-        width: 20px;
-        text-align: center;
-    }
-    
+
     .avatar-upload-section {
         text-align: center;
         padding: 20px;
@@ -138,30 +135,47 @@ ob_start();
                         <h3 class="fs-6 fw-bold m-0"><?= htmlspecialchars($user['ho_ten'] ?? 'Tên người dùng') ?></h3>
                     </div>
                     <ul class="nav flex-column profile-menu">
-                        <li class="nav-item"><a href="/client/profile" class="nav-link active"><i class="fa fa-user me-2"></i> Hồ sơ của tôi</a></li>
-                        <li class="nav-item"><a href="/don-hang.php" class="nav-link"><i class="fa fa-file-invoice-dollar me-2"></i> Đơn hàng của tôi</a></li>
-                        <li class="nav-item"><a href="/dia-chi.php" class="nav-link"><i class="fa fa-map-marker-alt me-2"></i> Sổ địa chỉ</a></li>
-                        <li class="nav-item"><a href="#" id="logout-link" class="nav-link mt-2 pt-2 border-top"><i class="fa fa-sign-out-alt me-2"></i> Đăng xuất</a></li>
+                        <li class="nav-item">
+                            <a href="/client/profile" class="nav-link active">
+                                <i class="bi bi-person me-2"></i> Hồ sơ của tôi
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/don-hang.php" class="nav-link">
+                                <i class="bi bi-receipt me-2"></i> Đơn hàng của tôi
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/dia-chi.php" class="nav-link">
+                                <i class="bi bi-geo-alt me-2"></i> Sổ địa chỉ
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" id="logout-link" class="nav-link mt-2 pt-2 border-top">
+                                <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
 
             <div class="col-lg-9 col-md-8">
-                
+
                 <?php if (isset($_SESSION['success'])): ?>
                     <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                        <i class="fa fa-check-circle me-2"></i><?= $_SESSION['success']; unset($_SESSION['success']); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                <?php endif; ?>
-                
-                <?php if (isset($_SESSION['error'])): ?>
-                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                        <i class="fa fa-exclamation-triangle me-2"></i><?= $_SESSION['error']; unset($_SESSION['error']); ?>
+                        <i class="bi bi-check-circle me-2"></i><?= $_SESSION['success']; unset($_SESSION['success']); ?>
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 <?php endif; ?>
 
+                <?php if (isset($_SESSION['error'])): ?>
+                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i><?= $_SESSION['error']; unset($_SESSION['error']); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Hồ sơ -->
                 <div class="profile-content-box">
                     <div class="profile-content-header">
                         <h2>Hồ sơ của tôi</h2>
@@ -191,7 +205,7 @@ ob_start();
                                     <label class="form-label fw-medium">Giới tính</label>
                                     <select class="form-select" name="gioi_tinh">
                                         <option value="NAM" <?= (($user['gioi_tinh'] ?? '') === 'NAM') ? 'selected' : '' ?>>Nam</option>
-                                        <option value="NU" <?= (($user['gioi_tinh'] ?? '') === 'NU') ? 'selected' : '' ?>>Nữ</option>
+                                        <option value="NU"  <?= (($user['gioi_tinh'] ?? '') === 'NU')  ? 'selected' : '' ?>>Nữ</option>
                                         <option value="KHAC" <?= (($user['gioi_tinh'] ?? '') === 'KHAC') ? 'selected' : '' ?>>Khác</option>
                                     </select>
                                 </div>
@@ -203,17 +217,19 @@ ob_start();
                             <form action="/khach-hang/cap-nhat-avatar" method="POST" enctype="multipart/form-data" id="avatar-upload-form" class="h-100">
                                 <div class="avatar-upload-section">
                                     <div class="avatar-preview">
-                                        <img id="avatar-preview-img" src="<?= !empty($user['avatar_url']) ? htmlspecialchars($user['avatar_url']) : '/public/assets/client/images/others/anh-avatar.jpg' ?>" alt="Avatar Preview">
+                                        <img id="avatar-preview-img"
+                                             src="<?= !empty($user['avatar_url']) ? htmlspecialchars($user['avatar_url']) : '/public/assets/client/images/others/anh-avatar.jpg' ?>"
+                                             alt="Avatar Preview">
                                     </div>
-                                    
                                     <div class="w-100 px-3">
                                         <label for="avatar-input" class="btn btn-outline-secondary btn-sm w-100 mb-2" style="cursor: pointer;">
-                                            <i class="fa fa-camera me-1"></i> Chọn ảnh
+                                            <i class="bi bi-camera me-1"></i> Chọn ảnh
                                         </label>
                                         <input type="file" class="d-none" name="avatar" id="avatar-input" accept="image/jpeg,image/jpg,image/png" required>
-                                        <button type="submit" class="btn btn-sm btn-submit w-100" id="btn-save-avatar" style="display: none;">Lưu ảnh đại diện</button>
+                                        <button type="submit" class="btn btn-sm btn-submit w-100" id="btn-save-avatar" style="display: none;">
+                                            Lưu ảnh đại diện
+                                        </button>
                                     </div>
-                                    
                                     <p class="avatar-note">Dung lượng tối đa 2MB<br>Định dạng: JPG, JPEG, PNG</p>
                                 </div>
                             </form>
@@ -246,27 +262,26 @@ ob_start();
                         </div>
                     </form>
                 </div>
-                
+
             </div>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
 document.getElementById('avatar-input')?.addEventListener('change', function(e) {
     const file = e.target.files[0];
     const btnSave = document.getElementById('btn-save-avatar');
-    
+
     if (file) {
-        //check size (Mb)
         if (file.size > 2 * 1024 * 1024) {
             alert('Kích thước ảnh không được vượt quá 2MB!');
             e.target.value = '';
             btnSave.style.display = 'none';
             return;
         }
-
-        //check type
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
         if (!allowedTypes.includes(file.type)) {
             alert('Chỉ chấp nhận file JPG, JPEG hoặc PNG!');
@@ -274,12 +289,9 @@ document.getElementById('avatar-input')?.addEventListener('change', function(e) 
             btnSave.style.display = 'none';
             return;
         }
-
-        //preview ảnh
         const reader = new FileReader();
         reader.onload = function(event) {
             document.getElementById('avatar-preview-img').src = event.target.result;
-
             btnSave.style.display = 'block';
         };
         reader.readAsDataURL(file);
@@ -288,7 +300,6 @@ document.getElementById('avatar-input')?.addEventListener('change', function(e) 
     }
 });
 
-//confirm logout
 document.getElementById('logout-link')?.addEventListener('click', function(e) {
     e.preventDefault();
     if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
