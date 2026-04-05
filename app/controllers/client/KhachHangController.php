@@ -208,21 +208,42 @@ class KhachHangController
         }
 
         try {
-
             $cloudinary = CloudinaryService::getInstance();
 
             $userData = $this->khachHangModel->getById($userId);
 
+            //ép tên theo định dạng: avatar_user_1, avatar_user_2...
+            $publicId = 'avatar_user_' . $userId;
+
             $uploadResult = $cloudinary->uploadApi()->upload($file['tmp_name'], [
-                'folder' => 'avatars',
+                'folder'     => 'avatars',
+                'public_id'  => $publicId,
+                'overwrite'  => true,   
+                'invalidate' => true       
             ]);
 
             $avatarUrl = $uploadResult['secure_url'];
 
-            if (!empty($userData['avatar_url']) && strpos($userData['avatar_url'], 'cloudinary') === false) {
-                $oldLocalPath = dirname(__DIR__, 3) . $userData['avatar_url'];
-                if (file_exists($oldLocalPath)) {
-                    @unlink($oldLocalPath);
+            if (!empty($userData['avatar_url'])) {
+                $oldUrl = $userData['avatar_url'];
+
+                if (strpos($oldUrl, 'cloudinary.com') === false) {
+                    $oldLocalPath = dirname(__DIR__, 3) . $oldUrl;
+                    if (file_exists($oldLocalPath)) {
+                        @unlink($oldLocalPath);
+                    }
+                } 
+
+                else if (strpos($oldUrl, $publicId) === false) {
+
+                    $urlPath = parse_url($oldUrl, PHP_URL_PATH);
+                    if (preg_match('/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z0-9]+$/', $urlPath, $matches)) {
+                        $oldPublicId = $matches[1]; 
+                        try {
+                            $cloudinary->uploadApi()->destroy($oldPublicId, ['invalidate' => true]);
+                        } catch (\Exception $e) {
+                        }
+                    }
                 }
             }
 

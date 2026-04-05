@@ -6,7 +6,7 @@ class EnvSetup
 {
     public static function env($path)
     {
-        $loaded = Dotenv::createArrayBacked($path)->load();
+        $loaded = Dotenv::createArrayBacked($path)->safeLoad();
 
         return function ($key, $default = '') use ($loaded) {
             if (array_key_exists($key, $loaded)) {
