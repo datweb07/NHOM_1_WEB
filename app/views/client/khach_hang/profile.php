@@ -141,12 +141,12 @@ ob_start();
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/don-hang.php" class="nav-link">
+                            <a href="/don-hang" class="nav-link">
                                 <i class="bi bi-receipt me-2"></i> Đơn hàng của tôi
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/dia-chi.php" class="nav-link">
+                            <a href="/dia-chi" class="nav-link">
                                 <i class="bi bi-geo-alt me-2"></i> Sổ địa chỉ
                             </a>
                         </li>

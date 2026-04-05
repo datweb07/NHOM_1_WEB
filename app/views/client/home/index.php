@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'FPT Shop - Trang chủ';
+$pageTitle = 'Fptshop.com.vn | Điện thoại, Laptop, Điện máy, Gia dụng, Phụ kiện chính hãng giá tốt nhất';
 $additionalCSS = [
     '/public/assets/client/css/slider.css',
     '/public/assets/client/css/slider-card.css',
@@ -45,7 +45,7 @@ ob_start();
     </div>
 </div>
 
-<div class="category-wapper" style="position: relative; z-index: 10; margin-top: -300px;">
+<div class="category-wapper" style="position: relative; z-index: 10; margin-top: -300px; margin-bottom: 80px;">
   <div class="container-xl category"
     style="background: #fff; border-radius: 12px; border: none; padding: 15px 0;">
 
