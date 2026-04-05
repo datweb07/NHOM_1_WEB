@@ -2,6 +2,7 @@
 require_once dirname(__DIR__, 2) . '/core/Session.php';
 require_once dirname(__DIR__, 2) . '/models/BaseModel.php';
 require_once dirname(__DIR__, 2) . '/models/roles/KhachHang.php';
+require_once '../app/services/cloudinary/CloudinaryService.php';
 
 class KhachHangController
 {
@@ -17,15 +18,15 @@ class KhachHangController
     public function danhSachDonHangCuaToi()
     {
         \App\Core\Session::start();
-       
-        $userId = $_SESSION['user_id'] ?? null; 
+
+        $userId = $_SESSION['user_id'] ?? null;
 
         if (!$userId) {
             header("Location: /login.php");
             exit();
         }
 
-        $safeUserId = (int)$userId;
+        $safeUserId = (int) $userId;
         $sql = "SELECT id, ma_don_hang, tong_thanh_toan, trang_thai, ngay_tao 
                 FROM don_hang 
                 WHERE nguoi_dung_id = $safeUserId 
@@ -44,18 +45,18 @@ class KhachHangController
     public function profile()
     {
         \App\Core\Session::start();
-       
-        $userId = $_SESSION['user_id'] ?? null; 
+
+        $userId = $_SESSION['user_id'] ?? null;
 
         if (!$userId) {
             header("Location: /login.php");
             exit();
         }
 
-        $safeUserId = (int)$userId;
+        $safeUserId = (int) $userId;
         $sql = "SELECT * FROM nguoi_dung WHERE id = $safeUserId";
         $userList = $this->khachHangModel->query($sql);
-        
+
         $user = !empty($userList) ? $userList[0] : null;
 
         if (!$user) {
@@ -74,10 +75,10 @@ class KhachHangController
     public function capNhatHoSo()
     {
         \App\Core\Session::start();
-        $userId = $_SESSION['user_id'] ?? null; 
-        
+        $userId = $_SESSION['user_id'] ?? null;
+
         if (!$userId || $_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header("Location: /client/profile"); 
+            header("Location: /client/profile");
             exit();
         }
 
@@ -111,15 +112,15 @@ class KhachHangController
             $_SESSION['error'] = "Cập nhật hồ sơ thất bại!";
         }
 
-        header("Location: /client/profile"); 
+        header("Location: /client/profile");
         exit();
     }
 
     public function doiMatKhau()
     {
         \App\Core\Session::start();
-        $userId = $_SESSION['user_id'] ?? null; 
-        
+        $userId = $_SESSION['user_id'] ?? null;
+
         if (!$userId || $_SERVER['REQUEST_METHOD'] !== 'POST') {
             header("Location: /client/profile");
             exit();
@@ -143,7 +144,7 @@ class KhachHangController
 
         //lấy userId hiện tại
         $userData = $this->khachHangModel->getById($userId);
-        
+
         if (!$userData) {
             $_SESSION['error'] = "Không tìm thấy thông tin người dùng!";
             header("Location: /client/profile");
@@ -166,7 +167,7 @@ class KhachHangController
             $_SESSION['error'] = "Đổi mật khẩu thất bại!";
         }
 
-        header("Location: /client/profile"); 
+        header("Location: /client/profile");
         exit();
     }
 
@@ -174,13 +175,13 @@ class KhachHangController
     {
         \App\Core\Session::start();
         $userId = $_SESSION['user_id'] ?? null;
-        
+
         if (!$userId || $_SERVER['REQUEST_METHOD'] !== 'POST') {
             header("Location: /client/profile");
             exit();
         }
 
-        //check url
+        // Kiểm tra xem có file được upload không
         if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
             $_SESSION['error'] = "Vui lòng chọn ảnh để upload!";
             header("Location: /client/profile");
@@ -188,16 +189,16 @@ class KhachHangController
         }
 
         $file = $_FILES['avatar'];
-        
-        //check size
-        $maxSize = 2 * 1024 * 1024; //MB
+
+        // Kiểm tra dung lượng (Max 2MB)
+        $maxSize = 2 * 1024 * 1024;
         if ($file['size'] > $maxSize) {
             $_SESSION['error'] = "Kích thước ảnh không được vượt quá 2MB!";
             header("Location: /client/profile");
             exit();
         }
 
-        //check type
+        // Kiểm tra định dạng file
         $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
         $fileType = mime_content_type($file['tmp_name']);
         if (!in_array($fileType, $allowedTypes)) {
@@ -206,27 +207,25 @@ class KhachHangController
             exit();
         }
 
-        //tạo mới uploads nếu chưa có
-        $uploadDir = dirname(__DIR__, 3) . '/public/uploads/avatars/';
-        if (!file_exists($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
+        try {
 
-        //file unique name
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $newFileName = 'avatar_' . $userId . '_' . time() . '.' . $extension;
-        $uploadPath = $uploadDir . $newFileName;
+            $cloudinary = CloudinaryService::getInstance();
 
-        //upload
-        if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-            //xóa ảnh cũ nếu có
             $userData = $this->khachHangModel->getById($userId);
-            if (!empty($userData['avatar_url']) && file_exists(dirname(__DIR__, 3) . $userData['avatar_url'])) {
-                @unlink(dirname(__DIR__, 3) . $userData['avatar_url']);
+
+            $uploadResult = $cloudinary->uploadApi()->upload($file['tmp_name'], [
+                'folder' => 'avatars',
+            ]);
+
+            $avatarUrl = $uploadResult['secure_url'];
+
+            if (!empty($userData['avatar_url']) && strpos($userData['avatar_url'], 'cloudinary') === false) {
+                $oldLocalPath = dirname(__DIR__, 3) . $userData['avatar_url'];
+                if (file_exists($oldLocalPath)) {
+                    @unlink($oldLocalPath);
+                }
             }
 
-            //update url vào db
-            $avatarUrl = '/public/uploads/avatars/' . $newFileName;
             $result = $this->khachHangModel->update($userId, [
                 'avatar_url' => $avatarUrl,
                 'ngay_cap_nhat' => date('Y-m-d H:i:s')
@@ -237,8 +236,8 @@ class KhachHangController
             } else {
                 $_SESSION['error'] = "Cập nhật ảnh đại diện thất bại!";
             }
-        } else {
-            $_SESSION['error'] = "Upload ảnh thất bại!";
+        } catch (\Exception $e) {
+            $_SESSION['error'] = "Upload ảnh thất bại: " . $e->getMessage();
         }
 
         header("Location: /client/profile");
