@@ -2,7 +2,7 @@
 require_once dirname(__DIR__, 2) . '/core/Session.php';
 require_once dirname(__DIR__, 2) . '/models/BaseModel.php';
 require_once dirname(__DIR__, 2) . '/models/roles/KhachHang.php';
-require_once '../app/services/cloudinary/CloudinaryService.php';
+require_once dirname(__DIR__, 2) . '/services/cloudinary/CloudinaryService.php';
 
 class KhachHangController
 {
