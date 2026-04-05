@@ -34,7 +34,7 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                             <h3 class="card-title">Thêm banner mới</h3>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="/admin/banner/them">
+                            <form method="POST" action="/admin/banner/them" enctype="multipart/form-data">
                                 <div class="mb-3">
                                     <label for="tieu_de" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
                                     <input
@@ -53,31 +53,30 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="hinh_anh_desktop" class="form-label">Link hình ảnh Desktop <span class="text-danger">*</span></label>
+                                        <label for="hinh_anh_desktop" class="form-label">Hình ảnh Desktop <span class="text-danger">*</span></label>
                                         <input
-                                            type="text"
+                                            type="file"
                                             class="form-control <?= isset($errors['hinh_anh_desktop']) ? 'is-invalid' : '' ?>"
                                             id="hinh_anh_desktop"
                                             name="hinh_anh_desktop"
-                                            value="<?= BannerCreateViewHelper::e($old['hinh_anh_desktop'] ?? '') ?>"
-                                            placeholder="https://example.com/banner-desktop.jpg"
+                                            accept="image/*"
                                             required>
                                         <?php if (isset($errors['hinh_anh_desktop'])): ?>
                                             <div class="invalid-feedback d-block">
                                                 <?= BannerCreateViewHelper::e($errors['hinh_anh_desktop']) ?>
                                             </div>
                                         <?php endif; ?>
+                                        <small class="text-muted">Chọn ảnh cho giao diện máy tính</small>
                                     </div>
 
                                     <div class="col-md-6 mb-3">
-                                        <label for="hinh_anh_mobile" class="form-label">Link hình ảnh Mobile</label>
+                                        <label for="hinh_anh_mobile" class="form-label">Hình ảnh Mobile</label>
                                         <input
-                                            type="text"
+                                            type="file"
                                             class="form-control <?= isset($errors['hinh_anh_mobile']) ? 'is-invalid' : '' ?>"
                                             id="hinh_anh_mobile"
                                             name="hinh_anh_mobile"
-                                            value="<?= BannerCreateViewHelper::e($old['hinh_anh_mobile'] ?? '') ?>"
-                                            placeholder="https://example.com/banner-mobile.jpg">
+                                            accept="image/*">
                                         <?php if (isset($errors['hinh_anh_mobile'])): ?>
                                             <div class="invalid-feedback d-block">
                                                 <?= BannerCreateViewHelper::e($errors['hinh_anh_mobile']) ?>
@@ -89,14 +88,19 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
 
                                 <div class="mb-3">
                                     <label for="link_dich" class="form-label">Link đích <span class="text-danger">*</span></label>
-                                    <input
-                                        type="text"
-                                        class="form-control <?= isset($errors['link_dich']) ? 'is-invalid' : '' ?>"
-                                        id="link_dich"
-                                        name="link_dich"
-                                        value="<?= BannerCreateViewHelper::e($old['link_dich'] ?? '') ?>"
-                                        placeholder="/san-pham hoặc https://example.com"
-                                        required>
+                                    <div class="input-group">
+                                        <input
+                                            type="text"
+                                            class="form-control <?= isset($errors['link_dich']) ? 'is-invalid' : '' ?>"
+                                            id="link_dich"
+                                            name="link_dich"
+                                            value="<?= BannerCreateViewHelper::e($old['link_dich'] ?? '') ?>"
+                                            placeholder="/san-pham/ten-san-pham hoặc https://example.com"
+                                            required>
+                                        <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalChonSanPham">
+                                            <i class="bi bi-box-seam me-1"></i> Chọn sản phẩm
+                                        </button>
+                                    </div>
                                     <?php if (isset($errors['link_dich'])): ?>
                                         <div class="invalid-feedback d-block">
                                             <?= BannerCreateViewHelper::e($errors['link_dich']) ?>
@@ -207,4 +211,92 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
     </div>
 </main>
 
+<div class="modal fade" id="modalChonSanPham" tabindex="-1" aria-labelledby="modalChonSanPhamLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalChonSanPhamLabel">Chọn sản phẩm đích</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="searchInput" class="form-control mb-3" placeholder="Nhập tên sản phẩm để tìm kiếm...">
+                <div id="productList" class="list-group">
+                    <div class="text-center text-muted py-3">Đang tải danh sách sản phẩm...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modalElement = document.getElementById('modalChonSanPham');
+    const productList = document.getElementById('productList');
+    const searchInput = document.getElementById('searchInput');
+    let allProducts = [];
+    let isLoaded = false;
+
+    modalElement.addEventListener('show.bs.modal', function () {
+        if (!isLoaded) {
+            fetchProducts();
+        }
+    });
+
+    searchInput.addEventListener('input', function(e) {
+        const keyword = e.target.value.toLowerCase();
+        const filtered = allProducts.filter(p => p.ten_san_pham.toLowerCase().includes(keyword));
+        renderProducts(filtered);
+    });
+
+    async function fetchProducts() {
+        try {
+            const response = await fetch('/admin/api/san-pham');
+            
+            if (!response.ok) {
+                throw new Error('Không thể tải danh sách sản phẩm');
+            }
+            
+            const data = await response.json();
+            allProducts = data;
+            isLoaded = true;
+            renderProducts(allProducts);
+
+        } catch (error) {
+            productList.innerHTML = '<div class="text-danger text-center py-3">Lỗi tải dữ liệu. Vui lòng thử lại.</div>';
+            console.error(error);
+        }
+    }
+
+    // Hàm vẽ danh sách sản phẩm ra HTML
+    function renderProducts(products) {
+        productList.innerHTML = ''; // Xóa chữ "Đang tải..."
+        
+        if(products.length === 0) {
+            productList.innerHTML = '<div class="text-center text-muted py-3">Không tìm thấy sản phẩm phù hợp.</div>';
+            return;
+        }
+
+        products.forEach(product => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'list-group-item list-group-item-action';
+            button.textContent = product.ten_san_pham;
+            
+            // Sự kiện khi click vào 1 sản phẩm
+            button.onclick = function() {
+                // Điền link vào ô input ngoài form
+                // Giả định website bạn dùng slug (nếu dùng ID thì đổi thành product.id)
+                document.getElementById('link_dich').value = '/san-pham/' + product.slug;
+                
+                // Đóng modal
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
+            };
+            
+            productList.appendChild(button);
+        });
+    }
+});
+</script>

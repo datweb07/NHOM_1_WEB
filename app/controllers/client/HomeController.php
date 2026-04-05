@@ -2,26 +2,26 @@
 
 namespace App\Controllers\Client;
 
-require_once dirname(__DIR__, 2) . '/models/entities/BannerQuangCao.php';
+require_once dirname(__DIR__, 2) . '/controllers/client/BannerController.php';
 require_once dirname(__DIR__, 2) . '/models/entities/SanPham.php';
 require_once dirname(__DIR__, 2) . '/models/entities/DanhMuc.php';
 require_once dirname(__DIR__, 2) . '/models/entities/KhuyenMai.php';
 
-use BannerQuangCao;
+use App\Controllers\Client\BannerController;
 use SanPham;
 use DanhMuc;
 use KhuyenMai;
 
 class HomeController
 {
-    private BannerQuangCao $bannerModel;
+    private BannerController $bannerController;
     private SanPham $sanPhamModel;
     private DanhMuc $danhMucModel;
     private KhuyenMai $khuyenMaiModel;
 
     public function __construct()
     {
-        $this->bannerModel = new BannerQuangCao();
+        $this->bannerController = new BannerController();
         $this->sanPhamModel = new SanPham();
         $this->danhMucModel = new DanhMuc();
         $this->khuyenMaiModel = new KhuyenMai();
@@ -29,10 +29,11 @@ class HomeController
 
     public function index(): void
     {
-        // Lấy banner theo vị trí
-        $bannerHero = $this->bannerModel->layBannerTheoViTri('HOME_HERO');
-        $bannerSide = $this->bannerModel->layBannerTheoViTri('HOME_SIDE');
-        $bannerMid  = $this->bannerModel->layBannerTheoViTri('HOME_MID');
+        // Lấy banner từ BannerController
+        $banners = $this->bannerController->layBannerTrangChu();
+        $bannerHero = $banners['bannerHero'];
+        $bannerSide = $banners['bannerSide'];
+        $bannerMid  = $banners['bannerMid'];
         
         // Lấy sản phẩm nổi bật
         $sanPhamNoiBat = $this->sanPhamModel->laySanPhamNoiBat(8);

@@ -124,7 +124,7 @@ class SanPham extends BaseModel
 
     public function layTatCa(): array
     {
-        $sql = "SELECT id, ten_san_pham FROM {$this->table} ORDER BY ten_san_pham ASC";
+        $sql = "SELECT id, ten_san_pham, slug FROM {$this->table} WHERE slug IS NOT NULL AND slug != '' ORDER BY ten_san_pham ASC";
         return parent::query($sql);
     }
 

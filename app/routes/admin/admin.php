@@ -409,6 +409,12 @@ function adminRoute(string $uri): void
         return;
     }
 
+    // API: Lấy danh sách sản phẩm cho modal chọn sản phẩm
+    if ($path === 'admin/api/san-pham' && $method === 'GET') {
+        $bannerController->layDanhSachSanPham();
+        return;
+    }
+
     http_response_code(404);
     require_once dirname(__DIR__, 2) . '/views/errors/404.php';
 }

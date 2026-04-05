@@ -9,6 +9,7 @@ class BannerController
     {
         require_once dirname(__DIR__, 2) . '/models/entities/BannerQuangCao.php';
         require_once dirname(__DIR__, 2) . '/models/BaseModel.php';
+        
         $this->bannerModel = new BannerQuangCao();
         $this->baseModel = new BaseModel('banner_quang_cao');
     }
@@ -66,7 +67,36 @@ class BannerController
             exit;
         }
 
-        [$payload, $errors, $old] = $this->validatePayload($_POST);
+        $input = $_POST;
+        
+        require_once dirname(__DIR__, 2) . '/services/cloudinary/CloudinaryService.php';
+        $cloudinary = CloudinaryService::getInstance();
+
+        $uniqueCode = time(); 
+        $publicIdDesktop = 'banner_desktop_' . $uniqueCode;
+        $publicIdMobile  = 'banner_mobile_' . $uniqueCode;
+
+        if (isset($_FILES['hinh_anh_desktop']) && $_FILES['hinh_anh_desktop']['error'] === UPLOAD_ERR_OK) {
+            try {
+                $uploadResult = $cloudinary->uploadApi()->upload($_FILES['hinh_anh_desktop']['tmp_name'], [
+                    'folder'    => 'banners',
+                    'public_id' => $publicIdDesktop 
+                ]);
+                $input['hinh_anh_desktop'] = $uploadResult['secure_url']; 
+            } catch (\Exception $e) { }
+        }
+
+        if (isset($_FILES['hinh_anh_mobile']) && $_FILES['hinh_anh_mobile']['error'] === UPLOAD_ERR_OK) {
+            try {
+                $uploadResult = $cloudinary->uploadApi()->upload($_FILES['hinh_anh_mobile']['tmp_name'], [
+                    'folder'    => 'banners',
+                    'public_id' => $publicIdMobile 
+                ]);
+                $input['hinh_anh_mobile'] = $uploadResult['secure_url'];
+            } catch (\Exception $e) {}
+        }
+
+        [$payload, $errors, $old] = $this->validatePayload($input);
 
         if (!empty($errors)) {
             $this->create($old, $errors);
@@ -121,7 +151,50 @@ class BannerController
             exit;
         }
 
-        [$payload, $errors, $old] = $this->validatePayload($_POST, $id);
+        $input = $_POST;
+        
+        $input['hinh_anh_desktop'] = $input['hinh_anh_desktop'] ?? $banner['hinh_anh_desktop'];
+        $input['hinh_anh_mobile']  = $input['hinh_anh_mobile']  ?? $banner['hinh_anh_mobile'];
+
+        require_once dirname(__DIR__, 2) . '/services/cloudinary/CloudinaryService.php';
+        $cloudinary = CloudinaryService::getInstance();
+
+        $publicIdDesktop = 'banner_desktop_' . $id;
+        $publicIdMobile  = 'banner_mobile_' . $id;
+
+        if (isset($_FILES['hinh_anh_desktop']) && $_FILES['hinh_anh_desktop']['error'] === UPLOAD_ERR_OK) {
+            try {
+                $uploadResult = $cloudinary->uploadApi()->upload($_FILES['hinh_anh_desktop']['tmp_name'], [
+                    'folder'     => 'banners',
+                    'public_id'  => $publicIdDesktop,
+                    'overwrite'  => true,       
+                    'invalidate' => true       
+                ]);
+                $input['hinh_anh_desktop'] = $uploadResult['secure_url'];
+                
+                if (!empty($banner['hinh_anh_desktop']) && strpos($banner['hinh_anh_desktop'], $publicIdDesktop) === false) {
+                    $this->deleteCloudinaryImage($banner['hinh_anh_desktop']);
+                }
+            } catch (\Exception $e) {}
+        }
+
+        if (isset($_FILES['hinh_anh_mobile']) && $_FILES['hinh_anh_mobile']['error'] === UPLOAD_ERR_OK) {
+            try {
+                $uploadResult = $cloudinary->uploadApi()->upload($_FILES['hinh_anh_mobile']['tmp_name'], [
+                    'folder'     => 'banners',
+                    'public_id'  => $publicIdMobile,
+                    'overwrite'  => true,
+                    'invalidate' => true
+                ]);
+                $input['hinh_anh_mobile'] = $uploadResult['secure_url'];
+                
+                if (!empty($banner['hinh_anh_mobile']) && strpos($banner['hinh_anh_mobile'], $publicIdMobile) === false) {
+                    $this->deleteCloudinaryImage($banner['hinh_anh_mobile']);
+                }
+            } catch (\Exception $e) {}
+        }
+
+        [$payload, $errors, $old] = $this->validatePayload($input, $id);
 
         if (!empty($errors)) {
             $this->edit($id, $old, $errors);
@@ -147,9 +220,51 @@ class BannerController
             exit;
         }
 
+        $this->deleteCloudinaryImage($banner['hinh_anh_desktop']);
+        $this->deleteCloudinaryImage($banner['hinh_anh_mobile']);
+
         $this->baseModel->delete($id);
         
         header('Location: /admin/banner?success=deleted');
+        exit;
+    }
+
+    private function deleteCloudinaryImage($url): void
+    {
+        if (empty($url) || strpos($url, 'cloudinary.com') === false) {
+            return;
+        }
+
+        $urlPath = parse_url($url, PHP_URL_PATH);
+        if (preg_match('/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z0-9]+$/', $urlPath, $matches)) {
+            try {
+                require_once dirname(__DIR__, 2) . '/services/cloudinary/CloudinaryService.php';
+                $cloudinary = CloudinaryService::getInstance();
+                $cloudinary->uploadApi()->destroy($matches[1], ['invalidate' => true]);
+            } catch (\Exception $e) {
+
+            }
+        }
+    }
+
+    public function layDanhSachSanPham(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        
+        require_once dirname(__DIR__, 2) . '/models/entities/SanPham.php';
+        $sanPhamModel = new SanPham();
+        
+        $danhSachSanPham = $sanPhamModel->layTatCa();
+        
+        $result = array_map(function($sp) {
+            return [
+                'id' => (int)$sp['id'],
+                'ten_san_pham' => $sp['ten_san_pham'],
+                'slug' => $sp['slug']
+            ];
+        }, $danhSachSanPham);
+        
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
         exit;
     }
 
@@ -167,33 +282,28 @@ class BannerController
         $ngayKetThuc = trim((string)($input['ngay_ket_thuc'] ?? ''));
         $trangThai = isset($input['trang_thai']) ? (int)$input['trang_thai'] : 1;
 
-        // Validate tieu_de
         if ($tieuDe === '') {
             $errors['tieu_de'] = 'Tiêu đề không được để trống.';
         } elseif (mb_strlen($tieuDe) > 255) {
             $errors['tieu_de'] = 'Tiêu đề không được vượt quá 255 ký tự.';
         }
 
-        // Validate hinh_anh_desktop
         if ($hinhAnhDesktop === '') {
             $errors['hinh_anh_desktop'] = 'Hình ảnh desktop không được để trống.';
         } elseif (mb_strlen($hinhAnhDesktop) > 500) {
             $errors['hinh_anh_desktop'] = 'Link hình ảnh desktop không được vượt quá 500 ký tự.';
         }
 
-        // Validate hinh_anh_mobile (optional)
         if ($hinhAnhMobile !== '' && mb_strlen($hinhAnhMobile) > 500) {
             $errors['hinh_anh_mobile'] = 'Link hình ảnh mobile không được vượt quá 500 ký tự.';
         }
 
-        // Validate link_dich
         if ($linkDich === '') {
             $errors['link_dich'] = 'Link đích không được để trống.';
         } elseif (mb_strlen($linkDich) > 500) {
             $errors['link_dich'] = 'Link đích không được vượt quá 500 ký tự.';
         }
 
-        // Validate vi_tri
         $validViTri = ['HOME_HERO', 'HOME_SIDE', 'FLOATING_BOTTOM_LEFT', 'POPUP', 'CATEGORY_TOP'];
         if ($viTri === '') {
             $errors['vi_tri'] = 'Vị trí không được để trống.';
@@ -201,12 +311,10 @@ class BannerController
             $errors['vi_tri'] = 'Vị trí không hợp lệ.';
         }
 
-        // Validate thu_tu
         if (!is_numeric($thuTu)) {
             $errors['thu_tu'] = 'Thứ tự phải là số.';
         }
 
-        // Validate date range
         if ($ngayBatDau !== '' && $ngayKetThuc !== '') {
             if (strtotime($ngayBatDau) >= strtotime($ngayKetThuc)) {
                 $errors['ngay_ket_thuc'] = 'Ngày kết thúc phải sau ngày bắt đầu.';
