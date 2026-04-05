@@ -35,7 +35,6 @@ require_once dirname(__DIR__) . '/layouts/header.php';
     
     <div class="app-content">
         <div class="container-fluid">
-            <!-- Action Bar -->
             <div class="d-flex justify-content-end mb-3">
                 <a href="/admin/danh-muc/them" class="btn btn-primary">
                     <i class="bi bi-plus-circle"></i> Thêm Danh Mục
@@ -59,7 +58,6 @@ require_once dirname(__DIR__) . '/layouts/header.php';
             </div>
         <?php endif; ?>
 
-        <!-- Search and Filter Form -->
         <form class="row g-3 mb-3" method="GET" action="/admin/danh-muc">
             <div class="col-md-5">
                 <label for="keyword" class="form-label">Tìm Kiếm</label>
@@ -86,7 +84,6 @@ require_once dirname(__DIR__) . '/layouts/header.php';
             </div>
         </form>
 
-        <!-- Table -->
         <div class="table-responsive">
             <?php if (empty($danhSachDanhMuc)): ?>
                 <div class="text-center py-5">
@@ -94,13 +91,15 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                     <p class="text-muted mt-3">Không có danh mục nào</p>
                 </div>
             <?php else: ?>
-                <table class="table table-striped table-hover">
+                <table class="table table-striped table-hover align-middle">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Tên Danh Mục</th>
                                 <th>Slug</th>
                                 <th>Danh Mục Cha</th>
+                                <th class="text-center">Nổi Bật</th>
+                                <th class="text-center">Gợi Ý</th>
                                 <th>Thứ Tự</th>
                                 <th>Trạng Thái</th>
                                 <th>Sản Phẩm</th>
@@ -119,6 +118,23 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                                     </td>
                                     <td><?= DanhMucViewHelper::e($item['slug']) ?></td>
                                     <td><?= DanhMucViewHelper::e($item['ten_danh_muc_cha'] ?? '-') ?></td>
+                                    
+                                    <td class="text-center">
+                                        <?php if ((int)($item['is_noi_bat'] ?? 0) === 1): ?>
+                                            <i class="bi bi-check-circle-fill text-success fs-5" title="Có"></i>
+                                        <?php else: ?>
+                                            <i class="bi bi-dash text-muted"></i>
+                                        <?php endif; ?>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <?php if ((int)($item['is_goi_y'] ?? 0) === 1): ?>
+                                            <i class="bi bi-check-circle-fill text-success fs-5" title="Có"></i>
+                                        <?php else: ?>
+                                            <i class="bi bi-dash text-muted"></i>
+                                        <?php endif; ?>
+                                    </td>
+
                                     <td><?= (int)$item['thu_tu'] ?></td>
                                     <td>
                                         <?php if ((int)$item['trang_thai'] === 1): ?>

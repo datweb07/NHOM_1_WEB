@@ -57,6 +57,8 @@ CREATE TABLE `danh_muc` (
     `danh_muc_cha_id` INT DEFAULT NULL,
     `thu_tu` INT DEFAULT 0 COMMENT 'Thứ tự hiển thị trên menu',
     `trang_thai` TINYINT(1) DEFAULT 1 COMMENT '1=hiện, 0=ẩn',
+    `is_noi_bat` TINYINT(1) DEFAULT 0 COMMENT '1 = Hiện ở danh mục nổi bật, 0 = Không',
+    `is_goi_y` TINYINT(1) DEFAULT 0 COMMENT '1 = Hiện ở gợi ý cho bạn, 0 = Không',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_dm_slug` (`slug`),
     KEY `danh_muc_cha_id` (`danh_muc_cha_id`),

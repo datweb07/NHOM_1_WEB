@@ -10,6 +10,10 @@ class DanhMuc extends BaseModel
     protected ?int $danhMucChaId = null;
     protected ?int $thuTu = 0;
     protected int $trangThai = 1;
+    
+    // Khai báo thêm 2 thuộc tính mới
+    protected int $isNoiBat = 0;
+    protected int $isGoiY = 0;
 
     public function __construct()
     {
@@ -138,6 +142,30 @@ class DanhMuc extends BaseModel
         return $this->query($sql);
     }
 
+    /**
+     * Lấy danh mục Nổi Bật (is_noi_bat = 1)
+     */
+    public function layDanhMucNoiBat(int $limit = 16): array
+    {
+        $limit = max(1, (int)$limit);
+        $sql = "SELECT * FROM {$this->table} 
+                WHERE is_noi_bat = 1 AND trang_thai = 1 
+                ORDER BY thu_tu ASC LIMIT $limit";
+        return $this->query($sql);
+    }
+
+    /**
+     * Lấy danh mục Gợi Ý (is_goi_y = 1) và Loại trừ Nổi Bật (is_noi_bat = 0)
+     */
+    public function layDanhMucGoiY(int $limit = 30): array
+    {
+        $limit = max(1, (int)$limit);
+        $sql = "SELECT * FROM {$this->table} 
+                WHERE is_goi_y = 1 AND is_noi_bat = 0 AND trang_thai = 1 
+                ORDER BY thu_tu ASC LIMIT $limit";
+        return $this->query($sql);
+    }
+
     public function toArray(): array
     {
         return [
@@ -148,6 +176,9 @@ class DanhMuc extends BaseModel
             'danh_muc_cha_id' => $this->danhMucChaId,
             'thu_tu' => $this->thuTu,
             'trang_thai' => $this->trangThai,
+            // Thêm 2 trường mới vào mảng trả về
+            'is_noi_bat' => $this->isNoiBat,
+            'is_goi_y' => $this->isGoiY,
         ];
     }
 }

@@ -29,22 +29,25 @@ class HomeController
 
     public function index(): void
     {
-        // Lấy banner từ BannerController
+        // Lấy banner
         $banners = $this->bannerController->layBannerTrangChu();
         $bannerHero = $banners['bannerHero'];
         $bannerSide = $banners['bannerSide'];
         $bannerMid  = $banners['bannerMid'];
         
-        // Lấy sản phẩm nổi bật
+        // Lấy sản phẩm nổi bật & khuyến mãi
         $sanPhamNoiBat = $this->sanPhamModel->laySanPhamNoiBat(8);
-        
-        // Lấy sản phẩm khuyến mãi
         $sanPhamKhuyenMai = $this->sanPhamModel->laySanPhamKhuyenMai(8);
         
-        // Lấy danh mục hoạt động
-        $danhMucList = $this->danhMucModel->layDanhMucHienThi(16);
+        // --- PHẦN CẬP NHẬT DANH MỤC ---
+        // Lấy danh mục nổi bật (16 cái)
+        $danhMucNoiBat = $this->danhMucModel->layDanhMucNoiBat(16);
         
-        // Lấy sản phẩm theo danh mục (Điện thoại, Laptop, Phụ kiện)
+        // Lấy danh mục gợi ý (30 cái)
+        $danhMucGoiY = $this->danhMucModel->layDanhMucGoiY(30);
+        // ------------------------------
+        
+        // Lấy sản phẩm theo danh mục
         $sanPhamDienThoai = $this->sanPhamModel->laySanPhamTheoDanhMuc('dien-thoai', 8);
         $sanPhamLaptop    = $this->sanPhamModel->laySanPhamTheoDanhMuc('laptop', 8);
         $sanPhamPhuKien   = $this->sanPhamModel->laySanPhamTheoDanhMuc('phu-kien', 12);

@@ -292,6 +292,10 @@ class DanhMucController
         $thuTuRaw = trim((string)($input['thu_tu'] ?? '0'));
         $trangThaiRaw = (string)($input['trang_thai'] ?? '1');
         $danhMucChaRaw = (string)($input['danh_muc_cha_id'] ?? '');
+        
+        // BỔ SUNG: Lấy dữ liệu Nổi bật và Gợi ý từ form
+        $isNoiBatRaw = (string)($input['is_noi_bat'] ?? '0');
+        $isGoiYRaw = (string)($input['is_goi_y'] ?? '0');
 
         if ($ten === '') {
             $errors['ten'] = 'Tên danh mục không được để trống.';
@@ -320,6 +324,10 @@ class DanhMucController
         }
 
         $trangThai = ($trangThaiRaw === '0') ? 0 : 1;
+        
+        // BỔ SUNG: Ép kiểu dữ liệu về 0 hoặc 1
+        $isNoiBat = ($isNoiBatRaw === '1') ? 1 : 0;
+        $isGoiY = ($isGoiYRaw === '1') ? 1 : 0;
 
         $danhMucChaId = null;
         if ($danhMucChaRaw !== '') {
@@ -336,6 +344,7 @@ class DanhMucController
             }
         }
 
+        // BỔ SUNG: Đẩy 2 trường mới vào payload để Database lưu lại
         $payload = [
             'ten' => addslashes($ten),
             'slug' => addslashes($slug),
@@ -343,8 +352,11 @@ class DanhMucController
             'danh_muc_cha_id' => $danhMucChaId,
             'thu_tu' => $thuTu,
             'trang_thai' => $trangThai,
+            'is_noi_bat' => $isNoiBat,
+            'is_goi_y' => $isGoiY,
         ];
 
+        // BỔ SUNG: Đẩy 2 trường mới vào old để giữ lại lựa chọn nếu form bị lỗi validation
         $old = [
             'ten' => $ten,
             'slug' => $slugInput,
@@ -352,6 +364,8 @@ class DanhMucController
             'danh_muc_cha_id' => $danhMucChaRaw,
             'thu_tu' => $thuTuRaw,
             'trang_thai' => $trangThaiRaw,
+            'is_noi_bat' => $isNoiBatRaw,
+            'is_goi_y' => $isGoiYRaw,
         ];
 
         return [$payload, $errors, $old];

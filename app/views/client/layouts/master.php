@@ -24,6 +24,11 @@
         body {
             font-family: 'Roboto', sans-serif;
         }
+        main {
+            background-color: #f5f5f5; /* Màu xám nhạt, bạn có thể đổi thành #f0f0f0 hoặc #e9ecef nếu muốn đậm hơn nữa */
+            min-height: 50vh; /* Đảm bảo main luôn có độ cao nhất định nếu nội dung quá ít */
+            padding-bottom: 20px;
+        }
 
         .header-top {
             background: #d70018;

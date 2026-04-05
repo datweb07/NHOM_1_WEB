@@ -19,6 +19,10 @@ $valueCha = (string)($old['danh_muc_cha_id'] ?? ($danhMuc['danh_muc_cha_id'] ?? 
 $valueThuTu = $old['thu_tu'] ?? ($danhMuc['thu_tu'] ?? '0');
 $valueTrangThai = (string)($old['trang_thai'] ?? ($danhMuc['trang_thai'] ?? '1'));
 
+// Lấy giá trị của Nổi bật và Gợi ý
+$valueIsNoiBat = (string)($old['is_noi_bat'] ?? ($danhMuc['is_noi_bat'] ?? '0'));
+$valueIsGoiY = (string)($old['is_goi_y'] ?? ($danhMuc['is_goi_y'] ?? '0'));
+
 require_once dirname(__DIR__) . '/layouts/header.php';
 require_once dirname(__DIR__) . '/layouts/sidebar.php';
 ?>
@@ -92,7 +96,23 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                             </select>
                         </div>
 
-                        <div class="col-12 d-flex gap-2 pt-1">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="is_noi_bat">Danh mục Nổi bật (Hiển thị trang chủ)</label>
+                            <select class="form-select" id="is_noi_bat" name="is_noi_bat">
+                                <option value="0" <?= $valueIsNoiBat === '0' ? 'selected' : '' ?>>Không</option>
+                                <option value="1" <?= $valueIsNoiBat === '1' ? 'selected' : '' ?>>Có</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="is_goi_y">Danh mục Gợi ý cho bạn</label>
+                            <select class="form-select" id="is_goi_y" name="is_goi_y">
+                                <option value="0" <?= $valueIsGoiY === '0' ? 'selected' : '' ?>>Không</option>
+                                <option value="1" <?= $valueIsGoiY === '1' ? 'selected' : '' ?>>Có</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 d-flex gap-2 pt-3">
                             <button class="btn btn-primary" type="submit">Lưu thay đổi</button>
                             <a class="btn btn-outline-secondary" href="/admin/danh-muc">Quay lại danh sách</a>
                         </div>

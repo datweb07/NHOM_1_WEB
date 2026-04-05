@@ -80,7 +80,23 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                             </select>
                         </div>
 
-                        <div class="col-12 d-flex gap-2 pt-1">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="is_noi_bat">Danh mục Nổi bật (Hiển thị trang chủ)</label>
+                            <select class="form-select" id="is_noi_bat" name="is_noi_bat">
+                                <option value="0" <?= (string)($old['is_noi_bat'] ?? '0') === '0' ? 'selected' : '' ?>>Không</option>
+                                <option value="1" <?= (string)($old['is_noi_bat'] ?? '0') === '1' ? 'selected' : '' ?>>Có</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="is_goi_y">Danh mục Gợi ý cho bạn</label>
+                            <select class="form-select" id="is_goi_y" name="is_goi_y">
+                                <option value="0" <?= (string)($old['is_goi_y'] ?? '0') === '0' ? 'selected' : '' ?>>Không</option>
+                                <option value="1" <?= (string)($old['is_goi_y'] ?? '0') === '1' ? 'selected' : '' ?>>Có</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 d-flex gap-2 pt-3">
                             <button class="btn btn-primary" type="submit">Thêm danh mục</button>
                             <a class="btn btn-outline-secondary" href="/admin/danh-muc">Quay lại danh sách</a>
                         </div>
@@ -92,7 +108,6 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
 </main>
 
 <script>
-// Script xem trước ảnh khi chọn file
 document.getElementById('icon_url').addEventListener('change', function(e) {
     const file = e.target.files[0];
     const preview = document.getElementById('icon-preview');

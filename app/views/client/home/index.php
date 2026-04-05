@@ -14,7 +14,7 @@ ob_start();
 
 <div class="full-width-hero" style="position: relative; width: 100%; overflow: hidden;">
 
-    <div class="wapper-slider hero-carousel" style="width: 100%; border: none; box-shadow: none;">
+    <div class="wrapper-slider hero-carousel" style="width: 100%; border: none; box-shadow: none;">
 
         <div class="row no-warp main-slider" style="margin: 0;">
             <?php if (!empty($bannerHero)): ?>
@@ -41,42 +41,39 @@ ob_start();
     </div>
 
     <div class="hero-fade-overlay"
-        style="position: absolute; bottom: 0; left: 0; width: 100%; height: 280px; background: linear-gradient(to bottom, transparent 0%, #f8f9fa 100%); pointer-events: none; z-index: 5;">
+        style="position: absolute; bottom: 0; left: 0; width: 100%; height: 280px; background: linear-gradient(to bottom, rgba(245,245,245,0) 0%, #f5f5f5 100%); pointer-events: none; z-index: 5;">
     </div>
 </div>
 
-<div class="category-wapper" style="position: relative; z-index: 10; margin-top: -300px; margin-bottom: 30px;">
-  <div class="container-xl category" style="background: #fff; border-radius: 12px; border: none; padding: 15px 0;">
+<div class="category-wrapper" style="position: relative; z-index: 10; margin-top: -300px; margin-bottom: 30px;">
+  <div class="container-xl category shadow-sm" style="background: #fff; border-radius: 12px; border: none; padding: 15px 0;">
 
     <div class="px-4 pb-4 pt-2">
       <h3 class="fw-bold mb-0" style="font-size: 1.3rem; color: #333;">Danh mục nổi bật</h3>
     </div>
     
     <div class="row g-2 px-2">
-      <?php if (!empty($danhMucList)): ?>
-        <?php foreach ($danhMucList as $dm): ?>
-          <div class="col-6 col-md-3 col-lg-custom-8">
-            <div class="category-item" style="border: none; text-align: center;">
-              <a href="/danh-muc/<?php echo htmlspecialchars($dm['slug']); ?>" class="text-decoration-none">
-                <div class="img-category" style="background: transparent;">
-                  <?php if (!empty($dm['icon_url'])): ?>
-                    <img src="<?php echo htmlspecialchars($dm['icon_url']); ?>"
-                         alt="<?php echo htmlspecialchars($dm['ten']); ?>">
-                  <?php else: ?>
-                    <img src="/public/assets/client/images/icon/phone.png"
-                         alt="<?php echo htmlspecialchars($dm['ten']); ?>">
-                  <?php endif; ?>
-                </div>
-                <p class="title-category mb-0" style="font-size: 0.85rem; font-weight: bold; color: #333; margin-top: 8px;">
-                    <?php echo htmlspecialchars($dm['ten']); ?>
-                </p>
-              </a>
+  <?php if (!empty($danhMucNoiBat)): ?>
+    <?php foreach ($danhMucNoiBat as $dm): ?>
+      <div class="col-6 col-md-3 col-lg-custom-8">
+        <div class="category-item" style="border: none; text-align: center;">
+          <a href="/danh-muc/<?php echo htmlspecialchars($dm['slug']); ?>" class="text-decoration-none">
+            <div class="category-image" style="background: transparent;">
+              <?php if (!empty($dm['icon_url'])): ?>
+                <img src="<?php echo htmlspecialchars($dm['icon_url']); ?>" alt="<?php echo htmlspecialchars($dm['ten']); ?>">
+              <?php else: ?>
+                <img src="/public/assets/client/images/icon/phone.png" alt="<?php echo htmlspecialchars($dm['ten']); ?>">
+              <?php endif; ?>
             </div>
-          </div>
-        <?php endforeach; ?>
-      <?php endif; ?>
+            <p class="category-title mb-0" style="font-size: 0.85rem; font-weight: bold; color: #333; margin-top: 8px;">
+                <?php echo htmlspecialchars($dm['ten']); ?>
+            </p>
+          </a>
+        </div>
+      </div>
+    <?php endforeach; ?>
+  <?php endif; ?>
     </div>
-    
   </div>
 </div>
 
@@ -139,99 +136,467 @@ ob_start();
         transform: scale(1.05);
     }
 
-  .category-item {
-    transition: all 0.2s ease;
-  }
-  .category-item .img-category img {
-    transition: transform 1s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  }
-  .category-item:hover .img-category img {
-    transform: scale(1);
-  }
+    .category-item {
+        transition: all 0.2s ease;
+    }
+
+    .category-item .category-image img {
+        transition: transform 1s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+
+    .category-item:hover .category-image img {
+        transform: scale(1.1);
+    }
 </style>
 
 <div class="slider-card mt-4">
     <div class="container-xl">
-        <div class="row">
-            <div class="col-12">
-                <p class="fs-4 fw-bold text-danger py-2 mb-0"><i class="fa fa-fire-flame-curved"></i> Khuyến mãi</p>
+        <div class="bg-white shadow-sm" style="border-radius: 12px; padding: 15px;">
+            <div class="row">
+                <div class="col-12">
+                    <p class="fs-4 fw-bold text-danger py-2 px-2 mb-0"><i class="fa fa-fire-flame-curved"></i> Khuyến
+                        mãi</p>
+                </div>
             </div>
-        </div>
 
-        <div class="continuous-slider-wrapper">
-            <?php
-            require_once dirname(__DIR__, 3) . '/models/entities/SanPham.php';
-            $spModel = new SanPham();
-            ?>
-            <div class="continuous-slider-track">
-                <?php if (!empty($sanPhamKhuyenMai)): ?>
-                    <?php
-                    for ($i = 0; $i < 2; $i++):
-                        foreach ($sanPhamKhuyenMai as $sp):
-                            $giaSauGiam = $spModel->tinhGiaSauKhuyenMai(
-                                $sp['gia_hien_thi'],
-                                $sp['loai_giam'],
-                                $sp['gia_tri_giam'],
-                                $sp['giam_toi_da']
-                            );
-                            $tienGiam = $sp['gia_hien_thi'] - $giaSauGiam;
-                            ?>
-                            <div class="continuous-slider-item">
-                                <div class="p-2 border rounded-3 bg-white custom-hover-card h-100 mx-1">
-                                    <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
-                                        class="text-dark text-decoration-none d-block">
-                                        <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
-                                            style="height: 250px;">
-                                            <?php if (!empty($sp['anh_chinh'])): ?>
-                                                <img src="<?php echo htmlspecialchars($sp['anh_chinh']); ?>"
-                                                    alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
-                                                    class="w-100 h-100 object-fit-cover custom-hover-zoom">
-                                            <?php else: ?>
-                                                <img src="/public/assets/client/images/products/14.png"
-                                                    alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
-                                                    class="w-100 h-100 object-fit-cover custom-hover-zoom">
-                                            <?php endif; ?>
-                                            <div class="position-absolute bottom-0 start-0 p-2">
-                                                <span class="text-white px-2 py-1 rounded-pill d-inline-block mb-1"
-                                                    style="background-color: #4285f4; font-size: 0.75rem;">Ưu đãi
-                                                    <?php echo number_format($tienGiam, 0, ',', '.'); ?>đ</span><br>
-                                                <span class="text-white px-2 py-1 rounded-pill d-inline-block"
-                                                    style="background-color: #66cd42; font-size: 0.75rem;">Trả góp 0%</span>
+            <div class="continuous-slider-wrapper">
+                <?php
+                require_once dirname(__DIR__, 3) . '/models/entities/SanPham.php';
+                $spModel = new SanPham();
+                ?>
+                <div class="continuous-slider-track">
+                    <?php if (!empty($sanPhamKhuyenMai)): ?>
+                        <?php
+                        for ($i = 0; $i < 2; $i++):
+                            foreach ($sanPhamKhuyenMai as $sp):
+                                $giaSauGiam = $spModel->tinhGiaSauKhuyenMai(
+                                    $sp['gia_hien_thi'],
+                                    $sp['loai_giam'],
+                                    $sp['gia_tri_giam'],
+                                    $sp['giam_toi_da']
+                                );
+                                $tienGiam = $sp['gia_hien_thi'] - $giaSauGiam;
+                                ?>
+                                <div class="continuous-slider-item">
+                                    <div class="p-2 border rounded-3 bg-white custom-hover-card h-100 mx-1">
+                                        <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
+                                            class="text-dark text-decoration-none d-block">
+                                            <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
+                                                style="height: 250px;">
+                                                <?php if (!empty($sp['anh_chinh'])): ?>
+                                                    <img src="<?php echo htmlspecialchars($sp['anh_chinh']); ?>"
+                                                        alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
+                                                        class="w-100 h-100 object-fit-cover custom-hover-zoom">
+                                                <?php else: ?>
+                                                    <img src="/public/assets/client/images/products/14.png"
+                                                        alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
+                                                        class="w-100 h-100 object-fit-cover custom-hover-zoom">
+                                                <?php endif; ?>
+                                                <div class="position-absolute bottom-0 start-0 p-2">
+                                                    <span class="text-white px-2 py-1 rounded-pill d-inline-block mb-1"
+                                                        style="background-color: #4285f4; font-size: 0.75rem;">Ưu đãi
+                                                        <?php echo number_format($tienGiam, 0, ',', '.'); ?>đ</span><br>
+                                                    <span class="text-white px-2 py-1 rounded-pill d-inline-block"
+                                                        style="background-color: #66cd42; font-size: 0.75rem;">Trả góp 0%</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="mt-3 px-1">
-                                            <h3 class="fs-6 fw-semibold mb-3 text-truncate">
-                                                <?php echo htmlspecialchars($sp['ten_san_pham']); ?>
-                                            </h3>
-                                            <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-                                                <span class="px-2 py-1 rounded-pill text-white fw-bold"
-                                                    style="background-color: #eb0501; font-size: 0.9rem;"><?php echo number_format($giaSauGiam, 0, ',', '.'); ?>đ</span>
-                                                <span class="text-secondary text-decoration-line-through"
-                                                    style="font-size: 0.85rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
+                                            <div class="mt-3 px-1">
+                                                <h3 class="fs-6 fw-semibold mb-3 text-truncate">
+                                                    <?php echo htmlspecialchars($sp['ten_san_pham']); ?>
+                                                </h3>
+                                                <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
+                                                    <span class="px-2 py-1 rounded-pill text-white fw-bold"
+                                                        style="background-color: #eb0501; font-size: 0.9rem;"><?php echo number_format($giaSauGiam, 0, ',', '.'); ?>đ</span>
+                                                    <span class="text-secondary text-decoration-line-through"
+                                                        style="font-size: 0.85rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
+                                                </div>
+                                                <div class="bg-light p-2 rounded-3 mt-3">
+                                                    <span class="text-secondary" style="font-size: 0.75rem;">Giảm thêm 150.000đ khi
+                                                        TT
+                                                        online 100% qua thẻ Mastercard</span>
+                                                </div>
                                             </div>
-                                            <div class="bg-light p-2 rounded-3 mt-3">
-                                                <span class="text-secondary" style="font-size: 0.75rem;">Giảm thêm 150.000đ khi TT
-                                                    online 100% qua thẻ Mastercard</span>
-                                            </div>
-                                        </div>
-                                    </a>
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-                            <?php
-                        endforeach;
-                    endfor;
-                    ?>
-                <?php endif; ?>
+                                <?php
+                            endforeach;
+                        endfor;
+                        ?>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<div class="suggestion-wrapper mt-4 mb-4" style="position: relative; z-index: 10;">
+  <div class="container-xl suggestion shadow-sm position-relative hover-slider-container" style="background: #fff; border-radius: 12px; border: none; padding: 15px 0;">
+
+    <div class="px-4 pb-4 pt-2">
+      <h3 class="fw-bold mb-0" style="font-size: 1.3rem; color: #333;">Gợi ý cho bạn</h3>
+    </div>
+    
+    <div class="suggestion-slider-viewport mx-2" id="suggestionViewport">
+      <div class="suggestion-slider-track" id="suggestionTrack">
+        <?php if (!empty($danhMucGoiY)): ?>
+          <?php foreach ($danhMucGoiY as $dm): ?>
+            <div class="suggestion-slide-item">
+              <div class="suggestion-item" style="border: none; text-align: center;">
+                <a href="/san-pham/<?php echo htmlspecialchars($dm['slug']); ?>" class="text-decoration-none">
+                  <div class="suggestion-image" style="background: transparent;">
+                    <?php if (!empty($dm['icon_url'])): ?>
+                      <img src="<?php echo htmlspecialchars($dm['icon_url']); ?>" alt="<?php echo htmlspecialchars($dm['ten']); ?>">
+                    <?php else: ?>
+                      <img src="/public/assets/client/images/icon/phone.png" alt="<?php echo htmlspecialchars($dm['ten']); ?>">
+                    <?php endif; ?>
+                  </div>
+                  <p class="suggestion-title mb-0" style="font-size: 0.85rem; font-weight: bold; color: #333; margin-top: 8px;">
+                      <?php echo htmlspecialchars($dm['ten']); ?>
+                  </p>
+                </a>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
+    </div>
+
+    <div class="custom-scrollbar-wrapper" id="scrollbarWrapper">
+      <div class="custom-scrollbar-track">
+        <div class="custom-scrollbar-thumb" id="sugScrollThumb"></div>
+      </div>
+    </div>
+
+    <button class="custom-slider-btn prev-btn" id="sugPrevBtn" type="button">
+      <i class="fa fa-chevron-left"></i>
+    </button>
+    <button class="custom-slider-btn next-btn" id="sugNextBtn" type="button">
+      <i class="fa fa-chevron-right"></i>
+    </button>
+    
+  </div>
+</div>
+
+<style>
+    .suggestion-slider-viewport {
+        overflow: hidden;
+        width: 100%;
+        padding-right: 25px;
+    }
+
+    .suggestion-slider-track {
+        display: grid;
+        grid-template-rows: repeat(2, 1fr);
+        grid-auto-flow: column;
+        grid-auto-columns: calc(100% / 8);
+        transition: transform 0.4s ease-in-out;
+    }
+
+    .suggestion-slide-item {
+        padding: 6px;
+        width: 100%;
+        user-select: none; /* Không cho phép bôi đen text */
+        -webkit-user-drag: none; /* Chặn kéo thẻ a/img trên các trình duyệt lõi webkit */
+    }
+
+    .custom-slider-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 38px;
+        height: 38px;
+        background-color: #fff;
+        border: 1px solid #f0f0f0;
+        border-radius: 50%;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #555;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .custom-slider-btn.prev-btn {
+        left: -15px;
+    }
+
+    .custom-slider-btn.next-btn {
+        right: -15px;
+    }
+
+    .hover-slider-container:hover .custom-slider-btn {
+        opacity: 0.9;
+        visibility: visible;
+    }
+
+    .hover-slider-container .custom-slider-btn:hover {
+        opacity: 1;
+        color: #d70018;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .custom-scrollbar-wrapper {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin-top: 20px;
+        margin-bottom: 5px;
+    }
+
+    .custom-scrollbar-track {
+        width: 80px;
+        height: 8px;
+        background-color: #dcdcdc;
+        border-radius: 10px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .custom-scrollbar-thumb {
+        height: 100%;
+        background-color: #999;
+        border-radius: 10px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        /* Hiệu ứng trượt cho Desktop */
+        transition: left 0.4s ease-in-out;
+    }
+
+    @media (max-width: 992px) {
+        .suggestion-slider-viewport {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-right: 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            scroll-snap-type: x mandatory;
+        }
+
+        .suggestion-slider-viewport::-webkit-scrollbar {
+            display: none;
+        }
+
+        .suggestion-slider-track {
+            transform: none !important;
+            transition: none !important;
+            grid-auto-columns: calc(100% / 4);
+        }
+
+        .suggestion-slide-item {
+            scroll-snap-align: start;
+        }
+
+        .custom-slider-btn {
+            display: none !important;
+        }
+
+        .custom-scrollbar-thumb {
+            transition: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .suggestion-slider-track {
+            grid-auto-columns: calc(100% / 2.3);
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const track = document.getElementById('suggestionTrack');
+        const viewport = document.getElementById('suggestionViewport');
+        const prevBtn = document.getElementById('sugPrevBtn');
+        const nextBtn = document.getElementById('sugNextBtn');
+
+        const scrollbarWrapper = document.getElementById('scrollbarWrapper');
+        const scrollThumb = document.getElementById('sugScrollThumb');
+
+        if (!track || !prevBtn || !nextBtn || !viewport) return;
+
+        const items = track.querySelectorAll('.suggestion-slide-item');
+        const totalItems = items.length;
+        const totalCols = Math.ceil(totalItems / 2);
+
+        let currentCol = 0;
+
+        // Các biến dùng cho tính năng Kéo thả (Drag)
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+        let isDragging = false;
+
+        function syncScrollbar() {
+            if (!scrollThumb || !scrollbarWrapper) return;
+
+            const sLeft = viewport.scrollLeft;
+            const sWidth = viewport.scrollWidth;
+            const cWidth = viewport.clientWidth;
+
+            if (sWidth <= cWidth) {
+                scrollbarWrapper.style.display = 'none';
+                return;
+            } else {
+                scrollbarWrapper.style.display = 'flex';
+            }
+
+            const thumbWidthPercent = (cWidth / sWidth) * 100;
+            scrollThumb.style.width = `${thumbWidthPercent}%`;
+
+            const scrollPercent = sLeft / (sWidth - cWidth);
+            const maxLeft = 100 - thumbWidthPercent;
+            scrollThumb.style.left = `${scrollPercent * maxLeft}%`;
+            
+            if (window.innerWidth > 992) {
+                const itemWidth = viewport.clientWidth / 8; 
+                currentCol = Math.round(sLeft / itemWidth);
+                updateButtons();
+            }
+        }
+
+        function updateButtons() {
+            if (window.innerWidth <= 992) {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+                return;
+            }
+
+            const visibleCols = 8;
+            const maxCols = Math.max(0, totalCols - visibleCols);
+
+            if (maxCols <= 0) {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            } else {
+                prevBtn.style.display = currentCol === 0 ? 'none' : 'flex';
+                nextBtn.style.display = currentCol >= maxCols ? 'none' : 'flex';
+            }
+        }
+
+        function updateSliderByButton() {
+            if (window.innerWidth <= 992) return;
+
+            const visibleCols = 8;
+            const maxCols = Math.max(0, totalCols - visibleCols);
+
+            if (currentCol > maxCols) currentCol = maxCols;
+            if (currentCol < 0) currentCol = 0;
+
+            const itemWidth = viewport.clientWidth / visibleCols;
+            
+            viewport.scrollTo({
+                left: currentCol * itemWidth,
+                behavior: 'smooth'
+            });
+
+            updateButtons();
+        }
+
+        function initSlider() {
+            track.style.transform = ''; 
+            
+            if (window.innerWidth > 992) {
+                viewport.style.overflowX = 'hidden'; 
+                viewport.style.scrollBehavior = 'smooth';
+            } else {
+                viewport.style.overflowX = 'auto';
+                viewport.style.scrollBehavior = 'auto';
+            }
+            
+            updateButtons();
+            syncScrollbar();
+        }
+
+        nextBtn.addEventListener('click', () => {
+            currentCol += 4; 
+            updateSliderByButton();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            currentCol -= 4;
+            updateSliderByButton();
+        });
+
+        viewport.addEventListener('scroll', () => {
+            syncScrollbar();
+        });
+
+        window.addEventListener('resize', initSlider);
+
+        // --- XỬ LÝ KÉO THẢ (DRAG TO SCROLL) ---
+
+        // BƯỚC 1: Ngăn chặn trình duyệt tự kéo bóng mờ của ảnh/link
+        const draggables = viewport.querySelectorAll('a, img');
+        draggables.forEach(el => {
+            el.addEventListener('dragstart', (e) => e.preventDefault());
+        });
+
+        viewport.addEventListener('mousedown', (e) => {
+            isDown = true;
+            isDragging = false; // Đặt lại cờ kéo mỗi lần nhấn chuột xuống
+            viewport.style.cursor = 'grabbing';
+            viewport.style.scrollBehavior = 'auto'; 
+            startX = e.pageX - viewport.offsetLeft;
+            scrollLeft = viewport.scrollLeft;
+        });
+
+        viewport.addEventListener('mouseleave', () => {
+            isDown = false;
+            viewport.style.cursor = 'default';
+            viewport.style.scrollBehavior = 'smooth';
+            setTimeout(() => { isDragging = false; }, 50);
+        });
+
+        viewport.addEventListener('mouseup', () => {
+            isDown = false;
+            viewport.style.cursor = 'default';
+            viewport.style.scrollBehavior = 'smooth';
+            
+            // BƯỚC 2: Cố tình delay 50 mili-giây để sự kiện 'click' kịp nhận diện isDragging đang là true
+            setTimeout(() => { 
+                isDragging = false; 
+            }, 50);
+        });
+
+        viewport.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault(); // Ngăn bôi đen văn bản
+            
+            const x = e.pageX - viewport.offsetLeft;
+            const walk = (x - startX) * 2; 
+            
+            if (Math.abs(walk) > 5) {
+                isDragging = true; 
+            }
+            
+            viewport.scrollLeft = scrollLeft - walk;
+        });
+
+        // Ngăn chặn sự kiện click vào link nếu hệ thống xác định là thao tác kéo
+        const links = viewport.querySelectorAll('a');
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (isDragging) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        initSlider();
+    });
+</script>
+
 <?php if (!empty($bannerMid[1])): ?>
     <div class="banner-2 mt-4">
         <div class="container-xl">
             <div class="row">
-                <div class="col-12 banner">
+                <div class="col-12 banner shadow-sm rounded-3">
                     <a href="<?php echo htmlspecialchars($bannerMid[1]['link_dich'] ?? '#'); ?>">
                         <img src="<?php echo htmlspecialchars($bannerMid[1]['hinh_anh_desktop']); ?>"
                             style="width:100%; border-radius: 8px;">
@@ -244,13 +609,13 @@ ob_start();
 
 <div class="product mt-4">
     <div class="container-xl">
-        <div class="product-wapper">
+        <div class="product-wrapper bg-white shadow-sm" style="border-radius: 12px; padding: 15px;">
             <div class="row mb-3">
                 <div class="col-12">
-                    <p class="fs-4 fw-bold py-2 mb-0">Điện thoại</p>
+                    <p class="fs-4 fw-bold py-2 mb-0 px-2">Điện thoại</p>
                 </div>
             </div>
-            <div class="row">
+            <div class="row px-2">
                 <?php if (!empty($sanPhamDienThoai)): ?>
                     <?php foreach ($sanPhamDienThoai as $sp): ?>
                         <div class="col-lg-3 col-md-4 col-6 mb-4">
@@ -300,7 +665,7 @@ ob_start();
     <div class="banner-3 mt-4">
         <div class="container-xl">
             <div class="row">
-                <div class="col-12 banner">
+                <div class="col-12 banner shadow-sm rounded-3">
                     <a href="<?php echo htmlspecialchars($bannerMid[2]['link_dich'] ?? '#'); ?>">
                         <img src="<?php echo htmlspecialchars($bannerMid[2]['hinh_anh_desktop']); ?>"
                             style="width:100%; border-radius: 8px;">
@@ -311,15 +676,15 @@ ob_start();
     </div>
 <?php endif; ?>
 
-<div class="product mt-4 mb-5">
+<div class="product mt-4 mb-4">
     <div class="container-xl">
-        <div class="product-wapper">
+        <div class="product-wrapper bg-white shadow-sm" style="border-radius: 12px; padding: 15px;">
             <div class="row mb-3">
                 <div class="col-12">
-                    <p class="fs-4 fw-bold py-2 mb-0">Laptop</p>
+                    <p class="fs-4 fw-bold py-2 px-2 mb-0">Laptop</p>
                 </div>
             </div>
-            <div class="row">
+            <div class="row px-2">
                 <?php if (!empty($sanPhamLaptop)): ?>
                     <?php foreach ($sanPhamLaptop as $sp): ?>
                         <div class="col-lg-3 col-md-4 col-6 mb-4">
@@ -365,14 +730,14 @@ ob_start();
     </div>
 </div>
 
-<div class="category-wapper mt-4">
-    <div class="container-xl category">
+<div class="category-wrapper mt-4">
+    <div class="container-xl category bg-white shadow-sm" style="border-radius: 12px; padding: 15px;">
         <div class="row">
             <div class="col-12">
-                <p class="fs-4 fw-bold py-2 mb-0">Phụ kiện</p>
+                <p class="fs-4 fw-bold py-2 px-2 mb-0">Phụ kiện</p>
             </div>
         </div>
-        <div class="row g-0 mt-3">
+        <div class="row g-0 mt-3 px-2">
             <?php if (!empty($sanPhamPhuKien)): ?>
                 <?php foreach (array_slice($sanPhamPhuKien, 0, 12) as $sp): ?>
                     <div class="col-lg-2 col-md-4 col-4 mb-4 text-center">
@@ -406,7 +771,7 @@ ob_start();
             <div class="row g-3">
                 <?php foreach (array_slice($bannerMid, 3, 3) as $b): ?>
                     <div class="col-lg-4 col-12">
-                        <div class="category-bot-item">
+                        <div class="category-bot-item shadow-sm rounded-3">
                             <a href="<?php echo htmlspecialchars($b['link_dich'] ?? '#'); ?>">
                                 <img src="<?php echo htmlspecialchars($b['hinh_anh_desktop']); ?>"
                                     style="width:100%; border-radius: 8px;">

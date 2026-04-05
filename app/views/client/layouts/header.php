@@ -19,7 +19,7 @@
 
                 <div class="col-auto">
                     <a href="/" style="display:inline-block; line-height:0;">
-                        <img src="/public/assets/client/images/header/3.png"
+                        <img src="https://cdn2.fptshop.com.vn/unsafe/360x0/filters:format(webp):quality(75)/small/logo_main_c9fbde96f1.png"
                              alt="FPT Shop"
                              style="height:40px; width:auto; display:block;">
                     </a>
