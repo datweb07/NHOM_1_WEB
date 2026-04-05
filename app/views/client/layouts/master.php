@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,15 +13,17 @@
     <link rel="stylesheet" href="/public/assets/client/css/main.css">
     <link rel="stylesheet" href="/public/assets/client/css/grid.css">
     <link rel="stylesheet" href="/public/assets/client/css/reponsive.css">
-    
+
     <?php if (isset($additionalCSS) && is_array($additionalCSS)): ?>
         <?php foreach ($additionalCSS as $css): ?>
             <link rel="stylesheet" href="<?php echo $css; ?>">
         <?php endforeach; ?>
     <?php endif; ?>
-    
+
     <style>
-        body { font-family: 'Roboto', sans-serif;}
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
 
         .header-top {
             background: #d70018;
@@ -33,6 +36,7 @@
             text-decoration: none;
             gap: 6px;
         }
+
         .fpt-logo-box {
             background: #fff;
             border-radius: 4px;
@@ -43,15 +47,26 @@
             font-size: 1.1rem;
             line-height: 1;
         }
-        .fpt-logo-box .f { color: #d70018; }
-        .fpt-logo-box .p { color: #ff6600; }
-        .fpt-logo-box .t { color: #0070c0; }
+
+        .fpt-logo-box .f {
+            color: #d70018;
+        }
+
+        .fpt-logo-box .p {
+            color: #ff6600;
+        }
+
+        .fpt-logo-box .t {
+            color: #0070c0;
+        }
+
         .fpt-logo-text {
             color: #fff;
             font-weight: 700;
             font-size: 1rem;
             line-height: 1;
         }
+
         .fpt-logo-text span {
             display: block;
             font-size: 0.6rem;
@@ -64,7 +79,11 @@
             font-size: 0.88rem;
             height: 36px;
         }
-        .search-form .form-control:focus { box-shadow: none; }
+
+        .search-form .form-control:focus {
+            box-shadow: none;
+        }
+
         .search-form .btn-search {
             background: #333;
             color: #fff;
@@ -84,22 +103,36 @@
             padding: 0 8px;
             gap: 3px;
         }
-        .service-item i { font-size: 1.2rem; }
 
-        .cart-wrapper { position: relative; display: inline-block; }
+        .service-item i {
+            font-size: 1.2rem;
+        }
+
+        .cart-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
         .cart-badge {
             position: absolute;
-            top: -5px; right: -6px;
+            top: -5px;
+            right: -6px;
             background: #fff;
             color: #d70018;
             font-size: 0.6rem;
             font-weight: 700;
-            width: 15px; height: 15px;
+            width: 15px;
+            height: 15px;
             border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .service-dropdown { position: relative; }
+        .service-dropdown {
+            position: relative;
+        }
+
         .service-dropdown-menu {
             display: none;
             position: absolute;
@@ -112,7 +145,11 @@
             padding: 4px 0;
             margin-top: 4px;
         }
-        .service-dropdown:hover .service-dropdown-menu { display: block; }
+
+        .service-dropdown:hover .service-dropdown-menu {
+            display: block;
+        }
+
         .service-dropdown-menu a {
             display: block;
             padding: 7px 14px;
@@ -125,7 +162,11 @@
             background: #222;
             padding: 0;
         }
-        .navbar-main .nav-item { position: relative; }
+
+        .navbar-main .nav-item {
+            position: relative;
+        }
+
         .navbar-main .nav-link {
             color: #fff !important;
             font-size: 0.78rem;
@@ -134,7 +175,11 @@
             white-space: nowrap;
             text-transform: uppercase;
         }
-        .navbar-main .nav-link i { margin-right: 4px; font-size: 0.75rem; }
+
+        .navbar-main .nav-link i {
+            margin-right: 4px;
+            font-size: 0.75rem;
+        }
 
         .mega-menu {
             display: none;
@@ -148,10 +193,19 @@
             padding: 16px;
             z-index: 1000;
         }
-        .navbar-main .nav-item:hover .mega-menu { display: flex; gap: 18px; }
 
-        .mega-col { flex: 1; }
-        .mega-col-sm { flex: 0 0 120px; }
+        .navbar-main .nav-item:hover .mega-menu {
+            display: flex;
+            gap: 18px;
+        }
+
+        .mega-col {
+            flex: 1;
+        }
+
+        .mega-col-sm {
+            flex: 0 0 120px;
+        }
 
         .mega-section-title {
             font-weight: 700;
@@ -162,6 +216,7 @@
             padding-bottom: 4px;
             margin-bottom: 6px;
         }
+
         .mega-menu a {
             display: block;
             font-size: 0.82rem;
@@ -178,10 +233,27 @@
             border-bottom: 1px solid #f0f0f0;
             text-decoration: none !important;
         }
-        .hot-item:last-of-type { border-bottom: none; }
-        .hot-item img { width: 42px; height: 42px; object-fit: contain; }
-        .hot-item-name { font-size: 0.76rem; color: #333; }
-        .hot-item-price { font-size: 0.76rem; color: #d70018; font-weight: 700; }
+
+        .hot-item:last-of-type {
+            border-bottom: none;
+        }
+
+        .hot-item img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+        }
+
+        .hot-item-name {
+            font-size: 0.76rem;
+            color: #333;
+        }
+
+        .hot-item-price {
+            font-size: 0.76rem;
+            color: #d70018;
+            font-weight: 700;
+        }
 
         .simple-dropdown {
             display: none;
@@ -195,7 +267,11 @@
             padding: 4px 0;
             z-index: 1000;
         }
-        .navbar-main .nav-item:hover .simple-dropdown { display: block; }
+
+        .navbar-main .nav-item:hover .simple-dropdown {
+            display: block;
+        }
+
         .simple-dropdown a {
             display: block;
             padding: 7px 16px;
@@ -204,16 +280,30 @@
             text-decoration: none;
         }
 
-        .mega-banner { margin-top: 8px; }
-        .mega-banner img { width: 100%; }
+        .mega-banner {
+            margin-top: 8px;
+        }
 
-        .navbar-toggler { border: none; }
+        .mega-banner img {
+            width: 100%;
+        }
+
+        .navbar-toggler {
+            border: none;
+        }
+
         .navbar-toggler-icon {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255,255,255,1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
         }
 
-        .offcanvas-header { background: #d70018; }
-        .offcanvas-header .btn-close { filter: invert(1); }
+        .offcanvas-header {
+            background: #d70018;
+        }
+
+        .offcanvas-header .btn-close {
+            filter: invert(1);
+        }
+
         .offcanvas-menu-item a {
             display: flex;
             align-items: center;
@@ -224,24 +314,32 @@
             border-bottom: 1px solid #eee;
             font-size: 0.88rem;
         }
-        .offcanvas-menu-item a i { color: #d70018; width: 18px; text-align: center; }
+
+        .offcanvas-menu-item a i {
+            color: #d70018;
+            width: 18px;
+            text-align: center;
+        }
 
         .profile-wrapper {
             background-color: #f4f4f4;
             padding: 30px 0;
         }
+
         .profile-sidebar {
             background: #fff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
         }
+
         .profile-sidebar-header {
             text-align: center;
             border-bottom: 1px solid #eee;
             padding-bottom: 15px;
             margin-bottom: 15px;
         }
+
         .profile-sidebar-header img {
             width: 80px;
             height: 80px;
@@ -249,18 +347,22 @@
             object-fit: cover;
             border: 2px solid #d70018;
         }
+
         .profile-sidebar-header h3 {
             font-size: 16px;
             margin-top: 10px;
             color: #333;
         }
+
         .profile-menu {
             list-style: none;
             padding: 0;
         }
+
         .profile-menu li {
             margin-bottom: 10px;
         }
+
         .profile-menu li a {
             display: block;
             color: #555 !important;
@@ -269,37 +371,45 @@
             border-radius: 4px;
             transition: all 0.3s;
         }
-        .profile-menu li a:hover, .profile-menu li a.active {
+
+        .profile-menu li a:hover,
+        .profile-menu li a.active {
             background-color: #fde8e8 !important;
             color: #d70018 !important;
             font-weight: bold;
         }
+
         .profile-menu li a i {
             width: 25px;
             margin-right: 8px;
         }
+
         .profile-content-box {
             background: #fff;
             padding: 25px;
             border-radius: 8px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
             margin-bottom: 20px;
         }
+
         .profile-content-header {
             border-bottom: 1px solid #eee;
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
+
         .profile-content-header h2 {
             font-size: 20px;
             color: #333;
             margin: 0 0 5px 0;
         }
+
         .profile-content-header p {
             color: #777;
             font-size: 14px;
             margin: 0;
         }
+
         .btn-submit {
             background-color: #d70018;
             color: #fff;
@@ -311,11 +421,213 @@
             transition: 0.3s;
             font-weight: 500;
         }
+
         .btn-submit:hover {
             background-color: #a0151b;
         }
+
+        /* --- FOOTER FPT SHOP --- */
+        .footer-fpt {
+            background-color: #0f1013;
+            color: #a1a1aa;
+            font-size: 13px;
+            padding-top: 50px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .footer-fpt .footer-title {
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        /* Các link trong danh sách */
+        .footer-fpt .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-fpt .footer-links a {
+            color: #ffffffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-fpt .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Phần tải ứng dụng */
+        .footer-fpt .app-download {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .footer-fpt .qr-code {
+            width: 75px;
+            height: 75px;
+            background: #fff;
+            padding: 3px;
+            border-radius: 4px;
+        }
+
+        .footer-fpt .store-buttons img {
+            height: 35px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* Mạng xã hội */
+        .footer-fpt .social-icons a {
+            display: inline-block;
+            font-size: 24px;
+            margin-right: 15px;
+            transition: transform 0.3s;
+        }
+
+        /* Tổng đài */
+        .footer-fpt .hotline-item {
+            margin-bottom: 18px;
+        }
+
+        .footer-fpt .hotline-item p {
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .footer-fpt .hotline-number {
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 2px !important;
+        }
+
+        .footer-fpt .hotline-number span {
+            font-size: 13px;
+            font-weight: normal;
+        }
+
+        /* Phần Website cùng hệ thống (Middle) */
+        /* Container bọc ngoài cùng */
+.footer-fpt .footer-middle {
+    border-top: 1px solid #27272a;
+    border-bottom: 1px solid #27272a;
+    padding: 20px 0;
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px; /* Khoảng cách giữa thẻ Label và Nhóm logo */
+    flex-wrap: wrap;
+}
+
+.footer-fpt .website-label {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Nhóm chứa 3 đối tác */
+.footer-fpt .partner-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Từng khối đối tác nhỏ */
+.footer-fpt .partner-item {
+    padding: 0 30px;
+    border-left: 1px solid #3f3f46; /* Đường kẻ dọc mờ phân cách */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Xóa đường kẻ dọc ở phần tử đầu tiên (F.Studio) */
+.footer-fpt .partner-item:first-child {
+    border-left: none;
+    padding-left: 0;
+}
+
+/* Chỉnh chữ mô tả nhỏ phía trên logo */
+.footer-fpt .partner-item p {
+    color: #ffffff;
+    font-size: 12px;
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+/* Chỉnh kích thước logo */
+.footer-fpt .partner-item img {
+    height: 26px; /* Bạn có thể tăng giảm tùy theo kích thước ảnh thực tế */
+    width: auto;
+    object-fit: contain;
+}
+
+/* Reponsive cho màn hình mobile (sẽ tự động rớt dòng cho gọn) */
+@media (max-width: 768px) {
+    .footer-fpt .footer-middle {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .footer-fpt .partner-group {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .footer-fpt .partner-item {
+        border-left: none;
+        padding: 0;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+        /* Phần Copyright (Bottom) */
+        .footer-fpt .footer-bottom {
+            padding: 25px 0;
+            text-align: center;
+            font-size: 12.5px;
+            color: #ffffffff;
+            line-height: 1.6;
+        }
+
+        .footer-fpt .footer-bottom p {
+            margin-bottom: 8px;
+            color: #a1a1aa
+        }
+
+        .footer-fpt .seo-links {
+            margin-bottom: 15px !important;
+        }
+
+        .footer-fpt .seo-links a {
+            color: #a1a1aa;
+            text-decoration: none;
+            padding: 0 4px;
+        }
+
+        .footer-fpt .seo-links a:hover {
+            color: #ffffff;
+        }
+        .payment-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 8px; 
+}
+
+.payment-grid img {
+    width: 100%;
+    height: auto;
+    background-color: #ffffff; 
+    border-radius: 4px;
+    object-fit: contain;
+}
     </style>
 </head>
+
 <body>
 
     <?php require_once __DIR__ . '/header.php'; ?>
@@ -327,29 +639,29 @@
     <?php require_once __DIR__ . '/footer.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script src="/public/assets/client/js/main.js"></script>
-    
-    <script>
-    // Cập nhật số lượng giỏ hàng
-    function updateCartCount() {
-        fetch('/gio-hang/dem-san-pham')
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const badges = document.querySelectorAll('.cart-badge, #cart-count');
-                    badges.forEach(badge => {
-                        badge.textContent = data.count || 0;
-                    });
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
 
-    // Gọi khi trang load
-    document.addEventListener('DOMContentLoaded', updateCartCount);
+    <script src="/public/assets/client/js/main.js"></script>
+
+    <script>
+        // Cập nhật số lượng giỏ hàng
+        function updateCartCount() {
+            fetch('/gio-hang/dem-san-pham')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const badges = document.querySelectorAll('.cart-badge, #cart-count');
+                        badges.forEach(badge => {
+                            badge.textContent = data.count || 0;
+                        });
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Gọi khi trang load
+        document.addEventListener('DOMContentLoaded', updateCartCount);
     </script>
-    
+
     <?php if (isset($additionalJS) && is_array($additionalJS)): ?>
         <?php foreach ($additionalJS as $js): ?>
             <script src="<?php echo $js; ?>"></script>
@@ -357,4 +669,5 @@
     <?php endif; ?>
 
 </body>
+
 </html>
