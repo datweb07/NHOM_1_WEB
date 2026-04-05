@@ -52,7 +52,29 @@ class DanhMucController
             exit;
         }
 
-        [$payload, $errors, $old] = $this->validatePayload($_POST);
+        $input = $_POST;
+
+        // Xử lý upload ảnh Icon lên Cloudinary (Thêm mới)
+        if (isset($_FILES['icon_url']) && $_FILES['icon_url']['error'] === UPLOAD_ERR_OK) {
+            try {
+                require_once dirname(__DIR__, 2) . '/services/cloudinary/CloudinaryService.php';
+                $cloudinary = CloudinaryService::getInstance();
+
+                // Tạo tên ngẫu nhiên bằng Timestamp vì chưa có ID
+                $uniqueCode = time();
+                $publicId = 'category_icon_' . $uniqueCode;
+
+                $uploadResult = $cloudinary->uploadApi()->upload($_FILES['icon_url']['tmp_name'], [
+                    'folder'    => 'categories',
+                    'public_id' => $publicId
+                ]);
+                $input['icon_url'] = $uploadResult['secure_url'];
+            } catch (\Exception $e) {
+                // Có thể log lỗi ở đây nếu cần
+            }
+        }
+
+        [$payload, $errors, $old] = $this->validatePayload($input);
 
         if (!empty($errors)) {
             $this->create($old, $errors);
@@ -110,7 +132,35 @@ class DanhMucController
             exit;
         }
 
-        [$payload, $errors, $old] = $this->validatePayload($_POST, $id);
+        $input = $_POST;
+        
+        // Mặc định giữ lại ảnh cũ nếu user không upload file mới
+        $input['icon_url'] = $input['icon_url'] ?? $danhMuc['icon_url'];
+
+        // Xử lý cập nhật ảnh lên Cloudinary
+        if (isset($_FILES['icon_url']) && $_FILES['icon_url']['error'] === UPLOAD_ERR_OK) {
+            try {
+                require_once dirname(__DIR__, 2) . '/services/cloudinary/CloudinaryService.php';
+                $cloudinary = CloudinaryService::getInstance();
+
+                $publicId = 'category_icon_' . $id;
+
+                $uploadResult = $cloudinary->uploadApi()->upload($_FILES['icon_url']['tmp_name'], [
+                    'folder'     => 'categories',
+                    'public_id'  => $publicId,
+                    'overwrite'  => true,       // Ghi đè file nếu đã tồn tại tên này
+                    'invalidate' => true        // Xóa cache trình duyệt
+                ]);
+                $input['icon_url'] = $uploadResult['secure_url'];
+
+                // DỌN RÁC: Xóa ảnh cũ nếu tên của nó là Timestamp (không khớp với ID chuẩn)
+                if (!empty($danhMuc['icon_url']) && strpos($danhMuc['icon_url'], $publicId) === false) {
+                    $this->deleteCloudinaryImage($danhMuc['icon_url']);
+                }
+            } catch (\Exception $e) {}
+        }
+
+        [$payload, $errors, $old] = $this->validatePayload($input, $id);
 
         if (!empty($errors)) {
             $this->edit($id, $old, $errors);
@@ -141,6 +191,8 @@ class DanhMucController
             exit;
         }
 
+        // Lưu ý: Do logic xóa của bạn đang là "ẩn danh mục" (soft-delete) thông qua hàm anDanhMuc() 
+        // Nên ta sẽ KHÔNG tự động xóa ảnh trên Cloudinary tại đây để đề phòng user khôi phục lại (hienDanhMuc).
         $this->danhMucModel->anDanhMuc($id);
         header('Location: /admin/danh-muc?success=hidden');
         exit;
@@ -209,6 +261,25 @@ class DanhMucController
 
         header("Location: /admin/danh-muc?success=bulk_updated&message=" . urlencode($message));
         exit;
+    }
+
+    /**
+     * Hàm hỗ trợ tự động xóa ảnh trên Cloudinary
+     */
+    private function deleteCloudinaryImage($url): void
+    {
+        if (empty($url) || strpos($url, 'cloudinary.com') === false) {
+            return;
+        }
+
+        $urlPath = parse_url($url, PHP_URL_PATH);
+        if (preg_match('/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z0-9]+$/', $urlPath, $matches)) {
+            try {
+                require_once dirname(__DIR__, 2) . '/services/cloudinary/CloudinaryService.php';
+                $cloudinary = CloudinaryService::getInstance();
+                $cloudinary->uploadApi()->destroy($matches[1], ['invalidate' => true]);
+            } catch (\Exception $e) { }
+        }
     }
 
     private function validatePayload(array $input, int $editingId = 0): array

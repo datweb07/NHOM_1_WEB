@@ -42,7 +42,7 @@ class HomeController
         $sanPhamKhuyenMai = $this->sanPhamModel->laySanPhamKhuyenMai(8);
         
         // Lấy danh mục hoạt động
-        $danhMucList = $this->danhMucModel->layDanhMucHienThi(12);
+        $danhMucList = $this->danhMucModel->layDanhMucHienThi(16);
         
         // Lấy sản phẩm theo danh mục (Điện thoại, Laptop, Phụ kiện)
         $sanPhamDienThoai = $this->sanPhamModel->laySanPhamTheoDanhMuc('dien-thoai', 8);
