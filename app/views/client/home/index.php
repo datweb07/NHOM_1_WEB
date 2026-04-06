@@ -152,82 +152,76 @@ ob_start();
     }
 </style>
 
-<div class="slider-card mt-4">
-    <div class="container-xl">
-        <div class="bg-white shadow-sm" style="border-radius: 12px; padding: 15px;">
-            <div class="row">
-                <div class="col-12">
-                    <p class="fs-4 fw-bold text-danger py-2 px-2 mb-0"><i class="fa fa-fire-flame-curved"></i> Khuyến
-                        mãi</p>
-                </div>
-            </div>
+<div class="slider-card mt-4" style="padding: 0;">
+    <div class="container-xl shadow-sm" style="background: #fff; border-radius: 12px; padding: 15px 0;">
+        
+        <div class="px-4 pb-2 pt-2">
+            <p class="fs-4 fw-bold text-danger mb-0"><i class="fa fa-fire-flame-curved"></i> Khuyến mãi</p>
+        </div>
 
-            <div class="continuous-slider-wrapper">
-                <?php
-                require_once dirname(__DIR__, 3) . '/models/entities/SanPham.php';
-                $spModel = new SanPham();
-                ?>
-                <div class="continuous-slider-track">
-                    <?php if (!empty($sanPhamKhuyenMai)): ?>
-                        <?php
-                        for ($i = 0; $i < 2; $i++):
-                            foreach ($sanPhamKhuyenMai as $sp):
-                                $giaSauGiam = $spModel->tinhGiaSauKhuyenMai(
-                                    $sp['gia_hien_thi'],
-                                    $sp['loai_giam'],
-                                    $sp['gia_tri_giam'],
-                                    $sp['giam_toi_da']
-                                );
-                                $tienGiam = $sp['gia_hien_thi'] - $giaSauGiam;
-                                ?>
-                                <div class="continuous-slider-item">
-                                    <div class="p-2 border rounded-3 bg-white custom-hover-card h-100 mx-1">
-                                        <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
-                                            class="text-dark text-decoration-none d-block">
-                                            <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
-                                                style="height: 250px;">
-                                                <?php if (!empty($sp['anh_chinh'])): ?>
-                                                    <img src="<?php echo htmlspecialchars($sp['anh_chinh']); ?>"
-                                                        alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
-                                                        class="w-100 h-100 object-fit-cover custom-hover-zoom">
-                                                <?php else: ?>
-                                                    <img src="/public/assets/client/images/products/14.png"
-                                                        alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
-                                                        class="w-100 h-100 object-fit-cover custom-hover-zoom">
-                                                <?php endif; ?>
-                                                <div class="position-absolute bottom-0 start-0 p-2">
-                                                    <span class="text-white px-2 py-1 rounded-pill d-inline-block mb-1"
-                                                        style="background-color: #4285f4; font-size: 0.75rem;">Ưu đãi
-                                                        <?php echo number_format($tienGiam, 0, ',', '.'); ?>đ</span><br>
-                                                    <span class="text-white px-2 py-1 rounded-pill d-inline-block"
-                                                        style="background-color: #66cd42; font-size: 0.75rem;">Trả góp 0%</span>
-                                                </div>
+        <div class="continuous-slider-wrapper">
+            <?php
+            require_once dirname(__DIR__, 3) . '/models/entities/SanPham.php';
+            $spModel = new SanPham();
+            ?>
+            <div class="continuous-slider-track">
+                <?php if (!empty($sanPhamKhuyenMai)): ?>
+                    <?php
+                    for ($i = 0; $i < 2; $i++):
+                        foreach ($sanPhamKhuyenMai as $sp):
+                            $giaSauGiam = $spModel->tinhGiaSauKhuyenMai(
+                                $sp['gia_hien_thi'],
+                                $sp['loai_giam'],
+                                $sp['gia_tri_giam'],
+                                $sp['giam_toi_da']
+                            );
+                            $tienGiam = $sp['gia_hien_thi'] - $giaSauGiam;
+                            ?>
+                            <div class="continuous-slider-item">
+                                <div class="p-2 border rounded-3 bg-white custom-hover-card h-100 mx-1">
+                                    <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
+                                        class="text-dark text-decoration-none d-block">
+                                        <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
+                                            style="height: 250px;">
+                                            <?php if (!empty($sp['anh_chinh'])): ?>
+                                                <img src="<?php echo htmlspecialchars($sp['anh_chinh']); ?>"
+                                                    alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
+                                                    class="w-100 h-100 object-fit-cover custom-hover-zoom">
+                                            <?php else: ?>
+                                                <img src="/public/assets/client/images/products/14.png"
+                                                    alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
+                                                    class="w-100 h-100 object-fit-cover custom-hover-zoom">
+                                            <?php endif; ?>
+                                            <div class="position-absolute bottom-0 start-0 p-2">
+                                                <span class="text-white px-2 py-1 rounded-pill d-inline-block mb-1"
+                                                    style="background-color: #4285f4; font-size: 0.75rem;">Ưu đãi
+                                                    <?php echo number_format($tienGiam, 0, ',', '.'); ?>đ</span><br>
+                                                <span class="text-white px-2 py-1 rounded-pill d-inline-block"
+                                                    style="background-color: #66cd42; font-size: 0.75rem;">Trả góp 0%</span>
                                             </div>
-                                            <div class="mt-3 px-1">
-                                                <h3 class="fs-6 fw-semibold mb-3 text-truncate">
-                                                    <?php echo htmlspecialchars($sp['ten_san_pham']); ?>
-                                                </h3>
-                                                <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-                                                    <span class="px-2 py-1 rounded-pill text-white fw-bold"
-                                                        style="background-color: #eb0501; font-size: 0.9rem;"><?php echo number_format($giaSauGiam, 0, ',', '.'); ?>đ</span>
-                                                    <span class="text-secondary text-decoration-line-through"
-                                                        style="font-size: 0.85rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
-                                                </div>
-                                                <div class="bg-light p-2 rounded-3 mt-3">
-                                                    <span class="text-secondary" style="font-size: 0.75rem;">Giảm thêm 150.000đ khi
-                                                        TT
-                                                        online 100% qua thẻ Mastercard</span>
-                                                </div>
+                                        </div>
+                                        <div class="mt-3 px-1">
+                                            <h3 class="fs-6 fw-semibold mb-3 text-truncate">
+                                                <?php echo htmlspecialchars($sp['ten_san_pham']); ?>
+                                            </h3>
+                                            <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
+                                                <span class="px-2 py-1 rounded-pill text-white fw-bold"
+                                                    style="background-color: #eb0501; font-size: 0.9rem;"><?php echo number_format($giaSauGiam, 0, ',', '.'); ?>đ</span>
+                                                <span class="text-secondary text-decoration-line-through"
+                                                    style="font-size: 0.85rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
                                             </div>
-                                        </a>
-                                    </div>
+                                            <div class="bg-light p-2 rounded-3 mt-3">
+                                                <span class="text-secondary" style="font-size: 0.75rem;">Giảm thêm 150.000đ khi TT online 100% qua thẻ Mastercard</span>
+                                            </div>
+                                        </div>
+                                    </a>
                                 </div>
-                                <?php
-                            endforeach;
-                        endfor;
-                        ?>
-                    <?php endif; ?>
-                </div>
+                            </div>
+                            <?php
+                        endforeach;
+                    endfor;
+                    ?>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -610,56 +604,41 @@ ob_start();
     </div>
 <?php endif; ?>
 
-<div class="product mt-4">
-    <div class="container-xl">
-        <div class="product-wrapper bg-white shadow-sm" style="border-radius: 12px; padding: 15px;">
-            <div class="row mb-3">
-                <div class="col-12">
-                    <p class="fs-4 fw-bold py-2 mb-0 px-2">Điện thoại</p>
-                </div>
-            </div>
-            <div class="row px-2">
-                <?php if (!empty($sanPhamDienThoai)): ?>
-                    <?php foreach ($sanPhamDienThoai as $sp): ?>
-                        <div class="col-lg-3 col-md-4 col-6 mb-4">
-                            <div class="p-2 border rounded-3 bg-white custom-hover-card h-100">
-                                <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
-                                    class="text-dark text-decoration-none d-block">
-                                    <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
-                                        style="height: 250px;">
-                                        <?php if (!empty($sp['anh_chinh'])): ?>
-                                            <img src="<?php echo htmlspecialchars($sp['anh_chinh']); ?>"
-                                                alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
-                                                class="w-100 h-100 object-fit-cover custom-hover-zoom">
-                                        <?php else: ?>
-                                            <img src="/public/assets/client/images/products/14.png"
-                                                alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
-                                                class="w-100 h-100 object-fit-cover custom-hover-zoom">
-                                        <?php endif; ?>
-                                        <div class="position-absolute bottom-0 start-0 p-2">
-                                            <span class="text-white px-2 py-1 rounded-pill d-inline-block"
-                                                style="background-color: #66cd42; font-size: 0.75rem;">Trả góp 0%</span>
-                                        </div>
+<div class="product mt-4" style="padding: 0;">
+    <div class="container-xl shadow-sm" style="background: #fff; border-radius: 12px; padding: 15px 0;">
+        <div class="px-4 pb-3 pt-2">
+            <p class="fs-4 fw-bold mb-0">Điện thoại</p>
+        </div>
+        <div class="row px-3 mx-0">
+            <?php if (!empty($sanPhamDienThoai)): ?>
+                <?php foreach ($sanPhamDienThoai as $sp): ?>
+                    <div class="col-lg-3 col-md-4 col-6 mb-4">
+                        <div class="p-2 border rounded-3 bg-white custom-hover-card h-100">
+                            <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>" class="text-dark text-decoration-none d-block">
+                                <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3" style="height: 250px;">
+                                    <?php if (!empty($sp['anh_chinh'])): ?>
+                                        <img src="<?php echo htmlspecialchars($sp['anh_chinh']); ?>" alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>" class="w-100 h-100 object-fit-cover custom-hover-zoom">
+                                    <?php else: ?>
+                                        <img src="/public/assets/client/images/products/14.png" alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>" class="w-100 h-100 object-fit-cover custom-hover-zoom">
+                                    <?php endif; ?>
+                                    <div class="position-absolute bottom-0 start-0 p-2">
+                                        <span class="text-white px-2 py-1 rounded-pill d-inline-block" style="background-color: #66cd42; font-size: 0.75rem;">Trả góp 0%</span>
                                     </div>
-                                    <div class="mt-3 px-1">
-                                        <h3 class="fs-6 fw-semibold mb-3 text-truncate">
-                                            <?php echo htmlspecialchars($sp['ten_san_pham']); ?>
-                                        </h3>
-                                        <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-                                            <span class="px-2 py-1 rounded-pill text-white fw-bold"
-                                                style="background-color: #eb0501; font-size: 0.9rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
-                                        </div>
-                                        <div class="bg-light p-2 rounded-3 mt-3">
-                                            <span class="text-secondary" style="font-size: 0.75rem;">Giảm thêm 150.000đ khi TT
-                                                online 100% qua thẻ Mastercard</span>
-                                        </div>
+                                </div>
+                                <div class="mt-3 px-1">
+                                    <h3 class="fs-6 fw-semibold mb-3 text-truncate"><?php echo htmlspecialchars($sp['ten_san_pham']); ?></h3>
+                                    <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
+                                        <span class="px-2 py-1 rounded-pill text-white fw-bold" style="background-color: #eb0501; font-size: 0.9rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
                                     </div>
-                                </a>
-                            </div>
+                                    <div class="bg-light p-2 rounded-3 mt-3">
+                                        <span class="text-secondary" style="font-size: 0.75rem;">Giảm thêm 150.000đ khi TT online 100% qua thẻ Mastercard</span>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -679,74 +658,56 @@ ob_start();
     </div>
 <?php endif; ?>
 
-<div class="product mt-4 mb-4">
-    <div class="container-xl">
-        <div class="product-wrapper bg-white shadow-sm" style="border-radius: 12px; padding: 15px;">
-            <div class="row mb-3">
-                <div class="col-12">
-                    <p class="fs-4 fw-bold py-2 px-2 mb-0">Laptop</p>
-                </div>
-            </div>
-            <div class="row px-2">
-                <?php if (!empty($sanPhamLaptop)): ?>
-                    <?php foreach ($sanPhamLaptop as $sp): ?>
-                        <div class="col-lg-3 col-md-4 col-6 mb-4">
-                            <div class="p-2 border rounded-3 bg-white custom-hover-card h-100">
-                                <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
-                                    class="text-dark text-decoration-none d-block">
-                                    <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
-                                        style="height: 250px;">
-                                        <?php if (!empty($sp['anh_chinh'])): ?>
-                                            <img src="<?php echo htmlspecialchars($sp['anh_chinh']); ?>"
-                                                alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
-                                                class="w-100 h-100 object-fit-cover custom-hover-zoom">
-                                        <?php else: ?>
-                                            <img src="/public/assets/client/images/products/20.jpg"
-                                                alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
-                                                class="w-100 h-100 object-fit-cover custom-hover-zoom">
-                                        <?php endif; ?>
-                                        <div class="position-absolute bottom-0 start-0 p-2">
-                                            <span class="text-white px-2 py-1 rounded-pill d-inline-block"
-                                                style="background-color: #66cd42; font-size: 0.75rem;">Trả góp 0%</span>
-                                        </div>
+<div class="product mt-4 mb-4" style="padding: 0;">
+    <div class="container-xl shadow-sm" style="background: #fff; border-radius: 12px; padding: 15px 0;">
+        <div class="px-4 pb-3 pt-2">
+            <p class="fs-4 fw-bold mb-0">Laptop</p>
+        </div>
+        <div class="row px-3 mx-0">
+            <?php if (!empty($sanPhamLaptop)): ?>
+                <?php foreach ($sanPhamLaptop as $sp): ?>
+                    <div class="col-lg-3 col-md-4 col-6 mb-4">
+                        <div class="p-2 border rounded-3 bg-white custom-hover-card h-100">
+                            <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>" class="text-dark text-decoration-none d-block">
+                                <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3" style="height: 250px;">
+                                    <?php if (!empty($sp['anh_chinh'])): ?>
+                                        <img src="<?php echo htmlspecialchars($sp['anh_chinh']); ?>" alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>" class="w-100 h-100 object-fit-cover custom-hover-zoom">
+                                    <?php else: ?>
+                                        <img src="/public/assets/client/images/products/20.jpg" alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>" class="w-100 h-100 object-fit-cover custom-hover-zoom">
+                                    <?php endif; ?>
+                                    <div class="position-absolute bottom-0 start-0 p-2">
+                                        <span class="text-white px-2 py-1 rounded-pill d-inline-block" style="background-color: #66cd42; font-size: 0.75rem;">Trả góp 0%</span>
                                     </div>
-                                    <div class="mt-3 px-1">
-                                        <h3 class="fs-6 fw-semibold mb-3 text-truncate">
-                                            <?php echo htmlspecialchars($sp['ten_san_pham']); ?>
-                                        </h3>
-                                        <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-                                            <span class="px-2 py-1 rounded-pill text-white fw-bold"
-                                                style="background-color: #eb0501; font-size: 0.9rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
-                                        </div>
-                                        <div class="bg-light p-2 rounded-3 mt-3">
-                                            <span class="text-secondary" style="font-size: 0.75rem;">Giảm thêm 150.000đ khi TT
-                                                online 100% qua thẻ Mastercard</span>
-                                        </div>
+                                </div>
+                                <div class="mt-3 px-1">
+                                    <h3 class="fs-6 fw-semibold mb-3 text-truncate"><?php echo htmlspecialchars($sp['ten_san_pham']); ?></h3>
+                                    <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
+                                        <span class="px-2 py-1 rounded-pill text-white fw-bold" style="background-color: #eb0501; font-size: 0.9rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
                                     </div>
-                                </a>
-                            </div>
+                                    <div class="bg-light p-2 rounded-3 mt-3">
+                                        <span class="text-secondary" style="font-size: 0.75rem;">Giảm thêm 150.000đ khi TT online 100% qua thẻ Mastercard</span>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>
 
-<div class="category-wrapper mt-4">
-    <div class="container-xl category bg-white shadow-sm" style="border-radius: 12px; padding: 15px;">
-        <div class="row">
-            <div class="col-12">
-                <p class="fs-4 fw-bold py-2 px-2 mb-0">Phụ kiện</p>
-            </div>
+<div class="category-wrapper mt-4" style="padding: 0;">
+    <div class="container-xl shadow-sm" style="background: #fff; border-radius: 12px; padding: 15px 0;">
+        <div class="px-4 pb-3 pt-2">
+            <p class="fs-4 fw-bold mb-0">Phụ kiện</p>
         </div>
-        <div class="row g-0 mt-3 px-2">
+        <div class="row g-0 px-3 mx-0">
             <?php if (!empty($sanPhamPhuKien)): ?>
                 <?php foreach (array_slice($sanPhamPhuKien, 0, 12) as $sp): ?>
                     <div class="col-lg-2 col-md-4 col-4 mb-4 text-center">
                         <div class="category-item">
-                            <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
-                                class="text-dark text-decoration-none">
+                            <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>" class="text-dark text-decoration-none">
                                 <div class="img-category d-flex justify-content-center">
                                     <img src="<?php echo htmlspecialchars($sp['anh_chinh'] ?? '/public/assets/client/images/products/14.png'); ?>"
                                         alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
