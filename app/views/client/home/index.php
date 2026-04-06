@@ -102,7 +102,6 @@ ob_start();
         min-height: 400px;
     }
 
-    /* Lớp phủ gradient mờ bên trái (tương đương left-0 bg-gradient-to-r) */
     .continuous-slider-wrapper::before {
         content: "";
         position: absolute;
@@ -110,14 +109,12 @@ ob_start();
         left: 0;
         bottom: 0;
         width: 100px;
-        /* Độ rộng của phần mờ (có thể chỉnh to nhỏ tùy ý) */
+
         background: linear-gradient(to right, #fff 0%, transparent 100%);
         z-index: 10;
         pointer-events: none;
-        /* RẤT QUAN TRỌNG: Cho phép chuột xuyên qua lớp mờ để click được vào sản phẩm */
     }
 
-    /* Lớp phủ gradient mờ bên phải (tương đương right-0 bg-gradient-to-l) */
     .continuous-slider-wrapper::after {
         content: "";
         position: absolute;
@@ -168,16 +165,12 @@ ob_start();
         transition: box-shadow 0.3s ease;
     }
 
-    .custom-hover-card:hover {
-        box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
-    }
-
     .custom-hover-zoom {
         transition: transform 0.5s linear;
     }
 
     .custom-hover-card:hover .custom-hover-zoom {
-        transform: scale(1.05);
+        transform: scale(1.02);
     }
 
     .category-item,
