@@ -49,7 +49,7 @@ class HomeController
         
         // Lấy sản phẩm theo danh mục
         $sanPhamDienThoai = $this->sanPhamModel->laySanPhamTheoDanhMuc('dien-thoai', 8);
-        $sanPhamLaptop    = $this->sanPhamModel->laySanPhamTheoDanhMuc('laptop', 8);
+        $sanPhamLaptop    = $this->sanPhamModel->laySanPhamTheoDanhMuc('may-tinh-xach-tay', 8);
         $sanPhamPhuKien   = $this->sanPhamModel->laySanPhamTheoDanhMuc('phu-kien', 12);
 
         // Load view
