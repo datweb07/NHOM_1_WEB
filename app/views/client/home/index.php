@@ -663,15 +663,15 @@ ob_start();
                             <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
                                 class="text-dark text-decoration-none d-block">
                                 <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
-                                    style="height: 250px;">
+                                    style="height: 250px; background-color: #fff;">
                                     <?php if (!empty($sp['anh_chinh'])): ?>
                                         <img src="<?php echo htmlspecialchars($sp['anh_chinh']); ?>"
                                             alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
-                                            class="w-100 h-100 object-fit-cover custom-hover-zoom">
+                                            class="w-100 h-100 object-fit-contain custom-hover-zoom">
                                     <?php else: ?>
                                         <img src="/public/assets/client/images/products/14.png"
                                             alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
-                                            class="w-100 h-100 object-fit-cover custom-hover-zoom">
+                                            class="w-100 h-100 object-fit-contain custom-hover-zoom">
                                     <?php endif; ?>
                                     <div class="position-absolute bottom-0 start-0 p-2">
                                         <span class="text-white px-2 py-1 rounded-pill d-inline-block"
@@ -728,15 +728,15 @@ ob_start();
                             <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
                                 class="text-dark text-decoration-none d-block">
                                 <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
-                                    style="height: 250px;">
+                                    style="height: 250px; background-color: #fff;">
                                     <?php if (!empty($sp['anh_chinh'])): ?>
                                         <img src="<?php echo htmlspecialchars($sp['anh_chinh']); ?>"
                                             alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
-                                            class="w-100 h-100 object-fit-cover custom-hover-zoom">
+                                            class="w-100 h-100 object-fit-contain custom-hover-zoom">
                                     <?php else: ?>
                                         <img src="/public/assets/client/images/products/20.jpg"
                                             alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
-                                            class="w-100 h-100 object-fit-cover custom-hover-zoom">
+                                            class="w-100 h-100 object-fit-contain custom-hover-zoom">
                                     <?php endif; ?>
                                     <div class="position-absolute bottom-0 start-0 p-2">
                                         <span class="text-white px-2 py-1 rounded-pill d-inline-block"
@@ -770,21 +770,30 @@ ob_start();
         <div class="px-4 pb-3 pt-2">
             <p class="fs-4 fw-bold mb-0">Phụ kiện</p>
         </div>
-        <div class="row g-0 px-3 mx-0">
+        <div class="row px-3 mx-0">
             <?php if (!empty($sanPhamPhuKien)): ?>
                 <?php foreach (array_slice($sanPhamPhuKien, 0, 12) as $sp): ?>
-                    <div class="col-lg-2 col-md-4 col-4 mb-4 text-center">
-                        <div class="category-item">
+                    <div class="col-lg-2 col-md-4 col-6 mb-4">
+                        <div class="p-2 border rounded-3 bg-white custom-hover-card h-100">
                             <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
-                                class="text-dark text-decoration-none">
-                                <div class="img-category d-flex justify-content-center">
+                                class="text-dark text-decoration-none d-block">
+                                <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
+                                    style="height: 250px;">
                                     <img src="<?php echo htmlspecialchars($sp['anh_chinh'] ?? '/public/assets/client/images/products/14.png'); ?>"
                                         alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
-                                        style="width:60px;height:60px;object-fit:contain;">
+                                        class="w-100 h-100 object-fit-cover custom-hover-zoom">
                                 </div>
-                                <p class="title-category mt-2" style="font-size:0.85rem;">
-                                    <?php echo htmlspecialchars($sp['ten_san_pham']); ?>
-                                </p>
+                                <div class="mt-3 px-1">
+                                    <h3 class="fs-6 fw-semibold mb-3 text-truncate">
+                                        <?php echo htmlspecialchars($sp['ten_san_pham']); ?>
+                                    </h3>
+                                    <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
+                                        <span class="px-2 py-1 rounded-pill text-white fw-bold"
+                                            style="background-color: #eb0501; font-size: 0.9rem;">
+                                            <?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ
+                                        </span>
+                                    </div>
+                                </div>
                             </a>
                         </div>
                     </div>
