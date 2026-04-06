@@ -644,22 +644,29 @@ class SanPhamController
             exit;
         }
 
-        require_once dirname(__DIR__, 2) . '/core/FileUpload.php';
         require_once dirname(__DIR__, 2) . '/models/entities/HinhAnhSanPham.php';
-
-        $fileUpload = new FileUpload();
         $hinhAnhModel = new HinhAnhSanPham();
 
-        // Validate file upload
         if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
             header('Location: /admin/san-pham/hinh-anh?id=' . $sanPhamId . '&error=no_file');
             exit;
         }
 
-        // Upload file
-        $uploadResult = $fileUpload->uploadImage($_FILES['image'], 'products');
-        if (!$uploadResult['success']) {
-            $_SESSION['image_error'] = $uploadResult['error'];
+        require_once dirname(__DIR__, 2) . '/services/cloudinary/CloudinaryService.php';
+        $cloudinary = CloudinaryService::getInstance();
+
+        try {
+            $publicIdPrefix = 'product_' . $sanPhamId . '_' . time() . '_' . rand(100, 999);
+
+            $uploadResult = $cloudinary->uploadApi()->upload($_FILES['image']['tmp_name'], [
+                'folder'    => 'products',
+                'public_id' => $publicIdPrefix
+            ]);
+            
+            $imageUrl = $uploadResult['secure_url'];
+
+        } catch (\Exception $e) {
+            $_SESSION['image_error'] = "Lỗi Cloudinary: " . $e->getMessage();
             header('Location: /admin/san-pham/hinh-anh?id=' . $sanPhamId . '&error=upload_failed');
             exit;
         }
@@ -669,16 +676,14 @@ class SanPhamController
         $laAnhChinh = isset($_POST['la_anh_chinh']) ? 1 : 0;
         $phienBanId = !empty($_POST['phien_ban_id']) ? (int)$_POST['phien_ban_id'] : null;
 
-        // If setting as main image, unset others
         if ($laAnhChinh) {
             $hinhAnhModel->datAnhChinh(0, $sanPhamId);
         }
 
-        // Create image record
         $payload = [
             'san_pham_id' => $sanPhamId,
             'phien_ban_id' => $phienBanId,
-            'url_anh' => $uploadResult['url'],
+            'url_anh' => $imageUrl, 
             'alt_text' => addslashes($altText),
             'la_anh_chinh' => $laAnhChinh,
             'thu_tu' => $thuTu,
@@ -707,10 +712,29 @@ class SanPhamController
         }
 
         $sanPhamId = $image['san_pham_id'];
+
+        $this->deleteCloudinaryImage($image['url_anh']);
+
         $hinhAnhModel->xoaVaXoaFile($imageId);
 
         header('Location: /admin/san-pham/hinh-anh?id=' . $sanPhamId . '&success=image_deleted');
         exit;
+    }
+
+    private function deleteCloudinaryImage($url): void
+    {
+        if (empty($url) || strpos($url, 'cloudinary.com') === false) {
+            return;
+        }
+
+        $urlPath = parse_url($url, PHP_URL_PATH);
+        if (preg_match('/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z0-9]+$/', $urlPath, $matches)) {
+            try {
+                require_once dirname(__DIR__, 2) . '/services/cloudinary/CloudinaryService.php';
+                $cloudinary = CloudinaryService::getInstance();
+                $cloudinary->uploadApi()->destroy($matches[1], ['invalidate' => true]);
+            } catch (\Exception $e) { }
+        }
     }
 
     public function setMainImage($imageId): void

@@ -79,13 +79,13 @@ class HinhAnhSanPham extends BaseModel
         $sql1 = "UPDATE {$this->table} 
                  SET la_anh_chinh = 0 
                  WHERE san_pham_id = $sanPhamId";
-        $this->query($sql1);
+        $this->execute($sql1);
         
         // Đánh dấu ảnh mới là ảnh chính
         $sql2 = "UPDATE {$this->table} 
                  SET la_anh_chinh = 1 
                  WHERE id = $anhId AND san_pham_id = $sanPhamId";
-        $this->query($sql2);
+        $this->execute($sql2);
         
         return mysqli_affected_rows($this->link) > 0;
     }

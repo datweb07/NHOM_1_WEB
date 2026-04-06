@@ -13,14 +13,14 @@ class BaseModel
         taoKetNoi($this->link);
     }
 
-    
+
     //select *
     public function getAll()
     {
         $sql = "SELECT * FROM {$this->table}";
 
         $result = chayTruyVanTraVeDL($this->link, $sql);
-        
+
         $data = [];
         while ($row = mysqli_fetch_assoc($result)) {
             $data[] = $row;
@@ -55,11 +55,11 @@ class BaseModel
             }
         }
         $valuesString = implode(', ', $values);
-        
+
         $sql = "INSERT INTO {$this->table} ($columns) VALUES ($valuesString)";
 
         chayTruyVanKhongTraVeDL($this->link, $sql);
-        
+
         return mysqli_insert_id($this->link);
     }
 
@@ -74,47 +74,48 @@ class BaseModel
                 $updates[] = "$key = '$value'";
             }
         }
-        
+
         $sql = "UPDATE {$this->table} SET " . implode(', ', $updates) . " WHERE id = '$id'";
 
         chayTruyVanKhongTraVeDL($this->link, $sql);
-        
+
         return mysqli_affected_rows($this->link);
     }
 
     //delete
     public function delete($id)
     {
-        if (!empty($id)){
+        if (!empty($id)) {
             $sql = "DELETE FROM {$this->table} WHERE id = '$id'";   //xóa có điều kiện
-        }
-        else {
+        } else {
             $sql = "DELETE FROM {$this->table}";                    //xóa hết
         }
-        
+
         chayTruyVanKhongTraVeDL($this->link, $sql);
-        
+
         return mysqli_affected_rows($this->link);
     }
-    
+
     //dùng cho SELECT phức tạp (có JOIN, WHERE...)
     public function query($sql)
     {
         $result = chayTruyVanTraVeDL($this->link, $sql);
-        
+
         $data = [];
-        while ($row = mysqli_fetch_assoc($result)) {
-            $data[] = $row;
+        if ($result instanceof mysqli_result) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $data[] = $row;
+            }
         }
         return $data;
     }
 
     // // Dùng cho INSERT/UPDATE/DELETE phức tạp
-    // public function execute($sql)
-    // {
-    //     chayTruyVanKhongTraVeDL($this->link, $sql);
-    //     return mysqli_affected_rows($this->link);
-    // }
+    public function execute($sql)
+    {
+        chayTruyVanKhongTraVeDL($this->link, $sql);
+        return mysqli_affected_rows($this->link);
+    }
 
     public function __destruct()
     {
