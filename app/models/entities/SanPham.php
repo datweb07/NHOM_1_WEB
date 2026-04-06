@@ -51,9 +51,15 @@ class SanPham extends BaseModel
         return addslashes(trim($keyword));
     }
 
-    private function buildWhereClause(?string $keyword = null, int $danhMucId = 0, ?float $giaMin = null, ?float $giaMax = null): string
+    // BỔ SUNG: Thêm tham số $trangThai mặc định là 'CON_BAN'
+    private function buildWhereClause(?string $keyword = null, int $danhMucId = 0, ?float $giaMin = null, ?float $giaMax = null, ?string $trangThai = 'CON_BAN'): string
     {
         $whereConditions = [];
+
+        // Chặn sản phẩm ngưng bán
+        if ($trangThai !== null) {
+            $whereConditions[] = "sp.trang_thai = '" . addslashes($trangThai) . "'";
+        }
 
         if ($keyword !== null && trim($keyword) !== '') {
             $dbKeyword = $this->escapeLikeKeyword($keyword);
@@ -81,6 +87,7 @@ class SanPham extends BaseModel
 
     public function demSanPham(?string $keyword = null, int $danhMucId = 0, ?float $giaMin = null, ?float $giaMax = null): int
     {
+        // buildWhereClause đã tự động thêm điều kiện CON_BAN
         $whereClause = $this->buildWhereClause($keyword, $danhMucId, $giaMin, $giaMax);
         $sql = "SELECT COUNT(*) as total FROM {$this->table} sp $whereClause";
         $result = parent::query($sql);
@@ -90,6 +97,7 @@ class SanPham extends BaseModel
 
     public function layDanhSachPhanTrang(?string $keyword = null, int $danhMucId = 0, ?float $giaMin = null, ?float $giaMax = null, int $limit = 15, int $offset = 0, string $sortBy = 'ngay_tao', string $sortOrder = 'DESC'): array
     {
+        // buildWhereClause đã tự động thêm điều kiện CON_BAN
         $whereClause = $this->buildWhereClause($keyword, $danhMucId, $giaMin, $giaMax);
         $limit = max(1, (int)$limit);
         $offset = max(0, (int)$offset);
@@ -106,7 +114,6 @@ class SanPham extends BaseModel
             $sortOrder = 'DESC';
         }
 
-        // ĐÃ THÊM: Subquery lấy `anh_chinh` từ bảng `hinh_anh_san_pham`
         $sql = "SELECT sp.*, dm.ten AS ten_danh_muc,
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
@@ -156,7 +163,7 @@ class SanPham extends BaseModel
         $sanPhamId = (int)$sanPhamId;
         $sql = "UPDATE phien_ban_san_pham SET trang_thai = 'NGUNG_BAN' WHERE san_pham_id = $sanPhamId";
         $this->query($sql);
-        return mysqli_affected_rows($this -> link);
+        return mysqli_affected_rows($this->link);
     }
 
     public function capNhatTrangThaiPhienBanKhiMoBan(int $sanPhamId): int
@@ -166,21 +173,8 @@ class SanPham extends BaseModel
                 SET trang_thai = CASE WHEN so_luong_ton > 0 THEN 'CON_HANG' ELSE 'HET_HANG' END
                 WHERE san_pham_id = $sanPhamId";
               $this->query($sql);
-              return mysqli_affected_rows($this -> link);
+              return mysqli_affected_rows($this->link);
     }
-
-    // public function query($sql)
-    // {
-    //     $trimmed = ltrim($sql);
-    //     $command = strtoupper(strtok($trimmed, " \t\n\r"));
-
-    //     if (in_array($command, ['UPDATE', 'INSERT', 'DELETE', 'REPLACE'], true)) {
-    //         chayTruyVanKhongTraVeDL($this->link, $sql);
-    //         return mysqli_affected_rows($this->link);
-    //     }
-
-    //     return parent::query($sql);
-    // }
 
     // ===== Getter =====
 
@@ -382,10 +376,12 @@ class SanPham extends BaseModel
     public function layChiTietTheoSlug(string $slug): ?array
     {
         $slug = mysqli_real_escape_string($this->link, $slug);
+        
+        // BỔ SUNG: AND sp.trang_thai = 'CON_BAN' để chặn xem chi tiết khi đã ngưng bán
         $sql = "SELECT sp.*, dm.ten AS ten_danh_muc, dm.slug AS slug_danh_muc
                 FROM {$this->table} sp
                 LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.id
-                WHERE sp.slug = '$slug'
+                WHERE sp.slug = '$slug' AND sp.trang_thai = 'CON_BAN'
                 LIMIT 1";
         
         $result = parent::query($sql);
