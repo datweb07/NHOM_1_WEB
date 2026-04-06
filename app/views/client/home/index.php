@@ -136,16 +136,19 @@ ob_start();
         transform: scale(1.05);
     }
 
-    .category-item {
+    .category-item, 
+    .suggestion-item {
         transition: all 0.2s ease;
     }
 
-    .category-item .category-image img {
-        transition: transform 1s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    .category-item .category-image img,
+    .suggestion-item .suggestion-image img {
+        transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1); 
     }
 
-    .category-item:hover .category-image img {
-        transform: scale(1.1);
+    .category-item:hover .category-image img,
+    .suggestion-item:hover .suggestion-image img {
+        transform: scale(1.15);
     }
 </style>
 

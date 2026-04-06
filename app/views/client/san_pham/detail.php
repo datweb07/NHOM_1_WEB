@@ -2,6 +2,8 @@
 $pageTitle = htmlspecialchars($sanPham['ten_san_pham'] ?? 'Chi tiết sản phẩm') . ' - FPT Shop';
 ob_start();
 
+
+
 // Ảnh chính
 $anhChinh = !empty($hinhAnhList) ? $hinhAnhList[0]['url_anh'] : ($sanPham['anh_chinh'] ?? '/public/assets/client/images/products/14.png');
 
@@ -13,6 +15,59 @@ if (!empty($danhGiaList)) {
 
 $isLoggedIn = \App\Core\Session::isLoggedIn();
 ?>
+<style>
+    .variant-card {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 8px 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        background: #fff;
+        position: relative;
+        overflow: hidden;
+        user-select: none;
+        
+        /* --- THÊM CÁC DÒNG NÀY ĐỂ FIX THẲNG HÀNG --- */
+        height: 100%;             /* Giãn chiều cao card lấp đầy cột */
+        display: flex;            /* Sử dụng flexbox */
+        flex-direction: column;   /* Xếp nội dung theo chiều dọc */
+        justify-content: center;  /* Căn giữa nội dung theo chiều dọc */
+        align-items: center;      /* Căn giữa nội dung theo chiều ngang */
+    }
+    .variant-card:hover:not(.disabled) {
+        border-color: #d70018;
+        box-shadow: 0 0 5px rgba(215, 0, 24, 0.15);
+    }
+    .variant-card.active {
+        border-color: #d70018;
+        background-color: #fef2f2;
+    }
+    .variant-card.active::before {
+        content: '\f00c'; /* Icon dấu tick của FontAwesome */
+        font-family: 'Font Awesome 6 Free', 'FontAwesome';
+        font-weight: 900;
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #d70018;
+        color: #fff;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-bottom-left-radius: 8px;
+    }
+    .variant-card.disabled {
+        background-color: #f8f9fa;
+        color: #adb5bd;
+        cursor: not-allowed;
+        border-color: #e9ecef;
+        opacity: 0.7;
+    }
+    .variant-price-label {
+        font-size: 0.85rem;
+        margin-top: 2px;
+    }
+</style>
 
 <div class="container-xl py-4">
     <nav aria-label="breadcrumb" class="mb-3">
@@ -44,13 +99,19 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                 <img id="main-img" src="<?= htmlspecialchars($anhChinh) ?>"
                      alt="<?= htmlspecialchars($sanPham['ten_san_pham']) ?>"
                      class="img-fluid mx-auto d-block mb-3"
-                     style="max-height:320px;object-fit:contain;">
+                     style="max-height:320px;object-fit:contain; transition: opacity 0.2s;">
+                     
                 <?php if (count($hinhAnhList) > 1): ?>
                     <div class="d-flex gap-2 flex-wrap justify-content-center">
                         <?php foreach ($hinhAnhList as $img): ?>
+                            <?php 
+                                // Nếu ảnh có phien_ban_id thì in id đó ra, nếu không (Chung) thì in chữ 'all'
+                                $variantDataId = !empty($img['phien_ban_id']) ? $img['phien_ban_id'] : 'all'; 
+                            ?>
                             <img src="<?= htmlspecialchars($img['url_anh']) ?>"
                                  alt="" class="thumb-img border rounded"
-                                 style="width:60px;height:60px;object-fit:contain;cursor:pointer;border:2px solid transparent;"
+                                 data-variant-id="<?= $variantDataId ?>"
+                                 style="width:60px;height:60px;object-fit:contain;cursor:pointer;border:2px solid transparent; transition: all 0.2s;"
                                  onclick="document.getElementById('main-img').src=this.src; document.querySelectorAll('.thumb-img').forEach(t=>t.style.borderColor='transparent'); this.style.borderColor='#d70018';">
                         <?php endforeach; ?>
                     </div>
@@ -92,21 +153,35 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
 
             <!-- Phiên bản -->
             <?php if (!empty($phienBanList)): ?>
-                <div class="mb-3">
+                <div class="mb-4">
                     <p class="fw-medium small mb-2">Chọn phiên bản:</p>
-                    <div class="d-flex flex-wrap gap-2">
+                    <div class="row g-2">
                         <?php foreach ($phienBanList as $idx => $pb): ?>
-                            <button type="button"
-                                    class="btn btn-sm btn-outline-secondary variant-btn <?= $idx === 0 ? 'active border-danger text-danger' : '' ?>"
-                                    data-id="<?= $pb['id'] ?>"
-                                    data-price="<?= $pb['gia_ban'] ?>"
-                                    data-stock="<?= $pb['ton_kho'] ?>">
-                                <?= htmlspecialchars($pb['ten_phien_ban']) ?>
-                            </button>
+                            <?php 
+                                // Đã sửa ton_kho thành so_luong_ton
+                                $isOutOfStock = $pb['so_luong_ton'] <= 0;
+                                $isActive = ($idx === 0 && !$isOutOfStock) ? 'active' : ''; 
+                            ?>
+                            <div class="col-4">
+                                <div class="variant-card variant-btn <?= $isActive ?> <?= $isOutOfStock ? 'disabled' : '' ?>"
+                                     data-id="<?= $pb['id'] ?>"
+                                     data-price="<?= $pb['gia_ban'] ?>"
+                                     data-stock="<?= $pb['so_luong_ton'] ?>">
+                                    
+                                    <div class="fw-bold text-wrap" style="font-size: 0.85rem;">
+                                        <?= htmlspecialchars($pb['ten_phien_ban']) ?>
+                                    </div>
+                                    <div class="variant-price-label <?= $isActive ? 'text-danger fw-medium' : 'text-muted' ?>">
+                                        <?= number_format($pb['gia_ban'], 0, ',', '.') ?>đ
+                                    </div>
+                                    
+                                </div>
+                            </div>
                         <?php endforeach; ?>
                     </div>
-                    <small class="text-muted mt-1 d-block" id="stock-info">
-                        Còn lại: <?= $phienBanDauTien['ton_kho'] ?? 0 ?> sản phẩm
+                    
+                    <small id="stock-info" class="mt-2 d-block <?= ($phienBanDauTien['so_luong_ton'] ?? 0) > 0 ? 'text-success' : 'text-danger' ?>">
+                        <?= ($phienBanDauTien['so_luong_ton'] ?? 0) > 0 ? '<i class="fa fa-check-circle me-1"></i>Còn lại: ' . $phienBanDauTien['so_luong_ton'] . ' sản phẩm' : '<i class="fa fa-times-circle me-1"></i>Đã hết hàng' ?>
                     </small>
                 </div>
             <?php endif; ?>
@@ -288,31 +363,124 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
 <script>
 let selectedVariantId = document.getElementById('selected-variant')?.value;
 
-// Chọn phiên bản
+// Hàm lọc hình ảnh thông minh theo phiên bản
+function filterImagesByVariant(variantId) {
+    const thumbnails = document.querySelectorAll('.thumb-img');
+    if (thumbnails.length === 0) return;
+
+    let firstVisibleImageSrc = null;
+    let hasSpecificImages = false;
+
+    // Bước 1: Kiểm tra xem phiên bản đang chọn CÓ ảnh riêng nào không
+    thumbnails.forEach(thumb => {
+        if (thumb.getAttribute('data-variant-id') === variantId.toString()) {
+            hasSpecificImages = true;
+        }
+    });
+
+    // Bước 2: Duyệt qua từng ảnh để quyết định Ẩn hay Hiện
+    thumbnails.forEach(thumb => {
+        const thumbVariantId = thumb.getAttribute('data-variant-id');
+        let shouldShow = false;
+
+        if (hasSpecificImages) {
+            // Nếu CÓ ảnh riêng -> CHỈ hiện ảnh riêng của nó (Ẩn ảnh chung và ảnh màu khác)
+            shouldShow = (thumbVariantId === variantId.toString());
+        } else {
+            // Nếu KHÔNG CÓ ảnh riêng -> Hiện các ảnh dùng 'Chung' ('all')
+            shouldShow = (thumbVariantId === 'all');
+        }
+
+        if (shouldShow) {
+            thumb.style.display = 'block';
+            if (!firstVisibleImageSrc) {
+                firstVisibleImageSrc = thumb.src; // Ghi nhớ ảnh đầu tiên hiển thị
+            }
+        } else {
+            thumb.style.display = 'none'; // Giấu đi
+        }
+    });
+
+    // Bước 3: Tự động đổi ảnh to ở trên cùng theo ảnh đầu tiên của danh sách vừa lọc
+    const mainImg = document.getElementById('main-img');
+    if (firstVisibleImageSrc && mainImg) {
+        mainImg.style.opacity = 0.5; // Chớp nhẹ tạo cảm giác mượt
+        setTimeout(() => {
+            mainImg.src = firstVisibleImageSrc;
+            mainImg.style.opacity = 1;
+        }, 150);
+        
+        // Reset viền đỏ cho ảnh thumbnail tương ứng
+        document.querySelectorAll('.thumb-img').forEach(t => t.style.borderColor = 'transparent');
+        const firstVisibleThumb = Array.from(thumbnails).find(t => t.style.display !== 'none');
+        if (firstVisibleThumb) {
+            firstVisibleThumb.style.borderColor = '#d70018';
+        }
+    }
+}
+
+// Lọc ảnh ngay khi vừa tải trang xong (dựa vào phiên bản mặc định được chọn)
+if (selectedVariantId) {
+    filterImagesByVariant(selectedVariantId);
+}
+
+// Sự kiện khi Click chọn phiên bản
 document.querySelectorAll('.variant-btn').forEach(btn => {
     btn.addEventListener('click', function() {
+        if (this.classList.contains('disabled')) return;
+
+        // Xóa trạng thái active của các nút cũ
         document.querySelectorAll('.variant-btn').forEach(b => {
-            b.classList.remove('active', 'border-danger', 'text-danger');
+            b.classList.remove('active');
+            const priceLabel = b.querySelector('.variant-price-label');
+            if (priceLabel) {
+                priceLabel.classList.remove('text-danger', 'fw-medium');
+                priceLabel.classList.add('text-muted');
+            }
         });
-        this.classList.add('active', 'border-danger', 'text-danger');
+
+        // Kích hoạt nút mới
+        this.classList.add('active');
+        const activePriceLabel = this.querySelector('.variant-price-label');
+        if (activePriceLabel) {
+            activePriceLabel.classList.remove('text-muted');
+            activePriceLabel.classList.add('text-danger', 'fw-medium');
+        }
         
         const price = parseInt(this.dataset.price);
         const stock = parseInt(this.dataset.stock);
         selectedVariantId = this.dataset.id;
         
+        // Cập nhật Data
         document.getElementById('selected-variant').value = selectedVariantId;
         document.getElementById('current-price').textContent = price.toLocaleString('vi-VN') + 'đ';
-        document.getElementById('stock-info').textContent = 'Còn lại: ' + stock + ' sản phẩm';
+        
+        const stockInfo = document.getElementById('stock-info');
+        if (stock > 0) {
+            stockInfo.className = 'mt-2 d-block text-success';
+            stockInfo.innerHTML = '<i class="fa fa-check-circle me-1"></i>Còn lại: ' + stock + ' sản phẩm';
+        } else {
+            stockInfo.className = 'mt-2 d-block text-danger';
+            stockInfo.innerHTML = '<i class="fa fa-times-circle me-1"></i>Đã hết hàng';
+        }
+
+        const btnCart = document.querySelector('form[action="/gio-hang/them"] button[type="submit"]');
+        if (btnCart) {
+            if (stock <= 0) {
+                btnCart.disabled = true;
+                btnCart.classList.replace('btn-danger', 'btn-secondary');
+                btnCart.innerHTML = '<i class="fa fa-ban me-1"></i>Hết hàng';
+            } else {
+                btnCart.disabled = false;
+                btnCart.classList.replace('btn-secondary', 'btn-danger');
+                btnCart.innerHTML = '<i class="fa fa-cart-plus me-1"></i>Thêm vào giỏ hàng';
+            }
+        }
+
+        // KÍCH HOẠT LỌC ẢNH SAU KHI CLICK
+        filterImagesByVariant(selectedVariantId);
     });
 });
-
-function changeQty(delta) {
-    const inp = document.getElementById('qty-input');
-    let val = parseInt(inp.value) + delta;
-    if (val < 1) val = 1;
-    if (val > 99) val = 99;
-    inp.value = val;
-}
 
 // Yêu thích
 document.querySelector('.btn-wishlist')?.addEventListener('click', function() {
@@ -332,6 +500,15 @@ document.querySelector('.btn-wishlist')?.addEventListener('click', function() {
         }
     });
 });
+
+// Nút cộng/trừ số lượng
+function changeQty(delta) {
+    const inp = document.getElementById('qty-input');
+    let val = parseInt(inp.value) + delta;
+    if (val < 1) val = 1;
+    if (val > 99) val = 99;
+    inp.value = val;
+}
 
 // Đánh giá
 document.getElementById('btn-review')?.addEventListener('click', function() {

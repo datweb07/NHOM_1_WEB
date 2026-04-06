@@ -106,7 +106,11 @@ class SanPham extends BaseModel
             $sortOrder = 'DESC';
         }
 
-        $sql = "SELECT sp.*, dm.ten AS ten_danh_muc
+        // ĐÃ THÊM: Subquery lấy `anh_chinh` từ bảng `hinh_anh_san_pham`
+        $sql = "SELECT sp.*, dm.ten AS ten_danh_muc,
+                       (SELECT url_anh FROM hinh_anh_san_pham 
+                        WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
+                        LIMIT 1) as anh_chinh
                 FROM {$this->table} sp
                 LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.id
                 $whereClause

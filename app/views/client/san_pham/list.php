@@ -3,6 +3,35 @@ $pageTitle = 'Danh sách sản phẩm - FPT Shop';
 ob_start();
 ?>
 
+<style>
+    /* CSS thêm hiệu ứng scale ảnh giống mục Gợi ý cho bạn */
+    .product-img-wrapper {
+        overflow: hidden; /* Ngăn ảnh tràn ra ngoài khi phóng to */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .card {
+        transition: box-shadow 0.3s ease; /
+    }
+
+    .product-img {
+        transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1); 
+        
+        transform-origin: center center; 
+        backface-visibility: hidden; 
+        -webkit-backface-visibility: hidden;
+        -webkit-font-smoothing: antialiased;
+        transform: translateZ(0); 
+        will-change: transform;
+    }
+    
+    .card:hover .product-img {
+        transform: scale(1.05) translateZ(0); 
+    }
+</style>
+
 <div class="container-xl py-4">
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb small">
@@ -13,7 +42,6 @@ ob_start();
 
     <div class="row g-4">
 
-        <!-- Sidebar -->
         <div class="col-lg-3">
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-body">
@@ -68,7 +96,6 @@ ob_start();
             </div>
         </div>
 
-        <!-- Danh sách sản phẩm -->
         <div class="col-lg-9">
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <h1 class="h5 fw-bold mb-0">
@@ -92,25 +119,27 @@ ob_start();
                     <?php foreach ($sanPhamList as $sp): ?>
                         <div class="col-6 col-md-4 col-lg-3">
                             <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
-                                <div class="card border-0 shadow-sm h-100" style="transition: box-shadow 0.2s;">
-                                    <div class="position-relative">
+                                <div class="card border-0 shadow-sm h-100"> 
+                                    <div class="position-relative product-img-wrapper rounded-top">
                                         <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? '/public/assets/client/images/products/14.png') ?>"
-                                             class="card-img-top p-2"
+                                             class="card-img-top p-2 product-img"
                                              alt="<?= htmlspecialchars($sp['ten_san_pham']) ?>"
-                                             style="height:150px;object-fit:contain;">
-                                        <?php if (!empty($sp['phan_tram_giam'])): ?>
-                                            <span class="badge bg-danger position-absolute top-0 start-0 m-2" style="font-size:0.65rem;">
+                                             style="height:180px;object-fit:contain;">
+                                        <?php if (!empty($sp['phan_tram_giam']) && $sp['phan_tram_giam'] > 0): ?>
+                                            <span class="badge bg-danger position-absolute top-0 start-0 m-2" style="font-size:0.7rem; z-index: 2;">
                                                 -<?= $sp['phan_tram_giam'] ?>%
                                             </span>
                                         <?php endif; ?>
                                     </div>
-                                    <div class="card-body pt-0 px-3 pb-3">
-                                        <p class="small mb-1 text-dark" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5em;">
+                                    <div class="card-body pt-0 px-3 pb-3 text-center">
+                                        <h6 class="small mb-1 text-dark fw-medium" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5em;">
                                             <?= htmlspecialchars($sp['ten_san_pham']) ?>
-                                        </p>
-                                        <p class="text-danger fw-bold mb-0 small"><?= number_format($sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>
+                                        </h6>
+                                        <p class="text-danger fw-bold mb-0 fs-6"><?= number_format($sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>
                                         <?php if (!empty($sp['gia_goc']) && $sp['gia_goc'] > $sp['gia_hien_thi']): ?>
-                                            <small class="text-muted text-decoration-line-through"><?= number_format($sp['gia_goc'], 0, ',', '.') ?>đ</small>
+                                            <small class="text-muted text-decoration-line-through" style="font-size: 0.75rem;"><?= number_format($sp['gia_goc'], 0, ',', '.') ?>đ</small>
+                                        <?php else: ?>
+                                            <small class="text-transparent" style="opacity: 0; font-size: 0.75rem;">0</small>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -119,7 +148,6 @@ ob_start();
                     <?php endforeach; ?>
                 </div>
 
-                <!-- Phân trang -->
                 <?php if ($tongTrang > 1): ?>
                     <nav class="mt-4">
                         <ul class="pagination justify-content-center">
