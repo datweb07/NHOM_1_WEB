@@ -104,10 +104,10 @@ class SanPhamController
         // Check if product has orders
         require_once dirname(__DIR__, 2) . '/models/entities/SanPham.php';
         $sanPhamModel = new SanPham();
-        if ($sanPhamModel->kiemTraCoDonHang($id)) {
-            header("Location: /admin/san-pham?error=has_orders");
-            exit;
-        }
+        // if ($sanPhamModel->kiemTraCoDonHang($id)) {
+        //     header("Location: /admin/san-pham?error=has_orders");
+        //     exit;
+        // }
         
         $this->baseModel->update($id, ['trang_thai' => 'NGUNG_BAN']);
         $sqlPhienBan = "UPDATE phien_ban_san_pham SET trang_thai = 'NGUNG_BAN' WHERE san_pham_id = $id";
