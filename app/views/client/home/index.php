@@ -1,12 +1,12 @@
 <?php
 $pageTitle = 'Fptshop.com.vn | Điện thoại, Laptop, Điện máy, Gia dụng, Phụ kiện chính hãng giá tốt nhất';
 $additionalCSS = [
-    '/public/assets/client/css/slider.css',
-    '/public/assets/client/css/slider-card.css',
+    BASE_URL . '/assets/client/css/slider.css',
+    BASE_URL . '/assets/client/css/slider-card.css',
 ];
 $additionalJS = [
-    '/public/assets/client/js/slider.js',
-    '/public/assets/client/js/slider-card.js',
+    BASE_URL . '/assets/client/js/slider.js',
+    BASE_URL . '/assets/client/js/slider-card.js',
 ];
 
 ob_start();
@@ -64,7 +64,7 @@ ob_start();
                                         <img src="<?php echo htmlspecialchars($dm['icon_url']); ?>"
                                             alt="<?php echo htmlspecialchars($dm['ten']); ?>">
                                     <?php else: ?>
-                                        <img src="/public/assets/client/images/icon/phone.png"
+                                        <img src="<?= BASE_URL ?>/assets/client/images/icon/phone.png"
                                             alt="<?php echo htmlspecialchars($dm['ten']); ?>">
                                     <?php endif; ?>
                                 </div>
@@ -227,7 +227,7 @@ ob_start();
                                                     alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
                                                     class="w-100 h-100 object-fit-cover custom-hover-zoom">
                                             <?php else: ?>
-                                                <img src="/public/assets/client/images/products/14.png"
+                                                <img src="<?= BASE_URL ?>/assets/client/images/products/14.png"
                                                     alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
                                                     class="w-100 h-100 object-fit-cover custom-hover-zoom">
                                             <?php endif; ?>
@@ -287,7 +287,7 @@ ob_start();
                                             <img src="<?php echo htmlspecialchars($dm['icon_url']); ?>"
                                                 alt="<?php echo htmlspecialchars($dm['ten']); ?>">
                                         <?php else: ?>
-                                            <img src="/public/assets/client/images/icon/phone.png"
+                                            <img src="<?= BASE_URL ?>/assets/client/images/icon/phone.png"
                                                 alt="<?php echo htmlspecialchars($dm['ten']); ?>">
                                         <?php endif; ?>
                                     </div>
@@ -669,7 +669,7 @@ ob_start();
                                             alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
                                             class="w-100 h-100 object-fit-contain custom-hover-zoom">
                                     <?php else: ?>
-                                        <img src="/public/assets/client/images/products/14.png"
+                                        <img src="<?= BASE_URL ?>/assets/client/images/products/14.png"
                                             alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
                                             class="w-100 h-100 object-fit-contain custom-hover-zoom">
                                     <?php endif; ?>
@@ -734,7 +734,7 @@ ob_start();
                                             alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
                                             class="w-100 h-100 object-fit-contain custom-hover-zoom">
                                     <?php else: ?>
-                                        <img src="/public/assets/client/images/products/20.jpg"
+                                        <img src="<?= BASE_URL ?>/assets/client/images/products/20.jpg"
                                             alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
                                             class="w-100 h-100 object-fit-contain custom-hover-zoom">
                                     <?php endif; ?>
@@ -779,7 +779,7 @@ ob_start();
                                 class="text-dark text-decoration-none d-block">
                                 <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
                                     style="height: 250px;">
-                                    <img src="<?php echo htmlspecialchars($sp['anh_chinh'] ?? '/public/assets/client/images/products/14.png'); ?>"
+                                    <img src="<?php echo htmlspecialchars($sp['anh_chinh'] ?? BASE_URL . '/assets/client/images/products/14.png'); ?>"
                                         alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
                                         class="w-100 h-100 object-fit-cover custom-hover-zoom">
                                 </div>

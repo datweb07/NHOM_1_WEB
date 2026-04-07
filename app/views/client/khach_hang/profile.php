@@ -131,7 +131,7 @@ ob_start();
             <div class="col-lg-3 col-md-4 mb-4">
                 <div class="profile-content-box" style="padding: 20px;">
                     <div class="profile-sidebar-header text-center border-bottom pb-3 mb-3">
-                        <img src="<?= !empty($user['avatar_url']) ? htmlspecialchars($user['avatar_url']) : '/public/assets/client/images/others/anh-avatar.jpg' ?>" alt="Avatar">
+                        <img src="<?= !empty($user['avatar_url']) ? htmlspecialchars($user['avatar_url']) : BASE_URL . '/assets/client/images/others/anh-avatar.jpg' ?>" alt="Avatar">
                         <h3 class="fs-6 fw-bold m-0"><?= htmlspecialchars($user['ho_ten'] ?? 'Tên người dùng') ?></h3>
                     </div>
                     <ul class="nav flex-column profile-menu">
@@ -218,7 +218,7 @@ ob_start();
                                 <div class="avatar-upload-section">
                                     <div class="avatar-preview">
                                         <img id="avatar-preview-img"
-                                             src="<?= !empty($user['avatar_url']) ? htmlspecialchars($user['avatar_url']) : '/public/assets/client/images/others/anh-avatar.jpg' ?>"
+                                             src="<?= !empty($user['avatar_url']) ? htmlspecialchars($user['avatar_url']) : BASE_URL . '/assets/client/images/others/anh-avatar.jpg' ?>"
                                              alt="Avatar Preview">
                                     </div>
                                     <div class="w-100 px-3">

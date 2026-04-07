@@ -22,7 +22,7 @@ ob_start();
                             <i class="fa fa-times" style="font-size:0.7rem;"></i>
                         </button>
                         <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
-                            <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? '/public/assets/client/images/products/14.png') ?>"
+                            <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? BASE_URL . '/assets/client/images/products/14.png') ?>"
                                  class="card-img-top p-2"
                                  alt="<?= htmlspecialchars($sp['ten_san_pham']) ?>"
                                  style="height:160px;object-fit:contain;">

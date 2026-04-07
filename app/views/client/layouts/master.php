@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title><?php echo $pageTitle ?? 'FPT Shop'; ?></title>
-    <link rel="icon" href="/public/assets/client/images/header/1.png">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/client/images/header/1.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/public/assets/client/css/main.css">
-    <link rel="stylesheet" href="/public/assets/client/css/grid.css">
-    <link rel="stylesheet" href="/public/assets/client/css/reponsive.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/client/css/main.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/client/css/grid.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/client/css/reponsive.css">
 
     <?php if (isset($additionalCSS) && is_array($additionalCSS)): ?>
         <?php foreach ($additionalCSS as $css): ?>
@@ -645,7 +645,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="/public/assets/client/js/main.js"></script>
+    <script src="<?= BASE_URL ?>/assets/client/js/main.js"></script>
 
     <script>
         // Cập nhật số lượng giỏ hàng

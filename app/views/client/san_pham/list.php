@@ -121,7 +121,7 @@ ob_start();
                             <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
                                 <div class="card border-0 shadow-sm h-100"> 
                                     <div class="position-relative product-img-wrapper rounded-top">
-                                        <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? '/public/assets/client/images/products/14.png') ?>"
+                                        <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? BASE_URL . '/assets/client/images/products/14.png') ?>"
                                              class="card-img-top p-2 product-img"
                                              alt="<?= htmlspecialchars($sp['ten_san_pham']) ?>"
                                              style="height:180px;object-fit:contain;">

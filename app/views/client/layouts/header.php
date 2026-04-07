@@ -124,20 +124,20 @@
                         <div class="mega-col">
                             <div class="mega-section-title">Bán chạy nhất</div>
                             <a href="#" class="hot-item">
-                                <img src="/public/assets/client/images/navbar/1.png" alt="">
+                                <img src="<?= BASE_URL ?>/assets/client/images/navbar/1.png" alt="">
                                 <div>
                                     <div class="hot-item-name">Samsung Galaxy A53 5G 256GB</div>
                                     <div class="hot-item-price">10.990.000 ₫</div>
                                 </div>
                             </a>
                             <a href="#" class="hot-item">
-                                <img src="/public/assets/client/images/navbar/2.png" alt="">
+                                <img src="<?= BASE_URL ?>/assets/client/images/navbar/2.png" alt="">
                                 <div>
                                     <div class="hot-item-name">OPPO A55 4GB-64GB</div>
                                     <div class="hot-item-price">4.990.000 ₫</div>
                                 </div>
                             </a>
-                            <div class="mega-banner"><a href="#"><img src="/public/assets/client/images/navbar/3.png"
+                            <div class="mega-banner"><a href="#"><img src="<?= BASE_URL ?>/assets/client/images/navbar/3.png"
                                         alt=""></a></div>
                         </div>
                     </div>
@@ -164,7 +164,7 @@
                         </div>
                         <div class="mega-col">
                             <div class="mega-banner" style="margin-top:0">
-                                <a href="#"><img src="/public/assets/client/images/navbar/4.png" alt=""></a>
+                                <a href="#"><img src="<?= BASE_URL ?>/assets/client/images/navbar/4.png" alt=""></a>
                             </div>
                         </div>
                     </div>
@@ -186,20 +186,20 @@
                         <div class="mega-col">
                             <div class="mega-section-title">Bán chạy nhất</div>
                             <a href="#" class="hot-item">
-                                <img src="/public/assets/client/images/navbar/5.png" alt="">
+                                <img src="<?= BASE_URL ?>/assets/client/images/navbar/5.png" alt="">
                                 <div>
                                     <div class="hot-item-name">iPad Pro 11 2021 M1 Wi-Fi 128GB</div>
                                     <div class="hot-item-price">19.999.000 ₫</div>
                                 </div>
                             </a>
                             <a href="#" class="hot-item">
-                                <img src="/public/assets/client/images/navbar/6.png" alt="">
+                                <img src="<?= BASE_URL ?>/assets/client/images/navbar/6.png" alt="">
                                 <div>
                                     <div class="hot-item-name">Samsung Galaxy Tab S6 Lite 2022</div>
                                     <div class="hot-item-price">7.990.000 ₫</div>
                                 </div>
                             </a>
-                            <div class="mega-banner"><a href="#"><img src="/public/assets/client/images/navbar/7.png"
+                            <div class="mega-banner"><a href="#"><img src="<?= BASE_URL ?>/assets/client/images/navbar/7.png"
                                         alt=""></a></div>
                         </div>
                     </div>
@@ -219,20 +219,20 @@
                         <div class="mega-col">
                             <div class="mega-section-title">Bán chạy nhất</div>
                             <a href="#" class="hot-item">
-                                <img src="/public/assets/client/images/navbar/8.png" alt="">
+                                <img src="<?= BASE_URL ?>/assets/client/images/navbar/8.png" alt="">
                                 <div>
                                     <div class="hot-item-name">iPhone 13 Pro Max 128GB</div>
                                     <div class="hot-item-price">27.990.000 ₫</div>
                                 </div>
                             </a>
                             <a href="#" class="hot-item">
-                                <img src="/public/assets/client/images/navbar/9.png" alt="">
+                                <img src="<?= BASE_URL ?>/assets/client/images/navbar/9.png" alt="">
                                 <div>
                                     <div class="hot-item-name">iPhone 13 128GB</div>
                                     <div class="hot-item-price">19.490.000 ₫</div>
                                 </div>
                             </a>
-                            <div class="mega-banner"><a href="#"><img src="/public/assets/client/images/navbar/10.png"
+                            <div class="mega-banner"><a href="#"><img src="<?= BASE_URL ?>/assets/client/images/navbar/10.png"
                                         alt=""></a></div>
                         </div>
                     </div>
@@ -260,20 +260,20 @@
                         <div class="mega-col">
                             <div class="mega-section-title">Bán chạy nhất</div>
                             <a href="#" class="hot-item">
-                                <img src="/public/assets/client/images/navbar/11.png" alt="">
+                                <img src="<?= BASE_URL ?>/assets/client/images/navbar/11.png" alt="">
                                 <div>
                                     <div class="hot-item-name">Combo Loa Bluetooth Karaoke ivalue F12-65N</div>
                                     <div class="hot-item-price">1.953.000 ₫</div>
                                 </div>
                             </a>
                             <a href="#" class="hot-item">
-                                <img src="/public/assets/client/images/navbar/12.png" alt="">
+                                <img src="<?= BASE_URL ?>/assets/client/images/navbar/12.png" alt="">
                                 <div>
                                     <div class="hot-item-name">Pin sạc dự phòng UmeTravel 10000mAh</div>
                                     <div class="hot-item-price">809.000 ₫</div>
                                 </div>
                             </a>
-                            <div class="mega-banner"><a href="#"><img src="/public/assets/client/images/navbar/13.png"
+                            <div class="mega-banner"><a href="#"><img src="<?= BASE_URL ?>/assets/client/images/navbar/13.png"
                                         alt=""></a></div>
                         </div>
                     </div>
@@ -317,7 +317,7 @@
     <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
         <div class="offcanvas-header">
             <a href="/" style="display:inline-block; line-height:0;">
-                <img src="/public/assets/client/images/header/3.png"
+                <img src="<?= BASE_URL ?>/assets/client/images/header/3.png"
                      alt="FPT Shop"
                      style="height:36px; width:auto; display:block;">
             </a>

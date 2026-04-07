@@ -105,7 +105,7 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                         <h6 class="fw-bold mb-3 border-bottom pb-2">Đơn hàng (<?= count($chiTietGioList) ?> sản phẩm)</h6>
                         <?php foreach ($chiTietGioList as $item): ?>
                             <div class="d-flex align-items-center gap-2 mb-3">
-                                <img src="<?= htmlspecialchars($item['anh_chinh'] ?? '/public/assets/client/images/products/14.png') ?>"
+                                <img src="<?= htmlspecialchars($item['anh_chinh'] ?? BASE_URL . '/assets/client/images/products/14.png') ?>"
                                      alt="" style="width:50px;height:50px;object-fit:contain;border:1px solid #eee;border-radius:4px;">
                                 <div class="flex-grow-1">
                                     <div class="small fw-medium"><?= htmlspecialchars($item['ten_san_pham'] ?? '') ?></div>
