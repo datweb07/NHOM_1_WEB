@@ -4,10 +4,10 @@
             <div class="col-lg-3 col-md-6 col-12">
                 <h5 class="footer-title">TẢI ỨNG DỤNG FPT SHOP</h5>
                 <div class="app-download mb-4">
-                    <img src="<?= BASE_URL ?>/assets/client/images/others/qr-fptshop.webp" alt="QR Code" class="qr-code">
+                    <img src="<?= ASSET_URL ?>/assets/client/images/others/qr-fptshop.webp" alt="QR Code" class="qr-code">
                     <div class="store-buttons">
-                        <a href="#"><img src="<?= BASE_URL ?>/assets/client/images/others/app-store.webp" alt="App Store"></a>
-                        <a href="#"><img src="<?= BASE_URL ?>/assets/client/images/others/google-play.webp"
+                        <a href="#"><img src="<?= ASSET_URL ?>/assets/client/images/others/app-store.webp" alt="App Store"></a>
+                        <a href="#"><img src="<?= ASSET_URL ?>/assets/client/images/others/google-play.webp"
                                 alt="Google Play"></a>
                     </div>
                 </div>

@@ -27,10 +27,10 @@ $trangThaiDuyet = (string)($thanhToan['trang_thai_duyet'] ?? '');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chi tiết thanh toán</title>
     <script src="https://kit.fontawesome.com/1f55434e39.js" crossorigin="anonymous"></script>
-    <link rel="icon" href="<?= BASE_URL ?>/assets/client/images/header/1.png">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/client/css/main.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/client/css/grid.css">
-    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/client/css/reponsive.css">
+    <link rel="icon" href="<?= ASSET_URL ?>/assets/client/images/header/1.png">
+    <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/client/css/main.css">
+    <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/client/css/grid.css">
+    <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/client/css/reponsive.css">
     <style>
         .admin-detail-page {
             background: linear-gradient(180deg, #f7f8fb 0%, #eef1f7 100%);

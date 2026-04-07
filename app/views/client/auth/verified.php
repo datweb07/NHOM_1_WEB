@@ -13,7 +13,7 @@ $userName = Session::getUserName() ?? 'bạn';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
-    <link rel="icon" href="<?= BASE_URL ?>/assets/client/images/header/1.png">
+    <link rel="icon" href="<?= ASSET_URL ?>/assets/client/images/header/1.png">
     
     <style>
         :root {
@@ -84,7 +84,7 @@ $userName = Session::getUserName() ?? 'bạn';
             <div class="col-md-7 col-lg-6 col-xl-5">
                 
                 <div class="text-center mb-4">
-                    <img src="<?= BASE_URL ?>/assets/client/images/others/fpt-shop-banner.png" alt="FPT Shop" style="height: 100px;">
+                    <img src="<?= ASSET_URL ?>/assets/client/images/others/fpt-shop-banner.png" alt="FPT Shop" style="height: 100px;">
                 </div>
 
                 <div class="card custom-card">

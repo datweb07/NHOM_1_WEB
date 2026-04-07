@@ -8,7 +8,7 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link rel="icon" href="<?= BASE_URL ?>/assets/client/images/header/1.png" />
+    <link rel="icon" href="<?= ASSET_URL ?>/assets/client/images/header/1.png" />
     <style>
       :root {
         --fpt-red: #cb1c22;
@@ -68,7 +68,7 @@
         <div class="col-md-6 col-lg-5 col-xl-4">
           <div class="text-center mb-4">
             <img
-              src="<?= BASE_URL ?>/assets/client/images/others/fpt-shop-banner.png"
+              src="<?= ASSET_URL ?>/assets/client/images/others/fpt-shop-banner.png"
               alt="FPT Shop"
               style="height: 100px"
             />

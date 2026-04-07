@@ -28,7 +28,7 @@ function isMenuOpen($paths) {
           <a href="/admin/dashboard" class="brand-link">
             <!--begin::Brand Image-->
             <img
-              src="<?= BASE_URL ?>/assets/client/images/others/fpt-shop-banner.png"
+              src="<?= ASSET_URL ?>/assets/client/images/others/fpt-shop-banner.png"
               alt="FPT SHOP Logo"
               class="brand-image opacity-75 shadow"
             />
