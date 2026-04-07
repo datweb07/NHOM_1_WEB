@@ -98,12 +98,6 @@ class SanPhamController
             $sortOrder
         );
 
-        // Lấy phiên bản cho từng sản phẩm
-        foreach ($sanPhamList as &$sp) {
-            $sp['phien_ban_list'] = $this->phienBanModel->layPhienBanTheoSanPham((int)$sp['id']);
-        }
-        unset($sp);
-
         // Tính tổng số trang
         $tongTrang = ceil($tongSanPham / $limit);
 
