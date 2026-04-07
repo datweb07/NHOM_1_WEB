@@ -118,13 +118,19 @@ ob_start();
             <?php else: ?>
                 <div class="row g-3">
                     <?php foreach ($sanPhamList as $sp): ?>
+                        <?php
+                        $phienBanList = $sp['phien_ban_list'] ?? [];
+                        $phienBanMacDinh = $phienBanList[0] ?? null;
+                        ?>
                         <div class="col-6 col-md-4 col-lg-3">
-                            <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
-                                <div class="card border-0 shadow-sm h-100">
-                                    <div class="position-relative product-img-wrapper rounded-top">
+                            <div class="card border-0 shadow-sm h-100 d-flex flex-column">
+                                <!-- Ảnh sản phẩm -->
+                                <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none flex-grow-1" style="display: flex; flex-direction: column;">
+                                    <div class="position-relative product-img-wrapper rounded-top flex-grow-1">
                                         <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png') ?>"
-                                            class="card-img-top p-2 product-img"
+                                            class="card-img-top p-2 product-img product-variant-img"
                                             alt="<?= htmlspecialchars($sp['ten_san_pham']) ?>"
+                                            data-sp-id="<?= $sp['id'] ?>"
                                             style="height:180px;object-fit:contain;">
                                         <?php if (!empty($sp['phan_tram_giam']) && $sp['phan_tram_giam'] > 0): ?>
                                             <span class="badge bg-danger position-absolute top-0 start-0 m-2" style="font-size:0.7rem; z-index: 2;">
@@ -132,22 +138,178 @@ ob_start();
                                             </span>
                                         <?php endif; ?>
                                     </div>
-                                    <div class="card-body pt-0 px-3 pb-3 text-center">
+                                </a>
+
+                                <!-- Thông tin sản phẩm -->
+                                <div class="card-body pt-2 px-3 pb-2">
+                                    <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
                                         <h6 class="small mb-1 text-dark fw-medium" style="display:-webkit-box;line-clamp:2;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5em;">
                                             <?= htmlspecialchars($sp['ten_san_pham']) ?>
                                         </h6>
-                                        <p class="text-danger fw-bold mb-0 fs-6"><?= number_format($sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>
-                                        <?php if (!empty($sp['gia_goc']) && $sp['gia_goc'] > $sp['gia_hien_thi']): ?>
-                                            <small class="text-muted text-decoration-line-through" style="font-size: 0.75rem;"><?= number_format($sp['gia_goc'], 0, ',', '.') ?>đ</small>
-                                        <?php else: ?>
-                                            <small class="text-transparent" style="opacity: 0; font-size: 0.75rem;">0</small>
-                                        <?php endif; ?>
-                                    </div>
+                                    </a>
+
+                                    <!-- Chọn phiên bản -->
+                                    <?php if (!empty($phienBanList)): ?>
+                                        <div class="mb-2" style="font-size: 0.75rem;">
+                                            <?php
+                                            $hasColor = false;
+                                            $hasCapacity = false;
+                                            $hasRam = false;
+                                            foreach ($phienBanList as $pb) {
+                                                if (!empty($pb['mau_sac'])) $hasColor = true;
+                                                if (!empty($pb['dung_luong'])) $hasCapacity = true;
+                                                if (!empty($pb['ram'])) $hasRam = true;
+                                            }
+                                            ?>
+
+                                            <?php if ($hasColor): ?>
+                                                <select class="form-select form-select-sm mb-1 variant-select" data-sp-id="<?= $sp['id'] ?>" data-type="mau_sac" onchange="updateProductVariant(this, <?= $sp['id'] ?>)">
+                                                    <option value="">-- Màu --</option>
+                                                    <?php
+                                                    $uniqueColors = [];
+                                                    foreach ($phienBanList as $pb) {
+                                                        if (!empty($pb['mau_sac']) && !in_array($pb['mau_sac'], $uniqueColors)) {
+                                                            $uniqueColors[] = $pb['mau_sac'];
+                                                            echo '<option value="' . htmlspecialchars($pb['mau_sac']) . '">' . htmlspecialchars($pb['mau_sac']) . '</option>';
+                                                        }
+                                                    }
+                                                    ?>
+                                                </select>
+                                            <?php endif; ?>
+
+                                            <?php if ($hasCapacity): ?>
+                                                <select class="form-select form-select-sm mb-1 variant-select" data-sp-id="<?= $sp['id'] ?>" data-type="dung_luong" onchange="updateProductVariant(this, <?= $sp['id'] ?>)">
+                                                    <option value="">-- Dung lượng --</option>
+                                                    <?php
+                                                    $uniqueCapacities = [];
+                                                    foreach ($phienBanList as $pb) {
+                                                        if (!empty($pb['dung_luong']) && !in_array($pb['dung_luong'], $uniqueCapacities)) {
+                                                            $uniqueCapacities[] = $pb['dung_luong'];
+                                                            echo '<option value="' . htmlspecialchars($pb['dung_luong']) . '">' . htmlspecialchars($pb['dung_luong']) . '</option>';
+                                                        }
+                                                    }
+                                                    ?>
+                                                </select>
+                                            <?php endif; ?>
+
+                                            <?php if ($hasRam): ?>
+                                                <select class="form-select form-select-sm mb-1 variant-select" data-sp-id="<?= $sp['id'] ?>" data-type="ram" onchange="updateProductVariant(this, <?= $sp['id'] ?>)">
+                                                    <option value="">-- RAM --</option>
+                                                    <?php
+                                                    $uniqueRams = [];
+                                                    foreach ($phienBanList as $pb) {
+                                                        if (!empty($pb['ram']) && !in_array($pb['ram'], $uniqueRams)) {
+                                                            $uniqueRams[] = $pb['ram'];
+                                                            echo '<option value="' . htmlspecialchars($pb['ram']) . '">' . htmlspecialchars($pb['ram']) . '</option>';
+                                                        }
+                                                    }
+                                                    ?>
+                                                </select>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <!-- Giá -->
+                                    <p class="text-danger fw-bold mb-2 fs-6 product-variant-price" data-sp-id="<?= $sp['id'] ?>"><?= number_format($phienBanMacDinh['gia_ban'] ?? $sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>
+                                    <?php if (!empty($sp['gia_goc']) && $sp['gia_goc'] > $sp['gia_hien_thi']): ?>
+                                        <small class="text-muted text-decoration-line-through" style="font-size: 0.75rem;"><?= number_format($sp['gia_goc'], 0, ',', '.') ?>đ</small>
+                                    <?php else: ?>
+                                        <small class="text-transparent" style="opacity: 0; font-size: 0.75rem;">0</small>
+                                    <?php endif; ?>
+
+                                    <!-- Thêm vào giỏ hàng -->
+                                    <form method="POST" action="/gio-hang/them" class="mt-2 add-to-cart-form" data-sp-id="<?= $sp['id'] ?>">
+                                        <input type="hidden" name="phien_ban_id" class="phien-ban-id-input" value="<?= $phienBanMacDinh['id'] ?? 0 ?>">
+                                        <input type="hidden" name="so_luong" value="1">
+                                        <button type="submit" class="btn btn-sm btn-danger w-100" style="font-size: 0.75rem;">
+                                            <i class="fas fa-shopping-cart"></i> Thêm giỏ
+                                        </button>
+                                    </form>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
+
+                <!-- Lưu dữ liệu phiên bản để JavaScript sử dụng -->
+                <script type="application/json" id="product-variants">
+                    <?php
+                    $variantsData = [];
+                    foreach ($sanPhamList as $sp) {
+                        $phienBanList = $sp['phien_ban_list'] ?? [];
+                        $variantsData[$sp['id']] = $phienBanList;
+                    }
+                    echo json_encode($variantsData);
+                    ?>
+                </script>
+
+                <script>
+                    // Lấy dữ liệu phiên bản từ JSON
+                    const productVariantsElement = document.getElementById('product-variants');
+                    const productVariants = productVariantsElement ? JSON.parse(productVariantsElement.innerText) : {};
+
+                    function updateProductVariant(selectElement, spId) {
+                        const selectedColor = document.querySelector(`[data-sp-id="${spId}"][data-type="mau_sac"]`)?.value || '';
+                        const selectedCapacity = document.querySelector(`[data-sp-id="${spId}"][data-type="dung_luong"]`)?.value || '';
+                        const selectedRam = document.querySelector(`[data-sp-id="${spId}"][data-type="ram"]`)?.value || '';
+
+                        const variants = productVariants[spId] || [];
+
+                        // Lọc phiên bản phù hợp
+                        let matchedVariant = variants.find(v => {
+                            const matchColor = !selectedColor || v.mau_sac === selectedColor;
+                            const matchCapacity = !selectedCapacity || v.dung_luong === selectedCapacity;
+                            const matchRam = !selectedRam || v.ram === selectedRam;
+                            return matchColor && matchCapacity && matchRam;
+                        });
+
+                        if (!matchedVariant && (selectedColor || selectedCapacity || selectedRam)) {
+                            // Nếu không tìm thấy match chính xác, lấy phiên bản đầu tiên mà match được
+                            matchedVariant = variants.find(v => {
+                                if (selectedColor && v.mau_sac !== selectedColor) return false;
+                                if (selectedCapacity && v.dung_luong !== selectedCapacity) return false;
+                                if (selectedRam && v.ram !== selectedRam) return false;
+                                return true;
+                            });
+                        }
+
+                        // Nếu vẫn không tìm thấy, dùng phiên bản đầu tiên
+                        if (!matchedVariant && variants.length > 0) {
+                            matchedVariant = variants[0];
+                        }
+
+                        if (matchedVariant) {
+                            // Cập nhật giá
+                            const priceElement = document.querySelector(`[data-sp-id="${spId}"].product-variant-price`);
+                            if (priceElement) {
+                                priceElement.textContent = new Intl.NumberFormat('vi-VN', {
+                                    maximumFractionDigits: 0
+                                }).format(matchedVariant.gia_ban) + 'đ';
+                            }
+
+                            // Cập nhật phien_ban_id trong form
+                            const form = document.querySelector(`.add-to-cart-form[data-sp-id="${spId}"]`);
+                            if (form) {
+                                form.querySelector('.phien-ban-id-input').value = matchedVariant.id;
+                            }
+
+                            if (opt.value && !availableRams.has(opt.value)) {
+                                opt.disabled = true;
+                                opt.style.color = '#ccc';
+                            } else {
+                                opt.disabled = false;
+                                opt.style.color = '#333';
+                            }
+                        });
+                    }
+                    }
+                    }
+
+                    // Khởi tạo khi trang tải
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Có thể thêm các xử lý khởi tạo khác nếu cần
+                    });
+                </script>
 
                 <?php if ($tongTrang > 1): ?>
                     <nav class="mt-4">

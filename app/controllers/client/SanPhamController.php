@@ -38,7 +38,7 @@ class SanPhamController
     {
         // Lấy thông tin sản phẩm
         $sanPham = $this->sanPhamModel->layChiTietTheoSlug($slug);
-        
+
         if (!$sanPham) {
             header('Location: /');
             exit;
@@ -46,20 +46,20 @@ class SanPhamController
 
         // Lấy hình ảnh sản phẩm
         $hinhAnhList = $this->hinhAnhModel->layHinhAnhTheoSanPham($sanPham['id']);
-        
+
         // Lấy phiên bản sản phẩm
         $phienBanList = $this->phienBanModel->layPhienBanTheoSanPham($sanPham['id']);
-        
+
         // Lấy thông số kỹ thuật
         $thongSoList = $this->thongSoModel->layThongSoTheoSanPham($sanPham['id']);
-        
+
         // Lấy đánh giá
         $danhGiaList = $this->danhGiaModel->layDanhGiaTheoSanPham($sanPham['id'], 5);
         $tongDanhGia = $this->danhGiaModel->demDanhGiaTheoSanPham($sanPham['id']);
-        
+
         // Lấy sản phẩm tương tự (cùng danh mục)
         $sanPhamTuongTu = $this->sanPhamModel->laySanPhamTheoDanhMuc(
-            $sanPham['slug_danh_muc'], 
+            $sanPham['slug_danh_muc'],
             4
         );
 
@@ -78,29 +78,35 @@ class SanPhamController
         $giaMax = isset($_GET['gia_max']) ? (float)$_GET['gia_max'] : null;
         $sortBy = $_GET['sort_by'] ?? 'ngay_tao';
         $sortOrder = $_GET['sort_order'] ?? 'DESC';
-        
+
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
         // Đếm tổng số sản phẩm
         $tongSanPham = $this->sanPhamModel->demSanPham($keyword, $danhMucId, $giaMin, $giaMax);
-        
+
         // Lấy danh sách sản phẩm
         $sanPhamList = $this->sanPhamModel->layDanhSachPhanTrang(
-            $keyword, 
-            $danhMucId, 
-            $giaMin, 
-            $giaMax, 
-            $limit, 
-            $offset, 
-            $sortBy, 
+            $keyword,
+            $danhMucId,
+            $giaMin,
+            $giaMax,
+            $limit,
+            $offset,
+            $sortBy,
             $sortOrder
         );
-        
+
+        // Lấy phiên bản cho từng sản phẩm
+        foreach ($sanPhamList as &$sp) {
+            $sp['phien_ban_list'] = $this->phienBanModel->layPhienBanTheoSanPham((int)$sp['id']);
+        }
+        unset($sp);
+
         // Tính tổng số trang
         $tongTrang = ceil($tongSanPham / $limit);
-        
+
         // Lấy danh sách danh mục
         $danhMucList = $this->sanPhamModel->layDanhSachDanhMucHoatDong();
 
