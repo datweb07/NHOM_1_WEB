@@ -55,7 +55,7 @@ $ptMap = [
                     <h6 class="fw-bold mb-3 border-bottom pb-2">Sản phẩm đã đặt</h6>
                     <?php foreach ($chiTietDonList as $item): ?>
                         <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom">
-                            <img src="<?= htmlspecialchars($item['anh_chinh'] ?? BASE_URL . '/assets/client/images/products/14.png') ?>"
+                            <img src="<?= htmlspecialchars($item['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png') ?>"
                                  alt="" style="width:60px;height:60px;object-fit:contain;border:1px solid #eee;border-radius:6px;">
                             <div class="flex-grow-1">
                                 <div class="small fw-medium"><?= htmlspecialchars($item['ten_san_pham'] ?? '') ?></div>

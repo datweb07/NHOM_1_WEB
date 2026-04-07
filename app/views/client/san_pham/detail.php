@@ -5,7 +5,7 @@ ob_start();
 
 
 // Ảnh chính
-$anhChinh = !empty($hinhAnhList) ? $hinhAnhList[0]['url_anh'] : ($sanPham['anh_chinh'] ?? BASE_URL . '/assets/client/images/products/14.png');
+$anhChinh = !empty($hinhAnhList) ? $hinhAnhList[0]['url_anh'] : ($sanPham['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png');
 
 // Tính điểm trung bình
 $diemTB = 0;
@@ -342,7 +342,7 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                     <div class="col-6 col-md-3">
                         <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
                             <div class="card border-0 shadow-sm h-100">
-                                <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? BASE_URL . '/assets/client/images/products/14.png') ?>"
+                                <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png') ?>"
                                      class="card-img-top p-2" alt=""
                                      style="height:130px;object-fit:contain;">
                                 <div class="card-body pt-0 px-3 pb-3">

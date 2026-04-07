@@ -67,7 +67,7 @@ ob_start();
                         <div class="col-6 col-md-4 col-lg-3">
                             <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
                                 <div class="card border-0 shadow-sm h-100">
-                                    <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? BASE_URL . '/assets/client/images/products/14.png') ?>"
+                                    <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png') ?>"
                                          class="card-img-top p-2"
                                          alt="<?= htmlspecialchars($sp['ten_san_pham']) ?>"
                                          style="height:150px;object-fit:contain;">

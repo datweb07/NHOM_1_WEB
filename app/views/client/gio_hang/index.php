@@ -45,7 +45,7 @@ ob_start();
                                     <tr id="row-<?= $item['id'] ?>">
                                         <td class="px-3">
                                             <div class="d-flex align-items-center gap-3">
-                                                <img src="<?= htmlspecialchars($item['anh_chinh'] ?? BASE_URL . '/assets/client/images/products/14.png') ?>"
+                                                <img src="<?= htmlspecialchars($item['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png') ?>"
                                                      alt="<?= htmlspecialchars($item['ten_san_pham'] ?? '') ?>"
                                                      style="width:65px;height:65px;object-fit:contain;border:1px solid #eee;border-radius:6px;">
                                                 <div>
