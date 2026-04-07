@@ -18,6 +18,13 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	if ($path === 'so-sanh') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/CompareController.php';
+		$controller = new \App\Controllers\Client\CompareController();
+		$controller->index();
+		return;
+	}
+
 	if ($path === 'san-pham/chi-tiet' || $path === 'san-pham/detail') {
 		require_once dirname(__DIR__, 2) . '/views/client/san_pham/detail.php';
 		return;
@@ -334,4 +341,3 @@ function clientRoute(string $uri): void
 
 	require_once dirname(__DIR__, 2) . '/views/client/home/index.php';
 }
-

@@ -45,7 +45,7 @@ class KhuyenMaiController
             exit;
         }
 
-        $khuyenMai = $this->khuyenMaiModel->findById($id);
+        $khuyenMai = $this->khuyenMaiModel->getById($id);
 
         if (!$khuyenMai || $khuyenMai['trang_thai'] !== 'HOAT_DONG') {
             header('Location: /khuyen-mai');
@@ -86,7 +86,7 @@ class KhuyenMaiController
                 WHERE trang_thai = 'HOAT_DONG'
                   AND (ngay_bat_dau IS NULL OR ngay_bat_dau <= NOW())
                   AND (ngay_ket_thuc IS NULL OR ngay_ket_thuc >= NOW())
-                ORDER BY ngay_tao DESC
+            ORDER BY ngay_bat_dau DESC, id DESC
                 LIMIT $limit OFFSET $offset";
 
         return $this->khuyenMaiModel->query($sql);
@@ -128,9 +128,9 @@ class KhuyenMaiController
         $sql = "SELECT * FROM ma_giam_gia
                 WHERE trang_thai = 'HOAT_DONG'
                   AND (ngay_bat_dau IS NULL OR ngay_bat_dau <= NOW())
-                  AND (ngay_het_han IS NULL OR ngay_het_han >= NOW())
+                                    AND (ngay_ket_thuc IS NULL OR ngay_ket_thuc >= NOW())
                   AND (so_luong_con_lai IS NULL OR so_luong_con_lai > 0)
-                ORDER BY ngay_tao DESC
+                                ORDER BY ngay_bat_dau DESC, id DESC
                 LIMIT $limit OFFSET $offset";
 
         return $this->maGiamGiaModel->query($sql);
@@ -141,7 +141,7 @@ class KhuyenMaiController
         $sql = "SELECT COUNT(*) as total FROM ma_giam_gia
                 WHERE trang_thai = 'HOAT_DONG'
                   AND (ngay_bat_dau IS NULL OR ngay_bat_dau <= NOW())
-                  AND (ngay_het_han IS NULL OR ngay_het_han >= NOW())
+                                    AND (ngay_ket_thuc IS NULL OR ngay_ket_thuc >= NOW())
                   AND (so_luong_con_lai IS NULL OR so_luong_con_lai > 0)";
 
         $result = $this->maGiamGiaModel->query($sql);
