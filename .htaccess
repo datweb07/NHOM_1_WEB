@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1. Nếu người dùng truy cập trang chủ (domain gốc), tự động gọi public/index.php
+    RewriteRule ^$ public/index.php [L]
+
+    # 2. Nếu đường dẫn trỏ tới một FILE CÓ THẬT (ví dụ: /public/assets/client/css/main.css) -> Cho phép tải file
+    RewriteCond %{REQUEST_FILENAME} !-f
+    
+    # 3. Nếu đường dẫn trỏ tới một THƯ MỤC CÓ THẬT -> Cho phép truy cập
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # 4. Nếu không phải file/thư mục thật, đẩy mọi luồng dữ liệu còn lại vào public/index.php để chạy website
+    RewriteRule ^(.*)$ public/index.php [QSA,L]
+</IfModule>
