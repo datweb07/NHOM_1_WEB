@@ -9,7 +9,10 @@
     <link rel="icon" href="<?= ASSET_URL ?>/assets/client/images/header/1.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts - Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/client/css/main.css">
     <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/client/css/grid.css">
     <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/client/css/reponsive.css">
@@ -437,7 +440,6 @@
             color: #a1a1aa;
             font-size: 13px;
             padding-top: 50px;
-            font-family: Arial, Helvetica, sans-serif;
         }
 
         .footer-fpt .footer-title {

@@ -94,9 +94,7 @@ class AuthController
       margin: 0;
       padding: 0;
       background-color: #f4f4f4;
-      font-family:
-        -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, Arial,
-        sans-serif;
+      font-family: 'Roboto', Arial, sans-serif;
     \"
   >
     <table
@@ -319,9 +317,7 @@ class AuthController
       margin: 0;
       padding: 0;
       background-color: #f4f4f4;
-      font-family:
-        -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, Arial,
-        sans-serif;
+      font-family: 'Roboto', Arial, sans-serif;
     \"
   >
     <table
