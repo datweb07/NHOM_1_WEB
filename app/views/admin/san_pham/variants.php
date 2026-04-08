@@ -297,87 +297,67 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
 
 <script>
     // Lấy tên danh mục của sản phẩm hiện tại để render đúng field
-    // TODO: Thay thế 'Điện Thoại' bằng $sanPham['ten_danh_muc'] của bạn nếu có
-    const productCategory = <?= json_encode($sanPham['ten_danh_muc'] ?? 'Máy lạnh - Điều hòa') ?>; 
+    const productCategory = <?= json_encode($sanPham['ten_danh_muc'] ?? 'Điện Thoại') ?>; 
 
-    function renderDynamicInputs(categoryName, containerId, existingData = null) {
+    /**
+     * Hàm gọi AJAX để lấy cấu hình thuộc tính động từ Server
+     * Sử dụng Async/Await hiện đại
+     */
+    async function renderDynamicInputsAJAX(categoryName, containerId, existingData = null) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        
-        let html = '';
-        
-        // Hàm lấy giá trị cũ để fill vào input
-        const val = (key) => existingData && existingData[key] ? existingData[key] : '';
 
-        // Nhóm 1: Thiết bị điện toán
-        if (['Điện Thoại', 'Máy tính bảng', 'Laptop', 'PC - Máy tính để bàn', 'Máy Mac'].includes(categoryName)) {
-            html = `
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="form-label">RAM</label>
-                        <input type="text" name="thuoc_tinh[RAM]" class="form-control" placeholder="VD: 8GB" value="${val('RAM')}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="form-label">Dung lượng</label>
-                        <input type="text" name="thuoc_tinh[Dung_luong]" class="form-control" placeholder="VD: 256GB" value="${val('Dung_luong')}">
-                    </div>
-                </div>
-            `;
-        } 
-        // Nhóm 2: Màn hình & Tivi
-        else if (['Tivi', 'Màn hình'].includes(categoryName)) {
-            html = `
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="form-label">Kích thước màn hình</label>
-                        <input type="text" name="thuoc_tinh[Kich_thuoc]" class="form-control" placeholder="VD: 55 inch" value="${val('Kich_thuoc')}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="form-label">Độ phân giải</label>
-                        <input type="text" name="thuoc_tinh[Do_phan_giai]" class="form-control" placeholder="VD: 4K" value="${val('Do_phan_giai')}">
-                    </div>
-                </div>
-            `;
+        // Hiển thị trạng thái đang tải (Loading state)
+        container.innerHTML = '<div class="col-12"><div class="spinner-border text-primary spinner-border-sm me-2"></div><span class="text-muted">Đang tải thuộc tính...</span></div>';
+
+        try {
+            // 1. GỌI AJAX ĐẾN SERVER
+            // URL đã được cập nhật để khớp với routing admin
+            const response = await fetch(`/admin/api/get-category-attributes?category=${encodeURIComponent(categoryName)}`);
+            const result = await response.json();
+
+            if (!result.success) {
+                container.innerHTML = '<div class="col-12"><div class="text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Lỗi khi tải cấu hình thuộc tính.</div></div>';
+                return;
+            }
+
+            // 2. VẼ FORM TỪ DỮ LIỆU JSON TRẢ VỀ
+            const attributes = result.data;
+            let html = '';
+            
+            // Hàm lấy giá trị cũ để fill vào input
+            const val = (key) => existingData && existingData[key] ? existingData[key] : '';
+
+            if (attributes.length === 0) {
+                html = '<div class="col-12 text-muted mb-3"><i class="bi bi-info-circle me-2"></i><em>Danh mục này không yêu cầu thuộc tính biến thể phụ.</em></div>';
+            } else {
+                attributes.forEach(attr => {
+                    html += `
+                        <div class="col-md-${attr.col}">
+                            <div class="mb-3">
+                                <label class="form-label">${attr.label}</label>
+                                <input type="${attr.type}" 
+                                       name="thuoc_tinh[${attr.name}]" 
+                                       class="form-control" 
+                                       placeholder="${attr.placeholder}" 
+                                       value="${val(attr.name)}">
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            container.innerHTML = html;
+
+        } catch (error) {
+            console.error("Lỗi AJAX:", error);
+            container.innerHTML = '<div class="col-12"><div class="text-danger"><i class="bi bi-x-circle me-2"></i>Không thể kết nối đến máy chủ.</div></div>';
         }
-        // Nhóm 3: Điện lạnh & Gia dụng lớn
-        else if (['Máy lạnh - Điều hòa', 'Máy giặt', 'Tủ lạnh', 'Máy lọc nước'].includes(categoryName)) {
-            html = `
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="form-label">Công suất / Dung tích / Khối lượng</label>
-                        <input type="text" name="thuoc_tinh[Cong_suat_Dung_tich]" class="form-control" placeholder="VD: 1.5 HP hoặc 300 Lít" value="${val('Cong_suat_Dung_tich')}">
-                    </div>
-                </div>
-            `;
-        }
-        // Nhóm 4: Đồng hồ thông minh
-        else if (['Đồng hồ thông minh'].includes(categoryName)) {
-            html = `
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="form-label">Kích thước mặt</label>
-                        <input type="text" name="thuoc_tinh[Kich_thuoc_mat]" class="form-control" placeholder="VD: 44mm" value="${val('Kich_thuoc_mat')}">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="form-label">Chất liệu dây</label>
-                        <input type="text" name="thuoc_tinh[Chat_lieu_day]" class="form-control" placeholder="VD: Silicone" value="${val('Chat_lieu_day')}">
-                    </div>
-                </div>
-            `;
-        }
-        
-        container.innerHTML = html;
     }
 
     // Tự động nạp field khi load trang form Thêm
     document.addEventListener('DOMContentLoaded', function() {
-        renderDynamicInputs(productCategory, 'dynamic-attributes-container');
+        renderDynamicInputsAJAX(productCategory, 'dynamic-attributes-container');
     });
 
     // Hàm gọi khi nhấn nút Sửa Phiên Bản
@@ -394,9 +374,13 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
         if (variant.thuoc_tinh_bien_the) {
             try {
                 thuocTinhData = JSON.parse(variant.thuoc_tinh_bien_the);
-            } catch (e) { console.error("Lỗi parse JSON thuộc tính"); }
+            } catch (e) { 
+                console.error("Lỗi parse JSON thuộc tính:", e); 
+            }
         }
-        renderDynamicInputs(productCategory, 'edit-dynamic-attributes-container', thuocTinhData);
+
+        // Gọi AJAX khi mở Modal sửa
+        renderDynamicInputsAJAX(productCategory, 'edit-dynamic-attributes-container', thuocTinhData);
         
         document.getElementById('editVariantForm').action = '/admin/san-pham/phien-ban/sua?id=' + variant.id;
         

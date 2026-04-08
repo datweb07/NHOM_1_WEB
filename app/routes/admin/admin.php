@@ -415,6 +415,12 @@ function adminRoute(string $uri): void
         return;
     }
 
+    // API: Lấy thuộc tính động theo danh mục (AJAX)
+    if ($path === 'admin/api/get-category-attributes' && $method === 'GET') {
+        $sanPhamController->getCategoryAttributes();
+        return;
+    }
+
     http_response_code(404);
     require_once dirname(__DIR__, 2) . '/views/errors/404.php';
 }
