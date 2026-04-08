@@ -783,45 +783,12 @@ class SanPhamController
     
     /**
      * API Endpoint: Trả về danh sách thuộc tính động theo danh mục
-     * Được gọi bởi AJAX từ trang quản lý phiên bản
-     * 
-     * Dữ liệu được lấy từ bảng thuoc_tinh_danh_muc thay vì hardcode
+     * Delegate to API handler
      */
     public function getCategoryAttributes(): void
     {
-        // Bắt buộc khai báo trả về JSON
-        header('Content-Type: application/json; charset=utf-8');
-        
-        $categoryName = $_GET['category'] ?? '';
-
-        // Kiểm tra danh mục có được cung cấp không
-        if (empty($categoryName)) {
-            echo json_encode([
-                'success' => false,
-                'data' => []
-            ], JSON_UNESCAPED_UNICODE);
-            exit;
-        }
-
-        // Chống SQL Injection
-        $categoryNameClean = addslashes(trim($categoryName));
-
-        // JOIN bảng thuoc_tinh_danh_muc với bảng danh_muc để tìm thuộc tính dựa trên Tên danh mục
-        $sql = "SELECT tt.name, tt.label, tt.placeholder, tt.type, tt.col
-                FROM thuoc_tinh_danh_muc tt
-                INNER JOIN danh_muc dm ON tt.danh_muc_id = dm.id
-                WHERE dm.ten = '$categoryNameClean' AND dm.trang_thai = 1
-                ORDER BY tt.thu_tu ASC";
-
-        // Sử dụng baseModel có sẵn để fetch dữ liệu
-        $attributes = $this->baseModel->query($sql);
-
-        // Trả dữ liệu mảng trực tiếp về cho JavaScript vẽ Form
-        echo json_encode([
-            'success' => true,
-            'data' => $attributes
-        ], JSON_UNESCAPED_UNICODE);
-        exit;
+        require_once dirname(__DIR__, 2) . '/api/CategoryAttributesApi.php';
+        // API file sẽ tự xử lý request và trả về JSON response
     }
 
     // ===== TECHNICAL SPECIFICATIONS MANAGEMENT =====
