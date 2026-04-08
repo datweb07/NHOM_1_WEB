@@ -59,7 +59,7 @@ Dự án website thương mại điện tử FPT Shop là một nền tảng mua
 - **PHPMailer**: Gửi email để xác minh và đặt lại mật khẩu.
 - **PHPDotenv**: Quản lý biến môi trường.
 - **Redis** (Tùy chọn): Lớp bộ nhớ đệm (caching) giúp cải thiện hiệu suất.
-- **Supabase** (Tùy chọn): Giải pháp lưu trữ thay thế.
+- **Supabase**: Đăng nhập bằng Google Oauth.
 
 ### Công cụ Phát triển
 - **Composer**: Quản lý các thư viện phụ thuộc của PHP.
@@ -84,22 +84,15 @@ cd NHOM_1_WEB
 
   - Cài đặt Composer tại [liên kết này](https://getcomposer.org/download/)
 
-<!-- end list -->
 
 ```bash
 composer install
 ```
 
-Thao tác này sẽ cài đặt:
-
-  - `vlucas/phpdotenv` - Quản lý biến môi trường
-  - `cloudinary/cloudinary_php` - SDK PHP của Cloudinary
-
 ### Bước 3: Cấu hình Biến môi trường
 
 1.  Sao chép tệp môi trường mẫu:
 
-<!-- end list -->
 
 ```bash
 cp .env.example .env
@@ -107,7 +100,6 @@ cp .env.example .env
 
 2.  Chỉnh sửa tệp `.env` với các cấu hình của bạn:
 
-<!-- end list -->
 
 ```env
 APP_ENV=local
@@ -133,13 +125,15 @@ MAIL_PORT=587
 MAIL_USERNAME=your_email@gmail.com
 MAIL_PASSWORD=your_app_password
 MAIL_ENCRYPTION=tls
+
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_ANON_KEY=your-jwt-secret-from-api-settings
 ```
 
 ### Bước 4: Thiết lập Cơ sở dữ liệu
 
 1.  Tạo một cơ sở dữ liệu mới trong MySQL:
 
-<!-- end list -->
 
 ```sql
 CREATE DATABASE db_web CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -147,7 +141,6 @@ CREATE DATABASE db_web CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 2.  Nhập (Import) lược đồ cơ sở dữ liệu:
 
-<!-- end list -->
 
 ```bash
 mysql -u root -p db_web < database/db_web.sql
@@ -161,7 +154,7 @@ Hoặc sử dụng phpMyAdmin để import tệp `database/db_web.sql`
 2.  Lấy thông tin xác thực (credentials) từ bảng điều khiển của bạn.
 3.  Cập nhật tệp `.env` với thông tin xác thực Cloudinary của bạn.
 
-### Bước 6: Cấu hình Dịch vụ Email (Tùy chọn)
+### Bước 6: Cấu hình Dịch vụ Email 
 
 Đối với Gmail SMTP:
 
@@ -169,7 +162,41 @@ Hoặc sử dụng phpMyAdmin để import tệp `database/db_web.sql`
 2.  Tạo Mật khẩu Ứng dụng (App Password): [Google App Passwords](https://myaccount.google.com/apppasswords)
 3.  Điền mật khẩu vừa tạo vào phần `MAIL_PASSWORD` trong tệp `.env`
 
-### Bước 7: Chạy Máy chủ Phát triển
+### Bước 7: Cấu hình Dịch vụ Login Google
+Cấu hình Supabase và Google đám mây (Supabase & Google Cloud)
+
+- Thiết lập Supabase:
+
+1. Truy cập vào trang chủ [Supabase](https://supabase.com/), tạo tài khoản miễn phí và tạo một project mới
+2. Sao chép lại URL project vừa mới tạo
+3. Ở thanh điều hướng bên trái, truy cập vào **Authentication** → **Sign In/Providers**
+4. Ở phần **Auth Providers** bấm chọn Google, thiết lập Google Cloud Console để điền các thông tin cần thiết
+
+- Thiết lập Google Cloud Console:
+1. Truy cập vào trang chủ [Google Cloud Console](https://console.cloud.google.com/?hl=vi)
+2. Ở góc trái cạnh logo Goole Cloud, chọn cửa sổ và chọn **New project**
+3. Ở **Prject name**, nhập tên dự án dễ nhớ vào, ví dụ `FPT-SHOP`, sau đó nhấn **Create**
+4. Tiếp theo, bấm chọn vào dấu 3 gạch, chọn **APIs & Services** → **OAuth consent screen**
+5. Ở **Overview** → **Google Auth Platform not configured yet**, chọn **Get started**
+6. Ở **App Information**, điền **App name** dễ nhớ (có thể điền `FPT-SHOP`), **User support email** chọn email hiện tại đang login, rồi nhấn Next
+7. Ở phần **Audience**, chọn **External**, rồi nhấn Next
+8. Ở **Contact Infomation** nhập mail hiện tại đang login, nhấn Next rồi nhấn **Create**
+
+- Tạo Client ID:
+1. Ở menu bên trái, chọn **APIs & Services** → **Credentials**
+2. Trên cùng chọn **Create credentials** → **OAuth client ID**
+3. **Application type** chọn **Web application**, ở Name đặt tên dễ nhớ (ví dụ `Supabase Auth Client`)
+4. Ở phần **Authorized redirect URIs**, nhấn **Add URL**, sau đó quay lại *Thiết lập Supabase* ở bước 4, copy đường dẫn của phần **Callback URL (for OAuth)** rồi quay lại paste vào URLs 1, sau đó nhấn **Create**
+5. Ngay sau khi nhấn tạo, Google sẽ hiển thị một bảng popup chứa 2 chuỗi mã: **Client ID** và **Client Secret**, copy 2 chuỗi này, quay trở lại **(Authentication → Providers → Google)**, bật Enable Sign in with Google, dán 2 chuỗi này vào các ô tương ứng và nhấn Save
+
+- Khai báo URL cho Ứng dụng Web:
+1. Quay lại Supabase, vào **Authentication → URL Configuration**
+2. **Site URL**: Nhập ``http://localhost:3000`` (development) hoặc ``https://yourdomain.com`` (production)
+3. **Redirect URLs**: Thêm chính xác đường dẫn file xử lý callback trên hệ thống PHP của bạn. 
+Ví dụ: ``http://localhost:3000/app/views/client/auth/callback.php``
+4. Cập nhật tệp `.env` với thông tin xác thực Cloudinary của bạn
+
+### Bước 8: Chạy Máy chủ Phát triển
 
 Từ thư mục gốc của dự án:
 
@@ -177,7 +204,7 @@ Từ thư mục gốc của dự án:
 php -S localhost:3000 router.php
 ```
 
-### Bước 8: Truy cập Ứng dụng
+### Bước 9: Truy cập Ứng dụng
 
   - **Dành cho Khách hàng (Client)**: http://localhost:3000
   - **Trang Quản trị (Admin Panel)**: http://localhost:3000/admin/auth/login

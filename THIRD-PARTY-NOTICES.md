@@ -108,7 +108,7 @@ This project uses third-party libraries and services. Below is a list of all thi
 - **Purpose**: Caching layer for improved performance
 - **License Text**: https://redis.io/docs/about/license/
 
-### 11. Supabase (Optional)
+### 11. Supabase
 - **Service**: Open source Firebase alternative
 - **License**: Apache License 2.0
 - **Website**: https://supabase.com/
