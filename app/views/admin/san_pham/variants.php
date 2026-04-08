@@ -59,7 +59,6 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                 </div>
             <?php endif; ?>
 
-            <!-- Add Variant Form -->
             <div class="card mb-4">
                 <div class="card-header">
                     <h5 class="mb-0">Thêm Phiên bản mới</h5>
@@ -84,47 +83,11 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                            value="<?= htmlspecialchars($_SESSION['variant_old']['ten_phien_ban'] ?? '') ?>">
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <div class="mb-3">
                                     <label class="form-label">Màu sắc</label>
                                     <input type="text" name="mau_sac" class="form-control" 
                                            value="<?= htmlspecialchars($_SESSION['variant_old']['mau_sac'] ?? '') ?>">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="mb-3">
-                                    <label class="form-label">Dung lượng</label>
-                                    <input type="text" name="dung_luong" class="form-control" 
-                                           value="<?= htmlspecialchars($_SESSION['variant_old']['dung_luong'] ?? '') ?>">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="mb-3">
-                                    <label class="form-label">RAM</label>
-                                    <input type="text" name="ram" class="form-control" 
-                                           value="<?= htmlspecialchars($_SESSION['variant_old']['ram'] ?? '') ?>">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label class="form-label">Giá bán <span class="text-danger">*</span></label>
-                                    <input type="number" name="gia_ban" class="form-control <?= isset($_SESSION['variant_errors']['gia_ban']) ? 'is-invalid' : '' ?>" 
-                                           value="<?= htmlspecialchars($_SESSION['variant_old']['gia_ban'] ?? '') ?>" step="0.01" required>
-                                    <?php if (isset($_SESSION['variant_errors']['gia_ban'])): ?>
-                                        <div class="invalid-feedback"><?= $_SESSION['variant_errors']['gia_ban'] ?></div>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="mb-3">
-                                    <label class="form-label">Giá gốc</label>
-                                    <input type="number" name="gia_goc" class="form-control <?= isset($_SESSION['variant_errors']['gia_goc']) ? 'is-invalid' : '' ?>" 
-                                           value="<?= htmlspecialchars($_SESSION['variant_old']['gia_goc'] ?? '') ?>" step="0.01">
-                                    <?php if (isset($_SESSION['variant_errors']['gia_goc'])): ?>
-                                        <div class="invalid-feedback"><?= $_SESSION['variant_errors']['gia_goc'] ?></div>
-                                    <?php endif; ?>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -137,7 +100,33 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                     <?php endif; ?>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                        </div>
+
+                        <div id="dynamic-attributes-container" class="row">
+                            </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Giá bán <span class="text-danger">*</span></label>
+                                    <input type="number" name="gia_ban" class="form-control <?= isset($_SESSION['variant_errors']['gia_ban']) ? 'is-invalid' : '' ?>" 
+                                           value="<?= htmlspecialchars($_SESSION['variant_old']['gia_ban'] ?? '') ?>" step="0.01" required>
+                                    <?php if (isset($_SESSION['variant_errors']['gia_ban'])): ?>
+                                        <div class="invalid-feedback"><?= $_SESSION['variant_errors']['gia_ban'] ?></div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Giá gốc</label>
+                                    <input type="number" name="gia_goc" class="form-control <?= isset($_SESSION['variant_errors']['gia_goc']) ? 'is-invalid' : '' ?>" 
+                                           value="<?= htmlspecialchars($_SESSION['variant_old']['gia_goc'] ?? '') ?>" step="0.01">
+                                    <?php if (isset($_SESSION['variant_errors']['gia_goc'])): ?>
+                                        <div class="invalid-feedback"><?= $_SESSION['variant_errors']['gia_goc'] ?></div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">&nbsp;</label>
                                     <button type="submit" class="btn btn-primary w-100">
@@ -150,7 +139,6 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                 </div>
             </div>
 
-            <!-- Variants List -->
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">Danh sách Phiên bản (<?= count($variants) ?>)</h5>
@@ -168,8 +156,7 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                         <th>SKU</th>
                                         <th>Tên phiên bản</th>
                                         <th>Màu sắc</th>
-                                        <th>Dung lượng</th>
-                                        <th>RAM</th>
+                                        <th>Thuộc tính</th>
                                         <th>Giá bán</th>
                                         <th>Giá gốc</th>
                                         <th>Tồn kho</th>
@@ -183,8 +170,23 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                             <td><strong><?= htmlspecialchars($variant['sku']) ?></strong></td>
                                             <td><?= htmlspecialchars($variant['ten_phien_ban'] ?? '-') ?></td>
                                             <td><?= htmlspecialchars($variant['mau_sac'] ?? '-') ?></td>
-                                            <td><?= htmlspecialchars($variant['dung_luong'] ?? '-') ?></td>
-                                            <td><?= htmlspecialchars($variant['ram'] ?? '-') ?></td>
+                                            <td>
+                                                <?php
+                                                // Xử lý hiển thị chuỗi JSON thành văn bản đọc được
+                                                $thuocTinhText = [];
+                                                if (!empty($variant['thuoc_tinh_bien_the'])) {
+                                                    $thuocTinhArr = json_decode($variant['thuoc_tinh_bien_the'], true);
+                                                    if (is_array($thuocTinhArr)) {
+                                                        foreach ($thuocTinhArr as $key => $val) {
+                                                            if ($val !== '') {
+                                                                $thuocTinhText[] = str_replace('_', ' ', $key) . ': ' . $val;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                echo !empty($thuocTinhText) ? htmlspecialchars(implode(' | ', $thuocTinhText)) : '-';
+                                                ?>
+                                            </td>
                                             <td><?= number_format($variant['gia_ban'], 0, ',', '.') ?>đ</td>
                                             <td><?= $variant['gia_goc'] ? number_format($variant['gia_goc'], 0, ',', '.') . 'đ' : '-' ?></td>
                                             <td><?= number_format($variant['so_luong_ton']) ?></td>
@@ -228,7 +230,6 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
     </div>
 </main>
 
-<!-- Edit Variant Modal -->
 <div class="modal fade" id="editVariantModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -239,39 +240,29 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="mb-3">
                                 <label class="form-label">SKU <span class="text-danger">*</span></label>
                                 <input type="text" name="sku" id="edit_sku" class="form-control" required>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="mb-3">
                                 <label class="form-label">Tên phiên bản</label>
                                 <input type="text" name="ten_phien_ban" id="edit_ten_phien_ban" class="form-control">
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label class="form-label">Màu sắc</label>
                                 <input type="text" name="mau_sac" id="edit_mau_sac" class="form-control">
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label class="form-label">Dung lượng</label>
-                                <input type="text" name="dung_luong" id="edit_dung_luong" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label class="form-label">RAM</label>
-                                <input type="text" name="ram" id="edit_ram" class="form-control">
-                            </div>
-                        </div>
                     </div>
+
+                    <div id="edit-dynamic-attributes-container" class="row">
+                        </div>
+
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3">
@@ -305,15 +296,107 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
 <?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
 
 <script>
+    // Lấy tên danh mục của sản phẩm hiện tại để render đúng field
+    // TODO: Thay thế 'Điện Thoại' bằng $sanPham['ten_danh_muc'] của bạn nếu có
+    const productCategory = <?= json_encode($sanPham['ten_danh_muc'] ?? 'Máy lạnh - Điều hòa') ?>; 
+
+    function renderDynamicInputs(categoryName, containerId, existingData = null) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        
+        let html = '';
+        
+        // Hàm lấy giá trị cũ để fill vào input
+        const val = (key) => existingData && existingData[key] ? existingData[key] : '';
+
+        // Nhóm 1: Thiết bị điện toán
+        if (['Điện Thoại', 'Máy tính bảng', 'Laptop', 'PC - Máy tính để bàn', 'Máy Mac'].includes(categoryName)) {
+            html = `
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">RAM</label>
+                        <input type="text" name="thuoc_tinh[RAM]" class="form-control" placeholder="VD: 8GB" value="${val('RAM')}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Dung lượng</label>
+                        <input type="text" name="thuoc_tinh[Dung_luong]" class="form-control" placeholder="VD: 256GB" value="${val('Dung_luong')}">
+                    </div>
+                </div>
+            `;
+        } 
+        // Nhóm 2: Màn hình & Tivi
+        else if (['Tivi', 'Màn hình'].includes(categoryName)) {
+            html = `
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Kích thước màn hình</label>
+                        <input type="text" name="thuoc_tinh[Kich_thuoc]" class="form-control" placeholder="VD: 55 inch" value="${val('Kich_thuoc')}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Độ phân giải</label>
+                        <input type="text" name="thuoc_tinh[Do_phan_giai]" class="form-control" placeholder="VD: 4K" value="${val('Do_phan_giai')}">
+                    </div>
+                </div>
+            `;
+        }
+        // Nhóm 3: Điện lạnh & Gia dụng lớn
+        else if (['Máy lạnh - Điều hòa', 'Máy giặt', 'Tủ lạnh', 'Máy lọc nước'].includes(categoryName)) {
+            html = `
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Công suất / Dung tích / Khối lượng</label>
+                        <input type="text" name="thuoc_tinh[Cong_suat_Dung_tich]" class="form-control" placeholder="VD: 1.5 HP hoặc 300 Lít" value="${val('Cong_suat_Dung_tich')}">
+                    </div>
+                </div>
+            `;
+        }
+        // Nhóm 4: Đồng hồ thông minh
+        else if (['Đồng hồ thông minh'].includes(categoryName)) {
+            html = `
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Kích thước mặt</label>
+                        <input type="text" name="thuoc_tinh[Kich_thuoc_mat]" class="form-control" placeholder="VD: 44mm" value="${val('Kich_thuoc_mat')}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Chất liệu dây</label>
+                        <input type="text" name="thuoc_tinh[Chat_lieu_day]" class="form-control" placeholder="VD: Silicone" value="${val('Chat_lieu_day')}">
+                    </div>
+                </div>
+            `;
+        }
+        
+        container.innerHTML = html;
+    }
+
+    // Tự động nạp field khi load trang form Thêm
+    document.addEventListener('DOMContentLoaded', function() {
+        renderDynamicInputs(productCategory, 'dynamic-attributes-container');
+    });
+
+    // Hàm gọi khi nhấn nút Sửa Phiên Bản
     function editVariant(variant) {
         document.getElementById('edit_sku').value = variant.sku || '';
         document.getElementById('edit_ten_phien_ban').value = variant.ten_phien_ban || '';
         document.getElementById('edit_mau_sac').value = variant.mau_sac || '';
-        document.getElementById('edit_dung_luong').value = variant.dung_luong || '';
-        document.getElementById('edit_ram').value = variant.ram || '';
         document.getElementById('edit_gia_ban').value = variant.gia_ban || '';
         document.getElementById('edit_gia_goc').value = variant.gia_goc || '';
         document.getElementById('edit_so_luong_ton').value = variant.so_luong_ton || '';
+        
+        // Parse JSON thuộc tính biến thể để đưa vào Modal
+        let thuocTinhData = {};
+        if (variant.thuoc_tinh_bien_the) {
+            try {
+                thuocTinhData = JSON.parse(variant.thuoc_tinh_bien_the);
+            } catch (e) { console.error("Lỗi parse JSON thuộc tính"); }
+        }
+        renderDynamicInputs(productCategory, 'edit-dynamic-attributes-container', thuocTinhData);
         
         document.getElementById('editVariantForm').action = '/admin/san-pham/phien-ban/sua?id=' + variant.id;
         

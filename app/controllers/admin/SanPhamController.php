@@ -411,7 +411,13 @@ class SanPhamController
             exit;
         }
 
-        $sanPham = $this->baseModel->getById($sanPhamId);
+        $sql = "SELECT sp.*, dm.ten AS ten_danh_muc 
+                FROM san_pham sp 
+                LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.id 
+                WHERE sp.id = $sanPhamId LIMIT 1";
+        $result = $this->baseModel->query($sql);
+        $sanPham = !empty($result) ? $result[0] : null;
+
         if (!$sanPham) {
             header('Location: /admin/san-pham?error=not_found');
             exit;
@@ -529,11 +535,22 @@ class SanPhamController
         $sku = trim((string)($input['sku'] ?? ''));
         $tenPhienBan = trim((string)($input['ten_phien_ban'] ?? ''));
         $mauSac = trim((string)($input['mau_sac'] ?? ''));
-        $dungLuong = trim((string)($input['dung_luong'] ?? ''));
-        $ram = trim((string)($input['ram'] ?? ''));
         $giaBanRaw = trim((string)($input['gia_ban'] ?? ''));
         $giaGocRaw = trim((string)($input['gia_goc'] ?? ''));
         $soLuongTonRaw = trim((string)($input['so_luong_ton'] ?? '0'));
+
+        // --- XỬ LÝ LƯU JSON THUỘC TÍNH BẢN THỂ ---
+        $thuocTinhBienThe = null;
+        if (isset($input['thuoc_tinh']) && is_array($input['thuoc_tinh'])) {
+            // Lọc bỏ các thuộc tính bị bỏ trống (không nhập gì)
+            $thuocTinhClean = array_filter($input['thuoc_tinh'], function($value) {
+                return trim($value) !== '';
+            });
+            // Nếu có dữ liệu thì ép thành chuỗi JSON (Giữ nguyên tiếng Việt)
+            if (!empty($thuocTinhClean)) {
+                $thuocTinhBienThe = json_encode($thuocTinhClean, JSON_UNESCAPED_UNICODE);
+            }
+        }
 
         // Validate SKU
         if ($sku === '') {
@@ -586,8 +603,7 @@ class SanPhamController
             'sku' => addslashes($sku),
             'ten_phien_ban' => addslashes($tenPhienBan),
             'mau_sac' => addslashes($mauSac),
-            'dung_luong' => addslashes($dungLuong),
-            'ram' => addslashes($ram),
+            'thuoc_tinh_bien_the' => $thuocTinhBienThe ? addslashes($thuocTinhBienThe) : null,
             'gia_ban' => $giaBan ?? 0,
             'gia_goc' => $giaGoc,
             'so_luong_ton' => $soLuongTon ?? 0,
