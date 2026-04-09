@@ -2,8 +2,6 @@
 $pageTitle = htmlspecialchars($sanPham['ten_san_pham'] ?? 'Chi tiết sản phẩm') . ' - FPT Shop';
 ob_start();
 
-
-
 // Ảnh chính
 $anhChinh = !empty($hinhAnhList) ? $hinhAnhList[0]['url_anh'] : ($sanPham['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png');
 
@@ -29,11 +27,11 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
         user-select: none;
         
         /* --- THÊM CÁC DÒNG NÀY ĐỂ FIX THẲNG HÀNG --- */
-        height: 100%;             /* Giãn chiều cao card lấp đầy cột */
-        display: flex;            /* Sử dụng flexbox */
-        flex-direction: column;   /* Xếp nội dung theo chiều dọc */
-        justify-content: center;  /* Căn giữa nội dung theo chiều dọc */
-        align-items: center;      /* Căn giữa nội dung theo chiều ngang */
+        height: 100%;            /* Giãn chiều cao card lấp đầy cột */
+        display: flex;           /* Sử dụng flexbox */
+        flex-direction: column;  /* Xếp nội dung theo chiều dọc */
+        justify-content: center; /* Căn giữa nội dung theo chiều dọc */
+        align-items: center;     /* Căn giữa nội dung theo chiều ngang */
     }
     .variant-card:hover:not(.disabled) {
         border-color: #d70018;
@@ -67,6 +65,24 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
         font-size: 0.85rem;
         margin-top: 2px;
     }
+    
+    /* CSS cho bài viết mô tả sản phẩm */
+    .product-description {
+        line-height: 1.6;
+        color: #333;
+    }
+    .product-description img {
+        max-width: 100%;
+        height: auto !important;
+        border-radius: 8px;
+        margin: 10px 0;
+    }
+    .product-description h2, .product-description h3, .product-description h4 {
+        color: #d70018;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
 </style>
 
 <div class="container-xl py-4">
@@ -93,7 +109,6 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
 
     <div class="row g-4">
 
-        <!-- Hình ảnh sản phẩm -->
         <div class="col-md-5">
             <div class="card border-0 shadow-sm p-3">
                 <img id="main-img" src="<?= htmlspecialchars($anhChinh) ?>"
@@ -119,11 +134,9 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
             </div>
         </div>
 
-        <!-- Thông tin sản phẩm -->
         <div class="col-md-7">
             <h1 class="h4 fw-bold mb-2"><?= htmlspecialchars($sanPham['ten_san_pham']) ?></h1>
 
-            <!-- Đánh giá -->
             <div class="d-flex align-items-center gap-2 mb-3">
                 <div class="text-warning">
                     <?php for ($i = 1; $i <= 5; $i++): ?>
@@ -133,7 +146,6 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                 <span class="text-muted small"><?= $tongDanhGia ?> đánh giá</span>
             </div>
 
-            <!-- Giá -->
             <div class="mb-3">
                 <?php
                 $giaBan = $sanPham['gia_hien_thi'];
@@ -151,14 +163,12 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                 <?php endif; ?>
             </div>
 
-            <!-- Phiên bản -->
             <?php if (!empty($phienBanList)): ?>
                 <div class="mb-4">
                     <p class="fw-medium small mb-2">Chọn phiên bản:</p>
                     <div class="row g-2">
                         <?php foreach ($phienBanList as $idx => $pb): ?>
                             <?php 
-                                // Đã sửa ton_kho thành so_luong_ton
                                 $isOutOfStock = $pb['so_luong_ton'] <= 0;
                                 $isActive = ($idx === 0 && !$isOutOfStock) ? 'active' : ''; 
                             ?>
@@ -186,7 +196,6 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                 </div>
             <?php endif; ?>
 
-            <!-- Form thêm giỏ -->
             <form action="/gio-hang/them" method="POST" class="mb-3">
                 <input type="hidden" name="phien_ban_id" id="selected-variant"
                        value="<?= $phienBanDauTien['id'] ?? 0 ?>">
@@ -214,7 +223,6 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                 </div>
             </form>
 
-            <!-- Dịch vụ -->
             <div class="border rounded p-3 mt-2">
                 <div class="row g-2">
                     <div class="col-6">
@@ -246,33 +254,44 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
         </div>
     </div>
 
-    <!-- Tabs thông số & đánh giá -->
-    <div class="mt-4">
+    <div class="mt-5">
         <ul class="nav nav-tabs" id="productTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="tab-specs" data-bs-toggle="tab"
+                <button class="nav-link active fw-bold text-dark" id="tab-desc" data-bs-toggle="tab"
+                        data-bs-target="#pane-desc" type="button">Đặc điểm nổi bật</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold text-dark" id="tab-specs" data-bs-toggle="tab"
                         data-bs-target="#pane-specs" type="button">Thông số kỹ thuật</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tab-reviews" data-bs-toggle="tab"
+                <button class="nav-link fw-bold text-dark" id="tab-reviews" data-bs-toggle="tab"
                         data-bs-target="#pane-reviews" type="button">
                     Đánh giá (<?= $tongDanhGia ?>)
                 </button>
             </li>
         </ul>
-        <div class="tab-content border border-top-0 rounded-bottom p-3 bg-white shadow-sm">
+        
+        <div class="tab-content border border-top-0 rounded-bottom p-4 bg-white shadow-sm">
+            
+            <div class="tab-pane fade show active product-description" id="pane-desc" role="tabpanel">
+                <?php if (!empty($sanPham['mo_ta'])): ?>
+                    <?= $sanPham['mo_ta'] ?>
+                <?php else: ?>
+                    <p class="text-muted small mb-0 text-center py-4">Nội dung mô tả sản phẩm đang được cập nhật.</p>
+                <?php endif; ?>
+            </div>
 
-            <!-- Thông số -->
-            <div class="tab-pane fade show active" id="pane-specs" role="tabpanel">
+            <div class="tab-pane fade" id="pane-specs" role="tabpanel">
                 <?php if (empty($thongSoList)): ?>
-                    <p class="text-muted small mb-0">Chưa có thông số kỹ thuật.</p>
+                    <p class="text-muted small mb-0 text-center py-4">Chưa có thông số kỹ thuật.</p>
                 <?php else: ?>
                     <table class="table table-sm table-striped mb-0">
                         <tbody>
                             <?php foreach ($thongSoList as $ts): ?>
                                 <tr>
-                                    <td class="fw-medium small" style="width:40%;"><?= htmlspecialchars($ts['ten_thong_so']) ?></td>
-                                    <td class="small"><?= htmlspecialchars($ts['gia_tri']) ?></td>
+                                    <td class="fw-medium small py-2" style="width:40%;"><?= htmlspecialchars($ts['ten_thong_so']) ?></td>
+                                    <td class="small py-2"><?= htmlspecialchars($ts['gia_tri']) ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -280,10 +299,9 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                 <?php endif; ?>
             </div>
 
-            <!-- Đánh giá -->
             <div class="tab-pane fade" id="pane-reviews" role="tabpanel">
                 <?php if (empty($danhGiaList)): ?>
-                    <p class="text-muted small">Chưa có đánh giá nào.</p>
+                    <p class="text-muted small text-center py-3">Chưa có đánh giá nào.</p>
                 <?php else: ?>
                     <?php foreach ($danhGiaList as $dg): ?>
                         <div class="border-bottom pb-3 mb-3">
@@ -301,7 +319,6 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                     <?php endforeach; ?>
                 <?php endif; ?>
 
-                <!-- Form gửi đánh giá -->
                 <?php if ($isLoggedIn): ?>
                     <div class="border rounded p-3 bg-light mt-3">
                         <h6 class="fw-bold mb-3">Gửi đánh giá của bạn</h6>
@@ -316,7 +333,7 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                                 <option value="1">★☆☆☆☆ (1)</option>
                             </select>
                         </div>
-                        <div class="mb-2">
+                        <div class="mb-3">
                             <label class="form-label small fw-medium">Nội dung</label>
                             <textarea id="noi_dung" class="form-control form-control-sm" rows="3"
                                       placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
@@ -324,15 +341,14 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                         <button type="button" class="btn btn-danger btn-sm" id="btn-review" data-id="<?= $sanPham['id'] ?>">Gửi đánh giá</button>
                     </div>
                 <?php else: ?>
-                    <p class="text-muted small mt-3">
-                        <a href="/client/auth/login" class="text-danger">Đăng nhập</a> để gửi đánh giá.
-                    </p>
+                    <div class="alert alert-info small mt-4 mb-0">
+                        <i class="fa fa-info-circle me-1"></i> <a href="/client/auth/login" class="text-danger fw-bold text-decoration-none">Đăng nhập</a> để gửi đánh giá.
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 
-    <!-- Sản phẩm tương tự -->
     <?php if (!empty($sanPhamTuongTu)): ?>
         <div class="mt-5">
             <h5 class="fw-bold mb-3 border-start border-danger border-3 ps-2">Sản phẩm tương tự</h5>
@@ -341,12 +357,14 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                     <?php if ($sp['id'] == $sanPham['id']) continue; ?>
                     <div class="col-6 col-md-3">
                         <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
-                            <div class="card border-0 shadow-sm h-100">
-                                <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png') ?>"
-                                     class="card-img-top p-2" alt=""
-                                     style="height:130px;object-fit:contain;">
+                            <div class="card border-0 shadow-sm h-100 custom-hover-card">
+                                <div class="overflow-hidden p-2">
+                                    <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png') ?>"
+                                         class="card-img-top custom-hover-zoom" alt=""
+                                         style="height:150px;object-fit:contain;">
+                                </div>
                                 <div class="card-body pt-0 px-3 pb-3">
-                                    <p class="small mb-1 text-dark" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                    <p class="small mb-1 text-dark fw-medium" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
                                         <?= htmlspecialchars($sp['ten_san_pham']) ?>
                                     </p>
                                     <p class="text-danger fw-bold mb-0 small"><?= number_format($sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>
@@ -371,46 +389,43 @@ function filterImagesByVariant(variantId) {
     let firstVisibleImageSrc = null;
     let hasSpecificImages = false;
 
-    // Bước 1: Kiểm tra xem phiên bản đang chọn CÓ ảnh riêng nào không
+    // Kiểm tra xem phiên bản đang chọn CÓ ảnh riêng nào không
     thumbnails.forEach(thumb => {
         if (thumb.getAttribute('data-variant-id') === variantId.toString()) {
             hasSpecificImages = true;
         }
     });
 
-    // Bước 2: Duyệt qua từng ảnh để quyết định Ẩn hay Hiện
+    // Duyệt qua từng ảnh để quyết định Ẩn hay Hiện
     thumbnails.forEach(thumb => {
         const thumbVariantId = thumb.getAttribute('data-variant-id');
         let shouldShow = false;
 
         if (hasSpecificImages) {
-            // Nếu CÓ ảnh riêng -> CHỈ hiện ảnh riêng của nó (Ẩn ảnh chung và ảnh màu khác)
             shouldShow = (thumbVariantId === variantId.toString());
         } else {
-            // Nếu KHÔNG CÓ ảnh riêng -> Hiện các ảnh dùng 'Chung' ('all')
             shouldShow = (thumbVariantId === 'all');
         }
 
         if (shouldShow) {
             thumb.style.display = 'block';
             if (!firstVisibleImageSrc) {
-                firstVisibleImageSrc = thumb.src; // Ghi nhớ ảnh đầu tiên hiển thị
+                firstVisibleImageSrc = thumb.src;
             }
         } else {
-            thumb.style.display = 'none'; // Giấu đi
+            thumb.style.display = 'none'; 
         }
     });
 
-    // Bước 3: Tự động đổi ảnh to ở trên cùng theo ảnh đầu tiên của danh sách vừa lọc
+    // Tự động đổi ảnh to ở trên cùng theo ảnh đầu tiên
     const mainImg = document.getElementById('main-img');
     if (firstVisibleImageSrc && mainImg) {
-        mainImg.style.opacity = 0.5; // Chớp nhẹ tạo cảm giác mượt
+        mainImg.style.opacity = 0.5; 
         setTimeout(() => {
             mainImg.src = firstVisibleImageSrc;
             mainImg.style.opacity = 1;
         }, 150);
         
-        // Reset viền đỏ cho ảnh thumbnail tương ứng
         document.querySelectorAll('.thumb-img').forEach(t => t.style.borderColor = 'transparent');
         const firstVisibleThumb = Array.from(thumbnails).find(t => t.style.display !== 'none');
         if (firstVisibleThumb) {
@@ -419,7 +434,7 @@ function filterImagesByVariant(variantId) {
     }
 }
 
-// Lọc ảnh ngay khi vừa tải trang xong (dựa vào phiên bản mặc định được chọn)
+// Lọc ảnh ngay khi vừa tải trang
 if (selectedVariantId) {
     filterImagesByVariant(selectedVariantId);
 }
@@ -429,7 +444,6 @@ document.querySelectorAll('.variant-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         if (this.classList.contains('disabled')) return;
 
-        // Xóa trạng thái active của các nút cũ
         document.querySelectorAll('.variant-btn').forEach(b => {
             b.classList.remove('active');
             const priceLabel = b.querySelector('.variant-price-label');
@@ -439,7 +453,6 @@ document.querySelectorAll('.variant-btn').forEach(btn => {
             }
         });
 
-        // Kích hoạt nút mới
         this.classList.add('active');
         const activePriceLabel = this.querySelector('.variant-price-label');
         if (activePriceLabel) {
@@ -451,7 +464,6 @@ document.querySelectorAll('.variant-btn').forEach(btn => {
         const stock = parseInt(this.dataset.stock);
         selectedVariantId = this.dataset.id;
         
-        // Cập nhật Data
         document.getElementById('selected-variant').value = selectedVariantId;
         document.getElementById('current-price').textContent = price.toLocaleString('vi-VN') + 'đ';
         
@@ -477,7 +489,6 @@ document.querySelectorAll('.variant-btn').forEach(btn => {
             }
         }
 
-        // KÍCH HOẠT LỌC ẢNH SAU KHI CLICK
         filterImagesByVariant(selectedVariantId);
     });
 });
@@ -517,7 +528,10 @@ document.getElementById('btn-review')?.addEventListener('click', function() {
     const noiDung = document.getElementById('noi_dung').value.trim();
     const msg = document.getElementById('review-msg');
 
-    if (!noiDung) { msg.innerHTML = '<div class="alert alert-warning py-1 small">Vui lòng nhập nội dung đánh giá</div>'; return; }
+    if (!noiDung) { 
+        msg.innerHTML = '<div class="alert alert-warning py-2 small mb-3"><i class="fa fa-exclamation-triangle me-1"></i>Vui lòng nhập nội dung đánh giá</div>'; 
+        return; 
+    }
 
     fetch('/danh-gia/them', {
         method: 'POST',
@@ -527,10 +541,10 @@ document.getElementById('btn-review')?.addEventListener('click', function() {
     .then(r => r.json())
     .then(data => {
         if (data.success) {
-            msg.innerHTML = '<div class="alert alert-success py-1 small"><i class="fa fa-check me-1"></i>' + data.message + '</div>';
+            msg.innerHTML = '<div class="alert alert-success py-2 small mb-3"><i class="fa fa-check-circle me-1"></i>' + data.message + '</div>';
             document.getElementById('noi_dung').value = '';
         } else {
-            msg.innerHTML = '<div class="alert alert-danger py-1 small">' + data.message + '</div>';
+            msg.innerHTML = '<div class="alert alert-danger py-2 small mb-3"><i class="fa fa-times-circle me-1"></i>' + data.message + '</div>';
         }
     });
 });
