@@ -143,6 +143,35 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	// Address management routes
+	if ($path === 'khach-hang/them-dia-chi') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/KhachHangController.php';
+		$controller = new KhachHangController();
+		$controller->themDiaChi();
+		return;
+	}
+
+	if ($path === 'khach-hang/cap-nhat-dia-chi') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/KhachHangController.php';
+		$controller = new KhachHangController();
+		$controller->capNhatDiaChi();
+		return;
+	}
+
+	if ($path === 'khach-hang/xoa-dia-chi') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/KhachHangController.php';
+		$controller = new KhachHangController();
+		$controller->xoaDiaChi();
+		return;
+	}
+
+	if ($path === 'khach-hang/dat-mac-dinh') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/KhachHangController.php';
+		$controller = new KhachHangController();
+		$controller->datMacDinh();
+		return;
+	}
+
 	// Giỏ hàng routes
 	if ($path === 'gio-hang') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/GioHangController.php';
