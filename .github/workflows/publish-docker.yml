@@ -1,0 +1,32 @@
+name: Build and Publish Docker Image
+
+on:
+  push:
+    branches: [ "main" ] 
+
+jobs:
+  push_to_registry:
+    name: Đẩy Docker image lên GHCR
+    runs-on: ubuntu-latest
+    
+    permissions:
+      packages: write
+      contents: read
+    
+    steps:
+      - name: Lấy mã nguồn về
+        uses: actions/checkout@v4
+
+      - name: Đăng nhập vào GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }} 
+
+      - name: Build và đẩy Docker image lên
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest
