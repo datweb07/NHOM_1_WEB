@@ -70,12 +70,7 @@ ob_start();
         transition: all 0.3s ease;
         margin-bottom: 4px;
     }
-    .profile-menu .nav-link:hover {
-        background-color: #fde8e8 !important;
-        color: #d70018 !important;
-        font-weight: 600;
-    }
-    .profile-menu .nav-link.active {
+    .profile-menu .nav-link:hover, .profile-menu .nav-link.active {
         background-color: #fde8e8 !important;
         color: #d70018 !important;
         font-weight: 600;
@@ -121,6 +116,14 @@ ob_start();
         margin-bottom: 15px;
         border: 2px solid #cb1c22;
     }
+    
+    /* Căn chỉnh tab */
+    .tab-content > .tab-pane {
+        display: none;
+    }
+    .tab-content > .active {
+        display: block;
+    }
 </style>
 
 <div class="profile-wrapper py-4" style="background-color: #f4f4f4;">
@@ -133,9 +136,9 @@ ob_start();
                         <img src="<?= !empty($user['avatar_url']) ? htmlspecialchars($user['avatar_url']) : ASSET_URL . '/assets/client/images/others/anh-avatar.jpg' ?>" alt="Avatar">
                         <h3 class="fs-6 fw-bold m-0"><?= htmlspecialchars($user['ho_ten'] ?? 'Tên người dùng') ?></h3>
                     </div>
-                    <ul class="nav flex-column profile-menu">
+                    <ul class="nav flex-column profile-menu" id="profileTabs">
                         <li class="nav-item">
-                            <a href="/client/profile" class="nav-link active">
+                            <a href="#ho-so" class="nav-link active" data-bs-toggle="tab">
                                 <i class="bi bi-person me-2"></i> Hồ sơ của tôi
                             </a>
                         </li>
@@ -145,7 +148,7 @@ ob_start();
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/dia-chi" class="nav-link">
+                            <a href="#dia-chi" class="nav-link" data-bs-toggle="tab">
                                 <i class="bi bi-geo-alt me-2"></i> Sổ địa chỉ
                             </a>
                         </li>
@@ -158,7 +161,7 @@ ob_start();
                 </div>
             </div>
 
-            <div class="col-lg-9 col-md-8">
+            <div class="col-lg-9 col-md-8 tab-content">
 
                 <?php if (isset($_SESSION['success'])): ?>
                     <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
@@ -174,92 +177,101 @@ ob_start();
                     </div>
                 <?php endif; ?>
 
-                <!-- Hồ sơ -->
-                <div class="profile-content-box">
-                    <div class="profile-content-header">
-                        <h2>Hồ sơ của tôi</h2>
-                        <p>Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
+                <div class="tab-pane fade show active" id="ho-so">
+                    <div class="profile-content-box">
+                        <div class="profile-content-header">
+                            <h2>Hồ sơ của tôi</h2>
+                            <p>Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-8 pe-lg-4 border-end">
+                                <form action="/khach-hang/cap-nhat-ho-so" method="POST">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-medium">Email (Tên đăng nhập)</label>
+                                        <input type="text" class="form-control bg-light" value="<?= htmlspecialchars($user['email'] ?? '') ?>" disabled>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-medium">Họ và tên <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="ho_ten" value="<?= htmlspecialchars($user['ho_ten'] ?? '') ?>" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-medium">Số điện thoại</label>
+                                        <input type="tel" class="form-control" name="sdt" value="<?= htmlspecialchars($user['sdt'] ?? '') ?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-medium">Ngày sinh</label>
+                                        <input type="date" class="form-control" name="ngay_sinh" value="<?= htmlspecialchars($user['ngay_sinh'] ?? '') ?>">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label fw-medium">Giới tính</label>
+                                        <select class="form-select" name="gioi_tinh">
+                                            <option value="NAM" <?= (($user['gioi_tinh'] ?? '') === 'NAM') ? 'selected' : '' ?>>Nam</option>
+                                            <option value="NU"  <?= (($user['gioi_tinh'] ?? '') === 'NU')  ? 'selected' : '' ?>>Nữ</option>
+                                            <option value="KHAC" <?= (($user['gioi_tinh'] ?? '') === 'KHAC') ? 'selected' : '' ?>>Khác</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn-submit">Lưu thay đổi</button>
+                                </form>
+                            </div>
+
+                            <div class="col-lg-4 mt-4 mt-lg-0">
+                                <form action="/khach-hang/cap-nhat-avatar" method="POST" enctype="multipart/form-data" id="avatar-upload-form" class="h-100">
+                                    <div class="avatar-upload-section">
+                                        <div class="avatar-preview">
+                                            <img id="avatar-preview-img"
+                                                 src="<?= !empty($user['avatar_url']) ? htmlspecialchars($user['avatar_url']) : ASSET_URL . '/assets/client/images/others/anh-avatar.jpg' ?>"
+                                                 alt="Avatar Preview">
+                                        </div>
+                                        <div class="w-100 px-3">
+                                            <label for="avatar-input" class="btn btn-outline-secondary btn-sm w-100 mb-2" style="cursor: pointer;">
+                                                <i class="bi bi-camera me-1"></i> Chọn ảnh
+                                            </label>
+                                            <input type="file" class="d-none" name="avatar" id="avatar-input" accept="image/jpeg,image/jpg,image/png" required>
+                                            <button type="submit" class="btn btn-sm btn-submit w-100" id="btn-save-avatar" style="display: none;">
+                                                Lưu ảnh đại diện
+                                            </button>
+                                        </div>
+                                        <p class="avatar-note">Dung lượng tối đa 2MB<br>Định dạng: JPG, JPEG, PNG</p>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-lg-8 pe-lg-4 border-end">
-                            <form action="/khach-hang/cap-nhat-ho-so" method="POST">
-                                <div class="mb-3">
-                                    <label class="form-label fw-medium">Email (Tên đăng nhập)</label>
-                                    <input type="text" class="form-control bg-light" value="<?= htmlspecialchars($user['email'] ?? '') ?>" disabled>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-medium">Họ và tên <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" name="ho_ten" value="<?= htmlspecialchars($user['ho_ten'] ?? '') ?>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-medium">Số điện thoại</label>
-                                    <input type="tel" class="form-control" name="sdt" value="<?= htmlspecialchars($user['sdt'] ?? '') ?>">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-medium">Ngày sinh</label>
-                                    <input type="date" class="form-control" name="ngay_sinh" value="<?= htmlspecialchars($user['ngay_sinh'] ?? '') ?>">
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label fw-medium">Giới tính</label>
-                                    <select class="form-select" name="gioi_tinh">
-                                        <option value="NAM" <?= (($user['gioi_tinh'] ?? '') === 'NAM') ? 'selected' : '' ?>>Nam</option>
-                                        <option value="NU"  <?= (($user['gioi_tinh'] ?? '') === 'NU')  ? 'selected' : '' ?>>Nữ</option>
-                                        <option value="KHAC" <?= (($user['gioi_tinh'] ?? '') === 'KHAC') ? 'selected' : '' ?>>Khác</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn-submit">Lưu thay đổi</button>
-                            </form>
+                    <div class="profile-content-box">
+                        <div class="profile-content-header">
+                            <h2>Đổi mật khẩu</h2>
+                            <p>Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác</p>
                         </div>
-
-                        <div class="col-lg-4 mt-4 mt-lg-0">
-                            <form action="/khach-hang/cap-nhat-avatar" method="POST" enctype="multipart/form-data" id="avatar-upload-form" class="h-100">
-                                <div class="avatar-upload-section">
-                                    <div class="avatar-preview">
-                                        <img id="avatar-preview-img"
-                                             src="<?= !empty($user['avatar_url']) ? htmlspecialchars($user['avatar_url']) : ASSET_URL . '/assets/client/images/others/anh-avatar.jpg' ?>"
-                                             alt="Avatar Preview">
+                        <form action="/khach-hang/doi-mat-khau" method="POST">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-medium">Mật khẩu hiện tại <span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" name="mat_khau_cu" placeholder="Nhập mật khẩu hiện tại" required>
                                     </div>
-                                    <div class="w-100 px-3">
-                                        <label for="avatar-input" class="btn btn-outline-secondary btn-sm w-100 mb-2" style="cursor: pointer;">
-                                            <i class="bi bi-camera me-1"></i> Chọn ảnh
-                                        </label>
-                                        <input type="file" class="d-none" name="avatar" id="avatar-input" accept="image/jpeg,image/jpg,image/png" required>
-                                        <button type="submit" class="btn btn-sm btn-submit w-100" id="btn-save-avatar" style="display: none;">
-                                            Lưu ảnh đại diện
-                                        </button>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-medium">Mật khẩu mới <span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" name="mat_khau_moi" placeholder="Nhập mật khẩu mới" required>
                                     </div>
-                                    <p class="avatar-note">Dung lượng tối đa 2MB<br>Định dạng: JPG, JPEG, PNG</p>
+                                    <div class="mb-4">
+                                        <label class="form-label fw-medium">Xác nhận mật khẩu mới <span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" name="xac_nhan_mat_khau" placeholder="Nhập lại mật khẩu mới" required>
+                                    </div>
+                                    <button type="submit" class="btn-submit">Cập nhật mật khẩu</button>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
-                <div class="profile-content-box">
-                    <div class="profile-content-header">
-                        <h2>Đổi mật khẩu</h2>
-                        <p>Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác</p>
-                    </div>
-                    <form action="/khach-hang/doi-mat-khau" method="POST">
-                        <div class="row">
-                            <div class="col-lg-8">
-                                <div class="mb-3">
-                                    <label class="form-label fw-medium">Mật khẩu hiện tại <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" name="mat_khau_cu" placeholder="Nhập mật khẩu hiện tại" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-medium">Mật khẩu mới <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" name="mat_khau_moi" placeholder="Nhập mật khẩu mới" required>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label fw-medium">Xác nhận mật khẩu mới <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" name="xac_nhan_mat_khau" placeholder="Nhập lại mật khẩu mới" required>
-                                </div>
-                                <button type="submit" class="btn-submit">Cập nhật mật khẩu</button>
-                            </div>
-                        </div>
-                    </form>
+                <div class="tab-pane fade" id="dia-chi">
+                    <?php
+                    
+                    require_once __DIR__ . '/../dia_chi/index.php';
+                    
+                    ?>
                 </div>
 
             </div>
@@ -268,6 +280,7 @@ ob_start();
 </div>
 
 <script>
+// Logic đổi hình ảnh Avatar
 document.getElementById('avatar-input')?.addEventListener('change', function(e) {
     const file = e.target.files[0];
     const btnSave = document.getElementById('btn-save-avatar');
@@ -297,11 +310,94 @@ document.getElementById('avatar-input')?.addEventListener('change', function(e) 
     }
 });
 
+// Đăng xuất
 document.getElementById('logout-link')?.addEventListener('click', function(e) {
     e.preventDefault();
     if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
         window.location.href = '/client/auth/logout';
     }
+});
+
+// ==========================================
+// TÍCH HỢP DATA HÀNH CHÍNH VIỆT NAM (dvhcvn)
+// Nguồn raw json từ Github DaoHoangSon
+// ==========================================
+document.addEventListener("DOMContentLoaded", function() {
+    const tinhThanhSelect = document.getElementById('tinhThanh');
+    const quanHuyenSelect = document.getElementById('quanHuyen');
+    const phuongXaSelect = document.getElementById('phuongXa');
+    let vnData = [];
+
+    // URL file JSON data cấp 1 (Tỉnh/Thành) bao gồm luôn cấp 2 và cấp 3
+    const dataUrl = 'https://raw.githubusercontent.com/daohoangson/dvhcvn/master/data/dvhcvn.json';
+
+    // Fetch dữ liệu từ Github
+    fetch(dataUrl)
+        .then(response => response.json())
+        .then(data => {
+            vnData = data.data; // Lưu lại mảng data
+            // Đổ dữ liệu Tỉnh Thành vào select
+            vnData.forEach(tinh => {
+                const option = document.createElement('option');
+                option.value = tinh.name; // Bạn có thể dùng tinh.level1_id nếu lưu ID vào DB
+                option.dataset.id = tinh.level1_id; 
+                option.textContent = tinh.name;
+                tinhThanhSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Lỗi khi tải dữ liệu hành chính:', error);
+            tinhThanhSelect.innerHTML = '<option disabled>Không thể tải dữ liệu</option>';
+        });
+
+    // Khi thay đổi Tỉnh / Thành
+    tinhThanhSelect.addEventListener('change', function() {
+        const selectedId = this.options[this.selectedIndex].dataset.id;
+        
+        // Reset Quận/Huyện và Phường/Xã
+        quanHuyenSelect.innerHTML = '<option value="" selected disabled>Chọn Quận/Huyện</option>';
+        phuongXaSelect.innerHTML = '<option value="" selected disabled>Chọn Phường/Xã</option>';
+        phuongXaSelect.disabled = true;
+
+        if (selectedId) {
+            const tinhData = vnData.find(t => t.level1_id === selectedId);
+            if (tinhData && tinhData.level2s) {
+                tinhData.level2s.forEach(quan => {
+                    const option = document.createElement('option');
+                    option.value = quan.name; 
+                    option.dataset.id = quan.level2_id;
+                    option.textContent = quan.name;
+                    quanHuyenSelect.appendChild(option);
+                });
+                quanHuyenSelect.disabled = false;
+            }
+        }
+    });
+
+    // Khi thay đổi Quận / Huyện
+    quanHuyenSelect.addEventListener('change', function() {
+        const selectedTinhId = tinhThanhSelect.options[tinhThanhSelect.selectedIndex].dataset.id;
+        const selectedQuanId = this.options[this.selectedIndex].dataset.id;
+
+        // Reset Phường/Xã
+        phuongXaSelect.innerHTML = '<option value="" selected disabled>Chọn Phường/Xã</option>';
+
+        if (selectedTinhId && selectedQuanId) {
+            const tinhData = vnData.find(t => t.level1_id === selectedTinhId);
+            const quanData = tinhData.level2s.find(q => q.level2_id === selectedQuanId);
+
+            if (quanData && quanData.level3s) {
+                quanData.level3s.forEach(phuong => {
+                    const option = document.createElement('option');
+                    option.value = phuong.name;
+                    option.dataset.id = phuong.level3_id;
+                    option.textContent = phuong.name;
+                    phuongXaSelect.appendChild(option);
+                });
+                phuongXaSelect.disabled = false;
+            }
+        }
+    });
 });
 </script>
 
