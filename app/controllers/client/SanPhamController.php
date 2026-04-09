@@ -107,4 +107,57 @@ class SanPhamController
         // Load view
         require_once dirname(__DIR__, 2) . '/views/client/san_pham/list.php';
     }
+
+    /**
+     * Danh sách sản phẩm theo slug danh mục
+     */
+    public function danhSachTheoSlug(string $slugDanhMuc): void
+    {
+        require_once dirname(__DIR__, 2) . '/models/entities/DanhMuc.php';
+        $danhMucModel = new \DanhMuc();
+        
+        // Lookup category by slug
+        $danhMuc = $danhMucModel->findBySlug($slugDanhMuc);
+        
+        if (!$danhMuc) {
+            header('Location: /');
+            exit;
+        }
+        
+        // Get filter parameters
+        $keyword = $_GET['keyword'] ?? null;
+        $danhMucId = $danhMuc['id']; // Use the ID from slug lookup
+        $giaMin = isset($_GET['gia_min']) ? (float)$_GET['gia_min'] : null;
+        $giaMax = isset($_GET['gia_max']) ? (float)$_GET['gia_max'] : null;
+        $sortBy = $_GET['sort_by'] ?? 'ngay_tao';
+        $sortOrder = $_GET['sort_order'] ?? 'DESC';
+        
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $limit = 20;
+        $offset = ($page - 1) * $limit;
+
+        // Count total products
+        $tongSanPham = $this->sanPhamModel->demSanPham($keyword, $danhMucId, $giaMin, $giaMax);
+        
+        // Get product list
+        $sanPhamList = $this->sanPhamModel->layDanhSachPhanTrang(
+            $keyword, 
+            $danhMucId, 
+            $giaMin, 
+            $giaMax, 
+            $limit, 
+            $offset, 
+            $sortBy, 
+            $sortOrder
+        );
+        
+        // Calculate total pages
+        $tongTrang = ceil($tongSanPham / $limit);
+        
+        // Get category list
+        $danhMucList = $this->sanPhamModel->layDanhSachDanhMucHoatDong();
+
+        // Load view
+        require_once dirname(__DIR__, 2) . '/views/client/san_pham/list.php';
+    }
 }
