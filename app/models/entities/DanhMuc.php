@@ -166,6 +166,19 @@ class DanhMuc extends BaseModel
         return $this->query($sql);
     }
 
+    /**
+     * Tìm danh mục theo slug
+     * @param string $slug Slug của danh mục
+     * @return array|null Trả về mảng thông tin danh mục hoặc null nếu không tìm thấy
+     */
+    public function findBySlug(string $slug): ?array
+    {
+        $slug = mysqli_real_escape_string($this->link, $slug);
+        $sql = "SELECT * FROM {$this->table} WHERE slug = '$slug' AND trang_thai = 1 LIMIT 1";
+        $result = $this->query($sql);
+        return !empty($result) ? $result[0] : null;
+    }
+
     public function toArray(): array
     {
         return [
