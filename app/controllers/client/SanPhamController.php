@@ -160,4 +160,63 @@ class SanPhamController
         // Load view
         require_once dirname(__DIR__, 2) . '/views/client/san_pham/list.php';
     }
+
+    /**
+     * API: Lấy dữ liệu cho Mega Menu khi hover (Hãng, Sản phẩm, Danh mục con)
+     */
+    public function apiMegaMenu(): void
+    {
+        // Xóa bộ nhớ đệm đề phòng có khoảng trắng dư thừa làm hỏng JSON
+        if (ob_get_length()) ob_clean(); 
+        header('Content-Type: application/json; charset=utf-8');
+        
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+        if ($id <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid ID']);
+            exit;
+        }
+
+        try {
+            // 1. Lấy 5 sản phẩm mới nhất (Sử dụng Subquery để lấy url_anh từ bảng hinh_anh_san_pham)
+            $sqlProducts = "SELECT sp.ten_san_pham, sp.slug, 
+                                   (SELECT url_anh FROM hinh_anh_san_pham ha WHERE ha.san_pham_id = sp.id AND ha.la_anh_chinh = 1 LIMIT 1) AS anh_chinh
+                            FROM san_pham sp 
+                            WHERE sp.danh_muc_id = $id AND sp.trang_thai = 'CON_BAN' 
+                            ORDER BY sp.ngay_tao DESC LIMIT 5";
+            $products = $this->sanPhamModel->query($sqlProducts);
+
+            // 2. Lấy danh sách Hãng (Thương hiệu) có trong danh mục này
+            $sqlBrands = "SELECT DISTINCT hang_san_xuat 
+                          FROM san_pham 
+                          WHERE danh_muc_id = $id AND hang_san_xuat != '' AND hang_san_xuat IS NOT NULL 
+                          LIMIT 6";
+            $brands = $this->sanPhamModel->query($sqlBrands);
+
+            // 3. Lấy danh mục con (Cấp 2)
+            require_once dirname(__DIR__, 2) . '/models/entities/DanhMuc.php';
+            $dmModel = new \DanhMuc();
+            $subCategories = $dmModel->layDanhMucCon($id);
+
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'products' => $products,
+                    'brands' => $brands,
+                    'subCategories' => $subCategories
+                ]
+            ]);
+            exit;
+
+        } catch (\Throwable $th) {
+            // Bắt lỗi và trả về JSON thay vì in ra HTML làm vỡ giao diện
+            echo json_encode([
+                'success' => false, 
+                'error' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine()
+            ]);
+            exit;
+        }
+    }
 }

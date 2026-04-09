@@ -11,6 +11,14 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	// ĐẶT ROUTE API NÀY LÊN GẦN TRÊN CÙNG
+    if ($path === 'api/mega-menu') {
+        require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
+        $controller = new \App\Controllers\Client\SanPhamController();
+        $controller->apiMegaMenu();
+        return;
+    }
+
 	if ($path === 'san-pham' || $path === 'san-pham/list') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
 		$controller = new \App\Controllers\Client\SanPhamController();
