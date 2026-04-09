@@ -17,7 +17,6 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
     <form action="/thanh-toan/dat-hang" method="POST" id="order-form">
         <div class="row g-4">
 
-            <!-- Thông tin giao hàng -->
             <div class="col-lg-7">
 
                 <?php if ($isLoggedIn && !empty($diaChiList)): ?>
@@ -25,16 +24,34 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                         <div class="card-body">
                             <h6 class="fw-bold mb-3"><i class="fa fa-map-marker-alt text-danger me-2"></i>Địa chỉ giao hàng</h6>
                             <?php foreach ($diaChiList as $dc): ?>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="dia_chi_id"
-                                           id="dc_<?= $dc['id'] ?>" value="<?= $dc['id'] ?>"
-                                           <?= ($diaChiMacDinh && $dc['id'] == $diaChiMacDinh['id']) ? 'checked' : '' ?> required>
-                                    <label class="form-check-label" for="dc_<?= $dc['id'] ?>">
-                                        <span class="fw-medium"><?= htmlspecialchars($dc['ten_nguoi_nhan']) ?></span>
-                                        <span class="text-muted"> | <?= htmlspecialchars($dc['sdt']) ?></span><br>
-                                        <small class="text-muted"><?= htmlspecialchars($dc['dia_chi_chi_tiet'] . ', ' . $dc['xa_phuong'] . ', ' . $dc['quan_huyen'] . ', ' . $dc['tinh_thanh']) ?></small>
-                                        <?php if ($dc['la_mac_dinh']): ?>
-                                            <span class="badge bg-danger ms-1" style="font-size:0.65rem;">Mặc định</span>
+                                <?php
+                                // Lấy chính xác tên cột trong DB hoặc fallback nếu không tồn tại
+                                $idDiaChi = $dc['id'];
+                                $tenNguoiNhan = htmlspecialchars($dc['ten_nguoi_nhan'] ?? $dc['ho_ten'] ?? 'Chưa cập nhật');
+                                $sdtNhan = htmlspecialchars($dc['sdt_nhan'] ?? $dc['sdt'] ?? 'Chưa cập nhật');
+                                
+                                // Ghép địa chỉ
+                                $diaChiCuThe = $dc['so_nha_duong'] ?? $dc['dia_chi_chi_tiet'] ?? $dc['dia_chi_cu_the'] ?? '';
+                                $phuongXa = $dc['phuong_xa'] ?? $dc['xa_phuong'] ?? '';
+                                $quanHuyen = $dc['quan_huyen'] ?? '';
+                                $tinhThanh = $dc['tinh_thanh'] ?? '';
+                                
+                                $fullAddress = htmlspecialchars(implode(', ', array_filter([$diaChiCuThe, $phuongXa, $quanHuyen, $tinhThanh])));
+                                
+                                // Kiểm tra mặc định
+                                $isMacDinh = ($dc['mac_dinh'] ?? $dc['la_mac_dinh'] ?? 0) == 1;
+                                $isChecked = ($diaChiMacDinh && $idDiaChi == $diaChiMacDinh['id']) ? 'checked' : '';
+                                ?>
+                                <div class="form-check mb-2 border rounded p-3 position-relative <?= $isChecked ? 'bg-light' : '' ?>">
+                                    <input class="form-check-input ms-0 me-2" type="radio" name="dia_chi_id"
+                                           id="dc_<?= $idDiaChi ?>" value="<?= $idDiaChi ?>"
+                                           <?= $isChecked ?> required style="cursor: pointer; margin-top: 5px;">
+                                    <label class="form-check-label w-100" for="dc_<?= $idDiaChi ?>" style="cursor: pointer; padding-left: 10px;">
+                                        <span class="fw-medium text-dark"><?= $tenNguoiNhan ?></span>
+                                        <span class="text-muted"> | <?= $sdtNhan ?></span><br>
+                                        <small class="text-muted d-block mt-1"><?= $fullAddress ?></small>
+                                        <?php if ($isMacDinh): ?>
+                                            <span class="badge bg-danger position-absolute top-0 end-0 m-2" style="font-size:0.65rem;">Mặc định</span>
                                         <?php endif; ?>
                                     </label>
                                 </div>
@@ -61,7 +78,6 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                     </div>
                 <?php endif; ?>
 
-                <!-- Phương thức thanh toán -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body">
                         <h6 class="fw-bold mb-3"><i class="fa fa-wallet text-danger me-2"></i>Phương thức thanh toán</h6>
@@ -89,7 +105,6 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                     </div>
                 </div>
 
-                <!-- Ghi chú -->
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
                         <h6 class="fw-bold mb-3"><i class="fa fa-pen text-danger me-2"></i>Ghi chú đơn hàng</h6>
@@ -98,7 +113,6 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                 </div>
             </div>
 
-            <!-- Tóm tắt đơn hàng -->
             <div class="col-lg-5">
                 <div class="card border-0 shadow-sm mb-3">
                     <div class="card-body">
@@ -118,7 +132,6 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                             </div>
                         <?php endforeach; ?>
 
-                        <!-- Mã giảm giá -->
                         <div class="mt-3 border-top pt-3">
                             <label class="form-label small fw-medium">Mã giảm giá</label>
                             <div class="input-group input-group-sm">
@@ -185,6 +198,18 @@ document.getElementById('btn-apply-coupon')?.addEventListener('click', function(
             msg.innerHTML = '<span class="text-danger"><i class="fa fa-times"></i> ' + data.message + '</span>';
             document.getElementById('discount-row').classList.add('d-none');
             document.getElementById('total-final').textContent = (tongTien + phiVanChuyen).toLocaleString('vi-VN') + 'đ';
+        }
+    });
+});
+
+// Thêm script đổi màu background cho địa chỉ được chọn
+document.querySelectorAll('input[name="dia_chi_id"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('input[name="dia_chi_id"]').forEach(r => {
+            r.closest('.form-check').classList.remove('bg-light');
+        });
+        if(this.checked) {
+            this.closest('.form-check').classList.add('bg-light');
         }
     });
 });
