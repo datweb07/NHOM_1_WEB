@@ -49,15 +49,17 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
     }
 
     .fpt-menu-wrapper::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    height: 10px;          /* bằng với khoảng cách top của panel */
-    background: transparent;
-    pointer-events: auto;  /* quan trọng: nhận di chuột */
-}
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        height: 10px;
+        /* bằng với khoảng cách top của panel */
+        background: transparent;
+        pointer-events: auto;
+        /* quan trọng: nhận di chuột */
+    }
 
     /* --- MEGA MENU PANEL KHỔNG LỒ --- */
     .mega-menu-panel {
@@ -103,8 +105,8 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
 
     .left-brand-grid {
         display: grid;
-        grid-template-columns: 1fr 1px 1fr;
-        gap: 10px;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
         padding: 0 15px 15px;
     }
 
@@ -395,14 +397,28 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
                 <div class="mega-menu-panel">
 
                     <div class="mega-col-left">
-                        <div class="left-brand-grid">
-                            <a href="#" class="left-brand-item"><i class="fa-brands fa-apple fs-5"></i> Apple</a>
-                            <a href="#" class="left-brand-item text-primary"><i class="fa-brands fa-windows fs-5"></i>
-                                Samsung</a>
-                            <a href="#" class="left-brand-item text-danger"><i class="fa-brands fa-lg fs-5"></i> LG</a>
-                            <a href="#" class="left-brand-item" style="color: #ff6700;"><i
-                                    class="fa-solid fa-mobile-screen"></i> Xiaomi</a>
-                            <a href="#" class="left-brand-item"><i class="fa-solid fa-stopwatch"></i> Garmin</a>
+                        <div class="left-brand-grid px-3 pt-2">
+                            <a href="#" class="left-brand-item">
+                                <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/apple_icon_menu_b4ebd564eb.png"
+                                    alt="Apple"> Apple
+                            </a>
+
+                            <a href="#" class="left-brand-item">
+                                <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/samsung_icon_menu_80d224e1c9.png"
+                                    alt="Samsung"> Samsung
+                            </a>
+
+                            <a href="#" class="left-brand-item">
+                                <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/LG_con_menu_8607e6758e.png" alt="LG"> LG
+                            </a>
+
+                            <a href="#" class="left-brand-item">
+                                <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/xiaomi_icon_menu_c3719b2a43.png" alt="Xiaomi"> Xiaomi
+                            </a>
+
+                            <a href="#" class="left-brand-item">
+                                <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/garmin_menu_d9a8802e3b.png" alt="Garmin"> Garmin
+                            </a>
                         </div>
 
                         <div class="menu-group-title mt-2">Sản phẩm chính</div>
@@ -412,82 +428,19 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
                             $categoryUrl = '/danh-muc/' . $category['slug'];
                             $activeClass = ($index === 0) ? 'active' : '';
                             ?>
-                            <a href="<?= htmlspecialchars($categoryUrl) ?>" class="left-nav-item <?= $activeClass ?>">
+                            <a href="<?= htmlspecialchars($categoryUrl) ?>" 
+                               class="left-nav-item <?= $activeClass ?>"
+                               onmouseenter="fetchMegaMenu(<?= $category['id'] ?>, this)">
                                 <i class="<?= htmlspecialchars($iconClass) ?>"></i>
                                 <?= htmlspecialchars($category['ten']) ?>
                             </a>
                         <?php endforeach; ?>
                     </div>
 
-                    <div class="mega-col-center">
-                        <div class="center-title">🔥 Gợi ý cho bạn</div>
-
-                        <div class="brand-pills">
-                            <a href="#" class="brand-pill"><i class="fa-brands fa-apple"></i> iPhone</a>
-                            <a href="#" class="brand-pill text-primary fw-bold">SAMSUNG</a>
-                            <a href="#" class="brand-pill" style="color:#ff6700;">xiaomi</a>
-                            <a href="#" class="brand-pill text-success fw-bold">OPPO</a>
-                            <a href="#" class="brand-pill fw-bold">HONOR</a>
-                            <a href="#" class="brand-pill text-info fw-bold">TECNO</a>
-                        </div>
-
-                        <div class="suggest-grid">
-                            <a href="#" class="suggest-item">
-                                <img src="https://cdn2.fptshop.com.vn/unsafe/150x0/filters:quality(100)/5G_49cfb591b6.png"
-                                    alt="5G">
-                                <span>Điện thoại 5G</span>
-                            </a>
-                            <a href="#" class="suggest-item">
-                                <img src="https://cdn2.fptshop.com.vn/unsafe/150x0/filters:quality(100)/Ai_15c9284227.png"
-                                    alt="AI">
-                                <span>Điện thoại AI</span>
-                            </a>
-                            <a href="#" class="suggest-item">
-                                <img src="https://cdn2.fptshop.com.vn/unsafe/150x0/filters:quality(100)/Gap_a8cf92fb6f.png"
-                                    alt="Gập">
-                                <span>Điện thoại gập</span>
-                            </a>
-                            <a href="#" class="suggest-item">
-                                <img src="https://cdn2.fptshop.com.vn/unsafe/150x0/filters:quality(100)/Gaming_phone_a1e53cd251.png"
-                                    alt="Gaming">
-                                <span>Gaming phone</span>
-                            </a>
-                            <a href="#" class="suggest-item">
-                                <img src="https://cdn2.fptshop.com.vn/unsafe/150x0/filters:quality(100)/Icon_dien_thoai_Pho_thong_08d1fb5f09.png"
-                                    alt="Phổ thông">
-                                <span>Phổ thông 4G</span>
-                            </a>
-                        </div>
-
-                        <div class="sub-cat-grid mt-4">
-                            <div class="sub-cat-col">
-                                <h6>Apple (iPhone) <i class="fa fa-angle-right ms-1"></i></h6>
-                                <a href="#">iPhone 15 Series</a>
-                                <a href="#">iPhone 14 Series</a>
-                                <a href="#">iPhone 13 Series</a>
-
-                                <h6 class="mt-4">Xiaomi <i class="fa fa-angle-right ms-1"></i></h6>
-                                <a href="#">Poco Series</a>
-                                <a href="#">Redmi Note Series</a>
-                            </div>
-                            <div class="sub-cat-col">
-                                <h6>Samsung <i class="fa fa-angle-right ms-1"></i></h6>
-                                <a href="#">Galaxy S Series</a>
-                                <a href="#">Galaxy Z Series</a>
-                                <a href="#">Galaxy A Series</a>
-
-                                <h6 class="mt-4">HONOR <i class="fa fa-angle-right ms-1"></i></h6>
-                                <a href="#">HONOR 90 Series</a>
-                            </div>
-                            <div class="sub-cat-col">
-                                <h6>OPPO <i class="fa fa-angle-right ms-1"></i></h6>
-                                <a href="#">OPPO Reno Series</a>
-                                <a href="#">OPPO Find Series</a>
-
-                                <h6 class="mt-4">Thương hiệu khác <i class="fa fa-angle-right ms-1"></i></h6>
-                                <a href="#">Realme</a>
-                                <a href="#">Vivo</a>
-                            </div>
+                    <div class="mega-col-center" id="mega-center-content">
+                        <div class="text-center py-5 mt-5">
+                            <div class="spinner-border text-danger" role="status"></div>
+                            <p class="text-muted mt-2">Đang tải dữ liệu...</p>
                         </div>
                     </div>
 
@@ -570,3 +523,106 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
     </div>
 
 </header>
+
+<script>
+    const megaMenuCache = {};
+    let currentHoverId = null;
+
+    // Load dữ liệu cho danh mục đầu tiên ngay khi vào trang
+    document.addEventListener('DOMContentLoaded', () => {
+        const firstNavItem = document.querySelector('.left-nav-item');
+        if (firstNavItem) {
+            const onclickAttr = firstNavItem.getAttribute('onmouseenter');
+            if (onclickAttr) {
+                const idMatch = onclickAttr.match(/fetchMegaMenu\((\d+)/);
+                if (idMatch) {
+                    fetchMegaMenu(idMatch[1], firstNavItem);
+                }
+            }
+        }
+    });
+
+    async function fetchMegaMenu(id, element) {
+        // Đổi màu menu đang hover
+        document.querySelectorAll('.left-nav-item').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+
+        currentHoverId = id;
+        const container = document.getElementById('mega-center-content');
+
+        // Nếu đã cache rồi thì render luôn
+        if (megaMenuCache[id]) {
+            renderMegaMenu(megaMenuCache[id], container);
+            return;
+        }
+
+        // Hiện loading
+        container.innerHTML = '<div class="text-center py-5 mt-5"><div class="spinner-border text-danger"></div></div>';
+
+        try {
+            const response = await fetch(`/api/mega-menu?id=${id}`);
+            const result = await response.json();
+
+            if (result.success) {
+                megaMenuCache[id] = result.data;
+                // Chống nháy (trường hợp di chuột quá nhanh)
+                if (currentHoverId === id) {
+                    renderMegaMenu(result.data, container);
+                }
+            }
+        } catch (error) {
+            container.innerHTML = '<div class="text-danger p-3 text-center mt-5">Lỗi tải dữ liệu. Vui lòng thử lại.</div>';
+        }
+    }
+
+    function renderMegaMenu(data, container) {
+        let html = '<div class="center-title">🔥 Gợi ý cho bạn</div>';
+
+        // 1. Thương hiệu (Pills)
+        if (data.brands && data.brands.length > 0) {
+            html += '<div class="brand-pills">';
+            data.brands.forEach(b => {
+                html += `<a href="/tim-kiem?q=${encodeURIComponent(b.hang_san_xuat)}" class="brand-pill">${b.hang_san_xuat}</a>`;
+            });
+            html += '</div>';
+        }
+
+        // 2. Gợi ý Sản phẩm (5 Sản phẩm có ảnh chính)
+        if (data.products && data.products.length > 0) {
+            html += '<div class="suggest-grid">';
+            data.products.forEach(p => {
+                const img = p.anh_chinh || 'https://via.placeholder.com/60';
+                const shortName = p.ten_san_pham.length > 25 ? p.ten_san_pham.substring(0, 25) + '...' : p.ten_san_pham;
+                
+                html += `
+                <a href="/san-pham/${p.slug}" class="suggest-item">
+                    <img src="${img}" alt="${p.ten_san_pham}">
+                    <span>${shortName}</span>
+                </a>`;
+            });
+            html += '</div>';
+        } else {
+            html += '<div class="text-muted mb-4 small">Chưa có sản phẩm nào cho danh mục này.</div>';
+        }
+
+        // 3. Danh mục con
+        if (data.subCategories && data.subCategories.length > 0) {
+            html += '<div class="sub-cat-grid mt-4">';
+            
+            let colHtml = '';
+            data.subCategories.forEach((sub, index) => {
+                if (index % 5 === 0) {
+                    if (index > 0) colHtml += '</div>'; // Đóng cột
+                    colHtml += `<div class="sub-cat-col">
+                                    <h6>Phân loại <i class="fa fa-angle-right ms-1"></i></h6>`;
+                }
+                colHtml += `<a href="/danh-muc/${sub.slug}">${sub.ten}</a>`;
+            });
+            colHtml += '</div>'; 
+            
+            html += colHtml + '</div>';
+        }
+
+        container.innerHTML = html;
+    }
+</script>

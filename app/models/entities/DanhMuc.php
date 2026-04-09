@@ -94,6 +94,28 @@ class DanhMuc extends BaseModel
         return $this->query($sql);
     }
 
+    /**
+     * Lấy danh sách các danh mục con dựa vào ID của danh mục cha
+     * @param int $parentId ID của danh mục cha
+     * @return array Mảng chứa thông tin các danh mục con
+     */
+    public function layDanhMucCon(int $parentId): array
+    {
+        $parentId = (int)$parentId;
+        if ($parentId <= 0) {
+            return [];
+        }
+
+        // Lấy các danh mục đang hoạt động và có cha là $parentId
+        $sql = "SELECT id, ten, slug, icon_url 
+                FROM {$this->table} 
+                WHERE danh_muc_cha_id = $parentId 
+                  AND trang_thai = 1 
+                ORDER BY thu_tu ASC, ten ASC";
+                
+        return $this->query($sql);
+    }
+
     public function tonTaiSlug(string $slug, int $excludeId = 0): bool
     {
         $safeSlug = addslashes($slug);
