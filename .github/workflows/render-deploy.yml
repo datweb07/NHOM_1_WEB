@@ -2,7 +2,7 @@ name: Advanced Deploy to Render
 
 on:
   push:
-    branches: [ "main" ] # Đổi thành "master" nếu bạn dùng master
+    branches: [ "main" ] 
 
 jobs:
   deploy:
@@ -19,20 +19,17 @@ jobs:
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
-          env: production
+          env: 'fpt-shop / production'
 
       - name: Trigger Render Deploy
         id: trigger
         run: |
-          # Gọi Deploy Hook và lấy mã Deploy ID từ phản hồi (nếu có) hoặc bắt đầu theo dõi
           curl -s -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
           echo "Deploy triggered successfully."
 
       - name: Wait for Render to go Live
         run: |
-          # Vòng lặp kiểm tra trạng thái (Polling)
           while true; do
-            # Lấy thông tin bản deploy mới nhất từ API
             STATUS=$(curl -s -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
               "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys?limit=1" \
               | jq -r '.[0].deploy.status')
@@ -58,6 +55,6 @@ jobs:
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
-          env: production
+          env: 'fpt-shop / production'
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
           env_url: 'https://fpt-shop.onrender.com'

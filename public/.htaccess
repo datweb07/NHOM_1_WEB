@@ -1,15 +1,7 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-
-    # Thiết lập thư mục gốc là thư mục hiện tại
     RewriteBase /
-
-    # Nếu đường dẫn trỏ tới một FILE CÓ THẬT -> Cho phép tải file
     RewriteCond %{REQUEST_FILENAME} !-f
-    
-    # Nếu đường dẫn trỏ tới một THƯ MỤC CÓ THẬT -> Cho phép truy cập
     RewriteCond %{REQUEST_FILENAME} !-d
-
-    # Đẩy mọi luồng dữ liệu còn lại vào file index.php nằm ngay bên cạnh
     RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
