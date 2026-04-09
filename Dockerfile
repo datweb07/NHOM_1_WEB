@@ -12,6 +12,11 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
+# ---> BẮT ĐẦU PHẦN FIX LỖI PORT <---
+# Cấu hình Apache sử dụng biến môi trường PORT do hosting cấp (dùng nháy đơn để giữ nguyên chữ ${PORT})
+RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
+# ---> KẾT THÚC PHẦN FIX LỖI PORT <---
+
 WORKDIR /var/www/html/
 COPY . /var/www/html/
 
