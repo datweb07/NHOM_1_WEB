@@ -409,7 +409,7 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
 
                         <?php foreach ($danhMucTree as $index => $category):
                             $iconClass = HeaderHelper::layIconClass($category['ten']);
-                            $categoryUrl = '/san-pham?danh_muc_id=' . $category['id'];
+                            $categoryUrl = '/danh-muc/' . $category['slug'];
                             $activeClass = ($index === 0) ? 'active' : '';
                             ?>
                             <a href="<?= htmlspecialchars($categoryUrl) ?>" class="left-nav-item <?= $activeClass ?>">
@@ -548,7 +548,7 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
             <div class="list-group list-group-flush rounded-0">
                 <?php foreach ($danhMucTree as $category):
                     $iconClass = HeaderHelper::layIconClass($category['ten']);
-                    $categoryUrl = '/san-pham?danh_muc_id=' . $category['id'];
+                    $categoryUrl = '/danh-muc/' . $category['slug'];
                     ?>
                     <a href="<?= htmlspecialchars($categoryUrl) ?>"
                         class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
