@@ -216,10 +216,10 @@ class KhachHangController
             $publicId = 'avatar_user_' . $userId;
 
             $uploadResult = $cloudinary->uploadApi()->upload($file['tmp_name'], [
-                'folder'     => 'avatars',
-                'public_id'  => $publicId,
-                'overwrite'  => true,   
-                'invalidate' => true       
+                'folder' => 'avatars',
+                'public_id' => $publicId,
+                'overwrite' => true,
+                'invalidate' => true
             ]);
 
             $avatarUrl = $uploadResult['secure_url'];
@@ -232,13 +232,11 @@ class KhachHangController
                     if (file_exists($oldLocalPath)) {
                         @unlink($oldLocalPath);
                     }
-                } 
-
-                else if (strpos($oldUrl, $publicId) === false) {
+                } else if (strpos($oldUrl, $publicId) === false) {
 
                     $urlPath = parse_url($oldUrl, PHP_URL_PATH);
                     if (preg_match('/upload\/(?:v\d+\/)?(.+)\.[a-zA-Z0-9]+$/', $urlPath, $matches)) {
-                        $oldPublicId = $matches[1]; 
+                        $oldPublicId = $matches[1];
                         try {
                             $cloudinary->uploadApi()->destroy($oldPublicId, ['invalidate' => true]);
                         } catch (\Exception $e) {
@@ -259,6 +257,236 @@ class KhachHangController
             }
         } catch (\Exception $e) {
             $_SESSION['error'] = "Upload ảnh thất bại: " . $e->getMessage();
+        }
+
+        header("Location: /client/profile");
+        exit();
+    }
+
+    public function themDiaChi()
+    {
+        \App\Core\Session::start();
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: /client/profile");
+            exit();
+        }
+
+        // Validate required fields
+        $requiredFields = [
+            'ho_ten_nguoi_nhan',
+            'sdt_nguoi_nhan',
+            'tinh_thanh',
+            'quan_huyen',
+            'phuong_xa',
+            'dia_chi_cu_the'
+        ];
+
+        foreach ($requiredFields as $field) {
+            if (empty(trim($_POST[$field] ?? ''))) {
+                $_SESSION['error'] = "Vui lòng điền đầy đủ thông tin!";
+                header("Location: /client/profile");
+                exit();
+            }
+        }
+
+        $data = [
+            'nguoi_dung_id' => (int) $userId,
+            'ten_nguoi_nhan' => trim($_POST['ho_ten_nguoi_nhan']),
+            'sdt_nhan' => trim($_POST['sdt_nguoi_nhan']),
+            'tinh_thanh' => trim($_POST['tinh_thanh']),
+            'quan_huyen' => trim($_POST['quan_huyen']),
+            'phuong_xa' => trim($_POST['phuong_xa']),
+            'so_nha_duong' => trim($_POST['dia_chi_cu_the']),
+            'mac_dinh' => isset($_POST['is_mac_dinh']) ? 1 : 0
+        ];
+
+        // Load DiaChi model
+        require_once dirname(__DIR__, 2) . '/models/entities/DiaChi.php';
+        $diaChiModel = new DiaChi();
+
+        try {
+            $result = $diaChiModel->themDiaChi($data);
+
+            if ($result > 0) {
+                $_SESSION['success'] = "Thêm địa chỉ thành công!";
+            } else {
+                $_SESSION['error'] = "Thêm địa chỉ thất bại!";
+            }
+        } catch (\Exception $e) {
+            error_log("Address creation error: " . $e->getMessage());
+            $_SESSION['error'] = "Đã xảy ra lỗi. Vui lòng thử lại!";
+        }
+
+        header("Location: /client/profile");
+        exit();
+    }
+
+    public function capNhatDiaChi()
+    {
+        \App\Core\Session::start();
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: /client/profile");
+            exit();
+        }
+
+        // Get address ID
+        $addressId = (int) ($_POST['id'] ?? 0);
+        if (!$addressId) {
+            $_SESSION['error'] = "Địa chỉ không hợp lệ!";
+            header("Location: /client/profile");
+            exit();
+        }
+
+        // Load DiaChi model
+        require_once dirname(__DIR__, 2) . '/models/entities/DiaChi.php';
+        $diaChiModel = new DiaChi();
+
+        // Verify address belongs to user
+        $diaChi = $diaChiModel->getById($addressId);
+        if (!$diaChi || $diaChi['nguoi_dung_id'] != $userId) {
+            $_SESSION['error'] = "Bạn không có quyền thực hiện thao tác này!";
+            header("Location: /client/profile");
+            exit();
+        }
+
+        // Validate required fields
+        $requiredFields = [
+            'ho_ten_nguoi_nhan',
+            'sdt_nguoi_nhan',
+            'tinh_thanh',
+            'quan_huyen',
+            'phuong_xa',
+            'dia_chi_cu_the'
+        ];
+
+        foreach ($requiredFields as $field) {
+            if (empty(trim($_POST[$field] ?? ''))) {
+                $_SESSION['error'] = "Vui lòng điền đầy đủ thông tin!";
+                header("Location: /client/profile");
+                exit();
+            }
+        }
+
+        // Prepare data
+        $data = [
+            'ho_ten_nguoi_nhan' => trim($_POST['ho_ten_nguoi_nhan']),
+            'sdt_nguoi_nhan' => trim($_POST['sdt_nguoi_nhan']),
+            'tinh_thanh' => trim($_POST['tinh_thanh']),
+            'quan_huyen' => trim($_POST['quan_huyen']),
+            'phuong_xa' => trim($_POST['phuong_xa']),
+            'dia_chi_cu_the' => trim($_POST['dia_chi_cu_the']),
+            'mac_dinh' => isset($_POST['is_mac_dinh']) ? 1 : 0
+        ];
+
+        try {
+            $result = $diaChiModel->capNhatDiaChi($addressId, $data);
+
+            if ($result) {
+                $_SESSION['success'] = "Cập nhật địa chỉ thành công!";
+            } else {
+                $_SESSION['error'] = "Cập nhật địa chỉ thất bại!";
+            }
+        } catch (\Exception $e) {
+            error_log("Address update error: " . $e->getMessage());
+            $_SESSION['error'] = "Đã xảy ra lỗi. Vui lòng thử lại!";
+        }
+
+        header("Location: /client/profile");
+        exit();
+    }
+
+    public function xoaDiaChi()
+    {
+        \App\Core\Session::start();
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: /client/profile");
+            exit();
+        }
+
+        // Get address ID
+        $addressId = (int) ($_POST['id'] ?? 0);
+        if (!$addressId) {
+            $_SESSION['error'] = "Địa chỉ không hợp lệ!";
+            header("Location: /client/profile");
+            exit();
+        }
+
+        // Load DiaChi model
+        require_once dirname(__DIR__, 2) . '/models/entities/DiaChi.php';
+        $diaChiModel = new DiaChi();
+
+        // Verify address belongs to user
+        $diaChi = $diaChiModel->getById($addressId);
+        if (!$diaChi || $diaChi['nguoi_dung_id'] != $userId) {
+            $_SESSION['error'] = "Bạn không có quyền thực hiện thao tác này!";
+            header("Location: /client/profile");
+            exit();
+        }
+
+        try {
+            $result = $diaChiModel->xoaDiaChi($addressId);
+
+            if ($result) {
+                $_SESSION['success'] = "Xóa địa chỉ thành công!";
+            } else {
+                $_SESSION['error'] = "Xóa địa chỉ thất bại!";
+            }
+        } catch (\Exception $e) {
+            error_log("Address deletion error: " . $e->getMessage());
+            $_SESSION['error'] = "Đã xảy ra lỗi. Vui lòng thử lại!";
+        }
+
+        header("Location: /client/profile");
+        exit();
+    }
+
+    public function datMacDinh()
+    {
+        \App\Core\Session::start();
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if (!$userId || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: /client/profile");
+            exit();
+        }
+
+        // Get address ID
+        $addressId = (int) ($_POST['id'] ?? 0);
+        if (!$addressId) {
+            $_SESSION['error'] = "Địa chỉ không hợp lệ!";
+            header("Location: /client/profile");
+            exit();
+        }
+
+        // Load DiaChi model
+        require_once dirname(__DIR__, 2) . '/models/entities/DiaChi.php';
+        $diaChiModel = new DiaChi();
+
+        // Verify address belongs to user
+        $diaChi = $diaChiModel->getById($addressId);
+        if (!$diaChi || $diaChi['nguoi_dung_id'] != $userId) {
+            $_SESSION['error'] = "Bạn không có quyền thực hiện thao tác này!";
+            header("Location: /client/profile");
+            exit();
+        }
+
+        try {
+            $result = $diaChiModel->datMacDinh($addressId);
+
+            if ($result) {
+                $_SESSION['success'] = "Đặt địa chỉ mặc định thành công!";
+            } else {
+                $_SESSION['error'] = "Đặt địa chỉ mặc định thất bại!";
+            }
+        } catch (\Exception $e) {
+            error_log("Set default address error: " . $e->getMessage());
+            $_SESSION['error'] = "Đã xảy ra lỗi. Vui lòng thử lại!";
         }
 
         header("Location: /client/profile");
