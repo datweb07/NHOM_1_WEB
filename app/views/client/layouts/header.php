@@ -339,6 +339,74 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
         background-color: rgba(0, 0, 0, 0.25);
         color: white;
     }
+
+    /* Dropdown lịch sử tìm kiếm */
+.search-history-dropdown {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    z-index: 1060;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+}
+
+.dropdown-header {
+    border-bottom: 1px solid #f0f0f0;
+    background: #fafafa;
+}
+
+.history-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.history-item:hover {
+    background: #f8f9fa;
+}
+
+.history-item .keyword {
+    flex: 1;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.history-item .delete-btn {
+    color: #999;
+    background: none;
+    border: none;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 20px;
+}
+
+.history-item .delete-btn:hover {
+    background: #eee;
+    color: #cb1c22;
+}
+
+.history-empty {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-size: 0.85rem;
+}
 </style>
 
 <header class="sticky-header">
@@ -462,16 +530,29 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
                 </div>
             </div>
 
-            <div class="flex-grow-1 me-4">
-                <form class="search-form d-flex w-100 position-relative" action="/tim-kiem" method="GET">
-                    <input class="form-control rounded-pill ps-4" type="search" name="q"
-                        placeholder="Nhập tên điện thoại, laptop, phụ kiện... cần tìm" style="height: 42px;">
-                    <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-danger"
-                        type="submit" style="text-decoration: none;">
-                        <i class="fa fa-magnifying-glass fs-5"></i>
-                    </button>
-                </form>
+            <div class="flex-grow-1 me-4 position-relative">
+    <form class="search-form d-flex w-100 position-relative" action="/tim-kiem" method="GET" autocomplete="off">
+        <input class="form-control rounded-pill ps-4" type="search" name="q" id="searchInput"
+            placeholder="Nhập tên điện thoại, laptop, phụ kiện... cần tìm" style="height: 42px;">
+        <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-danger" type="submit" style="text-decoration: none;">
+            <i class="fa fa-magnifying-glass fs-5"></i>
+        </button>
+    </form>
+    <!-- Dropdown lịch sử tìm kiếm -->
+    <div id="searchHistoryDropdown" class="search-history-dropdown" style="display: none;">
+        <div class="dropdown-header d-flex justify-content-between align-items-center px-3 py-2">
+            <span class="fw-bold">Lịch sử tìm kiếm</span>
+            <div>
+                <a href="#" id="viewAllHistory" class="text-decoration-none me-3" style="font-size: 0.8rem;">Xem tất cả</a>
+                <a href="#" id="clearAllHistory" class="text-decoration-none text-danger" style="font-size: 0.8rem;">Xóa tất cả</a>
             </div>
+        </div>
+        <div id="historyList" class="history-list">
+            <!-- Danh sách sẽ được load bằng JS -->
+            <div class="text-muted text-center py-2">Đang tải...</div>
+        </div>
+    </div>
+</div>
 
             <?php
             $isLoggedIn = \App\Core\Session::isLoggedIn();
@@ -626,4 +707,138 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
 
         container.innerHTML = html;
     }
+    // ========== LỊCH SỬ TÌM KIẾM ==========
+const searchInput = document.getElementById('searchInput');
+const historyDropdown = document.getElementById('searchHistoryDropdown');
+const historyListDiv = document.getElementById('historyList');
+const viewAllBtn = document.getElementById('viewAllHistory');
+const clearAllBtn = document.getElementById('clearAllHistory');
+
+let currentHistoryData = [];
+
+// Kiểm tra đăng nhập qua session (có thể gán biến từ PHP)
+// Giả sử bạn đã có biến isLoggedIn ở đây, nếu không thì gọi API kiểm tra riêng
+const isLoggedIn = <?php echo json_encode($isLoggedIn); ?>; // $isLoggedIn đã có ở trên
+
+async function loadSearchHistory(limit = 5) {
+    if (!isLoggedIn) {
+        historyListDiv.innerHTML = '<div class="history-empty">Đăng nhập để xem lịch sử tìm kiếm</div>';
+        return;
+    }
+    try {
+        const response = await fetch(`/tim-kiem/lich-su?limit=${limit}`);
+        const result = await response.json();
+        if (result.success && result.data.length > 0) {
+            currentHistoryData = result.data;
+            renderHistoryList(result.data);
+        } else {
+            historyListDiv.innerHTML = '<div class="history-empty">Chưa có lịch sử tìm kiếm</div>';
+        }
+    } catch (error) {
+        historyListDiv.innerHTML = '<div class="history-empty">Lỗi tải dữ liệu</div>';
+    }
+}
+
+function renderHistoryList(history) {
+    if (!history.length) {
+        historyListDiv.innerHTML = '<div class="history-empty">Chưa có lịch sử tìm kiếm</div>';
+        return;
+    }
+    let html = '';
+    history.forEach(item => {
+        html += `
+            <div class="history-item" data-keyword="${escapeHtml(item.tu_khoa)}">
+                <a href="/tim-kiem?q=${encodeURIComponent(item.tu_khoa)}" class="keyword">${escapeHtml(item.tu_khoa)}</a>
+                <button class="delete-btn" data-keyword="${escapeHtml(item.tu_khoa)}"><i class="fa fa-trash-o"></i></button>
+            </div>
+        `;
+    });
+    historyListDiv.innerHTML = html;
+
+    // Gắn sự kiện xóa từng từ khóa
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const keyword = btn.getAttribute('data-keyword');
+            await deleteSingleKeyword(keyword);
+        });
+    });
+}
+
+async function deleteSingleKeyword(keyword) {
+    if (!confirm(`Xóa từ khóa "${keyword}" khỏi lịch sử?`)) return;
+    try {
+        const response = await fetch('/tim-kiem/xoa-lich-su', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ keyword: keyword }) // cần sửa backend hỗ trợ xóa 1 từ
+        });
+        const result = await response.json();
+        if (result.success) {
+            loadSearchHistory(5); // reload lại 5 mục
+        } else {
+            alert('Xóa thất bại');
+        }
+    } catch (error) {
+        alert('Lỗi kết nối');
+    }
+}
+
+async function clearAllHistory() {
+    if (!confirm('Bạn có chắc muốn xóa toàn bộ lịch sử tìm kiếm?')) return;
+    try {
+        const response = await fetch('/tim-kiem/xoa-lich-su', { method: 'POST' });
+        const result = await response.json();
+        if (result.success) {
+            loadSearchHistory(5);
+        } else {
+            alert('Xóa thất bại');
+        }
+    } catch (error) {
+        alert('Lỗi kết nối');
+    }
+}
+
+// Xem tất cả: load 20 từ khóa (hoặc tất cả)
+function viewAllHistory() {
+    loadSearchHistory(20); // hoặc 0 để lấy tất cả (cần backend hỗ trợ)
+}
+
+// Khi focus vào input
+searchInput.addEventListener('focus', () => {
+    loadSearchHistory(5);
+    historyDropdown.style.display = 'block';
+});
+
+// Ẩn dropdown khi click ra ngoài
+document.addEventListener('click', function(e) {
+    if (!searchInput.contains(e.target) && !historyDropdown.contains(e.target)) {
+        historyDropdown.style.display = 'none';
+    }
+});
+
+// Ngăn click vào dropdown làm mất focus input
+historyDropdown.addEventListener('click', (e) => {
+    e.stopPropagation();
+});
+
+// Xử lý nút xem tất cả và xóa tất cả
+if (viewAllBtn) viewAllBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    viewAllHistory();
+});
+if (clearAllBtn) clearAllBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    clearAllHistory();
+});
+
+// Helper escape HTML
+function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
 </script>
