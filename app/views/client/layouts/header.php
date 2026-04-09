@@ -67,6 +67,7 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
         top: calc(100% + 10px);
         left: 0;
         width: 1200px;
+        max-width: 100vw;
         /* Độ rộng fix chuẩn PC */
         background: #fff;
         border-radius: 12px;

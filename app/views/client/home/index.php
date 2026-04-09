@@ -95,11 +95,9 @@ ob_start();
 
     .continuous-slider-wrapper {
         overflow: hidden;
-        width: 100%;
-        margin: 0 24px;
+        margin: 0 24px; 
         position: relative;
-        padding: 15px 0;
-        min-height: 400px;
+        padding: 0;
     }
 
     .continuous-slider-wrapper::before {
@@ -151,7 +149,7 @@ ob_start();
     .continuous-slider-item {
         flex: 0 0 280px;
         width: 280px;
-        padding: 0 10px;
+        padding: 10px 10px;
     }
 
     @media (max-width: 768px) {
@@ -190,9 +188,9 @@ ob_start();
 </style>
 
 <div class="slider-card mt-4" style="padding: 0;">
-    <div class="container-xl shadow-sm" style="background: #fff; border-radius: 12px; padding: 15px 0;">
+    <div class="container-xl shadow-sm" style="background: #fff; border-radius: 12px; padding: 15px 0 10px 0;">
 
-        <div class="px-4 pb-2 pt-2">
+        <div class="px-4 pb-1 pt-2">
             <p class="fs-4 fw-bold text-danger mb-0"><i class="fa fa-fire-flame-curved"></i> Khuyến mãi</p>
         </div>
 
@@ -217,9 +215,9 @@ ob_start();
                             $tienGiam = (float) ($sp['gia_hien_thi'] ?? 0) - $giaSauGiam;
                             ?>
                             <div class="continuous-slider-item">
-                                <div class="p-2 border rounded-3 bg-white custom-hover-card h-100 mx-1">
+                                <div class="p-2 border rounded-3 bg-white custom-hover-card mx-1" style="height: 380px; display: flex; flex-direction: column;">
                                     <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
-                                        class="text-dark text-decoration-none d-block">
+                                        class="text-dark text-decoration-none d-flex flex-column h-100">
                                         <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
                                             style="height: 250px;">
                                             <?php if (!empty($sp['anh_chinh'])): ?>
@@ -239,8 +237,8 @@ ob_start();
                                                     style="background-color: #66cd42; font-size: 0.75rem;">Trả góp 0%</span>
                                             </div>
                                         </div>
-                                        <div class="mt-3 px-1">
-                                            <h3 class="fs-6 fw-semibold mb-3 text-truncate">
+                                        <div class="mt-3 px-1" style="flex: 1; display: flex; flex-direction: column;">
+                                            <h3 class="fs-6 fw-semibold mb-2 text-truncate">
                                                 <?php echo htmlspecialchars($sp['ten_san_pham']); ?>
                                             </h3>
                                             <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
@@ -249,7 +247,7 @@ ob_start();
                                                 <span class="text-secondary text-decoration-line-through"
                                                     style="font-size: 0.85rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
                                             </div>
-                                            <div class="bg-light p-2 rounded-3 mt-3">
+                                            <div class="bg-light p-2 rounded-3 mt-auto">
                                                 <span class="text-secondary" style="font-size: 0.75rem;">Giảm thêm 150.000đ khi TT
                                                     online 100% qua thẻ Mastercard</span>
                                             </div>

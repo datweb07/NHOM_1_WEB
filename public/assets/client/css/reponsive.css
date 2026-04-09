@@ -176,6 +176,25 @@
 
 /*mobile */
 @media (max-width: 739px) {
+    /* Fix horizontal overflow on mobile */
+    html, body {
+        overflow-x: hidden;
+        max-width: 100vw;
+    }
+    
+    * {
+        max-width: 100%;
+    }
+    
+    .container, .container-fluid, .container-xl {
+        overflow-x: hidden;
+    }
+    
+    /* Hide mega menu on mobile */
+    .mega-menu-panel {
+        display: none !important;
+    }
+    
     .menu-mobile-tablet{
         width: 70%;
     }
