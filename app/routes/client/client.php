@@ -171,6 +171,14 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	if (preg_match('#^danh-muc/([a-z0-9-]+)$#', $path, $matches)) {
+        require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
+        $controller = new \App\Controllers\Client\SanPhamController();
+        // Gọi đến hàm danhSachTheoSlug() mà bạn đã viết sẵn trong Controller
+        $controller->danhSachTheoSlug($matches[1]); 
+        return;
+    }
+
 	// Sản phẩm routes
 	if (preg_match('#^san-pham/([a-z0-9-]+)$#', $path, $matches)) {
 		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
