@@ -58,5 +58,6 @@ jobs:
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
           status: ${{ job.status }}
+          env: production
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
           env_url: 'https://fpt-shop.onrender.com'
