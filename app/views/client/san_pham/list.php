@@ -6,29 +6,30 @@ ob_start();
 <style>
     /* CSS thêm hiệu ứng scale ảnh giống mục Gợi ý cho bạn */
     .product-img-wrapper {
-        overflow: hidden; /* Ngăn ảnh tràn ra ngoài khi phóng to */
+        overflow: hidden;
+        /* Ngăn ảnh tràn ra ngoài khi phóng to */
         display: flex;
         justify-content: center;
         align-items: center;
     }
-    
+
     .card {
-        transition: box-shadow 0.3s ease; /
+        transition: box-shadow 0.3s ease;
     }
 
     .product-img {
-        transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1); 
-        
-        transform-origin: center center; 
-        backface-visibility: hidden; 
+        transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+
+        transform-origin: center center;
+        backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
         -webkit-font-smoothing: antialiased;
-        transform: translateZ(0); 
+        transform: translateZ(0);
         will-change: transform;
     }
-    
+
     .card:hover .product-img {
-        transform: scale(1.05) translateZ(0); 
+        transform: scale(1.05) translateZ(0);
     }
 </style>
 
@@ -75,7 +76,7 @@ ob_start();
                         <div class="mb-3">
                             <label class="form-label small fw-medium">Sắp xếp theo</label>
                             <select name="sort_by" class="form-select form-select-sm">
-                                <option value="ngay_tao" <?= ($sortBy ?? '' ) === 'ngay_tao' ? 'selected' : '' ?>>Mới nhất</option>
+                                <option value="ngay_tao" <?= ($sortBy ?? '') === 'ngay_tao' ? 'selected' : '' ?>>Mới nhất</option>
                                 <option value="gia_hien_thi" <?= ($sortBy ?? '') === 'gia_hien_thi' ? 'selected' : '' ?>>Giá</option>
                                 <option value="ten_san_pham" <?= ($sortBy ?? '') === 'ten_san_pham' ? 'selected' : '' ?>>Tên</option>
                             </select>
@@ -119,12 +120,12 @@ ob_start();
                     <?php foreach ($sanPhamList as $sp): ?>
                         <div class="col-6 col-md-4 col-lg-3">
                             <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
-                                <div class="card border-0 shadow-sm h-100"> 
+                                <div class="card border-0 shadow-sm h-100">
                                     <div class="position-relative product-img-wrapper rounded-top">
                                         <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png') ?>"
-                                             class="card-img-top p-2 product-img"
-                                             alt="<?= htmlspecialchars($sp['ten_san_pham']) ?>"
-                                             style="height:180px;object-fit:contain;">
+                                            class="card-img-top p-2 product-img"
+                                            alt="<?= htmlspecialchars($sp['ten_san_pham']) ?>"
+                                            style="height:180px;object-fit:contain;">
                                         <?php if (!empty($sp['phan_tram_giam']) && $sp['phan_tram_giam'] > 0): ?>
                                             <span class="badge bg-danger position-absolute top-0 start-0 m-2" style="font-size:0.7rem; z-index: 2;">
                                                 -<?= $sp['phan_tram_giam'] ?>%
@@ -132,7 +133,7 @@ ob_start();
                                         <?php endif; ?>
                                     </div>
                                     <div class="card-body pt-0 px-3 pb-3 text-center">
-                                        <h6 class="small mb-1 text-dark fw-medium" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5em;">
+                                        <h6 class="small mb-1 text-dark fw-medium" style="display:-webkit-box;line-clamp:2;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5em;">
                                             <?= htmlspecialchars($sp['ten_san_pham']) ?>
                                         </h6>
                                         <p class="text-danger fw-bold mb-0 fs-6"><?= number_format($sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>

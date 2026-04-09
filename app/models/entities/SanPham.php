@@ -139,6 +139,63 @@ class SanPham extends BaseModel
         return parent::query($sql);
     }
 
+    public function laySanPhamTheoSlugs(array $slugs, int $limit = 4): array
+    {
+        $safeSlugs = [];
+        foreach ($slugs as $slug) {
+            $slug = trim((string)$slug);
+            if ($slug === '') {
+                continue;
+            }
+            $safeSlugs[] = "'" . addslashes($slug) . "'";
+        }
+
+        if (empty($safeSlugs)) {
+            return [];
+        }
+
+        $limit = max(1, (int)$limit);
+        $limit = min($limit, 8);
+        $inClause = implode(', ', array_slice($safeSlugs, 0, $limit));
+
+        $sql = "SELECT sp.*, dm.ten AS ten_danh_muc,
+                       (SELECT url_anh FROM hinh_anh_san_pham
+                        WHERE san_pham_id = sp.id AND la_anh_chinh = 1
+                        LIMIT 1) as anh_chinh
+                FROM {$this->table} sp
+                LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.id
+                WHERE sp.slug IN ($inClause) AND sp.trang_thai = 'CON_BAN'
+                ORDER BY FIELD(sp.slug, $inClause)";
+
+        return parent::query($sql);
+    }
+
+    public function laySanPhamTheoIds(array $ids, int $limit = 4): array
+    {
+        $safeIds = [];
+        foreach ($ids as $id) {
+            $intId = (int)$id;
+            if ($intId > 0) {
+                $safeIds[] = $intId;
+            }
+        }
+
+        if (empty($safeIds)) {
+            return [];
+        }
+
+        $limit = max(1, (int)$limit);
+        $limit = min($limit, 8);
+        $safeIds = array_slice(array_values(array_unique($safeIds)), 0, $limit);
+        $inClause = implode(', ', $safeIds);
+
+        $sql = "SELECT id, slug FROM {$this->table}
+                WHERE id IN ($inClause) AND trang_thai = 'CON_BAN'
+                ORDER BY FIELD(id, $inClause)";
+
+        return parent::query($sql);
+    }
+
     public function kiemTraCoDonHang(int $id): bool
     {
         $sql = "SELECT COUNT(*) as total FROM chi_tiet_don ctd
@@ -172,8 +229,8 @@ class SanPham extends BaseModel
         $sql = "UPDATE phien_ban_san_pham
                 SET trang_thai = CASE WHEN so_luong_ton > 0 THEN 'CON_HANG' ELSE 'HET_HANG' END
                 WHERE san_pham_id = $sanPhamId";
-              $this->query($sql);
-              return mysqli_affected_rows($this->link);
+        $this->query($sql);
+        return mysqli_affected_rows($this->link);
     }
 
     // ===== Getter =====
@@ -301,7 +358,7 @@ class SanPham extends BaseModel
                 WHERE sp.noi_bat = 1 AND sp.trang_thai = 'CON_BAN'
                 ORDER BY sp.ngay_tao DESC
                 LIMIT $limit";
-        
+
         return parent::query($sql);
     }
 
@@ -327,7 +384,7 @@ class SanPham extends BaseModel
                   AND (km.ngay_ket_thuc IS NULL OR km.ngay_ket_thuc >= NOW())
                 ORDER BY sp.ngay_tao DESC
                 LIMIT $limit";
-        
+
         return parent::query($sql);
     }
 
@@ -338,7 +395,7 @@ class SanPham extends BaseModel
     {
         $limit = max(1, (int)$limit);
         $slugDanhMuc = mysqli_real_escape_string($this->link, $slugDanhMuc);
-        
+
         $sql = "SELECT sp.*, 
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
@@ -349,7 +406,7 @@ class SanPham extends BaseModel
                   AND sp.trang_thai = 'CON_BAN'
                 ORDER BY sp.ngay_tao DESC
                 LIMIT $limit";
-        
+
         return parent::query($sql);
     }
 
@@ -365,7 +422,7 @@ class SanPham extends BaseModel
             }
             return $giaGoc - $tienGiam;
         }
-        
+
         // SO_TIEN
         return max(0, $giaGoc - $giaTriGiam);
     }
@@ -376,14 +433,14 @@ class SanPham extends BaseModel
     public function layChiTietTheoSlug(string $slug): ?array
     {
         $slug = mysqli_real_escape_string($this->link, $slug);
-        
+
         // BỔ SUNG: AND sp.trang_thai = 'CON_BAN' để chặn xem chi tiết khi đã ngưng bán
         $sql = "SELECT sp.*, dm.ten AS ten_danh_muc, dm.slug AS slug_danh_muc
                 FROM {$this->table} sp
                 LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.id
                 WHERE sp.slug = '$slug' AND sp.trang_thai = 'CON_BAN'
                 LIMIT 1";
-        
+
         $result = parent::query($sql);
         return !empty($result) ? $result[0] : null;
     }

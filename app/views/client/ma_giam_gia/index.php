@@ -34,8 +34,9 @@ ob_start();
                                     <?php if ($mgg['gia_tri_don_toi_thieu']): ?>
                                         <p class="small text-muted mb-1">Đơn tối thiểu: <?= number_format($mgg['gia_tri_don_toi_thieu'], 0, ',', '.') ?>đ</p>
                                     <?php endif; ?>
-                                    <?php if ($mgg['ngay_het_han']): ?>
-                                        <p class="small text-muted mb-0"><i class="fa fa-clock me-1"></i>HSD: <?= date('d/m/Y', strtotime($mgg['ngay_het_han'])) ?></p>
+                                    <?php $ngayHetHan = $mgg['ngay_ket_thuc'] ?? ($mgg['ngay_het_han'] ?? null); ?>
+                                    <?php if ($ngayHetHan): ?>
+                                        <p class="small text-muted mb-0"><i class="fa fa-clock me-1"></i>HSD: <?= date('d/m/Y', strtotime($ngayHetHan)) ?></p>
                                     <?php endif; ?>
                                     <?php if ($mgg['so_luong_con_lai']): ?>
                                         <p class="small text-warning mb-0">Còn lại: <?= $mgg['so_luong_con_lai'] ?> mã</p>
@@ -46,7 +47,7 @@ ob_start();
                                         <code class="fs-6 fw-bold text-danger d-block"><?= htmlspecialchars($mgg['ma_code']) ?></code>
                                     </div>
                                     <button class="btn btn-outline-danger btn-sm w-100 btn-copy-code"
-                                            data-code="<?= htmlspecialchars($mgg['ma_code']) ?>">
+                                        data-code="<?= htmlspecialchars($mgg['ma_code']) ?>">
                                         <i class="fa fa-copy me-1"></i>Sao chép
                                     </button>
                                 </div>
@@ -72,15 +73,15 @@ ob_start();
 </div>
 
 <script>
-document.querySelectorAll('.btn-copy-code').forEach(btn => {
-    btn.addEventListener('click', function() {
-        navigator.clipboard.writeText(this.dataset.code).then(() => {
-            const orig = this.innerHTML;
-            this.innerHTML = '<i class="fa fa-check me-1"></i>Đã sao chép';
-            setTimeout(() => this.innerHTML = orig, 2000);
+    document.querySelectorAll('.btn-copy-code').forEach(btn => {
+        btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.dataset.code).then(() => {
+                const orig = this.innerHTML;
+                this.innerHTML = '<i class="fa fa-check me-1"></i>Đã sao chép';
+                setTimeout(() => this.innerHTML = orig, 2000);
+            });
         });
     });
-});
 </script>
 
 <?php
