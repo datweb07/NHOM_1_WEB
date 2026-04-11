@@ -139,6 +139,12 @@ function adminRoute(string $uri): void
         return;
     }
 
+    if ($path === 'admin/don-hang/hoan-tien' && $method === 'POST') {
+        $id = $_GET['id'] ?? null;
+        $donHangController->hoanTien($id);
+        return;
+    }
+
     if ($path === 'admin/thanh-toan' && $method === 'GET') {
         $thanhToanController->index();
         return;
@@ -159,6 +165,27 @@ function adminRoute(string $uri): void
     if ($path === 'admin/thanh-toan/tu-choi' && $method === 'POST') {
         $id = $_GET['id'] ?? null;
         $thanhToanController->reject($id);
+        return;
+    }
+
+    if ($path === 'admin/thanh-toan/xac-nhan-cod' && $method === 'POST') {
+        $id = $_GET['id'] ?? null;
+        $thanhToanController->confirmCODPayment($id);
+        return;
+    }
+
+    if ($path === 'admin/thanh-toan/xuat-csv' && $method === 'GET') {
+        $thanhToanController->exportTransactions();
+        return;
+    }
+
+    if ($path === 'admin/thanh-toan/cleanup-logs' && $method === 'POST') {
+        $thanhToanController->cleanupLogs();
+        return;
+    }
+
+    if ($path === 'admin/thanh-toan/health' && $method === 'GET') {
+        $thanhToanController->healthDashboard();
         return;
     }
 

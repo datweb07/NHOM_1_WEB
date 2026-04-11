@@ -25,9 +25,6 @@ class DonHangController
         $this->thanhToanModel = new ThanhToan();
     }
 
-    /**
-     * Danh sách đơn hàng của user
-     */
     public function danhSach(): void
     {
         if (!Session::has('user_id')) {
@@ -47,9 +44,6 @@ class DonHangController
         require_once dirname(__DIR__, 2) . '/views/client/don_hang/index.php';
     }
 
-    /**
-     * Chi tiết đơn hàng
-     */
     public function chiTiet(int $id): void
     {
         $donHang = $this->donHangModel->getById($id);
@@ -60,7 +54,6 @@ class DonHangController
             exit;
         }
 
-        // Kiểm tra quyền xem
         if (Session::has('user_id') && $donHang['nguoi_dung_id'] != Session::get('user_id')) {
             Session::flash('error', 'Bạn không có quyền xem đơn hàng này');
             header('Location: /don-hang');
@@ -70,12 +63,16 @@ class DonHangController
         $chiTietDonList = $this->chiTietDonModel->layChiTietDonHang($id);
         $thanhToan = $this->thanhToanModel->layTheoDonHang($id);
 
+        $diaChiGiaoHang = null;
+        if (!empty($donHang['dia_chi_id'])) {
+            require_once dirname(__DIR__, 2) . '/models/entities/DiaChi.php';
+            $diaChiModel = new \DiaChi();
+            $diaChiGiaoHang = $diaChiModel->getById($donHang['dia_chi_id']);
+        }
+
         require_once dirname(__DIR__, 2) . '/views/client/don_hang/detail.php';
     }
 
-    /**
-     * Hủy đơn hàng
-     */
     public function huy(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -98,24 +95,24 @@ class DonHangController
             exit;
         }
 
-        // Kiểm tra quyền
+
         if ($donHang['nguoi_dung_id'] != Session::get('user_id')) {
             Session::flash('error', 'Bạn không có quyền hủy đơn hàng này');
             header('Location: /don-hang');
             exit;
         }
 
-        // Chỉ cho phép hủy đơn chưa xác nhận
+
         if ($donHang['trang_thai'] !== 'CHO_DUYET') {
             Session::flash('error', 'Không thể hủy đơn hàng đã được xác nhận');
             header('Location: /don-hang/' . $id);
             exit;
         }
 
-        // Hủy đơn hàng
+
         $this->donHangModel->update($id, ['trang_thai' => 'DA_HUY']);
 
-        // Hoàn lại tồn kho
+
         $chiTietDonList = $this->chiTietDonModel->layChiTietDonHang($id);
         require_once dirname(__DIR__, 2) . '/models/entities/PhienBanSanPham.php';
         $phienBanModel = new \PhienBanSanPham();

@@ -7,11 +7,14 @@ function e($value): string
 $successMessages = [
     'approved' => 'Da duyet thanh toan thanh cong.',
     'rejected' => 'Da tu choi thanh toan.',
+    'cod_confirmed' => 'Da xac nhan thanh toan COD thanh cong.',
 ];
 
 $errorMessages = [
     'invalid_id' => 'ID thanh toan khong hop le.',
     'not_found' => 'Khong tim thay thanh toan.',
+    'not_cod' => 'Chi co the xac nhan thanh toan COD.',
+    'already_processed' => 'Thanh toan da duoc xu ly.',
 ];
 
 $thanhToan = (isset($thanhToan) && is_array($thanhToan)) ? $thanhToan : [];
@@ -316,7 +319,13 @@ $trangThaiDuyet = (string)($thanhToan['trang_thai_duyet'] ?? '');
                             <div><strong>Mã đơn hàng:</strong> <?= e($donHang['ma_don_hang'] ?? '-') ?></div>
                             <div><strong>Phương thức:</strong> <?= e($thanhToan['phuong_thuc'] ?? '-') ?></div>
                             <div><strong>Số tiền:</strong> <strong><?= number_format((float)($thanhToan['so_tien'] ?? 0), 0, ',', '.') ?> VND</strong></div>
-                            <div><strong>Ngày thanh toán:</strong> <?= e($thanhToan['ngay_thanh_toan'] ?? '-') ?></div>
+                            <?php if (!empty($thanhToan['gateway_transaction_id'])): ?>
+                                <div><strong>Mã giao dịch gateway:</strong> <code><?= e($thanhToan['gateway_transaction_id']) ?></code></div>
+                            <?php endif; ?>
+                            <div><strong>Ngày tạo:</strong> <?= e($thanhToan['created_at'] ?? $thanhToan['ngay_thanh_toan'] ?? '-') ?></div>
+                            <?php if (!empty($thanhToan['expiration_time'])): ?>
+                                <div><strong>Thời gian hết hạn:</strong> <?= e($thanhToan['expiration_time']) ?></div>
+                            <?php endif; ?>
                             <div>
                                 <strong>Trạng thái duyệt:</strong> 
                                 <?php if ($trangThaiDuyet === 'CHO_DUYET'): ?>
@@ -367,7 +376,76 @@ $trangThaiDuyet = (string)($thanhToan['trang_thai_duyet'] ?? '');
                 </div>
             </div>
 
-            <?php if ($trangThaiDuyet === 'CHO_DUYET'): ?>
+            <?php if (!empty($transactionLogs) && is_array($transactionLogs)): ?>
+                <div class="fpt-card">
+                    <div class="card-body">
+                        <h2 class="card-title">Lịch sử giao dịch (Transaction Logs)</h2>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Gateway</th>
+                                        <th>Trạng thái</th>
+                                        <th>Chi tiết</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($transactionLogs as $log): ?>
+                                        <tr>
+                                            <td><?= e($log['created_at'] ?? '-') ?></td>
+                                            <td><?= e($log['gateway_name'] ?? '-') ?></td>
+                                            <td>
+                                                <?php
+                                                $statusClass = 'secondary';
+                                                if ($log['status'] === 'SUCCESS') $statusClass = 'success';
+                                                elseif ($log['status'] === 'FAILED') $statusClass = 'danger';
+                                                elseif ($log['status'] === 'PENDING') $statusClass = 'warning';
+                                                ?>
+                                                <span class="badge bg-<?= $statusClass ?>"><?= e($log['status'] ?? '-') ?></span>
+                                            </td>
+                                            <td>
+                                                <?php if (!empty($log['callback_data'])): ?>
+                                                    <details>
+                                                        <summary style="cursor: pointer; color: #0d6efd;">Xem callback data</summary>
+                                                        <pre style="font-size: 11px; max-height: 200px; overflow: auto; background: #f8f9fa; padding: 8px; border-radius: 4px; margin-top: 8px;"><?= e($log['callback_data']) ?></pre>
+                                                    </details>
+                                                <?php elseif (!empty($log['response_data'])): ?>
+                                                    <details>
+                                                        <summary style="cursor: pointer; color: #0d6efd;">Xem response data</summary>
+                                                        <pre style="font-size: 11px; max-height: 200px; overflow: auto; background: #f8f9fa; padding: 8px; border-radius: 4px; margin-top: 8px;"><?= e($log['response_data']) ?></pre>
+                                                    </details>
+                                                <?php elseif (!empty($log['request_data'])): ?>
+                                                    <details>
+                                                        <summary style="cursor: pointer; color: #0d6efd;">Xem request data</summary>
+                                                        <pre style="font-size: 11px; max-height: 200px; overflow: auto; background: #f8f9fa; padding: 8px; border-radius: 4px; margin-top: 8px;"><?= e($log['request_data']) ?></pre>
+                                                    </details>
+                                                <?php else: ?>
+                                                    <span class="text-muted">-</span>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($trangThaiDuyet === 'CHO_DUYET' && ($thanhToan['phuong_thuc'] ?? '') === 'COD'): ?>
+                <div class="fpt-card action-section">
+                    <div class="card-body">
+                        <h2 class="card-title">Xác nhận thanh toán COD</h2>
+                        <p class="text-muted mb-3">Đánh dấu thanh toán COD này là đã hoàn thành sau khi khách hàng đã thanh toán cho shipper.</p>
+                        <form method="POST" action="/admin/thanh-toan/xac-nhan-cod?id=<?= $paymentId ?>" onsubmit="return confirm('Bạn có chắc chắn muốn xác nhận thanh toán COD này đã hoàn thành?');">
+                            <button type="submit" class="btn-approve">
+                                <i class="fa fa-circle-check"></i> Xác nhận đã thanh toán COD
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            <?php elseif ($trangThaiDuyet === 'CHO_DUYET'): ?>
                 <div class="fpt-card action-section">
                     <div class="card-body">
                         <h2 class="card-title">Duyệt thanh toán</h2>

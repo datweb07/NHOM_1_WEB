@@ -9,9 +9,6 @@ class PhienBanSanPham extends BaseModel
         parent::__construct('phien_ban_san_pham');
     }
 
-    /**
-     * Lấy phiên bản theo sản phẩm
-     */
     public function layPhienBanTheoSanPham(int $sanPhamId): array
     {
         $sanPhamId = (int)$sanPhamId;
@@ -22,18 +19,12 @@ class PhienBanSanPham extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Lấy phiên bản theo ID
-     */
     public function layPhienBanTheoId(int $id): ?array
     {
         $result = $this->getById($id);
         return !empty($result) ? $result : null;
     }
 
-    /**
-     * Kiểm tra tồn kho
-     */
     public function kiemTraTonKho(int $phienBanId, int $soLuong): bool
     {
         $phienBan = $this->layPhienBanTheoId($phienBanId);
@@ -45,9 +36,6 @@ class PhienBanSanPham extends BaseModel
         return $phienBan['so_luong_ton'] >= $soLuong;
     }
 
-    /**
-     * Giảm tồn kho
-     */
     public function giamTonKho(int $phienBanId, int $soLuong): bool
     {
         $phienBanId = (int)$phienBanId;
@@ -61,9 +49,6 @@ class PhienBanSanPham extends BaseModel
         return mysqli_affected_rows($this->link) > 0;
     }
 
-    /**
-     * Tăng tồn kho (khi hủy đơn)
-     */
     public function tangTonKho(int $phienBanId, int $soLuong): bool
     {
         $phienBanId = (int)$phienBanId;
@@ -77,17 +62,11 @@ class PhienBanSanPham extends BaseModel
         return mysqli_affected_rows($this->link) > 0;
     }
 
-    /**
-     * Cập nhật tồn kho trực tiếp
-     */
     public function capNhatTonKho(int $phienBanId, int $soLuongMoi): int
     {
         return $this->update($phienBanId, ['so_luong_ton' => $soLuongMoi]);
     }
 
-    /**
-     * Kiểm tra SKU đã tồn tại chưa
-     */
     public function kiemTraSKU(string $sku, ?int $excludeId = null): bool
     {
         $sku = mysqli_real_escape_string($this->link, $sku);
@@ -102,5 +81,10 @@ class PhienBanSanPham extends BaseModel
         $result = $this->query($sql);
         
         return !empty($result);
+    }
+
+    public function findById(int $id): ?array
+    {
+        return $this->layPhienBanTheoId($id);
     }
 }

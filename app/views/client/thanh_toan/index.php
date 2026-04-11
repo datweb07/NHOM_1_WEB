@@ -25,12 +25,12 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                             <h6 class="fw-bold mb-3"><i class="fa fa-map-marker-alt text-danger me-2"></i>Địa chỉ giao hàng</h6>
                             <?php foreach ($diaChiList as $dc): ?>
                                 <?php
-                                // Lấy chính xác tên cột trong DB hoặc fallback nếu không tồn tại
+
                                 $idDiaChi = $dc['id'];
                                 $tenNguoiNhan = htmlspecialchars($dc['ten_nguoi_nhan'] ?? $dc['ho_ten'] ?? 'Chưa cập nhật');
                                 $sdtNhan = htmlspecialchars($dc['sdt_nhan'] ?? $dc['sdt'] ?? 'Chưa cập nhật');
                                 
-                                // Ghép địa chỉ
+
                                 $diaChiCuThe = $dc['so_nha_duong'] ?? $dc['dia_chi_chi_tiet'] ?? $dc['dia_chi_cu_the'] ?? '';
                                 $phuongXa = $dc['phuong_xa'] ?? $dc['xa_phuong'] ?? '';
                                 $quanHuyen = $dc['quan_huyen'] ?? '';
@@ -38,7 +38,7 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                                 
                                 $fullAddress = htmlspecialchars(implode(', ', array_filter([$diaChiCuThe, $phuongXa, $quanHuyen, $tinhThanh])));
                                 
-                                // Kiểm tra mặc định
+
                                 $isMacDinh = ($dc['mac_dinh'] ?? $dc['la_mac_dinh'] ?? 0) == 1;
                                 $isChecked = ($diaChiMacDinh && $idDiaChi == $diaChiMacDinh['id']) ? 'checked' : '';
                                 ?>
@@ -81,29 +81,105 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body">
                         <h6 class="fw-bold mb-3"><i class="fa fa-wallet text-danger me-2"></i>Phương thức thanh toán</h6>
-                        <div class="form-check mb-2">
+                        
+
+                        <?php if (!empty($gatewayWarnings)): ?>
+                            <div class="alert alert-warning mb-3" role="alert">
+                                <i class="fa fa-exclamation-triangle me-2"></i>
+                                <strong>Thông báo:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <?php foreach ($gatewayWarnings as $warning): ?>
+                                        <li><?= htmlspecialchars($warning['message']) ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <small class="d-block mt-2">
+                                    <i class="fa fa-info-circle"></i> Chúng tôi khuyến nghị sử dụng phương thức thanh toán COD hoặc chọn cổng thanh toán khác.
+                                </small>
+                            </div>
+                        <?php endif; ?>
+                        
+
+                        <div class="form-check mb-3 border rounded p-3 payment-method-option" data-method="COD">
                             <input class="form-check-input" type="radio" name="phuong_thuc_thanh_toan" id="tt_cod" value="COD" checked>
-                            <label class="form-check-label d-flex align-items-center gap-2" for="tt_cod">
-                                <i class="fa fa-money-bill-wave text-success"></i>
-                                <span>Thanh toán khi nhận hàng (COD)</span>
+                            <label class="form-check-label w-100" for="tt_cod" style="cursor: pointer;">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="fa fa-money-bill-wave text-success fs-4"></i>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-medium">Thanh toán khi nhận hàng (COD)</div>
+                                        <small class="text-muted">Thanh toán bằng tiền mặt khi nhận hàng</small>
+                                        <?php if (!empty($gatewayWarnings)): ?>
+                                            <span class="badge bg-success ms-2">Khuyến nghị</span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
                             </label>
                         </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="phuong_thuc_thanh_toan" id="tt_bank" value="CHUYEN_KHOAN">
-                            <label class="form-check-label d-flex align-items-center gap-2" for="tt_bank">
-                                <i class="fa fa-university text-primary"></i>
-                                <span>Chuyển khoản ngân hàng</span>
+
+
+                        <?php if (isset($vnpayEnabled) && $vnpayEnabled): ?>
+                        <div class="form-check mb-3 border rounded p-3 payment-method-option <?= isset($gatewayWarnings['vnpay']) ? 'border-warning' : '' ?>" data-method="CHUYEN_KHOAN">
+                            <input class="form-check-input" type="radio" name="phuong_thuc_thanh_toan" id="tt_vnpay" value="CHUYEN_KHOAN" <?= isset($gatewayWarnings['vnpay']) ? 'disabled' : '' ?>>
+                            <label class="form-check-label w-100" for="tt_vnpay" style="cursor: pointer;">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="fa fa-university text-primary fs-4"></i>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-medium">Thanh toán qua VNPay</div>
+                                        <small class="text-muted">Thanh toán qua cổng VNPay (ATM, Visa, MasterCard)</small>
+                                        <?php if (isset($gatewayWarnings['vnpay'])): ?>
+                                            <span class="badge bg-warning text-dark ms-2">
+                                                <i class="fa fa-exclamation-triangle"></i> Đang gặp sự cố
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
                             </label>
                         </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="phuong_thuc_thanh_toan" id="tt_momo" value="MOMO">
-                            <label class="form-check-label d-flex align-items-center gap-2" for="tt_momo">
-                                <i class="fa fa-mobile text-danger"></i>
-                                <span>Ví MoMo</span>
+                        <?php endif; ?>
+
+
+                        <?php if (isset($momoEnabled) && $momoEnabled): ?>
+                        <div class="form-check mb-3 border rounded p-3 payment-method-option <?= isset($gatewayWarnings['momo']) ? 'border-warning' : '' ?>" data-method="VI_DIEN_TU">
+                            <input class="form-check-input" type="radio" name="phuong_thuc_thanh_toan" id="tt_momo" value="VI_DIEN_TU" <?= isset($gatewayWarnings['momo']) ? 'disabled' : '' ?>>
+                            <label class="form-check-label w-100" for="tt_momo" style="cursor: pointer;">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="fa fa-mobile-alt text-danger fs-4"></i>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-medium">Thanh toán qua ví Momo</div>
+                                        <small class="text-muted">Thanh toán qua ví điện tử Momo</small>
+                                        <?php if (isset($gatewayWarnings['momo'])): ?>
+                                            <span class="badge bg-warning text-dark ms-2">
+                                                <i class="fa fa-exclamation-triangle"></i> Đang gặp sự cố
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
                             </label>
                         </div>
+                        <?php endif; ?>
+
+                        <?php if ((!isset($vnpayEnabled) || !$vnpayEnabled) && (!isset($momoEnabled) || !$momoEnabled)): ?>
+                        <div class="alert alert-info small mb-0 mt-2">
+                            <i class="fa fa-info-circle me-1"></i>
+                            Hiện tại chỉ hỗ trợ thanh toán COD. Các phương thức thanh toán online đang được cập nhật.
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
+
+                <style>
+                .payment-method-option {
+                    transition: all 0.2s ease;
+                    cursor: pointer;
+                }
+                .payment-method-option:hover {
+                    background-color: #f8f9fa;
+                    border-color: #dc3545 !important;
+                }
+                .payment-method-option:has(input:checked) {
+                    background-color: #fff5f5;
+                    border-color: #dc3545 !important;
+                }
+                </style>
 
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
@@ -202,7 +278,6 @@ document.getElementById('btn-apply-coupon')?.addEventListener('click', function(
     });
 });
 
-// Thêm script đổi màu background cho địa chỉ được chọn
 document.querySelectorAll('input[name="dia_chi_id"]').forEach(radio => {
     radio.addEventListener('change', function() {
         document.querySelectorAll('input[name="dia_chi_id"]').forEach(r => {

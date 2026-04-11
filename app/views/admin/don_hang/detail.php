@@ -6,15 +6,22 @@ function e($value): string
 
 $successMessages = [
     'status_updated' => 'Da cap nhat trang thai don hang.',
+    'refund_initiated' => 'Da khoi tao yeu cau hoan tien thanh cong.',
+    'refund_completed' => 'Hoan tien thanh cong.',
 ];
 
 $errorMessages = [
     'invalid_transition' => 'Khong the chuyen trang thai theo luong yeu cau.',
+    'refund_failed' => 'Khong the hoan tien. Vui long thu lai.',
+    'no_payment' => 'Don hang chua co thong tin thanh toan.',
+    'already_refunded' => 'Don hang da duoc hoan tien.',
 ];
 
 $donHang = (isset($donHang) && is_array($donHang)) ? $donHang : [];
 $chiTietDon = (isset($chiTietDon) && is_array($chiTietDon)) ? $chiTietDon : [];
 $trangThaiKeTiep = (isset($trangThaiKeTiep) && is_array($trangThaiKeTiep)) ? $trangThaiKeTiep : [];
+$thanhToan = (isset($thanhToan) && is_array($thanhToan)) ? $thanhToan : null;
+$refunds = (isset($refunds) && is_array($refunds)) ? $refunds : [];
 $orderId = (int)($donHang['id'] ?? 0);
 ?>
 <!DOCTYPE html>
@@ -183,6 +190,56 @@ $orderId = (int)($donHang['id'] ?? 0);
             background: #fff1f3;
         }
 
+        .btn-refund {
+            border: 1px solid #d0d5dd;
+            background: #fff;
+            color: #344054;
+            border-radius: 10px;
+            padding: 9px 13px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-refund:hover {
+            border-color: #f97316;
+            color: #f97316;
+            background: #fff7ed;
+        }
+
+        .refund-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 5px 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .refund-badge.pending {
+            border: 1px solid #fedf89;
+            background: #fffaeb;
+            color: #b54708;
+        }
+
+        .refund-badge.completed {
+            border: 1px solid #abefc6;
+            background: #ecfdf3;
+            color: #027a48;
+        }
+
+        .refund-badge.failed {
+            border: 1px solid #fecdca;
+            background: #fff1f3;
+            color: #b42318;
+        }
+
         .empty-text {
             color: #667085;
             font-size: 14px;
@@ -329,6 +386,82 @@ $orderId = (int)($donHang['id'] ?? 0);
                     <?php endif; ?>
                 </div>
             </div>
+
+            <?php if ($thanhToan !== null): ?>
+            <div class="fpt-card">
+                <div class="card-body">
+                    <h2 class="card-title">Thông tin thanh toán & Hoàn tiền</h2>
+                    <div class="info-list">
+                        <div><strong>Phương thức:</strong> <?= e($thanhToan['phuong_thuc'] ?? '-') ?></div>
+                        <div><strong>Số tiền:</strong> <?= number_format((float)($thanhToan['so_tien'] ?? 0), 0, ',', '.') ?> VND</div>
+                        <div><strong>Trạng thái:</strong> <?= e($thanhToan['trang_thai_duyet'] ?? '-') ?></div>
+                        <?php if (!empty($thanhToan['gateway_transaction_id'])): ?>
+                            <div><strong>Mã giao dịch:</strong> <?= e($thanhToan['gateway_transaction_id']) ?></div>
+                        <?php endif; ?>
+                    </div>
+
+                    <?php
+                    $canRefund = false;
+                    $refundMessage = '';
+                    $phuongThuc = $thanhToan['phuong_thuc'] ?? '';
+                    $trangThaiDuyet = $thanhToan['trang_thai_duyet'] ?? '';
+                    $hasRefund = !empty($refunds);
+
+                    if ($phuongThuc === 'COD') {
+                        $refundMessage = 'Đơn hàng COD không cần hoàn tiền qua cổng thanh toán.';
+                    } elseif ($trangThaiDuyet !== 'THANH_CONG') {
+                        $refundMessage = 'Chỉ có thể hoàn tiền cho đơn hàng đã thanh toán thành công.';
+                    } elseif ($hasRefund) {
+                        $refundMessage = 'Đơn hàng đã có yêu cầu hoàn tiền.';
+                    } else {
+                        $canRefund = true;
+                    }
+                    ?>
+
+                    <?php if (!empty($refunds)): ?>
+                        <div style="margin-top: 16px;">
+                            <strong>Lịch sử hoàn tiền:</strong>
+                            <?php foreach ($refunds as $refund): ?>
+                                <div style="margin-top: 8px; padding: 10px; background: #f9fafb; border-radius: 8px;">
+                                    <div><strong>Số tiền:</strong> <?= number_format((float)($refund['amount'] ?? 0), 0, ',', '.') ?> VND</div>
+                                    <div><strong>Trạng thái:</strong> 
+                                        <?php
+                                        $refundStatus = strtolower($refund['status'] ?? 'pending');
+                                        $badgeClass = $refundStatus === 'completed' ? 'completed' : ($refundStatus === 'failed' ? 'failed' : 'pending');
+                                        ?>
+                                        <span class="refund-badge <?= $badgeClass ?>">
+                                            <i class="fa fa-circle"></i> <?= e($refund['status'] ?? '-') ?>
+                                        </span>
+                                    </div>
+                                    <?php if (!empty($refund['gateway_refund_id'])): ?>
+                                        <div><strong>Mã hoàn tiền:</strong> <?= e($refund['gateway_refund_id']) ?></div>
+                                    <?php endif; ?>
+                                    <div><strong>Lý do:</strong> <?= e($refund['reason'] ?? '-') ?></div>
+                                    <div><strong>Ngày tạo:</strong> <?= e($refund['created_at'] ?? '-') ?></div>
+                                    <?php if (!empty($refund['completed_at'])): ?>
+                                        <div><strong>Ngày hoàn thành:</strong> <?= e($refund['completed_at']) ?></div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($canRefund): ?>
+                        <div style="margin-top: 16px;">
+                            <form method="POST" action="/admin/don-hang/hoan-tien?id=<?= $orderId ?>" onsubmit="return confirm('Bạn có chắc chắn muốn hoàn tiền cho đơn hàng này?');">
+                                <button type="submit" class="btn-refund">
+                                    <i class="fa fa-rotate-left"></i> Khởi tạo hoàn tiền
+                                </button>
+                            </form>
+                        </div>
+                    <?php else: ?>
+                        <div style="margin-top: 16px; color: #667085; font-size: 14px;">
+                            <i class="fa fa-info-circle"></i> <?= e($refundMessage) ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php endif; ?>
 
             <div class="fpt-card">
                 <div class="table-wrap">

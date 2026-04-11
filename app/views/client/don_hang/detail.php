@@ -49,7 +49,7 @@ $ptMap = [
 
     <div class="row g-4">
         <div class="col-lg-8">
-            <!-- Danh sách sản phẩm -->
+
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body">
                     <h6 class="fw-bold mb-3 border-bottom pb-2">Sản phẩm đã đặt</h6>
@@ -62,15 +62,15 @@ $ptMap = [
                                 <?php if (!empty($item['ten_phien_ban'])): ?>
                                     <div class="text-muted" style="font-size:0.75rem;"><?= htmlspecialchars($item['ten_phien_ban']) ?></div>
                                 <?php endif; ?>
-                                <div class="text-muted small">x<?= $item['so_luong'] ?> | Đơn giá: <?= number_format($item['gia_ban'], 0, ',', '.') ?>đ</div>
+                                <div class="text-muted small">x<?= $item['so_luong'] ?> | Đơn giá: <?= number_format($item['gia_tai_thoi_diem_mua'], 0, ',', '.') ?>đ</div>
                             </div>
-                            <div class="text-danger fw-bold small"><?= number_format($item['gia_ban'] * $item['so_luong'], 0, ',', '.') ?>đ</div>
+                            <div class="text-danger fw-bold small"><?= number_format($item['gia_tai_thoi_diem_mua'] * $item['so_luong'], 0, ',', '.') ?>đ</div>
                         </div>
                     <?php endforeach; ?>
                 </div>
             </div>
 
-            <!-- Thông tin nhận hàng -->
+
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h6 class="fw-bold mb-3 border-bottom pb-2">Thông tin giao hàng</h6>
@@ -79,10 +79,12 @@ $ptMap = [
                         <p class="mb-1 small"><strong>Người nhận:</strong> <?= htmlspecialchars($guest['ten'] ?? '') ?></p>
                         <p class="mb-1 small"><strong>Điện thoại:</strong> <?= htmlspecialchars($guest['sdt'] ?? '') ?></p>
                         <p class="mb-0 small"><strong>Địa chỉ:</strong> <?= htmlspecialchars($guest['dia_chi'] ?? '') ?></p>
-                    <?php elseif (!empty($donHang['ten_nguoi_nhan'])): ?>
-                        <p class="mb-1 small"><strong>Người nhận:</strong> <?= htmlspecialchars($donHang['ten_nguoi_nhan']) ?></p>
-                        <p class="mb-1 small"><strong>Điện thoại:</strong> <?= htmlspecialchars($donHang['sdt']) ?></p>
-                        <p class="mb-0 small"><strong>Địa chỉ:</strong> <?= htmlspecialchars($donHang['dia_chi_chi_tiet'] . ', ' . ($donHang['xa_phuong'] ?? '') . ', ' . ($donHang['quan_huyen'] ?? '') . ', ' . ($donHang['tinh_thanh'] ?? '')) ?></p>
+                    
+                    <?php elseif (!empty($diaChiGiaoHang)): ?>
+                        <p class="mb-1 small"><strong>Người nhận:</strong> <?= htmlspecialchars($diaChiGiaoHang['ten_nguoi_nhan']) ?></p>
+                        <p class="mb-1 small"><strong>Điện thoại:</strong> <?= htmlspecialchars($diaChiGiaoHang['sdt_nhan']) ?></p>
+                        <p class="mb-0 small"><strong>Địa chỉ:</strong> <?= htmlspecialchars($diaChiGiaoHang['so_nha_duong'] . ', ' . $diaChiGiaoHang['phuong_xa'] . ', ' . $diaChiGiaoHang['quan_huyen'] . ', ' . $diaChiGiaoHang['tinh_thanh']) ?></p>
+                    
                     <?php else: ?>
                         <p class="text-muted small mb-0">Không có thông tin địa chỉ</p>
                     <?php endif; ?>
@@ -91,7 +93,7 @@ $ptMap = [
         </div>
 
         <div class="col-lg-4">
-            <!-- Tóm tắt thanh toán -->
+
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-body">
                     <h6 class="fw-bold mb-3 border-bottom pb-2">Tóm tắt thanh toán</h6>
@@ -130,7 +132,7 @@ $ptMap = [
                 </div>
             </div>
 
-            <!-- Hủy đơn -->
+
             <?php if ($donHang['trang_thai'] === 'CHO_DUYET' && \App\Core\Session::isLoggedIn()): ?>
                 <form action="/don-hang/huy" method="POST" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
                     <input type="hidden" name="id" value="<?= $donHang['id'] ?>">

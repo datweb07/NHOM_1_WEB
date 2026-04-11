@@ -16,7 +16,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
     <div class="app-content">
         <div class="container-fluid">
 
-<!-- Success/Error Messages -->
+
 <?php if (!empty($_GET['success'])): ?>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <?php
@@ -43,13 +43,55 @@ require_once dirname(__DIR__) . '/layouts/header.php';
     </div>
 <?php endif; ?>
 
-<!-- Main Card -->
+
 <div class="card">
     <div class="card-header">
-        <div class="card-title">Danh Sách Thanh Toán Chờ Duyệt</div>
+        <div class="card-title">Quản Lý Thanh Toán</div>
     </div>
     <div class="card-body">
-        <!-- Payments Table -->
+
+        <form method="GET" action="/admin/thanh-toan" class="mb-4">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="payment_method" class="form-label">Phương thức</label>
+                    <select name="payment_method" id="payment_method" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="COD" <?= ($paymentMethod ?? '') === 'COD' ? 'selected' : '' ?>>COD</option>
+                        <option value="CHUYEN_KHOAN" <?= ($paymentMethod ?? '') === 'CHUYEN_KHOAN' ? 'selected' : '' ?>>VNPay</option>
+                        <option value="VI_DIEN_TU" <?= ($paymentMethod ?? '') === 'VI_DIEN_TU' ? 'selected' : '' ?>>Momo</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="status" class="form-label">Trạng thái</label>
+                    <select name="status" id="status" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="CHO_DUYET" <?= ($status ?? '') === 'CHO_DUYET' ? 'selected' : '' ?>>Chờ duyệt</option>
+                        <option value="THANH_CONG" <?= ($status ?? '') === 'THANH_CONG' ? 'selected' : '' ?>>Thành công</option>
+                        <option value="THAT_BAI" <?= ($status ?? '') === 'THAT_BAI' ? 'selected' : '' ?>>Thất bại</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Tìm kiếm</label>
+                    <input type="text" name="search" id="search" class="form-control" 
+                           placeholder="Mã đơn, mã giao dịch, tên khách hàng..." 
+                           value="<?= htmlspecialchars($search ?? '') ?>">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Lọc
+                    </button>
+                </div>
+            </div>
+        </form>
+
+
+        <div class="mb-3">
+            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#exportModal">
+                <i class="bi bi-file-earmark-spreadsheet"></i> Xuất CSV
+            </button>
+        </div>
+
+
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
@@ -58,6 +100,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                         <th>Mã đơn</th>
                         <th>Khách hàng</th>
                         <th>Phương thức</th>
+                        <th>Mã giao dịch</th>
                         <th>Số tiền</th>
                         <th>Ngày thanh toán</th>
                         <th>Trạng thái</th>
@@ -67,9 +110,9 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                 <tbody>
                     <?php if (empty($danhSachThanhToan)): ?>
                         <tr>
-                            <td colspan="8" class="text-center text-muted py-4">
+                            <td colspan="9" class="text-center text-muted py-4">
                                 <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                                Không có thanh toán chờ duyệt.
+                                Không tìm thấy thanh toán nào.
                             </td>
                         </tr>
                     <?php else: ?>
@@ -77,16 +120,14 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                             <?php
                             $statusBadge = [
                                 'CHO_DUYET' => '<span class="badge bg-warning">Chờ duyệt</span>',
-                                'DA_DUYET' => '<span class="badge bg-success">Đã duyệt</span>',
-                                'TU_CHOI' => '<span class="badge bg-danger">Từ chối</span>',
+                                'THANH_CONG' => '<span class="badge bg-success">Thành công</span>',
+                                'THAT_BAI' => '<span class="badge bg-danger">Thất bại</span>',
                             ];
                             
                             $methodLabels = [
                                 'COD' => 'COD',
-                                'CHUYEN_KHOAN' => 'Chuyển khoản',
-                                'QR' => 'QR Code',
-                                'TRA_GOP' => 'Trả góp',
-                                'VI_DIEN_TU' => 'Ví điện tử',
+                                'CHUYEN_KHOAN' => 'VNPay',
+                                'VI_DIEN_TU' => 'Momo',
                             ];
                             ?>
                             <tr>
@@ -104,6 +145,13 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                                         <?= $methodLabels[$item['phuong_thuc']] ?? htmlspecialchars($item['phuong_thuc']) ?>
                                     </span>
                                 </td>
+                                <td>
+                                    <?php if (!empty($item['gateway_transaction_id'])): ?>
+                                        <small class="text-muted"><?= htmlspecialchars($item['gateway_transaction_id']) ?></small>
+                                    <?php else: ?>
+                                        <span class="text-muted">-</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td><strong><?= number_format((float)($item['so_tien'] ?? 0), 0, ',', '.') ?> ₫</strong></td>
                                 <td><?= htmlspecialchars($item['ngay_thanh_toan'] ?? '-') ?></td>
                                 <td><?= $statusBadge[$item['trang_thai_duyet']] ?? htmlspecialchars($item['trang_thai_duyet']) ?></td>
@@ -119,29 +167,34 @@ require_once dirname(__DIR__) . '/layouts/header.php';
             </table>
         </div>
 
-        <!-- Pagination -->
+
         <?php if (($totalPages ?? 1) > 1): ?>
             <nav aria-label="Page navigation" class="mt-4">
                 <ul class="pagination justify-content-center">
                     <?php
                     $currentPage = $currentPage ?? 1;
                     $totalPages = $totalPages ?? 1;
+                    
+                    $queryParams = [];
+                    if (!empty($paymentMethod)) $queryParams['payment_method'] = $paymentMethod;
+                    if (!empty($status)) $queryParams['status'] = $status;
+                    if (!empty($search)) $queryParams['search'] = $search;
+                    $queryString = !empty($queryParams) ? '&' . http_build_query($queryParams) : '';
                     ?>
                     
-                    <!-- Previous Button -->
+
                     <li class="page-item <?= $currentPage <= 1 ? 'disabled' : '' ?>">
-                        <a class="page-link" href="<?= $currentPage > 1 ? '/admin/thanh-toan?page=' . ($currentPage - 1) : '#' ?>">
+                        <a class="page-link" href="<?= $currentPage > 1 ? '/admin/thanh-toan?page=' . ($currentPage - 1) . $queryString : '#' ?>">
                             <i class="bi bi-chevron-left"></i>
                         </a>
                     </li>
                     
                     <?php
-                    // Show page numbers
                     $startPage = max(1, $currentPage - 2);
                     $endPage = min($totalPages, $currentPage + 2);
                     
                     if ($startPage > 1): ?>
-                        <li class="page-item"><a class="page-link" href="/admin/thanh-toan?page=1">1</a></li>
+                        <li class="page-item"><a class="page-link" href="/admin/thanh-toan?page=1<?= $queryString ?>">1</a></li>
                         <?php if ($startPage > 2): ?>
                             <li class="page-item disabled"><span class="page-link">...</span></li>
                         <?php endif; ?>
@@ -149,7 +202,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                     
                     <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
                         <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
-                            <a class="page-link" href="/admin/thanh-toan?page=<?= $i ?>"><?= $i ?></a>
+                            <a class="page-link" href="/admin/thanh-toan?page=<?= $i ?><?= $queryString ?>"><?= $i ?></a>
                         </li>
                     <?php endfor; ?>
                     
@@ -157,12 +210,12 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                         <?php if ($endPage < $totalPages - 1): ?>
                             <li class="page-item disabled"><span class="page-link">...</span></li>
                         <?php endif; ?>
-                        <li class="page-item"><a class="page-link" href="/admin/thanh-toan?page=<?= $totalPages ?>"><?= $totalPages ?></a></li>
+                        <li class="page-item"><a class="page-link" href="/admin/thanh-toan?page=<?= $totalPages ?><?= $queryString ?>"><?= $totalPages ?></a></li>
                     <?php endif; ?>
                     
-                    <!-- Next Button -->
+
                     <li class="page-item <?= $currentPage >= $totalPages ? 'disabled' : '' ?>">
-                        <a class="page-link" href="<?= $currentPage < $totalPages ? '/admin/thanh-toan?page=' . ($currentPage + 1) : '#' ?>">
+                        <a class="page-link" href="<?= $currentPage < $totalPages ? '/admin/thanh-toan?page=' . ($currentPage + 1) . $queryString : '#' ?>">
                             <i class="bi bi-chevron-right"></i>
                         </a>
                     </li>
@@ -179,5 +232,41 @@ require_once dirname(__DIR__) . '/layouts/header.php';
         </div>
     </div>
 </main>
+
+
+<div class="modal fade" id="exportModal" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exportModalLabel">Xuất dữ liệu CSV</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="GET" action="/admin/thanh-toan/xuat-csv">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="from_date" class="form-label">Từ ngày</label>
+                        <input type="date" class="form-control" id="from_date" name="from_date" 
+                               value="<?= date('Y-m-d', strtotime('-30 days')) ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="to_date" class="form-label">Đến ngày</label>
+                        <input type="date" class="form-control" id="to_date" name="to_date" 
+                               value="<?= date('Y-m-d') ?>" required>
+                    </div>
+                    <p class="text-muted small">
+                        <i class="bi bi-info-circle"></i> 
+                        File CSV sẽ chứa tất cả giao dịch trong khoảng thời gian đã chọn.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-download"></i> Tải xuống
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
