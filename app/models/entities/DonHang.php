@@ -17,13 +17,13 @@ class DonHang extends BaseModel
             $where = "WHERE dh.trang_thai = '$safeTrangThai'";
         }
 
-        // Validate sort column
+
         $allowedColumns = ['id', 'ma_don_hang', 'tong_tien', 'ngay_tao', 'trang_thai'];
         if (!in_array($sortBy, $allowedColumns, true)) {
             $sortBy = 'ngay_tao';
         }
 
-        // Validate sort order
+
         $sortOrder = strtoupper($sortOrder);
         if (!in_array($sortOrder, ['ASC', 'DESC'], true)) {
             $sortOrder = 'DESC';
@@ -59,7 +59,7 @@ class DonHang extends BaseModel
 
     public function laySanPhamTrongDon(int $donHangId): array
     {
-        $sql = "SELECT ct.*, pbs.ten_phien_ban, pbs.mau_sac, pbs.dung_luong,
+        $sql = "SELECT ct.*, pbs.ten_phien_ban,
 					   sp.ten_san_pham
 				FROM chi_tiet_don ct
 				LEFT JOIN phien_ban_san_pham pbs ON ct.phien_ban_id = pbs.id
@@ -72,9 +72,6 @@ class DonHang extends BaseModel
 
     public function trangThaiHopLe(string $from, string $to): bool
     {
-        // Workflow: CHO_DUYET → DA_XAC_NHAN → DANG_GIAO → DA_GIAO → HOAN_THANH
-        // Allow DA_HUY from any status
-        // Allow TRA_HANG from DA_GIAO
         $allowed = [
             'CHO_DUYET' => ['DA_XAC_NHAN', 'DA_HUY'],
             'DA_XAC_NHAN' => ['DANG_GIAO', 'DA_HUY'],
@@ -112,15 +109,6 @@ class DonHang extends BaseModel
         return $this->update($id, ['trang_thai' => addslashes($trangThaiMoi)]);
     }
 
-    /**
-     * Search orders by ma_don_hang or customer name
-     * 
-     * @param string $keyword Search keyword
-     * @param string|null $trangThai Optional status filter
-     * @param int $limit Records per page
-     * @param int $offset Starting offset for pagination
-     * @return array List of orders matching search criteria
-     */
     public function timKiem(string $keyword, ?string $trangThai = null, int $limit = 20, int $offset = 0): array
     {
         $safeKeyword = addslashes($keyword);
@@ -145,14 +133,6 @@ class DonHang extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Filter orders by date range
-     * 
-     * @param string $from Start date (YYYY-MM-DD format)
-     * @param string $to End date (YYYY-MM-DD format)
-     * @param string|null $trangThai Optional status filter
-     * @return array List of orders within date range
-     */
     public function layTheoKhoangNgay(string $from, string $to, ?string $trangThai = null): array
     {
         $safeFrom = addslashes($from);
@@ -177,12 +157,6 @@ class DonHang extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Filter orders by payment method
-     * 
-     * @param string $phuongThuc Payment method (COD, CHUYEN_KHOAN, QR, TRA_GOP, VI_DIEN_TU)
-     * @return array List of orders with specified payment method
-     */
     public function layTheoPhuongThuc(string $phuongThuc): array
     {
         $safePhuongThuc = addslashes($phuongThuc);
@@ -201,12 +175,6 @@ class DonHang extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Count orders for pagination
-     * 
-     * @param string|null $trangThai Optional status filter
-     * @return int Total count of orders
-     */
     public function demDonHang(?string $trangThai = null): int
     {
         $where = '';
@@ -221,9 +189,6 @@ class DonHang extends BaseModel
         return (int)($result[0]['total'] ?? 0);
     }
 
-    /**
-     * Lấy đơn hàng theo user
-     */
     public function layDonHangTheoUser(int $nguoiDungId, int $limit = 10, int $offset = 0): array
     {
         $nguoiDungId = (int)$nguoiDungId;
@@ -238,9 +203,6 @@ class DonHang extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Đếm đơn hàng theo user
-     */
     public function demDonHangTheoUser(int $nguoiDungId): int
     {
         $nguoiDungId = (int)$nguoiDungId;

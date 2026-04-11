@@ -246,6 +246,36 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	// Payment gateway callback routes (no authentication required)
+	if ($path === 'thanh-toan/callback/vnpay') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
+		$controller = new \App\Controllers\Client\ThanhToanController();
+		$controller->callbackVNPay();
+		return;
+	}
+
+	if ($path === 'thanh-toan/callback/momo') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
+		$controller = new \App\Controllers\Client\ThanhToanController();
+		$controller->callbackMomo();
+		return;
+	}
+
+	// Payment gateway return URL routes
+	if ($path === 'thanh-toan/return/vnpay') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
+		$controller = new \App\Controllers\Client\ThanhToanController();
+		$controller->returnVNPay();
+		return;
+	}
+
+	if ($path === 'thanh-toan/return/momo') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
+		$controller = new \App\Controllers\Client\ThanhToanController();
+		$controller->returnMomo();
+		return;
+	}
+
 	// Đơn hàng routes
 	if ($path === 'don-hang/huy') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/DonHangController.php';
