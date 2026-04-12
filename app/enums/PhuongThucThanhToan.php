@@ -6,6 +6,7 @@ abstract class PhuongThucThanhToan
     const CHUYEN_KHOAN = 'CHUYEN_KHOAN';
     const THE_TIN_DUNG = 'THE_TIN_DUNG';
     const VI_DIEN_TU = 'VI_DIEN_TU';
+    const ZALOPAY = 'ZALOPAY';
     const COD = 'COD';
 
 
@@ -16,6 +17,7 @@ abstract class PhuongThucThanhToan
             self::CHUYEN_KHOAN,
             self::THE_TIN_DUNG,
             self::VI_DIEN_TU,
+            self::ZALOPAY,
             self::COD
         ];
     }
@@ -40,6 +42,8 @@ abstract class PhuongThucThanhToan
                 return 'Thẻ tín dụng/Ghi nợ';
             case self::VI_DIEN_TU:
                 return 'Thanh toán qua ví Momo';
+            case self::ZALOPAY:
+                return 'Thanh toán qua ZaloPay';
             case self::COD:
                 return 'Thanh toán khi nhận hàng (COD)';
             default:
@@ -53,57 +57,42 @@ abstract class PhuongThucThanhToan
         return in_array($phuongThuc, [
             self::CHUYEN_KHOAN,
             self::THE_TIN_DUNG,
-            self::VI_DIEN_TU
+            self::VI_DIEN_TU,
+            self::ZALOPAY
         ]);
     }
 
-    /**
-     * Map payment method to gateway class name
-     * Requirements: 10.1, 10.2, 10.3, 10.4
-     * 
-     * @param string $paymentMethod Payment method constant
-     * @return string|null Gateway class name or null
-     */
     public static function getGatewayClass(string $paymentMethod): ?string
     {
         $gatewayMap = [
             self::COD => 'CODHandler',
             self::CHUYEN_KHOAN => 'VNPayGateway',
-            self::VI_DIEN_TU => 'MomoGateway'
+            self::VI_DIEN_TU => 'MomoGateway',
+            self::ZALOPAY => 'ZaloPayGateway'
         ];
 
         return $gatewayMap[$paymentMethod] ?? null;
     }
 
-    /**
-     * Get gateway name for logging
-     * 
-     * @param string $paymentMethod Payment method constant
-     * @return string Gateway name
-     */
     public static function getGatewayName(string $paymentMethod): string
     {
         $gatewayMap = [
             self::COD => 'COD',
             self::CHUYEN_KHOAN => 'VNPAY',
-            self::VI_DIEN_TU => 'MOMO'
+            self::VI_DIEN_TU => 'MOMO',
+            self::ZALOPAY => 'ZALOPAY'
         ];
 
         return $gatewayMap[$paymentMethod] ?? 'UNKNOWN';
     }
 
-    /**
-     * Get icon class for payment method
-     * 
-     * @param string $paymentMethod Payment method constant
-     * @return string Font Awesome icon class
-     */
     public static function getIcon(string $paymentMethod): string
     {
         $iconMap = [
             self::COD => 'fa-money-bill-wave',
             self::CHUYEN_KHOAN => 'fa-university',
             self::VI_DIEN_TU => 'fa-mobile-alt',
+            self::ZALOPAY => 'fa-wallet',
             self::THE_TIN_DUNG => 'fa-credit-card'
         ];
 
