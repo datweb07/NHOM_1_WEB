@@ -11,6 +11,11 @@ require_once dirname(__DIR__, 2) . '/models/entities/DiaChi.php';
 require_once dirname(__DIR__, 2) . '/models/entities/MaGiamGia.php';
 require_once dirname(__DIR__, 2) . '/models/entities/PhienBanSanPham.php';
 require_once dirname(__DIR__, 2) . '/core/Session.php';
+require_once dirname(__DIR__, 2) . '/services/payment/PaymentService.php';
+require_once dirname(__DIR__, 2) . '/services/payment/CallbackHandler.php';
+require_once dirname(__DIR__, 2) . '/services/payment/VNPayGateway.php';
+require_once dirname(__DIR__, 2) . '/services/payment/MomoGateway.php';
+require_once dirname(__DIR__, 2) . '/enums/PhuongThucThanhToan.php';
 
 use GioHang;
 use ChiTietGio;
@@ -32,6 +37,8 @@ class ThanhToanController
     private DiaChi $diaChiModel;
     private MaGiamGia $maGiamGiaModel;
     private PhienBanSanPham $phienBanModel;
+    private \PaymentService $paymentService;
+    private \CallbackHandler $callbackHandler;
 
     public function __construct()
     {
@@ -43,14 +50,13 @@ class ThanhToanController
         $this->diaChiModel = new DiaChi();
         $this->maGiamGiaModel = new MaGiamGia();
         $this->phienBanModel = new PhienBanSanPham();
+        $this->paymentService = new \PaymentService();
+        $this->callbackHandler = new \CallbackHandler();
     }
 
-    /**
-     * Trang thanh toán
-     */
     public function index(): void
     {
-        // Kiểm tra giỏ hàng
+
         $gioHang = $this->layGioHangHienTai();
         $chiTietGioList = $this->chiTietGioModel->layChiTietGioHang($gioHang['id']);
         
@@ -60,7 +66,7 @@ class ThanhToanController
             exit;
         }
 
-        // Lấy danh sách địa chỉ nếu user đã đăng nhập
+
         $diaChiList = [];
         $diaChiMacDinh = null;
         
@@ -70,14 +76,18 @@ class ThanhToanController
         }
 
         $tongTien = $this->chiTietGioModel->tinhTongTien($gioHang['id']);
-        $phiVanChuyen = 30000; // Phí cố định
+        $phiVanChuyen = 30000; 
+
+
+        $vnpayEnabled = (new \VNPayGateway())->isConfigured();
+        $momoEnabled = (new \MomoGateway())->isConfigured();
+
+
+        $gatewayWarnings = $this->checkGatewayHealth();
 
         require_once dirname(__DIR__, 2) . '/views/client/thanh_toan/index.php';
     }
 
-    /**
-     * Xử lý đặt hàng
-     */
     public function datHang(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -85,7 +95,7 @@ class ThanhToanController
             exit;
         }
 
-        // Lấy giỏ hàng
+
         $gioHang = $this->layGioHangHienTai();
         $chiTietGioList = $this->chiTietGioModel->layChiTietGioHang($gioHang['id']);
         
@@ -95,7 +105,7 @@ class ThanhToanController
             exit;
         }
 
-        // Kiểm tra tồn kho
+
         foreach ($chiTietGioList as $item) {
             if (!$this->phienBanModel->kiemTraTonKho($item['phien_ban_id'], $item['so_luong'])) {
                 Session::flash('error', 'Sản phẩm "' . $item['ten_san_pham'] . '" không đủ số lượng trong kho');
@@ -104,13 +114,13 @@ class ThanhToanController
             }
         }
 
-        // Tính toán
+
         $tongTien = $this->chiTietGioModel->tinhTongTien($gioHang['id']);
         $phiVanChuyen = 30000;
         $tienGiamGia = 0;
         $maGiamGiaId = null;
 
-        // Áp dụng mã giảm giá
+
         if (!empty($_POST['ma_giam_gia'])) {
             $maGiamGia = $this->maGiamGiaModel->kiemTraMaGiamGia($_POST['ma_giam_gia'], $tongTien);
             if ($maGiamGia) {
@@ -121,7 +131,7 @@ class ThanhToanController
 
         $tongThanhToan = $tongTien + $phiVanChuyen - $tienGiamGia;
 
-        // Xử lý địa chỉ
+
         $diaChiId = null;
         $thongTinGuest = null;
 
@@ -133,7 +143,7 @@ class ThanhToanController
                 exit;
             }
         } else {
-            // Khách vãng lai
+
             $thongTinGuest = json_encode([
                 'ten' => $_POST['ten_nguoi_nhan'] ?? '',
                 'sdt' => $_POST['sdt_nhan'] ?? '',
@@ -141,9 +151,34 @@ class ThanhToanController
             ]);
         }
 
-        // Tạo đơn hàng
-        $maDonHang = 'DH' . date('YmdHis');
+
         $phuongThucThanhToan = $_POST['phuong_thuc_thanh_toan'] ?? 'COD';
+        
+        if (!\PhuongThucThanhToan::isValid($phuongThucThanhToan)) {
+            Session::flash('error', 'Phương thức thanh toán không hợp lệ');
+            header('Location: /thanh-toan');
+            exit;
+        }
+
+
+        if ($phuongThucThanhToan === 'CHUYEN_KHOAN') {
+            $vnpayGateway = new \VNPayGateway();
+            if (!$vnpayGateway->isConfigured()) {
+                Session::flash('error', 'Phương thức thanh toán VNPay hiện không khả dụng');
+                header('Location: /thanh-toan');
+                exit;
+            }
+        } elseif ($phuongThucThanhToan === 'VI_DIEN_TU') {
+            $momoGateway = new \MomoGateway();
+            if (!$momoGateway->isConfigured()) {
+                Session::flash('error', 'Phương thức thanh toán Momo hiện không khả dụng');
+                header('Location: /thanh-toan');
+                exit;
+            }
+        }
+
+
+        $maDonHang = 'DH' . date('YmdHis');
         $ghiChu = $_POST['ghi_chu'] ?? '';
 
         $donHangId = $this->donHangModel->create([
@@ -160,7 +195,7 @@ class ThanhToanController
             'ghi_chu' => $ghiChu
         ]);
 
-        // Tạo chi tiết đơn hàng
+
         foreach ($chiTietGioList as $item) {
             $this->chiTietDonModel->themChiTiet(
                 $donHangId,
@@ -169,29 +204,49 @@ class ThanhToanController
                 $item['gia_ban']
             );
 
-            // Giảm tồn kho
+
             $this->phienBanModel->giamTonKho($item['phien_ban_id'], $item['so_luong']);
         }
 
-        // Tạo thông tin thanh toán
-        $this->thanhToanModel->taoThanhToan($donHangId, $phuongThucThanhToan, $tongThanhToan);
 
-        // Cập nhật số lượt dùng mã giảm giá
+        $transactionId = $this->paymentService->createTransaction($donHangId, $phuongThucThanhToan, $tongThanhToan);
+
+
+        $paymentResult = $this->paymentService->processPayment($transactionId, $phuongThucThanhToan);
+
+        if (!$paymentResult['success']) {
+            Session::flash('error', $paymentResult['message']);
+            header('Location: /thanh-toan');
+            exit;
+        }
+
+
         if ($maGiamGiaId) {
             $this->maGiamGiaModel->tangSoLuotDung($maGiamGiaId);
         }
 
-        // Xóa giỏ hàng
+
         $this->chiTietGioModel->xoaTatCa($gioHang['id']);
 
-        Session::flash('success', 'Đặt hàng thành công! Mã đơn hàng: ' . $maDonHang);
-        header('Location: /don-hang/' . $donHangId);
-        exit;
+
+        if ($phuongThucThanhToan === 'COD') {
+
+            Session::flash('success', 'Đặt hàng thành công! Mã đơn hàng: ' . $maDonHang);
+            header('Location: /don-hang/' . $donHangId);
+            exit;
+        } else {
+
+            if (!empty($paymentResult['payment_url'])) {
+                header('Location: ' . $paymentResult['payment_url']);
+                exit;
+            } else {
+                Session::flash('error', 'Không thể tạo liên kết thanh toán. Vui lòng thử lại.');
+                header('Location: /thanh-toan');
+                exit;
+            }
+        }
     }
 
-    /**
-     * Kiểm tra mã giảm giá (AJAX)
-     */
     public function kiemTraMaGiamGia(): void
     {
         header('Content-Type: application/json');
@@ -222,9 +277,6 @@ class ThanhToanController
         exit;
     }
 
-    /**
-     * Lấy giỏ hàng hiện tại
-     */
     private function layGioHangHienTai(): array
     {
         if (Session::has('user_id')) {
@@ -236,5 +288,162 @@ class ThanhToanController
         }
         
         return $this->gioHangModel->layHoacTaoGioHangGuest(Session::get('cart_session_id'));
+    }
+
+    public function callbackVNPay(): void
+    {
+        header('Content-Type: application/json');
+        
+        $data = $_GET;
+        $result = $this->callbackHandler->handleVNPayCallback($data);
+        
+        echo json_encode($result);
+        exit;
+    }
+
+    public function callbackMomo(): void
+    {
+        header('Content-Type: application/json');
+        
+        $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
+        $result = $this->callbackHandler->handleMomoCallback($data);
+        
+        echo json_encode($result);
+        exit;
+    }
+
+    public function returnVNPay(): void
+    {
+        $data = $_GET;
+        
+
+        $gateway = new \VNPayGateway();
+        $isValidSignature = $gateway->verifyReturnUrl($data);
+        
+        if (!$isValidSignature) {
+            Session::flash('error', 'Xác thực thanh toán thất bại. Vui lòng liên hệ hỗ trợ.');
+            header('Location: /');
+            exit;
+        }
+
+
+        $transactionId = $data['vnp_TxnRef'] ?? null;
+        
+        if (!$transactionId) {
+            Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
+            header('Location: /');
+            exit;
+        }
+
+        $transaction = $this->paymentService->getTransaction($transactionId);
+        
+        if (!$transaction) {
+            Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
+            header('Location: /');
+            exit;
+        }
+
+        $donHangId = $transaction['don_hang_id'];
+        $status = $transaction['trang_thai_duyet'];
+
+        if ($status === 'THANH_CONG') {
+            Session::flash('success', 'Thanh toán thành công!');
+            header('Location: /don-hang/' . $donHangId);
+        } elseif ($status === 'THAT_BAI') {
+            $errorMessage = $transaction['error_message'] ?? 'Thanh toán thất bại';
+            Session::flash('error', $errorMessage);
+            header('Location: /don-hang/' . $donHangId);
+        } else {
+            Session::flash('info', 'Giao dịch đang được xử lý. Vui lòng kiểm tra lại sau.');
+            header('Location: /don-hang/' . $donHangId);
+        }
+        
+        exit;
+    }
+
+    public function returnMomo(): void
+    {
+        $data = $_GET;
+        
+
+        $gateway = new \MomoGateway();
+        $isValidSignature = $gateway->verifyReturnUrl($data);
+        
+        if (!$isValidSignature) {
+            Session::flash('error', 'Xác thực thanh toán thất bại. Vui lòng liên hệ hỗ trợ.');
+            header('Location: /');
+            exit;
+        }
+
+
+        $transactionId = $data['orderId'] ?? null;
+        
+        if (!$transactionId) {
+            Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
+            header('Location: /');
+            exit;
+        }
+
+        $transaction = $this->paymentService->getTransaction($transactionId);
+        
+        if (!$transaction) {
+            Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
+            header('Location: /');
+            exit;
+        }
+
+        $donHangId = $transaction['don_hang_id'];
+        $status = $transaction['trang_thai_duyet'];
+
+
+        if ($status === 'THANH_CONG') {
+            Session::flash('success', 'Thanh toán thành công!');
+            header('Location: /don-hang/' . $donHangId);
+        } elseif ($status === 'THAT_BAI') {
+            $errorMessage = $transaction['error_message'] ?? 'Thanh toán thất bại';
+            Session::flash('error', $errorMessage);
+            header('Location: /don-hang/' . $donHangId);
+        } else {
+            Session::flash('info', 'Giao dịch đang được xử lý. Vui lòng kiểm tra lại sau.');
+            header('Location: /don-hang/' . $donHangId);
+        }
+        
+        exit;
+    }
+
+    private function checkGatewayHealth(): array
+    {
+        require_once dirname(__DIR__, 2) . '/models/entities/GatewayHealth.php';
+        $healthModel = new \GatewayHealth();
+        
+        $warnings = [];
+        
+
+        $vnpayHealth = $healthModel->getByGatewayName('VNPay');
+        if ($vnpayHealth) {
+            $successRate = $healthModel->getSuccessRate('VNPay', 24);
+            if ($successRate < 50 && ($vnpayHealth['success_count'] + $vnpayHealth['failure_count']) >= 10) {
+                $warnings['vnpay'] = [
+                    'gateway' => 'VNPay',
+                    'message' => 'Cổng thanh toán VNPay đang gặp sự cố. Vui lòng chọn phương thức thanh toán khác.',
+                    'success_rate' => $successRate
+                ];
+            }
+        }
+        
+
+        $momoHealth = $healthModel->getByGatewayName('Momo');
+        if ($momoHealth) {
+            $successRate = $healthModel->getSuccessRate('Momo', 24);
+            if ($successRate < 50 && ($momoHealth['success_count'] + $momoHealth['failure_count']) >= 10) {
+                $warnings['momo'] = [
+                    'gateway' => 'Momo',
+                    'message' => 'Cổng thanh toán Momo đang gặp sự cố. Vui lòng chọn phương thức thanh toán khác.',
+                    'success_rate' => $successRate
+                ];
+            }
+        }
+        
+        return $warnings;
     }
 }

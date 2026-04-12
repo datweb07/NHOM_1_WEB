@@ -45,7 +45,7 @@ class KhuyenMaiController
             exit;
         }
 
-        $khuyenMai = $this->khuyenMaiModel->findById($id);
+        $khuyenMai = $this->khuyenMaiModel->layDanhSachSanPhamLienKet($id);
 
         if (!$khuyenMai || $khuyenMai['trang_thai'] !== 'HOAT_DONG') {
             header('Location: /khuyen-mai');

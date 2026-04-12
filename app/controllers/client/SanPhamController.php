@@ -167,7 +167,11 @@ class SanPhamController
     public function apiMegaMenu(): void
     {
         // Xóa bộ nhớ đệm đề phòng có khoảng trắng dư thừa làm hỏng JSON
-        if (ob_get_length()) ob_clean(); 
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        
+        // Bây giờ mới set Header JSON một cách an toàn
         header('Content-Type: application/json; charset=utf-8');
         
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;

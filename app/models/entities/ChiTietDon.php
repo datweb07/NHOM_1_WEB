@@ -9,15 +9,12 @@ class ChiTietDon extends BaseModel
         parent::__construct('chi_tiet_don');
     }
 
-    /**
-     * Lấy chi tiết đơn hàng
-     */
     public function layChiTietDonHang(int $donHangId): array
     {
         $donHangId = (int)$donHangId;
         
         $sql = "SELECT ctd.*, 
-                       pbsp.ten_phien_ban, pbsp.mau_sac, pbsp.dung_luong, pbsp.ram,
+                       pbsp.ten_phien_ban, pbsp.mau_sac,
                        sp.ten_san_pham, sp.slug,
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
@@ -30,9 +27,6 @@ class ChiTietDon extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Thêm chi tiết đơn hàng
-     */
     public function themChiTiet(int $donHangId, int $phienBanId, int $soLuong, float $giaTaiThoiDiemMua): int
     {
         return $this->create([
@@ -43,9 +37,6 @@ class ChiTietDon extends BaseModel
         ]);
     }
 
-    /**
-     * Lấy chi tiết theo đơn hàng (alias cho layChiTietDonHang)
-     */
     public function layTheoDonHang(int $donHangId): array
     {
         return $this->layChiTietDonHang($donHangId);
