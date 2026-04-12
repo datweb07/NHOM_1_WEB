@@ -49,4 +49,32 @@ class AboutController
             'title' => 'Chính sách bảo mật - FPT Shop'
         ]);
     }
+
+    public function cauHoiThuongGap()
+    {
+        View::render('client/about/cau_hoi_thuong_gap', [
+            'title' => 'Câu hỏi thường gặp - FPT Shop'
+        ]);
+    }
+
+    public function apple()
+    {
+        View::render('client/about/apple', [
+            'title' => 'Đại lý uỷ quyền và TTBH uỷ quyền của Apple - FPT Shop'
+        ]);
+    }
+
+    public function mangDiDong()
+    {
+        View::render('client/about/mang_di_dong', [
+            'title' => 'Chính sách mạng di động FPT - FPT Shop'
+        ]);
+    }
+
+    public function goiCuoc()
+    {
+        View::render('client/about/goi_cuoc', [
+            'title' => 'Chính sách gói cước di động FPT - FPT Shop'
+        ]);
+    }
 }

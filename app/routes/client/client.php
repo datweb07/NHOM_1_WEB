@@ -464,6 +464,35 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	if ($path === 'cau-hoi-thuong-gap') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->cauHoiThuongGap();
+		return;
+	}
+
+	if ($path === 'apple') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->apple();
+		return;
+	}
+
+	if ($path === 'mang-di-dong') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->mangDiDong();
+		return;
+	}
+
+	if ($path === 'goi-cuoc') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->goiCuoc();
+		return;
+	}
+
+
 	require_once dirname(__DIR__, 2) . '/views/client/home/index.php';
 }
 
