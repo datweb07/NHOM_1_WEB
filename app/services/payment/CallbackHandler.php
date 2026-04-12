@@ -25,12 +25,10 @@ class CallbackHandler
     public function handleVNPayCallback(array $data): array
     {
         $startTime = microtime(true);
-        
 
         $sourceIp = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
         $this->logCallbackRequest('VNPAY', $data, $sourceIp);
         
-
         $transactionId = $data['vnp_TxnRef'] ?? null;
         
         if (!$transactionId) {
@@ -49,15 +47,12 @@ class CallbackHandler
             ];
         }
 
-
         $this->transactionLog->logCallback($transactionId, $data, false);
-
 
         $gateway = new VNPayGateway();
         $isValidSignature = $gateway->verifyCallback($data);
 
         if (!$isValidSignature) {
-
             $this->logSecurityViolation($transactionId, 'VNPAY', 'SIGNATURE_FAILED', [
                 'source_ip' => $sourceIp,
                 'data' => $data
@@ -75,9 +70,7 @@ class CallbackHandler
             ];
         }
 
-
         $this->transactionLog->logCallback($transactionId, $data, true);
-
 
         $gatewayTransactionId = $data['vnp_TransactionNo'] ?? null;
         
@@ -92,7 +85,6 @@ class CallbackHandler
             }
         }
 
-
         if ($this->paymentService->checkTransactionTimeout($transactionId)) {
 
             $this->logSecurityViolation($transactionId, 'VNPAY', 'EXPIRED_CALLBACK', [
@@ -100,7 +92,6 @@ class CallbackHandler
                 'gateway_transaction_id' => $gatewayTransactionId
             ]);
             
-
             $this->handleExpiredTransaction($transaction);
             
             return [
@@ -109,11 +100,9 @@ class CallbackHandler
             ];
         }
 
-
         $paidAmount = ($data['vnp_Amount'] ?? 0) / 100; 
         
         if (!$this->paymentService->validateAmount($transactionId, $paidAmount)) {
-
             $this->logSecurityViolation($transactionId, 'VNPAY', 'AMOUNT_MISMATCH', [
                 'source_ip' => $sourceIp,
                 'paid_amount' => $paidAmount,
@@ -130,7 +119,6 @@ class CallbackHandler
         
 
         if ($responseCode === '00') {
-
             $this->handleSuccessfulPayment($transaction, $gatewayTransactionId, 'VNPAY', $data);
             
             $result = [
@@ -138,7 +126,6 @@ class CallbackHandler
                 'Message' => 'Success'
             ];
         } else {
-
             $this->handleFailedPayment($transaction, $responseCode, 'VNPAY', $data);
             
             $result = [
@@ -161,11 +148,9 @@ class CallbackHandler
     {
         $startTime = microtime(true);
         
-
         $sourceIp = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
         $this->logCallbackRequest('MOMO', $data, $sourceIp);
         
-
         $transactionId = $data['orderId'] ?? null;
         
         if (!$transactionId) {
@@ -184,9 +169,7 @@ class CallbackHandler
             ];
         }
 
-
         $this->transactionLog->logCallback($transactionId, $data, false);
-
 
         $gateway = new MomoGateway();
         $isValidSignature = $gateway->verifyCallback($data);
@@ -224,7 +207,6 @@ class CallbackHandler
             }
         }
 
-
         if ($this->paymentService->checkTransactionTimeout($transactionId)) {
 
             $this->logSecurityViolation($transactionId, 'MOMO', 'EXPIRED_CALLBACK', [
@@ -232,7 +214,6 @@ class CallbackHandler
                 'gateway_transaction_id' => $gatewayTransactionId
             ]);
             
-
             $this->handleExpiredTransaction($transaction);
             
             return [
@@ -241,11 +222,9 @@ class CallbackHandler
             ];
         }
 
-
         $paidAmount = (float)($data['amount'] ?? 0);
         
         if (!$this->paymentService->validateAmount($transactionId, $paidAmount)) {
-
             $this->logSecurityViolation($transactionId, 'MOMO', 'AMOUNT_MISMATCH', [
                 'source_ip' => $sourceIp,
                 'paid_amount' => $paidAmount,
@@ -260,7 +239,6 @@ class CallbackHandler
 
         $resultCode = $data['resultCode'] ?? '99';
         
-
         if ($resultCode === '0') {
             $this->handleSuccessfulPayment($transaction, $gatewayTransactionId, 'MOMO', $data);
             
@@ -284,6 +262,97 @@ class CallbackHandler
         }
 
         return $result;
+    }
+
+    public function handleZaloPayCallback(array $data): array
+    {
+        $startTime = microtime(true);
+        
+        $sourceIp = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $this->logCallbackRequest('ZALOPAY', $data, $sourceIp);
+        
+        require_once __DIR__ . '/ZaloPayGateway.php';
+        $gateway = new ZaloPayGateway();
+        
+        $isValidSignature = $gateway->verifyCallback($data);
+        
+        if (!$isValidSignature) {
+            $this->transactionLog->logResponse(0, [
+                'error' => 'Invalid signature',
+                'severity' => 'critical',
+                'ip' => $sourceIp
+            ], 'SIGNATURE_FAILED');
+            
+            return [
+                'return_code' => -1,
+                'return_message' => 'Invalid signature'
+            ];
+        }
+        
+        $callbackData = json_decode($data['data'] ?? '{}', true);
+        $transactionId = $callbackData['app_trans_id'] ?? null;
+        
+        if (!$transactionId) {
+            return [
+                'return_code' => -1,
+                'return_message' => 'Invalid transaction reference'
+            ];
+        }
+        
+        $transaction = $this->paymentService->getTransaction($transactionId);
+        
+        if (!$transaction) {
+            return [
+                'return_code' => 2,
+                'return_message' => 'Order not found'
+            ];
+        }
+        
+        $this->transactionLog->logCallback($transaction['id'], $data, true);
+        
+        $gatewayTransactionId = $callbackData['zp_trans_id'] ?? null;
+        
+        if ($this->paymentService->checkTransactionTimeout($transaction['id'])) {
+            $this->logSecurityViolation($transaction['id'], 'ZALOPAY', 'EXPIRED_CALLBACK', [
+                'source_ip' => $sourceIp,
+                'gateway_transaction_id' => $gatewayTransactionId
+            ]);
+            
+            $this->handleExpiredTransaction($transaction);
+            
+            return [
+                'return_code' => 2,
+                'return_message' => 'Transaction expired'
+            ];
+        }
+        
+        $paidAmount = (float)($callbackData['amount'] ?? 0);
+        
+        if (!$this->paymentService->validateAmount($transaction['id'], $paidAmount)) {
+            $this->logSecurityViolation($transaction['id'], 'ZALOPAY', 'AMOUNT_MISMATCH', [
+                'source_ip' => $sourceIp,
+                'paid_amount' => $paidAmount,
+                'expected_amount' => $transaction['so_tien']
+            ]);
+            
+            return [
+                'return_code' => 2,
+                'return_message' => 'Invalid amount'
+            ];
+        }
+        
+        $this->handleSuccessfulPayment($transaction, $gatewayTransactionId, 'ZALOPAY', $data);
+        
+        $elapsedTime = microtime(true) - $startTime;
+        
+        if ($elapsedTime > 3) {
+            error_log("ZaloPay callback processing took {$elapsedTime} seconds");
+        }
+        
+        return [
+            'return_code' => 1,
+            'return_message' => 'Success'
+        ];
     }
 
     private function handleSuccessfulPayment(array $transaction, ?string $gatewayTransactionId, string $gatewayName, array $callbackData): void
