@@ -1,4 +1,4 @@
-<?php require_once dirname(__DIR__) . '/layout/header.php'; ?>
+<?php require_once dirname(__DIR__) . '/layouts/header.php'; ?>
 
 <style>
     .support-sidebar .list-group-item {
@@ -144,4 +144,4 @@
     </div>
 </div>
 
-<?php require_once dirname(__DIR__) . '/layout/footer.php'; ?>
+<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>

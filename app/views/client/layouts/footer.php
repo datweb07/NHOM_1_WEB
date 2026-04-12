@@ -53,12 +53,12 @@
             <div class="col-lg-3 col-md-6 col-6">
                 <h5 class="footer-title">VỀ CHÚNG TÔI</h5>
                 <ul class="list-unstyled footer-links">
-                    <li><a href="#">Giới thiệu về công ty</a></li>
-                    <li><a href="#">Quy chế hoạt động</a></li>
+                    <li><a href="<?= BASE_URL ?>/gioi-thieu">Giới thiệu về công ty</a></li>
+                    <li><a href="<?= BASE_URL ?>/quy-che-hoat-dong">Quy chế hoạt động</a></li>
                     <li><a href="#">Dự án Doanh nghiệp</a></li>
-                    <li><a href="#">Tin tức khuyến mại</a></li>
+                    <li><a href="<?= BASE_URL ?>/khuyen-mai">Tin tức khuyến mại</a></li>
                     <li><a href="#">Điện thoại chính hãng</a></li>
-                    <li><a href="#">Giới thiệu máy đổi trả</a></li>
+                    <li><a href="<?= BASE_URL ?>/gioi-thieu-may-doi-tra">Giới thiệu máy đổi trả</a></li>
                     <li><a href="#">Hướng dẫn mua hàng & thanh toán online</a></li>
                     <li><a href="#">Đại lý uỷ quyền và TTBH uỷ quyền của Apple</a></li>
                     <li><a href="#">Tra cứu hoá đơn điện tử</a></li>
@@ -70,14 +70,14 @@
             <div class="col-lg-3 col-md-6 col-6">
                 <h5 class="footer-title">CHÍNH SÁCH</h5>
                 <ul class="list-unstyled footer-links">
-                    <li><a href="#">Chính sách bảo hành</a></li>
-                    <li><a href="#">Chính sách đổi trả</a></li>
-                    <li><a href="#">Chính sách bảo mật</a></li>
+                    <li><a href="<?= BASE_URL ?>/chinh-sach-bao-hanh">Chính sách bảo hành</a></li>
+                    <li><a href="<?= BASE_URL ?>/chinh-sach-doi-tra">Chính sách đổi trả</a></li>
+                    <li><a href="<?= BASE_URL ?>/chinh-sach-bao-mat">Chính sách bảo mật</a></li>
                     <li><a href="#">Chính sách trả góp</a></li>
                     <li><a href="#">Chính sách khui hộp sản phẩm</a></li>
                     <li><a href="#">Chính sách giao hàng & lắp đặt</a></li>
                     <li><a href="#">Chính sách mạng di động FPT</a></li>
-                    <li><a href="#">Chính sách bảo mật dữ liệu cá nhân</a></li>
+                    <li><a href="<?= BASE_URL ?>/chinh-sach-bao-mat">Chính sách bảo mật dữ liệu cá nhân</a></li>
                     <li><a href="#">Quy định về hỗ trợ kỹ thuật & sao lưu dữ liệu</a></li>
                     <li><a href="#">Chính sách giao hàng & lắp đặt Điện máy, Gia dụng</a></li>
                     <li><a href="#">Chính sách chương trình khách hàng thân thiết</a></li>

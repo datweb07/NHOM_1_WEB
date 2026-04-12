@@ -421,6 +421,49 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	// About routes
+	if ($path === 'gioi-thieu') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->gioiThieu();
+		return;
+	}
+
+	if ($path === 'quy-che-hoat-dong') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->quyCheShoatDong();
+		return;
+	}
+
+	if ($path === 'gioi-thieu-may-doi-tra') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->gioiThieuMayDoiTra();
+		return;
+	}
+
+	if ($path === 'chinh-sach-bao-hanh') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->chinhSachBaoHanh();
+		return;
+	}
+
+	if ($path === 'chinh-sach-doi-tra') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->chinhSachDoiTra();
+		return;
+	}
+
+	if ($path === 'chinh-sach-bao-mat') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->chinhSachBaoMat();
+		return;
+	}
+
 	require_once dirname(__DIR__, 2) . '/views/client/home/index.php';
 }
 
