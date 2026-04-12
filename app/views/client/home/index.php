@@ -24,7 +24,8 @@ ob_start();
                             <a href="<?php echo htmlspecialchars($banner['link_dich']); ?>" style="display: block;">
                                 <img src="<?php echo htmlspecialchars($banner['hinh_anh_desktop']); ?>"
                                     alt="<?php echo htmlspecialchars($banner['tieu_de']); ?>"
-                                    style="width: 100%; min-height: 450px; max-height: 800px; object-fit: cover; display: block; border-radius: 0;">
+                                    class="hero-img-responsive"
+                                    style="width: 100%; object-fit: cover; display: block; border-radius: 0;">
                             </a>
                         </div>
                     </div>
@@ -45,7 +46,7 @@ ob_start();
     </div>
 </div>
 
-<div class="category-wrapper" style="position: relative; z-index: 10; margin-top: -300px; margin-bottom: 30px;">
+<div class="category-wrapper" style="position: relative; z-index: 10; margin-bottom: 30px;">
     <div class="container-xl category shadow-sm"
         style="background: #fff; border-radius: 12px; border: none; padding: 15px 0;">
 
@@ -56,16 +57,16 @@ ob_start();
         <div class="row g-2 px-2">
             <?php if (!empty($danhMucNoiBat)): ?>
                 <?php foreach ($danhMucNoiBat as $dm): ?>
-                    <div class="col-6 col-md-3 col-lg-custom-8">
+                    <div class="col-3 col-md-3 col-lg-custom-8">
                         <div class="category-item" style="border: none; text-align: center;">
                             <a href="/danh-muc/<?php echo htmlspecialchars($dm['slug']); ?>" class="text-decoration-none">
                                 <div class="category-image" style="background: transparent;">
                                     <?php if (!empty($dm['icon_url'])): ?>
                                         <img src="<?php echo htmlspecialchars($dm['icon_url']); ?>"
-                                            alt="<?php echo htmlspecialchars($dm['ten']); ?>">
+                                            alt="<?php echo htmlspecialchars($dm['ten']); ?>" class="cat-icon-img">
                                     <?php else: ?>
                                         <img src="<?= ASSET_URL ?>/assets/client/images/icon/phone.png"
-                                            alt="<?php echo htmlspecialchars($dm['ten']); ?>">
+                                            alt="<?php echo htmlspecialchars($dm['ten']); ?>" class="cat-icon-img">
                                     <?php endif; ?>
                                 </div>
                                 <p class="category-title mb-0"
@@ -107,7 +108,6 @@ ob_start();
         left: 0;
         bottom: 0;
         width: 100px;
-
         background: linear-gradient(to right, #fff 0%, transparent 100%);
         z-index: 10;
         pointer-events: none;
@@ -137,13 +137,8 @@ ob_start();
     }
 
     @keyframes marquee-scroll {
-        0% {
-            transform: translateX(0);
-        }
-
-        100% {
-            transform: translateX(-50%);
-        }
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
     }
 
     .continuous-slider-item {
@@ -159,31 +154,48 @@ ob_start();
         }
     }
 
-    .custom-hover-card {
-        transition: box-shadow 0.3s ease;
-    }
-
-    .custom-hover-zoom {
-        transition: transform 0.5s linear;
-    }
-
-    .custom-hover-card:hover .custom-hover-zoom {
-        transform: scale(1.02);
-    }
-
-    .category-item,
-    .suggestion-item {
-        transition: all 0.2s ease;
-    }
-
-    .category-item .category-image img,
-    .suggestion-item .suggestion-image img {
+    .custom-hover-card { transition: box-shadow 0.3s ease; }
+    .custom-hover-zoom { transition: transform 0.5s linear; }
+    .custom-hover-card:hover .custom-hover-zoom { transform: scale(1.02); }
+    .category-item, .suggestion-item { transition: all 0.2s ease; }
+    .category-item .category-image img, .suggestion-item .suggestion-image img {
         transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
-
-    .category-item:hover .category-image img,
-    .suggestion-item:hover .suggestion-image img {
+    .category-item:hover .category-image img, .suggestion-item:hover .suggestion-image img {
         transform: scale(1.15);
+    }
+    
+    .hero-img-responsive {
+        min-height: 450px;
+        max-height: 800px;
+    }
+    .category-wrapper {
+        margin-top: -300px; 
+    }
+    .cat-icon-img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    @media (max-width: 768px) {
+        .hero-img-responsive {
+            min-height: unset; 
+            height: 200px; 
+            max-height: 300px;
+        }
+        .hero-fade-overlay {
+            height: 80px !important; 
+        }
+        .category-wrapper {
+            margin-top: -40px; 
+            padding: 0 10px;
+        }
+        .cat-icon-img {
+            max-width: 45px; 
+        }
+        .category-title {
+            font-size: 0.7rem !important; 
+        }
     }
 </style>
 
@@ -211,7 +223,6 @@ ob_start();
                                 isset($sp['giam_toi_da']) ? (float) $sp['giam_toi_da'] : null
                             );
 
-                            // Cũng cần ép kiểu ở phép tính này để tránh lỗi toán học với NULL
                             $tienGiam = (float) ($sp['gia_hien_thi'] ?? 0) - $giaSauGiam;
                             ?>
                             <div class="continuous-slider-item">
@@ -336,9 +347,7 @@ ob_start();
         padding: 6px;
         width: 100%;
         user-select: none;
-        /* Không cho phép bôi đen text */
         -webkit-user-drag: none;
-        /* Chặn kéo thẻ a/img trên các trình duyệt lõi webkit */
     }
 
     .custom-slider-btn {
@@ -405,7 +414,6 @@ ob_start();
         position: absolute;
         top: 0;
         left: 0;
-        /* Hiệu ứng trượt cho Desktop */
         transition: left 0.4s ease-in-out;
     }
 
@@ -467,7 +475,6 @@ ob_start();
 
         let currentCol = 0;
 
-        // Các biến dùng cho tính năng Kéo thả (Drag)
         let isDown = false;
         let startX;
         let scrollLeft;
@@ -570,9 +577,7 @@ ob_start();
 
         window.addEventListener('resize', initSlider);
 
-        // --- XỬ LÝ KÉO THẢ (DRAG TO SCROLL) ---
 
-        // BƯỚC 1: Ngăn chặn trình duyệt tự kéo bóng mờ của ảnh/link
         const draggables = viewport.querySelectorAll('a, img');
         draggables.forEach(el => {
             el.addEventListener('dragstart', (e) => e.preventDefault());
@@ -580,7 +585,7 @@ ob_start();
 
         viewport.addEventListener('mousedown', (e) => {
             isDown = true;
-            isDragging = false; // Đặt lại cờ kéo mỗi lần nhấn chuột xuống
+            isDragging = false; 
             viewport.style.cursor = 'grabbing';
             viewport.style.scrollBehavior = 'auto';
             startX = e.pageX - viewport.offsetLeft;
@@ -599,7 +604,6 @@ ob_start();
             viewport.style.cursor = 'default';
             viewport.style.scrollBehavior = 'smooth';
 
-            // BƯỚC 2: Cố tình delay 50 mili-giây để sự kiện 'click' kịp nhận diện isDragging đang là true
             setTimeout(() => {
                 isDragging = false;
             }, 50);
@@ -607,7 +611,7 @@ ob_start();
 
         viewport.addEventListener('mousemove', (e) => {
             if (!isDown) return;
-            e.preventDefault(); // Ngăn bôi đen văn bản
+            e.preventDefault(); //ngăn bôi đen văn bản
 
             const x = e.pageX - viewport.offsetLeft;
             const walk = (x - startX) * 2;
@@ -619,7 +623,6 @@ ob_start();
             viewport.scrollLeft = scrollLeft - walk;
         });
 
-        // Ngăn chặn sự kiện click vào link nếu hệ thống xác định là thao tác kéo
         const links = viewport.querySelectorAll('a');
         links.forEach(link => {
             link.addEventListener('click', (e) => {
