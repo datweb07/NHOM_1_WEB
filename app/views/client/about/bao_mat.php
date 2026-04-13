@@ -86,7 +86,6 @@
 
     .content-section ul li::before {
         content: "-";
-        color: #cb1c22;
         font-weight: bold;
         position: absolute;
         left: 0;

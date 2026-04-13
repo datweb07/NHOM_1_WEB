@@ -94,7 +94,7 @@ $active_page = $active_page ?? '';
     <a href="/bao-mat-du-lieu" class="list-group-item list-group-item-action <?= $active_page === 'bao-mat-du-lieu' ? 'active' : '' ?>">Chính sách bảo mật dữ liệu cá nhân khách hàng</a>
     <a href="/quy-che" class="list-group-item list-group-item-action <?= $active_page === 'quy-che' ? 'active' : '' ?>">Quy chế hoạt động</a>
     <a href="/bao-mat" class="list-group-item list-group-item-action <?= $active_page === 'bao-mat' ? 'active' : '' ?>">Chính sách bảo mật</a>
-        <a href="/ho-tro-ky-thuat" class="list-group-item list-group-item-action <?= $active_page === 'ho-tro-ky-thuat' ? 'active' : '' ?>">Quy định hỗ trợ kỹ thuật và sao lưu dữ liệu</a>
+    <a href="/ho-tro-ky-thuat" class="list-group-item list-group-item-action <?= $active_page === 'ho-tro-ky-thuat' ? 'active' : '' ?>">Quy định hỗ trợ kỹ thuật và sao lưu dữ liệu</a>
     <a href="/bao-hanh" class="list-group-item list-group-item-action <?= $active_page === 'bao-hanh' ? 'active' : '' ?>">Chính sách bảo hành</a>
     <a href="/tra-gop" class="list-group-item list-group-item-action <?= $active_page === 'tra-gop' ? 'active' : '' ?>">Chính sách trả góp</a>
 </div>

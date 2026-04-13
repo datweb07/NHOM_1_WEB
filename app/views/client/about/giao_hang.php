@@ -73,20 +73,6 @@
         padding-bottom: 15px;
     }
 
-    .policy-icon {
-        width: 40px;
-        height: 40px;
-        background-color: #fef2f2;
-        color: #cb1c22;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-        margin-right: 15px;
-        flex-shrink: 0;
-    }
-
     .policy-card-title {
         font-size: 18px;
         font-weight: bold;
@@ -125,7 +111,6 @@
 
     .policy-card-body ul li::before {
         content: "•";
-        color: #cb1c22;
         font-weight: bold;
         font-size: 18px;
         position: absolute;
@@ -136,10 +121,6 @@
     .warning-card {
         background-color: #fffaf0;
         border-color: #fbd5d5;
-    }
-    .warning-card .policy-icon {
-        background-color: #fee2e2;
-        color: #dc2626;
     }
 
     .content-section.large-text h3 { font-size: 28px; }
@@ -212,7 +193,7 @@
 
                 <div class="policy-card warning-card mt-4">
                     <div class="policy-card-header">
-                        <h4 class="policy-card-title text-danger">Riêng đối với các sản phẩm Chỉ bán Online:</h4>
+                        <h4 class="policy-card-title">Riêng đối với các sản phẩm Chỉ bán Online:</h4>
                     </div>
                     <div class="policy-card-body">
                         <ul>
