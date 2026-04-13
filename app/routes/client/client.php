@@ -506,6 +506,97 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	if ($path === 'giao-hang-dien-may') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->giaoHangDienMay();
+		return;
+	}
+
+	if ($path === 'giao-hang-online') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->giaoHangOnline();
+		return;
+	}
+
+	if ($path === 'khach-hang-than-thiet') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->khachHangThanThiet();
+		return;
+	}
+
+	if ($path === 'khui-hop') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->khuiHop();
+		return;
+	}
+
+	if ($path === 'mua-hang-online') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->muaHangOnline();
+		return;
+	}
+
+	if ($path === 'may-doi-tra') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->mayDoiTra();
+		return;
+	}
+
+	if ($path === 'doi-tra') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->doiTra();
+		return;
+	}
+
+	if ($path === 'bao-mat-du-lieu') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->baoMatDuLieu();
+		return;
+	}
+
+	if ($path === 'quy-che') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->quyChe();
+		return;
+	}
+
+	if ($path === 'bao-mat') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->baoMat();
+		return;
+	}
+
+	if ($path === 'ho-tro-ky-thuat') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->hoTroKyThuat();
+		return;
+	}
+
+	if ($path === 'bao-hanh') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->baoHanh();
+		return;
+	}
+
+	if ($path === 'tra-gop') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->traGop();
+		return;
+	}
+
 
 	require_once dirname(__DIR__, 2) . '/views/client/home/index.php';
 }

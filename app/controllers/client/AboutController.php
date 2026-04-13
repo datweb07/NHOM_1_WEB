@@ -91,4 +91,95 @@ class AboutController
             'title' => 'Chính sách Chương trình Khách hàng thân thiết tại FPT Shop - FPT Shop'
         ]);
     }
+
+    public function giaoHangDienMay()
+    {
+        View::render('client/about/giao_hang_dien_may', [
+            'title' => 'Chính sách giao hàng & lắp đặt Điện máy, Gia dụng - FPT Shop'
+        ]);
+    }
+
+    public function giaoHangOnline()
+    {
+        View::render('client/about/giao_hang_online', [
+            'title' => 'Chính sách giao hàng & lắp đặt Điện máy chỉ bán online - FPT Shop'
+        ]);
+    }
+
+    public function khachHangThanThiet()
+    {
+        View::render('client/about/khach_hang_than_thiet', [
+            'title' => 'Chính sách Chương trình Khách hàng thân thiết tại FPT Shop - FPT Shop'
+        ]);
+    }
+
+    public function khuiHop()
+    {
+        View::render('client/about/khui_hop', [
+            'title' => 'Chính sách khui hộp sản phẩm - FPT Shop'
+        ]);
+    }
+
+    public function muaHangOnline()
+    {
+        View::render('client/about/mua_hang_online', [
+            'title' => 'Hướng dẫn mua hàng và thanh toán online - FPT Shop'
+        ]);
+    }
+
+    public function mayDoiTra()
+    {
+        View::render('client/about/may_doi_tra', [
+            'title' => 'Giới thiệu máy đổi trả - FPT Shop'
+        ]);
+    }
+
+    public function doiTra()
+    {
+        View::render('client/about/doi_tra', [
+            'title' => 'Chính sách đổi trả - FPT Shop'
+        ]);
+    }
+
+    public function baoMatDuLieu()
+    {
+        View::render('client/about/bao_mat_du_lieu', [
+            'title' => 'Chính sách bảo mật dữ liệu cá nhân khách hàng - FPT Shop'
+        ]);
+    }
+
+    public function quyChe()
+    {
+        View::render('client/about/quy_che', [
+            'title' => 'QUY CHẾ HOẠT ĐỘNG WEBSITE CUNG CẤP DỊCH VỤ TMĐT FPTSHOP.COM.VN - FPT Shop'
+        ]);
+    }
+
+    public function baoMat()
+    {
+        View::render('client/about/bao_mat', [
+            'title' => 'Chính sách bảo mật - FPT Shop'
+        ]);
+    }
+
+    public function hoTroKyThuat()
+    {
+        View::render('client/about/ho_tro_ky_thuat', [
+            'title' => 'Quy định hỗ trợ kỹ thuật và sao lưu dữ liệu - FPT Shop'
+        ]);
+    }
+
+    public function baoHanh()
+    {
+        View::render('client/about/bao_hanh', [
+            'title' => 'Chính sách bảo hành - FPT Shop'
+        ]);
+    }
+
+    public function traGop()
+    {
+        View::render('client/about/tra_gop', [
+            'title' => 'Chính sách trả góp - FPT Shop'
+        ]);
+    }
 }

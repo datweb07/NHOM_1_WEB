@@ -5,7 +5,6 @@
         background-color: #ffffff;
     }
 
-    /* BREADCRUMB */
     .breadcrumb-custom {
         background-color: transparent;
         padding: 15px 0;
@@ -26,7 +25,6 @@
         color: #212529;
     }
 
-    /* NỘI DUNG CHÍNH */
     .content-section {
         padding-left: 10px;
     }
@@ -96,7 +94,6 @@
         font-size: 15px;
     }
 
-    /* BẢNG BIỂU (TABLE) */
     .content-section .table th {
         background-color: #f8f9fa;
         color: #333;
@@ -110,7 +107,6 @@
         font-size: 14.5px;
     }
 
-    /* TRẠNG THÁI CỠ CHỮ LỚN */
     .content-section.large-text h3 { font-size: 28px; }
     .content-section.large-text h4 { font-size: 20px; }
     .content-section.large-text h5 { font-size: 18px; }
@@ -572,7 +568,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Logic đổi cỡ chữ
+
         const btnSmall = document.getElementById('btn-font-small');
         const btnLarge = document.getElementById('btn-font-large');
         const contentSection = document.getElementById('policy-content');

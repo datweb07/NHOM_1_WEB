@@ -5,7 +5,6 @@
         background-color: #ffffff;
     }
 
-    /* BREADCRUMB */
     .breadcrumb-custom {
         background-color: transparent;
         padding: 15px 0;
@@ -26,7 +25,6 @@
         color: #212529;
     }
 
-    /* NỘI DUNG CHÍNH */
     .content-section {
         padding-left: 10px;
     }
@@ -53,7 +51,6 @@
         font-size: 15.5px;
     }
 
-    /* CARD CHÍNH SÁCH */
     .policy-card {
         background-color: #fff;
         border: 1px solid #e9ecef;
@@ -126,7 +123,6 @@
         margin-bottom: 0;
     }
 
-    /* Tạo dấu chấm tròn đỏ cho list */
     .policy-card-body ul li::before {
         content: "•";
         color: #cb1c22;
@@ -137,7 +133,6 @@
         top: -2px;
     }
 
-    /* Riêng phần cảnh báo (Online) */
     .warning-card {
         background-color: #fffaf0;
         border-color: #fbd5d5;
@@ -147,7 +142,6 @@
         color: #dc2626;
     }
 
-    /* TRẠNG THÁI CỠ CHỮ LỚN */
     .content-section.large-text h3 { font-size: 28px; }
     .content-section.large-text p.intro-text,
     .content-section.large-text .policy-card-body p,
@@ -236,7 +230,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Logic đổi cỡ chữ
+
         const btnSmall = document.getElementById('btn-font-small');
         const btnLarge = document.getElementById('btn-font-large');
         const contentSection = document.getElementById('policy-content');
