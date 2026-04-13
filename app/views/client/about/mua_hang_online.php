@@ -122,7 +122,6 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb breadcrumb-custom">
             <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="/ho-tro">Hỗ trợ</a></li>
             <li class="breadcrumb-item active" aria-current="page">Hướng dẫn mua hàng và thanh toán online</li>
         </ol>
     </nav>

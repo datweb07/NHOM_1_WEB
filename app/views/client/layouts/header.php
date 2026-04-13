@@ -407,9 +407,60 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
         color: #999;
         font-size: 0.85rem;
     }
+
+    /* Băng rôn chạy */
+.top-banner {
+    background-color: #f5a623;
+    color: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 8px 0;
+    font-size: 14px;
+    font-weight: 500;
+    position: relative;
+    z-index: 1031; /* cao hơn header một chút nếu cần */
+}
+
+.marquee {
+    display: inline-block;
+    animation: marquee 20s linear infinite;
+}
+
+.marquee span {
+    display: inline-block;
+    padding-right: 50px;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* Responsive trên mobile */
+@media (max-width: 768px) {
+    .top-banner {
+        font-size: 12px;
+        padding: 6px 0;
+    }
+    .marquee {
+        animation-duration: 15s;
+    }
+}
 </style>
 
 <header class="sticky-header">
+
+<!-- Băng rôn chạy phía trên header -->
+<div class="top-banner">
+    <div class="marquee">
+        <span>🔥 ƯU ĐÃI LỚN – GIẢM ĐẾN 50% CHO ĐIỆN THOẠI, LAPTOP – MIỄN PHÍ VẬN CHUYỂN 🔥</span>
+        <span>🔥 ƯU ĐÃI LỚN – GIẢM ĐẾN 50% CHO ĐIỆN THOẠI, LAPTOP – MIỄN PHÍ VẬN CHUYỂN 🔥</span>
+    </div>
+</div>
 
     <div class="d-lg-none d-block">
         <div class="container-xl">

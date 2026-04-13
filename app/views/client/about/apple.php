@@ -91,7 +91,6 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb breadcrumb-custom">
             <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="/ho-tro">Hỗ trợ</a></li>
             <li class="breadcrumb-item active" aria-current="page">Đại lý uỷ quyền và TTBH uỷ quyền của Apple</li>
         </ol>
     </nav>

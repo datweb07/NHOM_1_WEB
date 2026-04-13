@@ -5,7 +5,6 @@
         background-color: #ffffff;
     }
 
-    /* BREADCRUMB */
     .breadcrumb-custom {
         background-color: transparent;
         padding: 15px 0;
@@ -26,7 +25,6 @@
         color: #212529;
     }
 
-    /* NỘI DUNG CHÍNH */
     .content-section {
         padding-left: 10px;
     }
@@ -71,9 +69,8 @@
         text-decoration: underline;
     }
 
-    /* BẢNG BIỂU (TABLE) */
     .content-section .table-container {
-        max-height: 600px; /* Giới hạn chiều cao bảng để dễ cuộn */
+        max-height: 600px;
         overflow-y: auto;
         border: 1px solid #dee2e6;
         border-radius: 4px;
@@ -91,7 +88,7 @@
         font-weight: 600;
         vertical-align: middle;
         position: sticky;
-        top: 0; /* Giữ cố định tiêu đề bảng khi cuộn */
+        top: 0; 
         z-index: 1;
         box-shadow: 0 1px 0 #dee2e6;
     }
@@ -107,7 +104,6 @@
         font-size: 14px;
     }
 
-    /* TRẠNG THÁI CỠ CHỮ LỚN */
     .content-section.large-text h3 { font-size: 28px; }
     .content-section.large-text h5 { font-size: 18px; }
     .content-section.large-text p,
@@ -122,7 +118,6 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb breadcrumb-custom">
             <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="/ho-tro">Hỗ trợ</a></li>
             <li class="breadcrumb-item active" aria-current="page">Danh sách điểm cung cấp dịch vụ viễn thông FPT</li>
         </ol>
     </nav>
@@ -526,7 +521,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Logic đổi cỡ chữ
+
         const btnSmall = document.getElementById('btn-font-small');
         const btnLarge = document.getElementById('btn-font-large');
         const contentSection = document.getElementById('policy-content');

@@ -131,7 +131,6 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb breadcrumb-custom">
             <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="/ho-tro">Hỗ trợ</a></li>
             <li class="breadcrumb-item active" aria-current="page">Chính sách giao hàng & lắp đặt Điện máy chỉ bán online</li>
         </ol>
     </nav>

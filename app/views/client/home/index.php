@@ -1064,7 +1064,6 @@ ob_start();
                 <div class="zalo-title">FPT Shop</div>
             </div>
             <div class="zalo-header-actions">
-                <div class="zalo-circle-btn">•••</div>
                 <div class="zalo-circle-btn" id="zaloClose"><i class="fas fa-chevron-down text-white"></i></div>
             </div>
         </div>
