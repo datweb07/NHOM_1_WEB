@@ -84,16 +84,17 @@ $active_page = $active_page ?? '';
     <a href="/goi-cuoc" class="list-group-item list-group-item-action <?= $active_page === 'goi-cuoc' ? 'active' : '' ?>">Chính sách gói cước di động FPT</a>
     <a href="/diem-cung-cap" class="list-group-item list-group-item-action <?= $active_page === 'diem-cung-cap' ? 'active' : '' ?>">Danh sách điểm cung cấp dịch vụ viễn thông FPT</a>
     <a href="/giao-hang" class="list-group-item list-group-item-action <?= $active_page === 'giao-hang' ? 'active' : '' ?>">Chính sách giao hàng & lắp đặt</a>
-    <a href="/gioi-thieu" class="list-group-item list-group-item-action <?= $active_page === 'giao-hang-dien-may' ? 'active' : '' ?>">Chính sách giao hàng & lắp đặt Điện máy, Gia dụng</a>
-    <a href="/gioi-thieu" class="list-group-item list-group-item-action <?= $active_page === 'giao-hang-online' ? 'active' : '' ?>">Chính sách giao hàng & lắp đặt Điện máy chỉ bán online</a>
-    <a href="/gioi-thieu" class="list-group-item list-group-item-action <?= $active_page === 'khach-hang-than-thiet' ? 'active' : '' ?>">Chính sách Chương trình Khách hàng thân thiết tại FPT Shop</a>
-    <a href="/gioi-thieu" class="list-group-item list-group-item-action <?= $active_page === 'khui-hop' ? 'active' : '' ?>">Chính sách khui hộp sản phẩm</a>
-    <a href="/gioi-thieu" class="list-group-item list-group-item-action <?= $active_page === 'mua-hang-online' ? 'active' : '' ?>">Hướng dẫn mua hàng và thanh toán online</a>
-    <a href="/gioi-thieu-may-doi-tra" class="list-group-item list-group-item-action <?= $active_page === 'may-doi-tra' ? 'active' : '' ?>">Giới thiệu máy đổi trả</a>
-    <a href="/chinh-sach-doi-tra" class="list-group-item list-group-item-action <?= $active_page === 'doi-tra' ? 'active' : '' ?>">Chính sách đổi trả</a>
-    <a href="/chinh-sach-bao-mat" class="list-group-item list-group-item-action <?= $active_page === 'bao-mat-du-lieu' ? 'active' : '' ?>">Chính sách bảo mật dữ liệu cá nhân khách hàng</a>
-    <a href="/quy-che-hoat-dong" class="list-group-item list-group-item-action <?= $active_page === 'quy-che' ? 'active' : '' ?>">Quy chế hoạt động</a>
-    <a href="/chinh-sach-bao-mat" class="list-group-item list-group-item-action <?= $active_page === 'bao-mat' ? 'active' : '' ?>">Chính sách bảo mật</a>
-    <a href="/chinh-sach-bao-hanh" class="list-group-item list-group-item-action <?= $active_page === 'bao-hanh' ? 'active' : '' ?>">Chính sách bảo hành</a>
-    <a href="/gioi-thieu" class="list-group-item list-group-item-action <?= $active_page === 'tra-gop' ? 'active' : '' ?>">Chính sách trả góp</a>
+    <a href="/giao-hang-dien-may" class="list-group-item list-group-item-action <?= $active_page === 'giao-hang-dien-may' ? 'active' : '' ?>">Chính sách giao hàng & lắp đặt Điện máy, Gia dụng</a>
+    <a href="/giao-hang-online" class="list-group-item list-group-item-action <?= $active_page === 'giao-hang-online' ? 'active' : '' ?>">Chính sách giao hàng & lắp đặt Điện máy chỉ bán online</a>
+    <a href="/khach-hang-than-thiet" class="list-group-item list-group-item-action <?= $active_page === 'khach-hang-than-thiet' ? 'active' : '' ?>">Chính sách Chương trình Khách hàng thân thiết tại FPT Shop</a>
+    <a href="/khui-hop" class="list-group-item list-group-item-action <?= $active_page === 'khui-hop' ? 'active' : '' ?>">Chính sách khui hộp sản phẩm</a>
+    <a href="/mua-hang-online" class="list-group-item list-group-item-action <?= $active_page === 'mua-hang-online' ? 'active' : '' ?>">Hướng dẫn mua hàng và thanh toán online</a>
+    <a href="/may-doi-tra" class="list-group-item list-group-item-action <?= $active_page === 'may-doi-tra' ? 'active' : '' ?>">Giới thiệu máy đổi trả</a>
+    <a href="/doi-tra" class="list-group-item list-group-item-action <?= $active_page === 'doi-tra' ? 'active' : '' ?>">Chính sách đổi trả</a>
+    <a href="/bao-mat-du-lieu" class="list-group-item list-group-item-action <?= $active_page === 'bao-mat-du-lieu' ? 'active' : '' ?>">Chính sách bảo mật dữ liệu cá nhân khách hàng</a>
+    <a href="/quy-che" class="list-group-item list-group-item-action <?= $active_page === 'quy-che' ? 'active' : '' ?>">Quy chế hoạt động</a>
+    <a href="/bao-mat" class="list-group-item list-group-item-action <?= $active_page === 'bao-mat' ? 'active' : '' ?>">Chính sách bảo mật</a>
+        <a href="/ho-tro-ky-thuat" class="list-group-item list-group-item-action <?= $active_page === 'ho-tro-ky-thuat' ? 'active' : '' ?>">Quy định hỗ trợ kỹ thuật và sao lưu dữ liệu</a>
+    <a href="/bao-hanh" class="list-group-item list-group-item-action <?= $active_page === 'bao-hanh' ? 'active' : '' ?>">Chính sách bảo hành</a>
+    <a href="/tra-gop" class="list-group-item list-group-item-action <?= $active_page === 'tra-gop' ? 'active' : '' ?>">Chính sách trả góp</a>
 </div>
