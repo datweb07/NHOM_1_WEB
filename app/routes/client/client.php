@@ -12,12 +12,19 @@ function clientRoute(string $uri): void
 	}
 
 	// ĐẶT ROUTE API NÀY LÊN GẦN TRÊN CÙNG
-    if ($path === 'api/mega-menu') {
-        require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
-        $controller = new \App\Controllers\Client\SanPhamController();
-        $controller->apiMegaMenu();
-        return;
-    }
+	if ($path === 'api/mega-menu') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
+		$controller = new \App\Controllers\Client\SanPhamController();
+		$controller->apiMegaMenu();
+		return;
+	}
+
+	if ($path === 'api/so-sanh-san-pham') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
+		$controller = new \App\Controllers\Client\SanPhamController();
+		$controller->apiSoSanhTheoSlug();
+		return;
+	}
 
 	if ($path === 'san-pham' || $path === 'san-pham/list') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
@@ -28,6 +35,13 @@ function clientRoute(string $uri): void
 
 	if ($path === 'san-pham/chi-tiet' || $path === 'san-pham/detail') {
 		require_once dirname(__DIR__, 2) . '/views/client/san_pham/detail.php';
+		return;
+	}
+
+	if ($path === 'so-sanh') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
+		$controller = new \App\Controllers\Client\SanPhamController();
+		$controller->soSanh();
 		return;
 	}
 
@@ -216,12 +230,12 @@ function clientRoute(string $uri): void
 	}
 
 	if (preg_match('#^danh-muc/([a-z0-9-]+)$#', $path, $matches)) {
-        require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
-        $controller = new \App\Controllers\Client\SanPhamController();
-        // Gọi đến hàm danhSachTheoSlug() mà bạn đã viết sẵn trong Controller
-        $controller->danhSachTheoSlug($matches[1]); 
-        return;
-    }
+		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
+		$controller = new \App\Controllers\Client\SanPhamController();
+		// Gọi đến hàm danhSachTheoSlug() mà bạn đã viết sẵn trong Controller
+		$controller->danhSachTheoSlug($matches[1]);
+		return;
+	}
 
 	// Sản phẩm routes
 	if (preg_match('#^san-pham/([a-z0-9-]+)$#', $path, $matches)) {
@@ -607,4 +621,3 @@ function clientRoute(string $uri): void
 
 	require_once dirname(__DIR__, 2) . '/views/client/home/index.php';
 }
-
