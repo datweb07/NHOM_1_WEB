@@ -12,6 +12,33 @@ if (!empty($danhGiaList)) {
 }
 
 $isLoggedIn = \App\Core\Session::isLoggedIn();
+
+$goiYSoSanh = [];
+if (!empty($sanPhamTuongTu)) {
+    foreach ($sanPhamTuongTu as $spTuongTu) {
+        if ((int)($spTuongTu['id'] ?? 0) === (int)($sanPham['id'] ?? 0)) {
+            continue;
+        }
+        if ((int)($spTuongTu['danh_muc_id'] ?? 0) !== (int)($sanPham['danh_muc_id'] ?? 0)) {
+            continue;
+        }
+        if (empty($spTuongTu['slug'])) {
+            continue;
+        }
+        $goiYSoSanh[] = $spTuongTu;
+    }
+}
+
+$danhSachSanPhamSoSanh = $danhSachSanPhamSoSanh ?? [];
+$optionsSanPhamKhacHtml = '<option value="">-- Chọn ngoài sản phẩm tương tự --</option>';
+foreach ($danhSachSanPhamSoSanh as $spSoSanhThem) {
+    $slugSpThem = (string)($spSoSanhThem['slug'] ?? '');
+    if ($slugSpThem === '' || $slugSpThem === (string)($sanPham['slug'] ?? '')) {
+        continue;
+    }
+    $tenSpThem = (string)($spSoSanhThem['ten_san_pham'] ?? $slugSpThem);
+    $optionsSanPhamKhacHtml .= '<option value="' . htmlspecialchars($slugSpThem, ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($tenSpThem, ENT_QUOTES, 'UTF-8') . '</option>';
+}
 ?>
 <style>
     .variant-card {
@@ -25,24 +52,33 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
         position: relative;
         overflow: hidden;
         user-select: none;
-        
+
         /* --- THÊM CÁC DÒNG NÀY ĐỂ FIX THẲNG HÀNG --- */
-        height: 100%;            /* Giãn chiều cao card lấp đầy cột */
-        display: flex;           /* Sử dụng flexbox */
-        flex-direction: column;  /* Xếp nội dung theo chiều dọc */
-        justify-content: center; /* Căn giữa nội dung theo chiều dọc */
-        align-items: center;     /* Căn giữa nội dung theo chiều ngang */
+        height: 100%;
+        /* Giãn chiều cao card lấp đầy cột */
+        display: flex;
+        /* Sử dụng flexbox */
+        flex-direction: column;
+        /* Xếp nội dung theo chiều dọc */
+        justify-content: center;
+        /* Căn giữa nội dung theo chiều dọc */
+        align-items: center;
+        /* Căn giữa nội dung theo chiều ngang */
     }
+
     .variant-card:hover:not(.disabled) {
         border-color: #d70018;
         box-shadow: 0 0 5px rgba(215, 0, 24, 0.15);
     }
+
     .variant-card.active {
         border-color: #d70018;
         background-color: #fef2f2;
     }
+
     .variant-card.active::before {
-        content: '\f00c'; /* Icon dấu tick của FontAwesome */
+        content: '\f00c';
+        /* Icon dấu tick của FontAwesome */
         font-family: 'Font Awesome 6 Free', 'FontAwesome';
         font-weight: 900;
         position: absolute;
@@ -54,6 +90,7 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
         padding: 2px 6px;
         border-bottom-left-radius: 8px;
     }
+
     .variant-card.disabled {
         background-color: #f8f9fa;
         color: #adb5bd;
@@ -61,27 +98,60 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
         border-color: #e9ecef;
         opacity: 0.7;
     }
+
     .variant-price-label {
         font-size: 0.85rem;
         margin-top: 2px;
     }
-    
+
     /* CSS cho bài viết mô tả sản phẩm */
     .product-description {
         line-height: 1.6;
         color: #333;
     }
+
     .product-description img {
         max-width: 100%;
         height: auto !important;
         border-radius: 8px;
         margin: 10px 0;
     }
-    .product-description h2, .product-description h3, .product-description h4 {
+
+    .product-description h2,
+    .product-description h3,
+    .product-description h4 {
         color: #d70018;
         margin-top: 20px;
         margin-bottom: 10px;
         font-weight: bold;
+    }
+
+    .compare-similar-card {
+        border: 1px solid #f0d7db;
+        border-radius: 12px;
+        background: linear-gradient(180deg, #fff 0%, #fff8f9 100%);
+    }
+
+    .compare-similar-option {
+        border: 1px solid #eceff3;
+        border-radius: 10px;
+        background: #fff;
+        padding: 10px;
+        height: 100%;
+    }
+
+    .inline-compare-table th,
+    .inline-compare-table td {
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .inline-compare-table th:first-child,
+    .inline-compare-table td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        background: #f8f9fa;
     }
 </style>
 
@@ -96,13 +166,15 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
 
     <?php if (isset($_SESSION['success'])): ?>
         <div class="alert alert-success alert-dismissible fade show">
-            <?= $_SESSION['success']; unset($_SESSION['success']); ?>
+            <?= $_SESSION['success'];
+            unset($_SESSION['success']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
     <?php if (isset($_SESSION['error'])): ?>
         <div class="alert alert-danger alert-dismissible fade show">
-            <?= $_SESSION['error']; unset($_SESSION['error']); ?>
+            <?= $_SESSION['error'];
+            unset($_SESSION['error']); ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
@@ -112,22 +184,22 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
         <div class="col-md-5">
             <div class="card border-0 shadow-sm p-3">
                 <img id="main-img" src="<?= htmlspecialchars($anhChinh) ?>"
-                     alt="<?= htmlspecialchars($sanPham['ten_san_pham']) ?>"
-                     class="img-fluid mx-auto d-block mb-3"
-                     style="max-height:320px;object-fit:contain; transition: opacity 0.2s;">
-                     
+                    alt="<?= htmlspecialchars($sanPham['ten_san_pham']) ?>"
+                    class="img-fluid mx-auto d-block mb-3"
+                    style="max-height:320px;object-fit:contain; transition: opacity 0.2s;">
+
                 <?php if (count($hinhAnhList) > 1): ?>
                     <div class="d-flex gap-2 flex-wrap justify-content-center">
                         <?php foreach ($hinhAnhList as $img): ?>
-                            <?php 
-                                // Nếu ảnh có phien_ban_id thì in id đó ra, nếu không (Chung) thì in chữ 'all'
-                                $variantDataId = !empty($img['phien_ban_id']) ? $img['phien_ban_id'] : 'all'; 
+                            <?php
+                            // Nếu ảnh có phien_ban_id thì in id đó ra, nếu không (Chung) thì in chữ 'all'
+                            $variantDataId = !empty($img['phien_ban_id']) ? $img['phien_ban_id'] : 'all';
                             ?>
                             <img src="<?= htmlspecialchars($img['url_anh']) ?>"
-                                 alt="" class="thumb-img border rounded"
-                                 data-variant-id="<?= $variantDataId ?>"
-                                 style="width:60px;height:60px;object-fit:contain;cursor:pointer;border:2px solid transparent; transition: all 0.2s;"
-                                 onclick="document.getElementById('main-img').src=this.src; document.querySelectorAll('.thumb-img').forEach(t=>t.style.borderColor='transparent'); this.style.borderColor='#d70018';">
+                                alt="" class="thumb-img border rounded"
+                                data-variant-id="<?= $variantDataId ?>"
+                                style="width:60px;height:60px;object-fit:contain;cursor:pointer;border:2px solid transparent; transition: all 0.2s;"
+                                onclick="document.getElementById('main-img').src=this.src; document.querySelectorAll('.thumb-img').forEach(t=>t.style.borderColor='transparent'); this.style.borderColor='#d70018';">
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
@@ -168,28 +240,28 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                     <p class="fw-medium small mb-2">Chọn phiên bản:</p>
                     <div class="row g-2">
                         <?php foreach ($phienBanList as $idx => $pb): ?>
-                            <?php 
-                                $isOutOfStock = $pb['so_luong_ton'] <= 0;
-                                $isActive = ($idx === 0 && !$isOutOfStock) ? 'active' : ''; 
+                            <?php
+                            $isOutOfStock = $pb['so_luong_ton'] <= 0;
+                            $isActive = ($idx === 0 && !$isOutOfStock) ? 'active' : '';
                             ?>
                             <div class="col-4">
                                 <div class="variant-card variant-btn <?= $isActive ?> <?= $isOutOfStock ? 'disabled' : '' ?>"
-                                     data-id="<?= $pb['id'] ?>"
-                                     data-price="<?= $pb['gia_ban'] ?>"
-                                     data-stock="<?= $pb['so_luong_ton'] ?>">
-                                    
+                                    data-id="<?= $pb['id'] ?>"
+                                    data-price="<?= $pb['gia_ban'] ?>"
+                                    data-stock="<?= $pb['so_luong_ton'] ?>">
+
                                     <div class="fw-bold text-wrap" style="font-size: 0.85rem;">
                                         <?= htmlspecialchars($pb['ten_phien_ban']) ?>
                                     </div>
                                     <div class="variant-price-label <?= $isActive ? 'text-danger fw-medium' : 'text-muted' ?>">
                                         <?= number_format($pb['gia_ban'], 0, ',', '.') ?>đ
                                     </div>
-                                    
+
                                 </div>
                             </div>
                         <?php endforeach; ?>
                     </div>
-                    
+
                     <small id="stock-info" class="mt-2 d-block <?= ($phienBanDauTien['so_luong_ton'] ?? 0) > 0 ? 'text-success' : 'text-danger' ?>">
                         <?= ($phienBanDauTien['so_luong_ton'] ?? 0) > 0 ? '<i class="fa fa-check-circle me-1"></i>Còn lại: ' . $phienBanDauTien['so_luong_ton'] . ' sản phẩm' : '<i class="fa fa-times-circle me-1"></i>Đã hết hàng' ?>
                     </small>
@@ -198,16 +270,16 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
 
             <form action="/gio-hang/them" method="POST" class="mb-3">
                 <input type="hidden" name="phien_ban_id" id="selected-variant"
-                       value="<?= $phienBanDauTien['id'] ?? 0 ?>">
+                    value="<?= $phienBanDauTien['id'] ?? 0 ?>">
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <label class="small fw-medium">Số lượng:</label>
                     <div class="input-group" style="width:110px;">
                         <button class="btn btn-outline-secondary btn-sm" type="button"
-                                onclick="changeQty(-1)">-</button>
+                            onclick="changeQty(-1)">-</button>
                         <input type="number" name="so_luong" id="qty-input" class="form-control text-center"
-                               value="1" min="1" max="99" style="font-size:0.88rem;">
+                            value="1" min="1" max="99" style="font-size:0.88rem;">
                         <button class="btn btn-outline-secondary btn-sm" type="button"
-                                onclick="changeQty(1)">+</button>
+                            onclick="changeQty(1)">+</button>
                     </div>
                 </div>
                 <div class="d-flex gap-2">
@@ -216,7 +288,7 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                     </button>
                     <?php if ($isLoggedIn): ?>
                         <button type="button" class="btn btn-outline-danger btn-wishlist"
-                                data-id="<?= $sanPham['id'] ?>">
+                            data-id="<?= $sanPham['id'] ?>">
                             <i class="fa fa-heart"></i>
                         </button>
                     <?php endif; ?>
@@ -258,22 +330,22 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
         <ul class="nav nav-tabs" id="productTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active fw-bold text-dark" id="tab-desc" data-bs-toggle="tab"
-                        data-bs-target="#pane-desc" type="button">Đặc điểm nổi bật</button>
+                    data-bs-target="#pane-desc" type="button">Đặc điểm nổi bật</button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link fw-bold text-dark" id="tab-specs" data-bs-toggle="tab"
-                        data-bs-target="#pane-specs" type="button">Thông số kỹ thuật</button>
+                    data-bs-target="#pane-specs" type="button">Thông số kỹ thuật</button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link fw-bold text-dark" id="tab-reviews" data-bs-toggle="tab"
-                        data-bs-target="#pane-reviews" type="button">
+                    data-bs-target="#pane-reviews" type="button">
                     Đánh giá (<?= $tongDanhGia ?>)
                 </button>
             </li>
         </ul>
-        
+
         <div class="tab-content border border-top-0 rounded-bottom p-4 bg-white shadow-sm">
-            
+
             <div class="tab-pane fade show active product-description" id="pane-desc" role="tabpanel">
                 <?php if (!empty($sanPham['mo_ta'])): ?>
                     <?= $sanPham['mo_ta'] ?>
@@ -336,7 +408,7 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                         <div class="mb-3">
                             <label class="form-label small fw-medium">Nội dung</label>
                             <textarea id="noi_dung" class="form-control form-control-sm" rows="3"
-                                      placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
+                                placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
                         </div>
                         <button type="button" class="btn btn-danger btn-sm" id="btn-review" data-id="<?= $sanPham['id'] ?>">Gửi đánh giá</button>
                     </div>
@@ -360,11 +432,11 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                             <div class="card border-0 shadow-sm h-100 custom-hover-card">
                                 <div class="overflow-hidden p-2">
                                     <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png') ?>"
-                                         class="card-img-top custom-hover-zoom" alt=""
-                                         style="height:150px;object-fit:contain;">
+                                        class="card-img-top custom-hover-zoom" alt=""
+                                        style="height:150px;object-fit:contain;">
                                 </div>
                                 <div class="card-body pt-0 px-3 pb-3">
-                                    <p class="small mb-1 text-dark fw-medium" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                    <p class="small mb-1 text-dark fw-medium" style="display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
                                         <?= htmlspecialchars($sp['ten_san_pham']) ?>
                                     </p>
                                     <p class="text-danger fw-bold mb-0 small"><?= number_format($sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>
@@ -376,178 +448,426 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
             </div>
         </div>
     <?php endif; ?>
+
+    <?php if (!empty($goiYSoSanh)): ?>
+        <div class="mt-4">
+            <div class="compare-similar-card p-3 p-md-4 shadow-sm">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fa fa-balance-scale text-danger me-2"></i>So sánh sản phẩm tương tự
+                    </h5>
+                    <span class="small text-muted">Chỉ hiển thị sản phẩm cùng danh mục, có thể chọn nhiều sản phẩm để so sánh</span>
+                </div>
+
+                <form method="GET" action="/so-sanh" id="compare-similar-form">
+                    <div class="row g-2 g-md-3 mb-3">
+                        <?php foreach ($goiYSoSanh as $idx => $sp): ?>
+                            <?php if ($idx >= 8) break; ?>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <label class="compare-similar-option d-flex align-items-start gap-2">
+                                    <input
+                                        class="form-check-input mt-1 compare-similar-checkbox"
+                                        type="checkbox"
+                                        name="slug[]"
+                                        value="<?= htmlspecialchars($sp['slug']) ?>">
+                                    <div class="flex-grow-1">
+                                        <div class="small fw-semibold text-dark mb-1" style="display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                            <?= htmlspecialchars($sp['ten_san_pham']) ?>
+                                        </div>
+                                        <div class="small text-danger fw-bold">
+                                            <?= number_format((float)($sp['gia_hien_thi'] ?? 0), 0, ',', '.') ?>đ
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div id="compare-extra-selects" class="row g-2 g-md-3 mb-3">
+                        <div class="col-12 col-md-6 compare-extra-item">
+                            <label class="form-label small fw-semibold mb-1">Chọn thêm sản phẩm khác</label>
+                            <select class="form-select form-select-sm compare-extra-select" name="slug[]">
+                                <?= $optionsSanPhamKhacHtml ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-outline-danger btn-sm mb-3" id="btn-add-compare-select">
+                        <i class="fa fa-plus me-1"></i>Thêm ô chọn sản phẩm khác
+                    </button>
+
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        <button type="submit" class="btn btn-danger" id="btn-compare-similar">
+                            <i class="fa fa-sliders me-1"></i>So sánh sản phẩm đã chọn
+                        </button>
+                    </div>
+                </form>
+
+                <div id="compare-inline-message" class="mt-3"></div>
+                <div id="compare-inline-result" class="mt-3 d-none">
+                    <div class="card border-0 shadow-sm overflow-hidden">
+                        <div class="table-responsive" style="max-height: 70vh;">
+                            <table class="table table-bordered align-middle mb-0 inline-compare-table" id="compare-inline-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>
 
 <script>
-let selectedVariantId = document.getElementById('selected-variant')?.value;
+    let selectedVariantId = document.getElementById('selected-variant')?.value;
 
-// Hàm lọc hình ảnh thông minh theo phiên bản
-function filterImagesByVariant(variantId) {
-    const thumbnails = document.querySelectorAll('.thumb-img');
-    if (thumbnails.length === 0) return;
+    // Hàm lọc hình ảnh thông minh theo phiên bản
+    function filterImagesByVariant(variantId) {
+        const thumbnails = document.querySelectorAll('.thumb-img');
+        if (thumbnails.length === 0) return;
 
-    let firstVisibleImageSrc = null;
-    let hasSpecificImages = false;
+        let firstVisibleImageSrc = null;
+        let hasSpecificImages = false;
 
-    // Kiểm tra xem phiên bản đang chọn CÓ ảnh riêng nào không
-    thumbnails.forEach(thumb => {
-        if (thumb.getAttribute('data-variant-id') === variantId.toString()) {
-            hasSpecificImages = true;
-        }
-    });
-
-    // Duyệt qua từng ảnh để quyết định Ẩn hay Hiện
-    thumbnails.forEach(thumb => {
-        const thumbVariantId = thumb.getAttribute('data-variant-id');
-        let shouldShow = false;
-
-        if (hasSpecificImages) {
-            shouldShow = (thumbVariantId === variantId.toString());
-        } else {
-            shouldShow = (thumbVariantId === 'all');
-        }
-
-        if (shouldShow) {
-            thumb.style.display = 'block';
-            if (!firstVisibleImageSrc) {
-                firstVisibleImageSrc = thumb.src;
-            }
-        } else {
-            thumb.style.display = 'none'; 
-        }
-    });
-
-    // Tự động đổi ảnh to ở trên cùng theo ảnh đầu tiên
-    const mainImg = document.getElementById('main-img');
-    if (firstVisibleImageSrc && mainImg) {
-        mainImg.style.opacity = 0.5; 
-        setTimeout(() => {
-            mainImg.src = firstVisibleImageSrc;
-            mainImg.style.opacity = 1;
-        }, 150);
-        
-        document.querySelectorAll('.thumb-img').forEach(t => t.style.borderColor = 'transparent');
-        const firstVisibleThumb = Array.from(thumbnails).find(t => t.style.display !== 'none');
-        if (firstVisibleThumb) {
-            firstVisibleThumb.style.borderColor = '#d70018';
-        }
-    }
-}
-
-// Lọc ảnh ngay khi vừa tải trang
-if (selectedVariantId) {
-    filterImagesByVariant(selectedVariantId);
-}
-
-// Sự kiện khi Click chọn phiên bản
-document.querySelectorAll('.variant-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        if (this.classList.contains('disabled')) return;
-
-        document.querySelectorAll('.variant-btn').forEach(b => {
-            b.classList.remove('active');
-            const priceLabel = b.querySelector('.variant-price-label');
-            if (priceLabel) {
-                priceLabel.classList.remove('text-danger', 'fw-medium');
-                priceLabel.classList.add('text-muted');
+        // Kiểm tra xem phiên bản đang chọn CÓ ảnh riêng nào không
+        thumbnails.forEach(thumb => {
+            if (thumb.getAttribute('data-variant-id') === variantId.toString()) {
+                hasSpecificImages = true;
             }
         });
 
-        this.classList.add('active');
-        const activePriceLabel = this.querySelector('.variant-price-label');
-        if (activePriceLabel) {
-            activePriceLabel.classList.remove('text-muted');
-            activePriceLabel.classList.add('text-danger', 'fw-medium');
-        }
-        
-        const price = parseInt(this.dataset.price);
-        const stock = parseInt(this.dataset.stock);
-        selectedVariantId = this.dataset.id;
-        
-        document.getElementById('selected-variant').value = selectedVariantId;
-        document.getElementById('current-price').textContent = price.toLocaleString('vi-VN') + 'đ';
-        
-        const stockInfo = document.getElementById('stock-info');
-        if (stock > 0) {
-            stockInfo.className = 'mt-2 d-block text-success';
-            stockInfo.innerHTML = '<i class="fa fa-check-circle me-1"></i>Còn lại: ' + stock + ' sản phẩm';
-        } else {
-            stockInfo.className = 'mt-2 d-block text-danger';
-            stockInfo.innerHTML = '<i class="fa fa-times-circle me-1"></i>Đã hết hàng';
-        }
+        // Duyệt qua từng ảnh để quyết định Ẩn hay Hiện
+        thumbnails.forEach(thumb => {
+            const thumbVariantId = thumb.getAttribute('data-variant-id');
+            let shouldShow = false;
 
-        const btnCart = document.querySelector('form[action="/gio-hang/them"] button[type="submit"]');
-        if (btnCart) {
-            if (stock <= 0) {
-                btnCart.disabled = true;
-                btnCart.classList.replace('btn-danger', 'btn-secondary');
-                btnCart.innerHTML = '<i class="fa fa-ban me-1"></i>Hết hàng';
+            if (hasSpecificImages) {
+                shouldShow = (thumbVariantId === variantId.toString());
             } else {
-                btnCart.disabled = false;
-                btnCart.classList.replace('btn-secondary', 'btn-danger');
-                btnCart.innerHTML = '<i class="fa fa-cart-plus me-1"></i>Thêm vào giỏ hàng';
+                shouldShow = (thumbVariantId === 'all');
+            }
+
+            if (shouldShow) {
+                thumb.style.display = 'block';
+                if (!firstVisibleImageSrc) {
+                    firstVisibleImageSrc = thumb.src;
+                }
+            } else {
+                thumb.style.display = 'none';
+            }
+        });
+
+        // Tự động đổi ảnh to ở trên cùng theo ảnh đầu tiên
+        const mainImg = document.getElementById('main-img');
+        if (firstVisibleImageSrc && mainImg) {
+            mainImg.style.opacity = 0.5;
+            setTimeout(() => {
+                mainImg.src = firstVisibleImageSrc;
+                mainImg.style.opacity = 1;
+            }, 150);
+
+            document.querySelectorAll('.thumb-img').forEach(t => t.style.borderColor = 'transparent');
+            const firstVisibleThumb = Array.from(thumbnails).find(t => t.style.display !== 'none');
+            if (firstVisibleThumb) {
+                firstVisibleThumb.style.borderColor = '#d70018';
             }
         }
-
-        filterImagesByVariant(selectedVariantId);
-    });
-});
-
-// Yêu thích
-document.querySelector('.btn-wishlist')?.addEventListener('click', function() {
-    const id = this.dataset.id;
-    fetch('/yeu-thich/them', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'san_pham_id=' + id
-    })
-    .then(r => r.json())
-    .then(data => {
-        const icon = this.querySelector('i');
-        if (data.success) {
-            icon.className = 'fas fa-heart text-danger';
-        } else {
-            alert(data.message || 'Đã có trong danh sách yêu thích');
-        }
-    });
-});
-
-// Nút cộng/trừ số lượng
-function changeQty(delta) {
-    const inp = document.getElementById('qty-input');
-    let val = parseInt(inp.value) + delta;
-    if (val < 1) val = 1;
-    if (val > 99) val = 99;
-    inp.value = val;
-}
-
-// Đánh giá
-document.getElementById('btn-review')?.addEventListener('click', function() {
-    const sanPhamId = this.dataset.id;
-    const soSao = document.getElementById('so_sao').value;
-    const noiDung = document.getElementById('noi_dung').value.trim();
-    const msg = document.getElementById('review-msg');
-
-    if (!noiDung) { 
-        msg.innerHTML = '<div class="alert alert-warning py-2 small mb-3"><i class="fa fa-exclamation-triangle me-1"></i>Vui lòng nhập nội dung đánh giá</div>'; 
-        return; 
     }
 
-    fetch('/danh-gia/them', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'san_pham_id=' + sanPhamId + '&so_sao=' + soSao + '&noi_dung=' + encodeURIComponent(noiDung)
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            msg.innerHTML = '<div class="alert alert-success py-2 small mb-3"><i class="fa fa-check-circle me-1"></i>' + data.message + '</div>';
-            document.getElementById('noi_dung').value = '';
-        } else {
-            msg.innerHTML = '<div class="alert alert-danger py-2 small mb-3"><i class="fa fa-times-circle me-1"></i>' + data.message + '</div>';
-        }
+    // Lọc ảnh ngay khi vừa tải trang
+    if (selectedVariantId) {
+        filterImagesByVariant(selectedVariantId);
+    }
+
+    // Sự kiện khi Click chọn phiên bản
+    document.querySelectorAll('.variant-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (this.classList.contains('disabled')) return;
+
+            document.querySelectorAll('.variant-btn').forEach(b => {
+                b.classList.remove('active');
+                const priceLabel = b.querySelector('.variant-price-label');
+                if (priceLabel) {
+                    priceLabel.classList.remove('text-danger', 'fw-medium');
+                    priceLabel.classList.add('text-muted');
+                }
+            });
+
+            this.classList.add('active');
+            const activePriceLabel = this.querySelector('.variant-price-label');
+            if (activePriceLabel) {
+                activePriceLabel.classList.remove('text-muted');
+                activePriceLabel.classList.add('text-danger', 'fw-medium');
+            }
+
+            const price = parseInt(this.dataset.price);
+            const stock = parseInt(this.dataset.stock);
+            selectedVariantId = this.dataset.id;
+
+            document.getElementById('selected-variant').value = selectedVariantId;
+            document.getElementById('current-price').textContent = price.toLocaleString('vi-VN') + 'đ';
+
+            const stockInfo = document.getElementById('stock-info');
+            if (stock > 0) {
+                stockInfo.className = 'mt-2 d-block text-success';
+                stockInfo.innerHTML = '<i class="fa fa-check-circle me-1"></i>Còn lại: ' + stock + ' sản phẩm';
+            } else {
+                stockInfo.className = 'mt-2 d-block text-danger';
+                stockInfo.innerHTML = '<i class="fa fa-times-circle me-1"></i>Đã hết hàng';
+            }
+
+            const btnCart = document.querySelector('form[action="/gio-hang/them"] button[type="submit"]');
+            if (btnCart) {
+                if (stock <= 0) {
+                    btnCart.disabled = true;
+                    btnCart.classList.replace('btn-danger', 'btn-secondary');
+                    btnCart.innerHTML = '<i class="fa fa-ban me-1"></i>Hết hàng';
+                } else {
+                    btnCart.disabled = false;
+                    btnCart.classList.replace('btn-secondary', 'btn-danger');
+                    btnCart.innerHTML = '<i class="fa fa-cart-plus me-1"></i>Thêm vào giỏ hàng';
+                }
+            }
+
+            filterImagesByVariant(selectedVariantId);
+        });
     });
-});
+
+    // Yêu thích
+    document.querySelector('.btn-wishlist')?.addEventListener('click', function() {
+        const id = this.dataset.id;
+        fetch('/yeu-thich/them', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'san_pham_id=' + id
+            })
+            .then(r => r.json())
+            .then(data => {
+                const icon = this.querySelector('i');
+                if (data.success) {
+                    icon.className = 'fas fa-heart text-danger';
+                } else {
+                    alert(data.message || 'Đã có trong danh sách yêu thích');
+                }
+            });
+    });
+
+    // Nút cộng/trừ số lượng
+    function changeQty(delta) {
+        const inp = document.getElementById('qty-input');
+        let val = parseInt(inp.value) + delta;
+        if (val < 1) val = 1;
+        if (val > 99) val = 99;
+        inp.value = val;
+    }
+
+    // Đánh giá
+    document.getElementById('btn-review')?.addEventListener('click', function() {
+        const sanPhamId = this.dataset.id;
+        const soSao = document.getElementById('so_sao').value;
+        const noiDung = document.getElementById('noi_dung').value.trim();
+        const msg = document.getElementById('review-msg');
+
+        if (!noiDung) {
+            msg.innerHTML = '<div class="alert alert-warning py-2 small mb-3"><i class="fa fa-exclamation-triangle me-1"></i>Vui lòng nhập nội dung đánh giá</div>';
+            return;
+        }
+
+        fetch('/danh-gia/them', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'san_pham_id=' + sanPhamId + '&so_sao=' + soSao + '&noi_dung=' + encodeURIComponent(noiDung)
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    msg.innerHTML = '<div class="alert alert-success py-2 small mb-3"><i class="fa fa-check-circle me-1"></i>' + data.message + '</div>';
+                    document.getElementById('noi_dung').value = '';
+                } else {
+                    msg.innerHTML = '<div class="alert alert-danger py-2 small mb-3"><i class="fa fa-times-circle me-1"></i>' + data.message + '</div>';
+                }
+            });
+    });
+
+    // So sánh sản phẩm ngay trên trang chi tiết
+    const compareSimilarForm = document.getElementById('compare-similar-form');
+    if (compareSimilarForm) {
+        const compareCheckboxes = Array.from(compareSimilarForm.querySelectorAll('.compare-similar-checkbox'));
+        const compareBtn = document.getElementById('btn-compare-similar');
+        const compareMsg = document.getElementById('compare-inline-message');
+        const compareResultWrap = document.getElementById('compare-inline-result');
+        const compareTable = document.getElementById('compare-inline-table');
+        const addCompareSelectBtn = document.getElementById('btn-add-compare-select');
+        const compareExtraSelectsWrap = document.getElementById('compare-extra-selects');
+        const extraSelectOptions = <?= json_encode($optionsSanPhamKhacHtml, JSON_UNESCAPED_UNICODE) ?>;
+
+        const getCompareExtraSelects = () => {
+            return Array.from(compareSimilarForm.querySelectorAll('.compare-extra-select'));
+        };
+
+        addCompareSelectBtn?.addEventListener('click', () => {
+            if (!compareExtraSelectsWrap) return;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'col-12 col-md-6 compare-extra-item';
+
+            wrapper.innerHTML = `
+                <label class="form-label small fw-semibold mb-1">Chọn thêm sản phẩm khác</label>
+                <div class="d-flex gap-2">
+                    <select class="form-select form-select-sm compare-extra-select" name="slug[]">
+                        ${extraSelectOptions}
+                    </select>
+                    <button type="button" class="btn btn-outline-secondary btn-sm compare-remove-select">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            compareExtraSelectsWrap.appendChild(wrapper);
+
+            wrapper.querySelector('.compare-remove-select')?.addEventListener('click', () => {
+                wrapper.remove();
+            });
+        });
+
+        const getSelectedSlugs = () => {
+            const slugSet = new Set();
+
+            compareCheckboxes.forEach((cb) => {
+                if (cb.checked && cb.value) {
+                    slugSet.add(cb.value);
+                }
+            });
+
+            getCompareExtraSelects().forEach((sel) => {
+                if (sel.value) {
+                    slugSet.add(sel.value);
+                }
+            });
+
+            return Array.from(slugSet);
+        };
+
+        const escapeHtml = (value) => {
+            return String(value ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        };
+
+        const formatCurrency = (value) => {
+            const num = Number(value || 0);
+            if (num <= 0) return 'Liên hệ';
+            return num.toLocaleString('vi-VN') + 'đ';
+        };
+
+        const renderCompareTable = (payload) => {
+            const products = payload.products || [];
+            const specNames = payload.specNames || [];
+
+            const headCells = products.map((p) => `<th>${escapeHtml(p.ten_san_pham)}</th>`).join('');
+
+            const rows = [];
+            rows.push(`
+                <tr>
+                    <th class="bg-light">Giá hiển thị</th>
+                    ${products.map((p) => `<td class="text-danger fw-semibold">${formatCurrency(p.gia_hien_thi)}</td>`).join('')}
+                </tr>
+            `);
+            rows.push(`
+                <tr>
+                    <th class="bg-light">Hãng sản xuất</th>
+                    ${products.map((p) => `<td>${escapeHtml(p.hang_san_xuat || '-')}</td>`).join('')}
+                </tr>
+            `);
+            rows.push(`
+                <tr>
+                    <th class="bg-light">Danh mục</th>
+                    ${products.map((p) => `<td>${escapeHtml(p.ten_danh_muc || '-')}</td>`).join('')}
+                </tr>
+            `);
+            rows.push(`
+                <tr>
+                    <th class="bg-light">Tổng tồn kho</th>
+                    ${products.map((p) => {
+                        const ton = Number(p.tong_ton_kho || 0);
+                        return `<td class="${ton > 0 ? 'text-success' : 'text-danger'}">${ton > 0 ? `${ton} sản phẩm` : 'Hết hàng'}</td>`;
+                    }).join('')}
+                </tr>
+            `);
+
+            specNames.forEach((name) => {
+                rows.push(`
+                    <tr>
+                        <th class="bg-light">${escapeHtml(name)}</th>
+                        ${products.map((p) => `<td>${escapeHtml((p.thong_so && p.thong_so[name]) || '-')}</td>`).join('')}
+                    </tr>
+                `);
+            });
+
+            compareTable.innerHTML = `
+                <thead class="table-light">
+                    <tr>
+                        <th style="width:220px;">Tiêu chí</th>
+                        ${headCells}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows.join('')}
+                </tbody>
+            `;
+        };
+
+        compareCheckboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                // Cho phép chọn nhiều sản phẩm, không giới hạn số lượng
+            });
+        });
+
+        compareSimilarForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const selectedSlugs = getSelectedSlugs();
+            if (selectedSlugs.length < 2) {
+                alert('Vui lòng chọn ít nhất 2 sản phẩm để bắt đầu so sánh.');
+                return;
+            }
+
+            const queryParams = new URLSearchParams();
+            selectedSlugs.forEach((slug) => queryParams.append('slug[]', slug));
+            const query = queryParams.toString();
+
+            compareMsg.innerHTML = '<div class="alert alert-info py-2 mb-0 small">Đang tạo bảng so sánh...</div>';
+            compareBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/so-sanh-san-pham?' + query);
+                const data = await response.json();
+
+                if (!data.success || !data.data || !Array.isArray(data.data.products)) {
+                    compareMsg.innerHTML = '<div class="alert alert-warning py-2 mb-0 small">' + escapeHtml(data.message || 'Không thể tải dữ liệu so sánh.') + '</div>';
+                    compareResultWrap.classList.add('d-none');
+                    return;
+                }
+
+                renderCompareTable(data.data);
+                compareMsg.innerHTML = '<div class="alert alert-success py-2 mb-0 small">Đã tạo bảng so sánh thành công.</div>';
+                compareResultWrap.classList.remove('d-none');
+                compareResultWrap.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            } catch (error) {
+                compareMsg.innerHTML = '<div class="alert alert-danger py-2 mb-0 small">Có lỗi xảy ra khi tải dữ liệu so sánh.</div>';
+                compareResultWrap.classList.add('d-none');
+            } finally {
+                compareBtn.disabled = false;
+            }
+        });
+    }
 </script>
 
 <?php

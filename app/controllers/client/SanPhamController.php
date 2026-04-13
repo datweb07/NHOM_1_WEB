@@ -38,7 +38,7 @@ class SanPhamController
     {
         // Lấy thông tin sản phẩm
         $sanPham = $this->sanPhamModel->layChiTietTheoSlug($slug);
-        
+
         if (!$sanPham) {
             header('Location: /');
             exit;
@@ -46,22 +46,25 @@ class SanPhamController
 
         // Lấy hình ảnh sản phẩm
         $hinhAnhList = $this->hinhAnhModel->layHinhAnhTheoSanPham($sanPham['id']);
-        
+
         // Lấy phiên bản sản phẩm
         $phienBanList = $this->phienBanModel->layPhienBanTheoSanPham($sanPham['id']);
-        
+
         // Lấy thông số kỹ thuật
         $thongSoList = $this->thongSoModel->layThongSoTheoSanPham($sanPham['id']);
-        
+
         // Lấy đánh giá
         $danhGiaList = $this->danhGiaModel->layDanhGiaTheoSanPham($sanPham['id'], 5);
         $tongDanhGia = $this->danhGiaModel->demDanhGiaTheoSanPham($sanPham['id']);
-        
+
         // Lấy sản phẩm tương tự (cùng danh mục)
         $sanPhamTuongTu = $this->sanPhamModel->laySanPhamTheoDanhMuc(
-            $sanPham['slug_danh_muc'], 
-            4
+            $sanPham['slug_danh_muc'],
+            8
         );
+
+        // Danh sách toàn bộ sản phẩm để hỗ trợ chọn so sánh ngoài sản phẩm tương tự
+        $danhSachSanPhamSoSanh = $this->sanPhamModel->layDanhSachChoSoSanh();
 
         // Load view
         require_once dirname(__DIR__, 2) . '/views/client/san_pham/detail.php';
@@ -74,35 +77,64 @@ class SanPhamController
     {
         $keyword = $_GET['keyword'] ?? null;
         $danhMucId = isset($_GET['danh_muc']) ? (int)$_GET['danh_muc'] : 0;
-        $giaMin = isset($_GET['gia_min']) ? (float)$_GET['gia_min'] : null;
-        $giaMax = isset($_GET['gia_max']) ? (float)$_GET['gia_max'] : null;
+        $giaMin = isset($_GET['gia_min']) && $_GET['gia_min'] !== '' ? (float)$_GET['gia_min'] : null;
+        $giaMax = isset($_GET['gia_max']) && $_GET['gia_max'] !== '' ? (float)$_GET['gia_max'] : null;
+        $hangFilters = $_GET['hang'] ?? [];
+        $giaKhoangFilters = $_GET['gia_khoang'] ?? [];
+
+        if (!is_array($hangFilters)) {
+            $hangFilters = [$hangFilters];
+        }
+        $hangFilters = array_values(array_unique(array_filter(array_map(static fn($item) => trim((string)$item), $hangFilters), static fn($item) => $item !== '')));
+
+        if (!is_array($giaKhoangFilters)) {
+            $giaKhoangFilters = [$giaKhoangFilters];
+        }
+        $giaKhoangFilters = array_values(array_unique(array_filter(array_map(static fn($item) => trim((string)$item), $giaKhoangFilters), static fn($item) => preg_match('/^(\d+)-(\d+)$/', $item) === 1)));
+
+        if ($giaMin !== null && $giaMax !== null && $giaMin > $giaMax) {
+            [$giaMin, $giaMax] = [$giaMax, $giaMin];
+        }
         $sortBy = $_GET['sort_by'] ?? 'ngay_tao';
         $sortOrder = $_GET['sort_order'] ?? 'DESC';
-        
+
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
         // Đếm tổng số sản phẩm
-        $tongSanPham = $this->sanPhamModel->demSanPham($keyword, $danhMucId, $giaMin, $giaMax);
-        
+        $tongSanPham = $this->sanPhamModel->demSanPham($keyword, $danhMucId, $giaMin, $giaMax, $hangFilters, $giaKhoangFilters);
+
         // Lấy danh sách sản phẩm
         $sanPhamList = $this->sanPhamModel->layDanhSachPhanTrang(
-            $keyword, 
-            $danhMucId, 
-            $giaMin, 
-            $giaMax, 
-            $limit, 
-            $offset, 
-            $sortBy, 
-            $sortOrder
+            $keyword,
+            $danhMucId,
+            $giaMin,
+            $giaMax,
+            $limit,
+            $offset,
+            $sortBy,
+            $sortOrder,
+            $hangFilters,
+            $giaKhoangFilters
         );
-        
+
         // Tính tổng số trang
         $tongTrang = ceil($tongSanPham / $limit);
-        
+
         // Lấy danh sách danh mục
         $danhMucList = $this->sanPhamModel->layDanhSachDanhMucHoatDong();
+        $danhSachHang = $this->sanPhamModel->layDanhSachHangSanXuat($keyword, $danhMucId);
+        $khoangGia = $this->sanPhamModel->layKhoangGiaSanPham($keyword, $danhMucId, $hangFilters);
+        $giaSliderMin = isset($khoangGia['min_gia']) ? (float)$khoangGia['min_gia'] : 0;
+        $giaSliderMax = isset($khoangGia['max_gia']) ? (float)$khoangGia['max_gia'] : 0;
+
+        if ($giaMin === null) {
+            $giaMin = $giaSliderMin;
+        }
+        if ($giaMax === null || $giaMax <= 0) {
+            $giaMax = $giaSliderMax;
+        }
 
         // Load view
         require_once dirname(__DIR__, 2) . '/views/client/san_pham/list.php';
@@ -115,50 +147,141 @@ class SanPhamController
     {
         require_once dirname(__DIR__, 2) . '/models/entities/DanhMuc.php';
         $danhMucModel = new \DanhMuc();
-        
+
         // Lookup category by slug
         $danhMuc = $danhMucModel->findBySlug($slugDanhMuc);
-        
+
         if (!$danhMuc) {
             header('Location: /');
             exit;
         }
-        
+
         // Get filter parameters
         $keyword = $_GET['keyword'] ?? null;
         $danhMucId = $danhMuc['id']; // Use the ID from slug lookup
-        $giaMin = isset($_GET['gia_min']) ? (float)$_GET['gia_min'] : null;
-        $giaMax = isset($_GET['gia_max']) ? (float)$_GET['gia_max'] : null;
+        $giaMin = isset($_GET['gia_min']) && $_GET['gia_min'] !== '' ? (float)$_GET['gia_min'] : null;
+        $giaMax = isset($_GET['gia_max']) && $_GET['gia_max'] !== '' ? (float)$_GET['gia_max'] : null;
+        $hangFilters = $_GET['hang'] ?? [];
+        $giaKhoangFilters = $_GET['gia_khoang'] ?? [];
+
+        if (!is_array($hangFilters)) {
+            $hangFilters = [$hangFilters];
+        }
+        $hangFilters = array_values(array_unique(array_filter(array_map(static fn($item) => trim((string)$item), $hangFilters), static fn($item) => $item !== '')));
+
+        if (!is_array($giaKhoangFilters)) {
+            $giaKhoangFilters = [$giaKhoangFilters];
+        }
+        $giaKhoangFilters = array_values(array_unique(array_filter(array_map(static fn($item) => trim((string)$item), $giaKhoangFilters), static fn($item) => preg_match('/^(\d+)-(\d+)$/', $item) === 1)));
+
+        if ($giaMin !== null && $giaMax !== null && $giaMin > $giaMax) {
+            [$giaMin, $giaMax] = [$giaMax, $giaMin];
+        }
         $sortBy = $_GET['sort_by'] ?? 'ngay_tao';
         $sortOrder = $_GET['sort_order'] ?? 'DESC';
-        
+
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
         // Count total products
-        $tongSanPham = $this->sanPhamModel->demSanPham($keyword, $danhMucId, $giaMin, $giaMax);
-        
+        $tongSanPham = $this->sanPhamModel->demSanPham($keyword, $danhMucId, $giaMin, $giaMax, $hangFilters, $giaKhoangFilters);
+
         // Get product list
         $sanPhamList = $this->sanPhamModel->layDanhSachPhanTrang(
-            $keyword, 
-            $danhMucId, 
-            $giaMin, 
-            $giaMax, 
-            $limit, 
-            $offset, 
-            $sortBy, 
-            $sortOrder
+            $keyword,
+            $danhMucId,
+            $giaMin,
+            $giaMax,
+            $limit,
+            $offset,
+            $sortBy,
+            $sortOrder,
+            $hangFilters,
+            $giaKhoangFilters
         );
-        
+
         // Calculate total pages
         $tongTrang = ceil($tongSanPham / $limit);
-        
+
         // Get category list
         $danhMucList = $this->sanPhamModel->layDanhSachDanhMucHoatDong();
+        $danhSachHang = $this->sanPhamModel->layDanhSachHangSanXuat($keyword, $danhMucId);
+        $khoangGia = $this->sanPhamModel->layKhoangGiaSanPham($keyword, $danhMucId, $hangFilters);
+        $giaSliderMin = isset($khoangGia['min_gia']) ? (float)$khoangGia['min_gia'] : 0;
+        $giaSliderMax = isset($khoangGia['max_gia']) ? (float)$khoangGia['max_gia'] : 0;
+
+        if ($giaMin === null) {
+            $giaMin = $giaSliderMin;
+        }
+        if ($giaMax === null || $giaMax <= 0) {
+            $giaMax = $giaSliderMax;
+        }
 
         // Load view
         require_once dirname(__DIR__, 2) . '/views/client/san_pham/list.php';
+    }
+
+    /**
+     * Trang so sánh sản phẩm
+     */
+    public function soSanh(): void
+    {
+        $selectedSlugs = $_GET['slug'] ?? [];
+        if (!is_array($selectedSlugs)) {
+            $selectedSlugs = [$selectedSlugs];
+        }
+
+        $selectedSlugs = array_values(array_unique(array_filter(array_map(static function ($item) {
+            $slug = trim((string)$item);
+            return preg_match('/^[a-z0-9-]+$/', $slug) ? $slug : '';
+        }, $selectedSlugs))));
+
+        $danhSachSanPham = $this->sanPhamModel->layDanhSachChoSoSanh();
+        $sanPhamSoSanh = [];
+        $thongSoTheoSanPham = [];
+        $tenThongSoMap = [];
+
+        foreach ($selectedSlugs as $slug) {
+            $sanPham = $this->sanPhamModel->layChiTietTheoSlug($slug);
+            if (!$sanPham) {
+                continue;
+            }
+
+            $phienBanList = $this->phienBanModel->layPhienBanTheoSanPham((int)$sanPham['id']);
+            $phienBanMacDinh = null;
+            $tongTonKho = 0;
+
+            if (!empty($phienBanList)) {
+                usort($phienBanList, static function (array $a, array $b): int {
+                    return ((float)($a['gia_ban'] ?? 0)) <=> ((float)($b['gia_ban'] ?? 0));
+                });
+
+                $phienBanMacDinh = $phienBanList[0];
+                foreach ($phienBanList as $pb) {
+                    $tongTonKho += max(0, (int)($pb['so_luong_ton'] ?? 0));
+                }
+            }
+
+            $thongSoRows = $this->thongSoModel->layThongSoTheoSanPham((int)$sanPham['id']);
+            foreach ($thongSoRows as $row) {
+                $tenThongSo = trim((string)($row['ten_thong_so'] ?? ''));
+                if ($tenThongSo === '') {
+                    continue;
+                }
+
+                $thongSoTheoSanPham[(int)$sanPham['id']][$tenThongSo] = (string)($row['gia_tri'] ?? '-');
+                $tenThongSoMap[$tenThongSo] = true;
+            }
+
+            $sanPham['phien_ban_mac_dinh'] = $phienBanMacDinh;
+            $sanPham['tong_ton_kho'] = $tongTonKho;
+            $sanPhamSoSanh[] = $sanPham;
+        }
+
+        $tenThongSo = array_values(array_keys($tenThongSoMap));
+
+        require_once dirname(__DIR__, 2) . '/views/client/san_pham/compare.php';
     }
 
     /**
@@ -170,10 +293,10 @@ class SanPhamController
         while (ob_get_level() > 0) {
             ob_end_clean();
         }
-        
+
         // Bây giờ mới set Header JSON một cách an toàn
         header('Content-Type: application/json; charset=utf-8');
-        
+
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
         if ($id <= 0) {
@@ -211,16 +334,115 @@ class SanPhamController
                 ]
             ]);
             exit;
-
         } catch (\Throwable $th) {
             // Bắt lỗi và trả về JSON thay vì in ra HTML làm vỡ giao diện
             echo json_encode([
-                'success' => false, 
+                'success' => false,
                 'error' => $th->getMessage(),
                 'file' => $th->getFile(),
                 'line' => $th->getLine()
             ]);
             exit;
         }
+    }
+
+    /**
+     * API: So sánh sản phẩm theo danh sách slug
+     */
+    public function apiSoSanhTheoSlug(): void
+    {
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        header('Content-Type: application/json; charset=utf-8');
+
+        $slugs = $_GET['slug'] ?? [];
+        if (!is_array($slugs)) {
+            $slugs = [$slugs];
+        }
+
+        $slugs = array_values(array_unique(array_filter(array_map(static function ($item) {
+            $slug = trim((string)$item);
+            return preg_match('/^[a-z0-9-]+$/', $slug) ? $slug : '';
+        }, $slugs))));
+
+        if (count($slugs) < 2) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Cần ít nhất 2 sản phẩm để so sánh.'
+            ]);
+            exit;
+        }
+
+        $products = [];
+        $specNameMap = [];
+
+        foreach ($slugs as $slug) {
+            $sanPham = $this->sanPhamModel->layChiTietTheoSlug($slug);
+            if (!$sanPham) {
+                continue;
+            }
+
+            $phienBanList = $this->phienBanModel->layPhienBanTheoSanPham((int)$sanPham['id']);
+            $gia = (float)($sanPham['gia_hien_thi'] ?? 0);
+            $tongTonKho = 0;
+
+            if (!empty($phienBanList)) {
+                $giaMin = null;
+                foreach ($phienBanList as $pb) {
+                    $giaPb = isset($pb['gia_ban']) ? (float)$pb['gia_ban'] : 0;
+                    $tonPb = isset($pb['so_luong_ton']) ? (int)$pb['so_luong_ton'] : 0;
+                    $tongTonKho += max(0, $tonPb);
+
+                    if ($giaPb > 0 && ($giaMin === null || $giaPb < $giaMin)) {
+                        $giaMin = $giaPb;
+                    }
+                }
+
+                if ($giaMin !== null) {
+                    $gia = $giaMin;
+                }
+            }
+
+            $thongSoRows = $this->thongSoModel->layThongSoTheoSanPham((int)$sanPham['id']);
+            $thongSo = [];
+            foreach ($thongSoRows as $row) {
+                $ten = trim((string)($row['ten_thong_so'] ?? ''));
+                if ($ten === '') {
+                    continue;
+                }
+                $thongSo[$ten] = (string)($row['gia_tri'] ?? '-');
+                $specNameMap[$ten] = true;
+            }
+
+            $products[] = [
+                'id' => (int)$sanPham['id'],
+                'slug' => (string)$sanPham['slug'],
+                'ten_san_pham' => (string)$sanPham['ten_san_pham'],
+                'hang_san_xuat' => (string)($sanPham['hang_san_xuat'] ?? '-'),
+                'ten_danh_muc' => (string)($sanPham['ten_danh_muc'] ?? '-'),
+                'gia_hien_thi' => $gia,
+                'tong_ton_kho' => $tongTonKho,
+                'thong_so' => $thongSo,
+            ];
+        }
+
+        if (count($products) < 2) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Không đủ dữ liệu sản phẩm để so sánh.'
+            ]);
+            exit;
+        }
+
+        echo json_encode([
+            'success' => true,
+            'data' => [
+                'products' => $products,
+                'specNames' => array_values(array_keys($specNameMap)),
+            ]
+        ]);
+        exit;
     }
 }
