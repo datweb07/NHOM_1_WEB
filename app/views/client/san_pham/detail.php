@@ -312,7 +312,7 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                                         <i class="fa<?= $i <= $dg['so_sao'] ? 's' : 'r' ?> fa-star"></i>
                                     <?php endfor; ?>
                                 </div>
-                                <span class="text-muted" style="font-size:0.72rem;"><?= date('d/m/Y', strtotime($dg['ngay_tao'])) ?></span>
+                                <span class="text-muted" style="font-size:0.72rem;"><?= date('d/m/Y', strtotime($dg['ngay_viet'])) ?></span>
                             </div>
                             <p class="small mb-0"><?= htmlspecialchars($dg['noi_dung']) ?></p>
                         </div>

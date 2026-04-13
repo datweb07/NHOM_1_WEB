@@ -138,6 +138,24 @@ class GioHangController
     }
 
     /**
+     * Xóa tất cả sản phẩm khỏi giỏ
+     */
+    public function xoaTatCa(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /gio-hang');
+            exit;
+        }
+
+        $gioHang = $this->layGioHangHienTai();
+        $this->chiTietGioModel->xoaTatCa($gioHang['id']);
+        Session::flash('success', 'Đã xóa tất cả sản phẩm khỏi giỏ hàng');
+
+        header('Location: /gio-hang');
+        exit;
+    }
+
+    /**
      * Lấy số lượng sản phẩm trong giỏ (AJAX)
      */
     public function demSanPham(): void

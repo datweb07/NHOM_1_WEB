@@ -201,6 +201,13 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	if ($path === 'gio-hang/xoa-tat-ca') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/GioHangController.php';
+		$controller = new \App\Controllers\Client\GioHangController();
+		$controller->xoaTatCa();
+		return;
+	}
+
 	if ($path === 'gio-hang/dem-san-pham') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/GioHangController.php';
 		$controller = new \App\Controllers\Client\GioHangController();
