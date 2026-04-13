@@ -82,8 +82,8 @@ $active_page = $active_page ?? '';
     <a href="/apple" class="list-group-item list-group-item-action <?= $active_page === 'apple' ? 'active' : '' ?>">Đại lý uỷ quyền và TTBH uỷ quyền của Apple</a>
     <a href="/mang-di-dong" class="list-group-item list-group-item-action <?= $active_page === 'mang-di-dong' ? 'active' : '' ?>">Chính sách mạng di động FPT</a>
     <a href="/goi-cuoc" class="list-group-item list-group-item-action <?= $active_page === 'goi-cuoc' ? 'active' : '' ?>">Chính sách gói cước di động FPT</a>
-    <a href="/gioi-thieu" class="list-group-item list-group-item-action <?= $active_page === 'diem-cung-cap' ? 'active' : '' ?>">Danh sách điểm cung cấp dịch vụ viễn thông FPT</a>
-    <a href="/gioi-thieu" class="list-group-item list-group-item-action <?= $active_page === 'giao-hang' ? 'active' : '' ?>">Chính sách giao hàng & lắp đặt</a>
+    <a href="/diem-cung-cap" class="list-group-item list-group-item-action <?= $active_page === 'diem-cung-cap' ? 'active' : '' ?>">Danh sách điểm cung cấp dịch vụ viễn thông FPT</a>
+    <a href="/giao-hang" class="list-group-item list-group-item-action <?= $active_page === 'giao-hang' ? 'active' : '' ?>">Chính sách giao hàng & lắp đặt</a>
     <a href="/gioi-thieu" class="list-group-item list-group-item-action <?= $active_page === 'giao-hang-dien-may' ? 'active' : '' ?>">Chính sách giao hàng & lắp đặt Điện máy, Gia dụng</a>
     <a href="/gioi-thieu" class="list-group-item list-group-item-action <?= $active_page === 'giao-hang-online' ? 'active' : '' ?>">Chính sách giao hàng & lắp đặt Điện máy chỉ bán online</a>
     <a href="/gioi-thieu" class="list-group-item list-group-item-action <?= $active_page === 'khach-hang-than-thiet' ? 'active' : '' ?>">Chính sách Chương trình Khách hàng thân thiết tại FPT Shop</a>

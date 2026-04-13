@@ -492,6 +492,20 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	if ($path === 'diem-cung-cap') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->diemCungCap();
+		return;
+	}
+
+	if ($path === 'giao-hang') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
+		$controller = new \App\Controllers\Client\AboutController();
+		$controller->giaoHang();
+		return;
+	}
+
 
 	require_once dirname(__DIR__, 2) . '/views/client/home/index.php';
 }

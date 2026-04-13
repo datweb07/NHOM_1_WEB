@@ -77,4 +77,18 @@ class AboutController
             'title' => 'Chính sách gói cước di động FPT - FPT Shop'
         ]);
     }
+
+    public function diemCungCap()
+    {
+        View::render('client/about/diem_cung_cap', [
+            'title' => 'Danh sách điểm cung cấp dịch vụ viễn thông FPT - FPT Shop'
+        ]);
+    }
+
+    public function giaoHang()
+    {
+        View::render('client/about/giao_hang', [
+            'title' => 'Chính sách Chương trình Khách hàng thân thiết tại FPT Shop - FPT Shop'
+        ]);
+    }
 }
