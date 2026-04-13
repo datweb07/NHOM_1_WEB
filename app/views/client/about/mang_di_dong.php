@@ -48,7 +48,6 @@
     .content-section h4 {
         font-weight: bold;
         font-size: 18px;
-        color: #cb1c22;
         margin-top: 30px;
         margin-bottom: 15px;
         text-transform: uppercase;

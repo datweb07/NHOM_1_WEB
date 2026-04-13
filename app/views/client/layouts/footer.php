@@ -54,33 +54,33 @@
                 <h5 class="footer-title">VỀ CHÚNG TÔI</h5>
                 <ul class="list-unstyled footer-links">
                     <li><a href="<?= BASE_URL ?>/gioi-thieu">Giới thiệu về công ty</a></li>
-                    <li><a href="<?= BASE_URL ?>/quy-che-hoat-dong">Quy chế hoạt động</a></li>
-                    <li><a href="#">Dự án Doanh nghiệp</a></li>
+                    <li><a href="<?= BASE_URL ?>/quy-che">Quy chế hoạt động</a></li>
+                    <li><a href="https://fptshop.com.vn/ctkm/giai-phap-cong-nghe-doanh-nghiep">Dự án Doanh nghiệp</a></li>
                     <li><a href="<?= BASE_URL ?>/khuyen-mai">Tin tức khuyến mại</a></li>
-                    <li><a href="#">Điện thoại chính hãng</a></li>
-                    <li><a href="<?= BASE_URL ?>/gioi-thieu-may-doi-tra">Giới thiệu máy đổi trả</a></li>
-                    <li><a href="#">Hướng dẫn mua hàng & thanh toán online</a></li>
-                    <li><a href="#">Đại lý uỷ quyền và TTBH uỷ quyền của Apple</a></li>
-                    <li><a href="#">Tra cứu hoá đơn điện tử</a></li>
-                    <li><a href="#">Tra cứu bảo hành</a></li>
-                    <li><a href="#">Câu hỏi thường gặp</a></li>
+                    <li><a href="<?= BASE_URL ?>/danh-muc/dien-thoai">Điện thoại chính hãng</a></li>
+                    <li><a href="<?= BASE_URL ?>/may-doi-tra">Giới thiệu máy đổi trả</a></li>
+                    <li><a href="<?= BASE_URL ?>/mua-hang-online">Hướng dẫn mua hàng & thanh toán online</a></li>
+                    <li><a href="<?= BASE_URL ?>/apple">Đại lý uỷ quyền và TTBH uỷ quyền của Apple</a></li>
+                    <li><a href="https://hddt.fptshop.com.vn/">Tra cứu hoá đơn điện tử</a></li>
+                    <li><a href="https://fptshop.com.vn/kiem-tra-bao-hanh?tab=thong-tin-bao-hanh">Tra cứu bảo hành</a></li>
+                    <li><a href="<?= BASE_URL ?>/cau-hoi-thuong-gap">Câu hỏi thường gặp</a></li>
                 </ul>
             </div>
 
             <div class="col-lg-3 col-md-6 col-6">
                 <h5 class="footer-title">CHÍNH SÁCH</h5>
                 <ul class="list-unstyled footer-links">
-                    <li><a href="<?= BASE_URL ?>/chinh-sach-bao-hanh">Chính sách bảo hành</a></li>
-                    <li><a href="<?= BASE_URL ?>/chinh-sach-doi-tra">Chính sách đổi trả</a></li>
-                    <li><a href="<?= BASE_URL ?>/chinh-sach-bao-mat">Chính sách bảo mật</a></li>
-                    <li><a href="#">Chính sách trả góp</a></li>
-                    <li><a href="#">Chính sách khui hộp sản phẩm</a></li>
-                    <li><a href="#">Chính sách giao hàng & lắp đặt</a></li>
-                    <li><a href="#">Chính sách mạng di động FPT</a></li>
-                    <li><a href="<?= BASE_URL ?>/chinh-sach-bao-mat">Chính sách bảo mật dữ liệu cá nhân</a></li>
-                    <li><a href="#">Quy định về hỗ trợ kỹ thuật & sao lưu dữ liệu</a></li>
-                    <li><a href="#">Chính sách giao hàng & lắp đặt Điện máy, Gia dụng</a></li>
-                    <li><a href="#">Chính sách chương trình khách hàng thân thiết</a></li>
+                    <li><a href="<?= BASE_URL ?>/bao-hanh">Chính sách bảo hành</a></li>
+                    <li><a href="<?= BASE_URL ?>/doi-tra">Chính sách đổi trả</a></li>
+                    <li><a href="<?= BASE_URL ?>/bao-mat">Chính sách bảo mật</a></li>
+                    <li><a href="<?= BASE_URL ?>/tra-gop">Chính sách trả góp</a></li>
+                    <li><a href="<?= BASE_URL ?>/khui-hop">Chính sách khui hộp sản phẩm</a></li>
+                    <li><a href="<?= BASE_URL ?>/giao-hang">Chính sách giao hàng & lắp đặt</a></li>
+                    <li><a href="<?= BASE_URL ?>/mang-di-dong">Chính sách mạng di động FPT</a></li>
+                    <li><a href="<?= BASE_URL ?>/bao-mat-du-lieu">Chính sách bảo mật dữ liệu cá nhân</a></li>
+                    <li><a href="<?= BASE_URL ?>/ho-tro-ky-thuat">Quy định về hỗ trợ kỹ thuật & sao lưu dữ liệu</a></li>
+                    <li><a href="<?= BASE_URL ?>/giao-hang-dien-may">Chính sách giao hàng & lắp đặt Điện máy, Gia dụng</a></li>
+                    <li><a href="<?= BASE_URL ?>/khach-hang-than-thiet">Chính sách chương trình khách hàng thân thiết</a></li>
                 </ul>
             </div>
 
