@@ -235,19 +235,7 @@ if (empty($sanPhamTuongTuGoiY)) {
                             <?php foreach ($sanPhamSoSanh as $sp): ?>
                                 <td><?= htmlspecialchars($sp['phien_ban_mac_dinh']['mau_sac'] ?? '-') ?></td>
                             <?php endforeach; ?>
-                        </tr>
-                        <tr>
-                            <th class="bg-light">Dung lượng</th>
-                            <?php foreach ($sanPhamSoSanh as $sp): ?>
-                                <td><?= htmlspecialchars($sp['phien_ban_mac_dinh']['dung_luong'] ?? '-') ?></td>
-                            <?php endforeach; ?>
-                        </tr>
-                        <tr>
-                            <th class="bg-light">RAM</th>
-                            <?php foreach ($sanPhamSoSanh as $sp): ?>
-                                <td><?= htmlspecialchars($sp['phien_ban_mac_dinh']['ram'] ?? '-') ?></td>
-                            <?php endforeach; ?>
-                        </tr>
+                        </tr>                   
                         <tr>
                             <th class="bg-light">Tổng tồn kho</th>
                             <?php foreach ($sanPhamSoSanh as $sp): ?>
