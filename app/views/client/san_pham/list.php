@@ -47,10 +47,8 @@ $mucGiaPreset = [
 ?>
 
 <style>
-    /* CSS thêm hiệu ứng scale ảnh giống mục Gợi ý cho bạn */
     .product-img-wrapper {
         overflow: hidden;
-        /* Ngăn ảnh tràn ra ngoài khi phóng to */
         display: flex;
         justify-content: center;
         align-items: center;
@@ -58,10 +56,6 @@ $mucGiaPreset = [
 
     .card {
         transition: box-shadow 0.3s ease;
-    }
-
-    .card:hover {
-        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12) !important;
     }
 
     .product-img {
@@ -564,7 +558,7 @@ $mucGiaPreset = [
         try {
             localStorage.setItem(COMPARE_STORAGE_KEY, JSON.stringify(Array.from(selectedCompareSlugs)));
         } catch (e) {
-            // Ignore storage errors
+
         }
     }
 
@@ -580,7 +574,7 @@ $mucGiaPreset = [
                 }
             });
         } catch (e) {
-            // Ignore parse errors
+
         }
     }
 

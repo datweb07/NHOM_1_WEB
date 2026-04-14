@@ -61,7 +61,13 @@ class SanPhamController
         $totalProducts = !empty($resultCount) ? (int)$resultCount[0]['total'] : 0;
         $totalPages = ceil($totalProducts / $limit);
 
-        $sqlSearch = "SELECT sp.*, dm.ten AS ten_danh_muc 
+        $sqlSearch = "SELECT sp.*, dm.ten AS ten_danh_muc,
+                      COALESCE(
+                          (SELECT MIN(pb.gia_ban) 
+                           FROM phien_ban_san_pham pb 
+                           WHERE pb.san_pham_id = sp.id),
+                          sp.gia_hien_thi
+                      ) AS gia_hien_thi
                       FROM san_pham sp
                       LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.id
                       $whereClause
