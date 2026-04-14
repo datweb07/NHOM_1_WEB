@@ -49,29 +49,25 @@ ob_start();
 <div class="category-wrapper" style="position: relative; z-index: 10; margin-bottom: 30px;">
     
     <style>
-    /* Reset và cấu trúc khung */
     .dual-banner-wrapper {
         position: relative;
         width: 100%;
         margin-bottom: 20px;
     }
 
-    /* Thanh cuộn chứa banner */
     .dual-banner-track {
         display: flex;
-        gap: 16px; /* Khoảng cách giữa 2 ảnh */
+        gap: 16px; 
         overflow-x: auto;
         scroll-behavior: smooth;
-        -ms-overflow-style: none; /* Ẩn scrollbar IE/Edge */
-        scrollbar-width: none;    /* Ẩn scrollbar Firefox */
+        -ms-overflow-style: none; 
+        scrollbar-width: none;    
     }
 
-    /* Ẩn scrollbar trên Chrome/Safari */
     .dual-banner-track::-webkit-scrollbar {
         display: none;
     }
 
-    /* Set cứng kích thước mỗi banner là 50% trừ đi nửa khoảng cách (để thẳng tắp 2 mép) */
     .dual-banner-item {
         flex: 0 0 calc(50% - 8px);
         border-radius: 12px;
@@ -87,11 +83,6 @@ ob_start();
         transition: transform 0.3s ease;
     }
 
-    .dual-banner-item:hover img {
-        transform: scale(1.02); /* Hiệu ứng hover nhẹ */
-    }
-
-    /* Nút Next/Prev thiết kế tròn, thò ra ngoài 1 nửa */
     .btn-dual-nav {
         position: absolute;
         top: 50%;
@@ -116,10 +107,9 @@ ob_start();
         box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     }
 
-    .btn-dual-prev { left: -18px; } /* Căn thò ra lề trái */
-    .btn-dual-next { right: -18px; } /* Căn thò ra lề phải */
+    .btn-dual-prev { left: -18px; }
+    .btn-dual-next { right: -18px; } 
 
-    /* Mobile Responsive: Hiển thị 1 ảnh */
     @media (max-width: 768px) {
         .dual-banner-item {
             flex: 0 0 100%;
@@ -745,16 +735,12 @@ ob_start();
 </script>
 
 <?php if (!empty($bannerMid[1])): ?>
-    <div class="banner-2 mt-4">
-        <div class="container-xl">
-            <div class="row">
-                <div class="col-12 banner shadow-sm rounded-3">
-                    <a href="<?php echo htmlspecialchars($bannerMid[1]['link_dich'] ?? '#'); ?>">
-                        <img src="<?php echo htmlspecialchars($bannerMid[1]['hinh_anh_desktop']); ?>"
-                            style="width:100%; border-radius: 8px;">
-                    </a>
-                </div>
-            </div>
+    <div class="banner-2 mt-4 mb-4">
+        <div class="container-xl px-0 shadow-sm rounded-3 overflow-hidden">
+            <a href="<?php echo htmlspecialchars($bannerMid[1]['link_dich'] ?? '#'); ?>" class="d-block">
+                <img src="<?php echo htmlspecialchars($bannerMid[1]['hinh_anh_desktop']); ?>"
+                     style="width: 100%; display: block; border-radius: 12px;">
+            </a>
         </div>
     </div>
 <?php endif; ?>
@@ -810,16 +796,11 @@ ob_start();
 </div>
 
 <?php if (!empty($bannerMid[2])): ?>
-    <div class="banner-3 mt-4">
-        <div class="container-xl">
-            <div class="row">
-                <div class="col-12 banner shadow-sm rounded-3">
-                    <a href="<?php echo htmlspecialchars($bannerMid[2]['link_dich'] ?? '#'); ?>">
-                        <img src="<?php echo htmlspecialchars($bannerMid[2]['hinh_anh_desktop']); ?>"
-                            style="width:100%; border-radius: 8px;">
-                    </a>
-                </div>
-            </div>
+    <div class="banner-3 mt-4 mb-4"> <div class="container-xl px-0 shadow-sm rounded-3 overflow-hidden">
+            <a href="<?php echo htmlspecialchars($bannerMid[2]['link_dich'] ?? '#'); ?>" class="d-block">
+                <img src="<?php echo htmlspecialchars($bannerMid[2]['hinh_anh_desktop']); ?>"
+                     style="width: 100%; display: block; border-radius: 12px;">
+            </a>
         </div>
     </div>
 <?php endif; ?>
@@ -921,18 +902,18 @@ ob_start();
 </div>
 
 <?php if (!empty($bannerMid) && count($bannerMid) >= 3): ?>
-    <div class="category-bottom mt-5 mb-5">
-        <div class="container-xl">
-            <div class="row g-3">
+    <div class="category-bottom mt-4 mb-4">
+        <div class="container-xl px-0">
+            <div class="d-flex flex-column flex-lg-row gap-3">
                 <?php foreach (array_slice($bannerMid, 3, 3) as $b): ?>
-                    <div class="col-lg-4 col-12">
-                        <div class="category-bot-item shadow-sm rounded-3">
-                            <a href="<?php echo htmlspecialchars($b['link_dich'] ?? '#'); ?>">
-                                <img src="<?php echo htmlspecialchars($b['hinh_anh_desktop']); ?>"
-                                    style="width:100%; border-radius: 8px;">
-                            </a>
-                        </div>
+                    
+                    <div class="category-bot-item shadow-sm rounded-3 overflow-hidden w-100">
+                        <a href="<?php echo htmlspecialchars($b['link_dich'] ?? '#'); ?>" class="d-block h-100">
+                            <img src="<?php echo htmlspecialchars($b['hinh_anh_desktop']); ?>"
+                                 style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        </a>
                     </div>
+
                 <?php endforeach; ?>
             </div>
         </div>
@@ -1291,15 +1272,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const btnNext = document.getElementById('btnDualNext');
 
     if (track && btnPrev && btnNext) {
-        // Click nút NEXT
         btnNext.addEventListener('click', function() {
-            // Lấy độ rộng của 1 banner + 16px (gap)
+
             const itemWidth = track.querySelector('.dual-banner-item').offsetWidth;
             const scrollAmount = itemWidth + 16;
             track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         });
 
-        // Click nút PREV
         btnPrev.addEventListener('click', function() {
             const itemWidth = track.querySelector('.dual-banner-item').offsetWidth;
             const scrollAmount = itemWidth + 16;
