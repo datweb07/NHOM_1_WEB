@@ -147,6 +147,60 @@ $mucGiaPreset = [
         flex: 0 0 20px;
     }
 
+    .price-preset-list {
+        display: grid;
+        gap: 8px;
+    }
+
+    .price-preset-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid #eceff3;
+        border-radius: 10px;
+        padding: 8px 10px;
+        background: #fff;
+        color: #374151;
+        font-size: 0.82rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .price-preset-item::after {
+        content: '\f00c';
+        font-family: 'Font Awesome 6 Free', 'FontAwesome';
+        font-weight: 900;
+        font-size: 0.68rem;
+        color: #d70018;
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.2s ease;
+    }
+
+    .price-preset-item:hover {
+        border-color: #d70018;
+        background: #fff6f7;
+        color: #d70018;
+    }
+
+    .price-preset-check:checked+.price-preset-item {
+        border-color: #d70018;
+        background: #fff1f3;
+        color: #b10016;
+        box-shadow: 0 0 0 1px rgba(215, 0, 24, 0.12);
+    }
+
+    .price-preset-check:checked+.price-preset-item::after {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .price-preset-check:focus-visible+.price-preset-item {
+        outline: 2px solid rgba(215, 0, 24, 0.25);
+        outline-offset: 2px;
+    }
+
     .price-range-values {
         font-size: 0.8rem;
         color: #6c757d;
@@ -314,17 +368,18 @@ $mucGiaPreset = [
 
                         <div class="mb-3">
                             <label class="form-label small fw-medium d-block mb-2">Mức giá</label>
-                            <div class="d-grid gap-2">
+                            <div class="price-preset-list">
                                 <?php foreach ($mucGiaPreset as $muc): ?>
-                                    <div class="form-check">
+                                    <?php $giaKhoangId = 'gia-khoang-' . md5($muc['value']); ?>
+                                    <div>
                                         <input
-                                            class="form-check-input"
+                                            class="btn-check price-preset-check"
                                             type="checkbox"
                                             name="gia_khoang[]"
                                             value="<?= $muc['value'] ?>"
-                                            id="gia-khoang-<?= md5($muc['value']) ?>"
+                                            id="<?= $giaKhoangId ?>"
                                             <?= in_array($muc['value'], $giaKhoangFilters, true) ? 'checked' : '' ?>>
-                                        <label class="form-check-label small" for="gia-khoang-<?= md5($muc['value']) ?>">
+                                        <label class="price-preset-item" for="<?= $giaKhoangId ?>">
                                             <?= htmlspecialchars($muc['label']) ?>
                                         </label>
                                     </div>
