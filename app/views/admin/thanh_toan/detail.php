@@ -5,423 +5,282 @@ function e($value): string
 }
 
 $successMessages = [
-    'approved' => 'Da duyet thanh toan thanh cong.',
-    'rejected' => 'Da tu choi thanh toan.',
-    'cod_confirmed' => 'Da xac nhan thanh toan COD thanh cong.',
+    'approved' => 'Đã duyệt thanh toán thành công.',
+    'rejected' => 'Đã từ chối thanh toán.',
+    'cod_confirmed' => 'Đã xác nhận thanh toán COD thành công.',
 ];
 
 $errorMessages = [
-    'invalid_id' => 'ID thanh toan khong hop le.',
-    'not_found' => 'Khong tim thay thanh toan.',
-    'not_cod' => 'Chi co the xac nhan thanh toan COD.',
-    'already_processed' => 'Thanh toan da duoc xu ly.',
+    'invalid_id' => 'ID thanh toán không hợp lệ.',
+    'not_found' => 'Không tìm thấy thanh toán.',
+    'not_cod' => 'Chỉ có thể xác nhận thanh toán COD.',
+    'already_processed' => 'Thanh toán đã được xử lý.',
 ];
 
 $thanhToan = (isset($thanhToan) && is_array($thanhToan)) ? $thanhToan : [];
 $donHang = (isset($donHang) && is_array($donHang)) ? $donHang : [];
+$transactionLogs = (isset($transactionLogs) && is_array($transactionLogs)) ? $transactionLogs : [];
 $paymentId = (int)($thanhToan['id'] ?? 0);
 $trangThaiDuyet = (string)($thanhToan['trang_thai_duyet'] ?? '');
+
+// Include Master Layout
+require_once dirname(__DIR__) . '/layouts/header.php';
+require_once dirname(__DIR__) . '/layouts/sidebar.php';
 ?>
-<!DOCTYPE html>
-<html lang="vi">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiết thanh toán</title>
-    <script src="https://kit.fontawesome.com/1f55434e39.js" crossorigin="anonymous"></script>
-    <link rel="icon" href="<?= ASSET_URL ?>/assets/client/images/header/1.png">
-    <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/client/css/main.css">
-    <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/client/css/grid.css">
-    <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/client/css/reponsive.css">
-    <style>
-        .admin-detail-page {
-            background: linear-gradient(180deg, #f7f8fb 0%, #eef1f7 100%);
-            min-height: 100vh;
-            padding: 22px 0 40px;
-        }
+<main class="app-main">
+    <?php 
+    $breadcrumbs = [
+        ['label' => 'Dashboard', 'url' => '/admin/dashboard'],
+        ['label' => 'Thanh Toán', 'url' => '/admin/thanh-toan'],
+        ['label' => 'Chi Tiết Thanh Toán', 'url' => '']
+    ];
+    require_once dirname(__DIR__) . '/layouts/breadcrumb.php'; 
+    ?>
+    
+    <div class="app-content">
+        <div class="container-fluid">
 
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-
-        .top-bar h1 {
-            margin: 0;
-            font-size: 25px;
-            color: #111827;
-            font-weight: 700;
-        }
-
-        .btn-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            border: 1px solid #d0d5dd;
-            color: #344054;
-            border-radius: 10px;
-            padding: 9px 12px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 13px;
-            background: #fff;
-        }
-
-        .btn-back:hover {
-            color: #cb1c22;
-            border-color: #cb1c22;
-            background: #fff6f6;
-        }
-
-        .fpt-alert {
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            font-size: 14px;
-            border: 1px solid transparent;
-        }
-
-        .fpt-alert.success {
-            background: #ecfdf3;
-            color: #027a48;
-            border-color: #abefc6;
-        }
-
-        .fpt-alert.error {
-            background: #fff1f3;
-            color: #b42318;
-            border-color: #fecdca;
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 14px;
-        }
-
-        .fpt-card {
-            background: #fff;
-            border-radius: 18px;
-            border: 1px solid #eceff4;
-            box-shadow: 0 14px 38px rgba(15, 23, 42, 0.08);
-            overflow: hidden;
-        }
-
-        .card-body {
-            padding: 18px;
-        }
-
-        .card-title {
-            margin: 0 0 12px;
-            color: #475467;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-        }
-
-        .info-list {
-            display: grid;
-            gap: 8px;
-            font-size: 14px;
-            color: #344054;
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border-radius: 999px;
-            padding: 5px 10px;
-            font-size: 12px;
-            font-weight: 700;
-            border: 1px solid #fedf89;
-            background: #fffaeb;
-            color: #b54708;
-        }
-
-        .status-badge.success {
-            border-color: #abefc6;
-            background: #ecfdf3;
-            color: #027a48;
-        }
-
-        .status-badge.error {
-            border-color: #fecdca;
-            background: #fff1f3;
-            color: #b42318;
-        }
-
-        .receipt-section {
-            margin-bottom: 14px;
-        }
-
-        .receipt-image {
-            max-width: 100%;
-            border-radius: 12px;
-            border: 1px solid #edf1f6;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .no-receipt {
-            padding: 20px;
-            text-align: center;
-            color: #667085;
-            background: #f9fafb;
-            border-radius: 12px;
-            border: 1px dashed #d0d5dd;
-        }
-
-        .action-section {
-            margin-bottom: 14px;
-        }
-
-        .action-section .card-body {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .action-form {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-group label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #344054;
-        }
-
-        .form-group textarea {
-            border: 1px solid #d0d5dd;
-            border-radius: 10px;
-            padding: 10px 12px;
-            font-size: 14px;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn-approve {
-            border: 1px solid #027a48;
-            background: #027a48;
-            color: #fff;
-            border-radius: 10px;
-            padding: 10px 16px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: .2s ease;
-        }
-
-        .btn-approve:hover {
-            background: #05603a;
-            border-color: #05603a;
-        }
-
-        .btn-reject {
-            border: 1px solid #b42318;
-            background: #b42318;
-            color: #fff;
-            border-radius: 10px;
-            padding: 10px 16px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: .2s ease;
-        }
-
-        .btn-reject:hover {
-            background: #912018;
-            border-color: #912018;
-        }
-
-        .empty-text {
-            color: #667085;
-            font-size: 14px;
-        }
-
-        @media (max-width: 992px) {
-            .summary-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .admin-detail-page {
-                padding-top: 14px;
-            }
-
-            .top-bar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .btn-back {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .btn-approve,
-            .btn-reject {
-                width: 100%;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="admin-detail-page">
-        <div class="grid wide">
-            <div class="top-bar">
-                <h1>Chi tiết thanh toán #<?= $paymentId > 0 ? $paymentId : '-' ?></h1>
-                <a class="btn-back" href="/admin/thanh-toan"><i class="fa fa-arrow-left"></i> Quay lại danh sách</a>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="mb-0">Chi tiết thanh toán #<?= $paymentId > 0 ? $paymentId : '-' ?></h3>
+                <a href="/admin/thanh-toan" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Quay lại danh sách
+                </a>
             </div>
 
             <?php if ($paymentId <= 0): ?>
-                <div class="fpt-alert error"><i class="fa fa-triangle-exclamation"></i> Khong tim thay du lieu thanh toan hop le.</div>
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> Không tìm thấy dữ liệu thanh toán hợp lệ.
+                </div>
             <?php endif; ?>
 
             <?php if (!empty($success) && isset($successMessages[$success])): ?>
-                <div class="fpt-alert success"><i class="fa fa-circle-check"></i> <?= e($successMessages[$success]) ?></div>
-            <?php endif; ?>
-            <?php if (!empty($error) && isset($errorMessages[$error])): ?>
-                <div class="fpt-alert error"><i class="fa fa-triangle-exclamation"></i> <?= e($errorMessages[$error]) ?></div>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle"></i> <?= e($successMessages[$success]) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
             <?php endif; ?>
 
-            <div class="summary-grid">
-                <div class="fpt-card">
-                    <div class="card-body">
-                        <h2 class="card-title">Thông tin thanh toán</h2>
-                        <div class="info-list">
-                            <div><strong>Mã đơn hàng:</strong> <?= e($donHang['ma_don_hang'] ?? '-') ?></div>
-                            <div><strong>Phương thức:</strong> <?= e($thanhToan['phuong_thuc'] ?? '-') ?></div>
-                            <div><strong>Số tiền:</strong> <strong><?= number_format((float)($thanhToan['so_tien'] ?? 0), 0, ',', '.') ?> VND</strong></div>
+            <?php if (!empty($error) && isset($errorMessages[$error])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> <?= e($errorMessages[$error]) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+
+            <div class="row mb-4">
+                <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h6 class="card-title text-uppercase text-muted mb-0">Thông tin thanh toán</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Mã đơn hàng:</div>
+                                <div class="col-sm-8 fw-bold text-primary"><?= e($donHang['ma_don_hang'] ?? '-') ?></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Phương thức:</div>
+                                <div class="col-sm-8 fw-bold"><?= e($thanhToan['phuong_thuc'] ?? '-') ?></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Số tiền:</div>
+                                <div class="col-sm-8 text-danger fw-bold fs-5"><?= number_format((float)($thanhToan['so_tien'] ?? 0), 0, ',', '.') ?> đ</div>
+                            </div>
                             <?php if (!empty($thanhToan['gateway_transaction_id'])): ?>
-                                <div><strong>Mã giao dịch gateway:</strong> <code><?= e($thanhToan['gateway_transaction_id']) ?></code></div>
+                                <div class="row mb-2">
+                                    <div class="col-sm-4 text-muted">Mã giao dịch:</div>
+                                    <div class="col-sm-8"><code><?= e($thanhToan['gateway_transaction_id']) ?></code></div>
+                                </div>
                             <?php endif; ?>
-                            <div><strong>Ngày tạo:</strong> <?= e($thanhToan['created_at'] ?? $thanhToan['ngay_thanh_toan'] ?? '-') ?></div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Ngày tạo:</div>
+                                <div class="col-sm-8"><?= e($thanhToan['created_at'] ?? $thanhToan['ngay_thanh_toan'] ?? '-') ?></div>
+                            </div>
                             <?php if (!empty($thanhToan['expiration_time'])): ?>
-                                <div><strong>Thời gian hết hạn:</strong> <?= e($thanhToan['expiration_time']) ?></div>
+                                <div class="row mb-2">
+                                    <div class="col-sm-4 text-muted">Hết hạn:</div>
+                                    <div class="col-sm-8"><?= e($thanhToan['expiration_time']) ?></div>
+                                </div>
                             <?php endif; ?>
-                            <div>
-                                <strong>Trạng thái duyệt:</strong> 
-                                <?php if ($trangThaiDuyet === 'CHO_DUYET'): ?>
-                                    <span class="status-badge"><i class="fa fa-clock"></i> CHO_DUYET</span>
-                                <?php elseif ($trangThaiDuyet === 'THANH_CONG'): ?>
-                                    <span class="status-badge success"><i class="fa fa-circle-check"></i> THANH_CONG</span>
-                                <?php elseif ($trangThaiDuyet === 'THAT_BAI'): ?>
-                                    <span class="status-badge error"><i class="fa fa-circle-xmark"></i> THAT_BAI</span>
-                                <?php else: ?>
-                                    <span class="status-badge"><?= e($trangThaiDuyet) ?></span>
-                                <?php endif; ?>
+                            <hr>
+                            <div class="row mb-2 align-items-center">
+                                <div class="col-sm-4 text-muted">Trạng thái duyệt:</div>
+                                <div class="col-sm-8">
+                                    <?php if ($trangThaiDuyet === 'CHO_DUYET'): ?>
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i> CHO_DUYET</span>
+                                    <?php elseif ($trangThaiDuyet === 'THANH_CONG'): ?>
+                                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> THANH_CONG</span>
+                                    <?php elseif ($trangThaiDuyet === 'THAT_BAI'): ?>
+                                        <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i> THAT_BAI</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-secondary"><?= e($trangThaiDuyet) ?></span>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                             <?php if (!empty($thanhToan['ngay_duyet'])): ?>
-                                <div><strong>Ngày duyệt:</strong> <?= e($thanhToan['ngay_duyet']) ?></div>
+                                <div class="row mb-2">
+                                    <div class="col-sm-4 text-muted">Ngày duyệt:</div>
+                                    <div class="col-sm-8"><?= e($thanhToan['ngay_duyet']) ?></div>
+                                </div>
                             <?php endif; ?>
                             <?php if (!empty($thanhToan['ghi_chu_duyet'])): ?>
-                                <div><strong>Ghi chú duyệt:</strong> <?= e($thanhToan['ghi_chu_duyet']) ?></div>
+                                <div class="row mb-0">
+                                    <div class="col-sm-4 text-muted">Ghi chú duyệt:</div>
+                                    <div class="col-sm-8 fst-italic text-secondary"><?= e($thanhToan['ghi_chu_duyet']) ?></div>
+                                </div>
                             <?php endif; ?>
                         </div>
                     </div>
                 </div>
 
-                <div class="fpt-card">
-                    <div class="card-body">
-                        <h2 class="card-title">Thông tin đơn hàng</h2>
-                        <div class="info-list">
-                            <div><strong>Khách hàng:</strong> <?= e($donHang['ho_ten'] ?? 'Khách vãng lai') ?></div>
-                            <div><strong>Email:</strong> <?= e($donHang['email'] ?? '-') ?></div>
-                            <div><strong>Số điện thoại:</strong> <?= e($donHang['sdt'] ?? '-') ?></div>
-                            <div><strong>Tổng thanh toán:</strong> <strong><?= number_format((float)($donHang['tong_thanh_toan'] ?? 0), 0, ',', '.') ?> VND</strong></div>
-                            <div><strong>Trạng thái đơn:</strong> <?= e($donHang['trang_thai'] ?? '-') ?></div>
+                <div class="col-lg-6 col-md-12">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h6 class="card-title text-uppercase text-muted mb-0">Thông tin khách hàng & Đơn hàng</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Khách hàng:</div>
+                                <div class="col-sm-8 fw-bold"><?= e($donHang['ho_ten'] ?? 'Khách vãng lai') ?></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Email:</div>
+                                <div class="col-sm-8"><?= e($donHang['email'] ?? '-') ?></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Số điện thoại:</div>
+                                <div class="col-sm-8"><?= e($donHang['sdt'] ?? '-') ?></div>
+                            </div>
+                            <hr>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Tổng thanh toán:</div>
+                                <div class="col-sm-8 fw-bold text-primary"><?= number_format((float)($donHang['tong_thanh_toan'] ?? 0), 0, ',', '.') ?> đ</div>
+                            </div>
+                            <div class="row mb-0">
+                                <div class="col-sm-4 text-muted">Trạng thái đơn:</div>
+                                <div class="col-sm-8">
+                                    <span class="badge bg-secondary px-2 py-1"><?= e($donHang['trang_thai'] ?? '-') ?></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="fpt-card receipt-section">
-                <div class="card-body">
-                    <h2 class="card-title">Biên lai thanh toán</h2>
-                    <?php if (!empty($thanhToan['anh_bien_lai'])): ?>
-                        <img src="<?= e($thanhToan['anh_bien_lai']) ?>" alt="Biên lai thanh toán" class="receipt-image">
-                    <?php else: ?>
-                        <div class="no-receipt">
-                            <i class="fa fa-image" style="font-size: 32px; color: #98a2b3; margin-bottom: 8px;"></i>
-                            <p>Chưa có biên lai thanh toán</p>
+            <div class="row mb-4">
+                <div class="col-lg-6 col-md-12 mb-3 mb-lg-0">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h6 class="card-title text-uppercase text-muted mb-0">Biên lai thanh toán</h6>
                         </div>
-                    <?php endif; ?>
+                        <div class="card-body text-center">
+                            <?php if (!empty($thanhToan['anh_bien_lai'])): ?>
+                                <img src="<?= e($thanhToan['anh_bien_lai']) ?>" alt="Biên lai thanh toán" class="img-fluid rounded border shadow-sm" style="max-height: 400px; object-fit: contain;">
+                            <?php else: ?>
+                                <div class="p-5 bg-light rounded border border-secondary" style="border-style: dashed !important;">
+                                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                                    <p class="text-muted mt-2 mb-0">Chưa có biên lai thanh toán</p>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-12">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h6 class="card-title text-uppercase text-muted mb-0">Hành động xử lý</h6>
+                        </div>
+                        <div class="card-body">
+                            <?php if ($trangThaiDuyet === 'CHO_DUYET' && ($thanhToan['phuong_thuc'] ?? '') === 'COD'): ?>
+                                <h5 class="mb-3">Xác nhận thanh toán COD</h5>
+                                <p class="text-muted mb-4">Đánh dấu thanh toán COD này là đã hoàn thành sau khi khách hàng đã thanh toán cho shipper.</p>
+                                <form method="POST" action="/admin/thanh-toan/xac-nhan-cod?id=<?= $paymentId ?>" onsubmit="return confirm('Bạn có chắc chắn muốn xác nhận thanh toán COD này đã hoàn thành?');">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-check-circle me-1"></i> Xác nhận đã thu tiền COD
+                                    </button>
+                                </form>
+
+                            <?php elseif ($trangThaiDuyet === 'CHO_DUYET'): ?>
+                                <h5 class="mb-3">Duyệt thanh toán</h5>
+                                <form id="approvalForm">
+                                    <div class="mb-3">
+                                        <label for="ghi_chu" class="form-label fw-bold text-muted">Ghi chú (tùy chọn)</label>
+                                        <textarea class="form-control" id="ghi_chu" name="ghi_chu" rows="3" placeholder="Nhập ghi chú về quyết định duyệt..."></textarea>
+                                    </div>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button type="button" class="btn btn-success" onclick="submitApproval('approve')">
+                                            <i class="bi bi-check-circle me-1"></i> Duyệt thanh toán
+                                        </button>
+                                        <button type="button" class="btn btn-danger" onclick="submitApproval('reject')">
+                                            <i class="bi bi-x-circle me-1"></i> Từ chối thanh toán
+                                        </button>
+                                    </div>
+                                </form>
+
+                            <?php else: ?>
+                                <div class="alert alert-secondary border-0 mb-0 d-flex align-items-center">
+                                    <i class="bi bi-info-circle fs-4 me-3 text-secondary"></i>
+                                    <div>
+                                        <h6 class="mb-1">Trạng thái đã đóng</h6>
+                                        <p class="mb-0 text-muted">Thanh toán đã được xử lý (<?= e($trangThaiDuyet) ?>), không thể thay đổi trạng thái.</p>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <?php if (!empty($transactionLogs) && is_array($transactionLogs)): ?>
-                <div class="fpt-card">
-                    <div class="card-body">
-                        <h2 class="card-title">Lịch sử giao dịch (Transaction Logs)</h2>
+            <?php if (!empty($transactionLogs)): ?>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="card-title text-uppercase text-muted mb-0">Lịch sử giao dịch (Transaction Logs)</h6>
+                    </div>
+                    <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
+                            <table class="table table-hover table-striped align-middle mb-0">
+                                <thead class="table-light">
                                     <tr>
-                                        <th>Thời gian</th>
+                                        <th class="ps-3">Thời gian</th>
                                         <th>Gateway</th>
                                         <th>Trạng thái</th>
-                                        <th>Chi tiết</th>
+                                        <th class="pe-3">Chi tiết (JSON)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($transactionLogs as $log): ?>
                                         <tr>
-                                            <td><?= e($log['created_at'] ?? '-') ?></td>
-                                            <td><?= e($log['gateway_name'] ?? '-') ?></td>
+                                            <td class="ps-3 text-muted"><?= e($log['created_at'] ?? '-') ?></td>
+                                            <td class="fw-medium"><?= e($log['gateway_name'] ?? '-') ?></td>
                                             <td>
                                                 <?php
-                                                $statusClass = 'secondary';
-                                                if ($log['status'] === 'SUCCESS') $statusClass = 'success';
-                                                elseif ($log['status'] === 'FAILED') $statusClass = 'danger';
-                                                elseif ($log['status'] === 'PENDING') $statusClass = 'warning';
+                                                $statusClass = 'bg-secondary';
+                                                if (($log['status'] ?? '') === 'SUCCESS') $statusClass = 'bg-success';
+                                                elseif (($log['status'] ?? '') === 'FAILED') $statusClass = 'bg-danger';
+                                                elseif (($log['status'] ?? '') === 'PENDING') $statusClass = 'bg-warning text-dark';
                                                 ?>
-                                                <span class="badge bg-<?= $statusClass ?>"><?= e($log['status'] ?? '-') ?></span>
+                                                <span class="badge <?= $statusClass ?>"><?= e($log['status'] ?? '-') ?></span>
                                             </td>
-                                            <td>
+                                            <td class="pe-3">
                                                 <?php if (!empty($log['callback_data'])): ?>
                                                     <details>
-                                                        <summary style="cursor: pointer; color: #0d6efd;">Xem callback data</summary>
-                                                        <pre style="font-size: 11px; max-height: 200px; overflow: auto; background: #f8f9fa; padding: 8px; border-radius: 4px; margin-top: 8px;"><?= e($log['callback_data']) ?></pre>
+                                                        <summary class="text-primary text-decoration-none" style="cursor: pointer;">Xem callback data</summary>
+                                                        <pre class="bg-light p-2 rounded mt-2 border" style="font-size: 12px; max-height: 200px; overflow-y: auto;"><code><?= e($log['callback_data']) ?></code></pre>
                                                     </details>
                                                 <?php elseif (!empty($log['response_data'])): ?>
                                                     <details>
-                                                        <summary style="cursor: pointer; color: #0d6efd;">Xem response data</summary>
-                                                        <pre style="font-size: 11px; max-height: 200px; overflow: auto; background: #f8f9fa; padding: 8px; border-radius: 4px; margin-top: 8px;"><?= e($log['response_data']) ?></pre>
+                                                        <summary class="text-primary text-decoration-none" style="cursor: pointer;">Xem response data</summary>
+                                                        <pre class="bg-light p-2 rounded mt-2 border" style="font-size: 12px; max-height: 200px; overflow-y: auto;"><code><?= e($log['response_data']) ?></code></pre>
                                                     </details>
                                                 <?php elseif (!empty($log['request_data'])): ?>
                                                     <details>
-                                                        <summary style="cursor: pointer; color: #0d6efd;">Xem request data</summary>
-                                                        <pre style="font-size: 11px; max-height: 200px; overflow: auto; background: #f8f9fa; padding: 8px; border-radius: 4px; margin-top: 8px;"><?= e($log['request_data']) ?></pre>
+                                                        <summary class="text-primary text-decoration-none" style="cursor: pointer;">Xem request data</summary>
+                                                        <pre class="bg-light p-2 rounded mt-2 border" style="font-size: 12px; max-height: 200px; overflow-y: auto;"><code><?= e($log['request_data']) ?></code></pre>
                                                     </details>
                                                 <?php else: ?>
-                                                    <span class="text-muted">-</span>
+                                                    <span class="text-muted fst-italic">Không có dữ liệu</span>
                                                 <?php endif; ?>
                                             </td>
                                         </tr>
@@ -433,87 +292,45 @@ $trangThaiDuyet = (string)($thanhToan['trang_thai_duyet'] ?? '');
                 </div>
             <?php endif; ?>
 
-            <?php if ($trangThaiDuyet === 'CHO_DUYET' && ($thanhToan['phuong_thuc'] ?? '') === 'COD'): ?>
-                <div class="fpt-card action-section">
-                    <div class="card-body">
-                        <h2 class="card-title">Xác nhận thanh toán COD</h2>
-                        <p class="text-muted mb-3">Đánh dấu thanh toán COD này là đã hoàn thành sau khi khách hàng đã thanh toán cho shipper.</p>
-                        <form method="POST" action="/admin/thanh-toan/xac-nhan-cod?id=<?= $paymentId ?>" onsubmit="return confirm('Bạn có chắc chắn muốn xác nhận thanh toán COD này đã hoàn thành?');">
-                            <button type="submit" class="btn-approve">
-                                <i class="fa fa-circle-check"></i> Xác nhận đã thanh toán COD
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            <?php elseif ($trangThaiDuyet === 'CHO_DUYET'): ?>
-                <div class="fpt-card action-section">
-                    <div class="card-body">
-                        <h2 class="card-title">Duyệt thanh toán</h2>
-                        <form class="action-form" id="approvalForm">
-                            <div class="form-group">
-                                <label for="ghi_chu">Ghi chú (tùy chọn)</label>
-                                <textarea id="ghi_chu" name="ghi_chu" placeholder="Nhập ghi chú về quyết định duyệt..."></textarea>
-                            </div>
-                            <div class="action-buttons">
-                                <button type="button" class="btn-approve" onclick="submitApproval('approve')">
-                                    <i class="fa fa-circle-check"></i> Duyệt thanh toán
-                                </button>
-                                <button type="button" class="btn-reject" onclick="submitApproval('reject')">
-                                    <i class="fa fa-circle-xmark"></i> Từ chối thanh toán
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            <?php else: ?>
-                <div class="fpt-card action-section">
-                    <div class="card-body">
-                        <h2 class="card-title">Trạng thái</h2>
-                        <div class="empty-text">Thanh toán đã được xử lý, không thể thay đổi trạng thái.</div>
-                    </div>
-                </div>
-            <?php endif; ?>
-        </div>
-    </div>
+        </div> </div> </main>
 
-    <script>
-        function submitApproval(action) {
-            const ghiChu = document.getElementById('ghi_chu').value;
-            const paymentId = <?= $paymentId ?>;
-            
-            if (action === 'approve') {
-                if (confirm('Bạn có chắc chắn muốn duyệt thanh toán này?')) {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = '/admin/thanh-toan/duyet?id=' + paymentId;
-                    
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'ghi_chu';
-                    input.value = ghiChu;
-                    form.appendChild(input);
-                    
-                    document.body.appendChild(form);
-                    form.submit();
-                }
-            } else if (action === 'reject') {
-                if (confirm('Bạn có chắc chắn muốn từ chối thanh toán này?')) {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = '/admin/thanh-toan/tu-choi?id=' + paymentId;
-                    
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'ghi_chu';
-                    input.value = ghiChu;
-                    form.appendChild(input);
-                    
-                    document.body.appendChild(form);
-                    form.submit();
-                }
+<script>
+    function submitApproval(action) {
+        const ghiChu = document.getElementById('ghi_chu').value;
+        const paymentId = <?= $paymentId ?>;
+        
+        if (action === 'approve') {
+            if (confirm('Bạn có chắc chắn muốn duyệt thanh toán này?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/admin/thanh-toan/duyet?id=' + paymentId;
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'ghi_chu';
+                input.value = ghiChu;
+                form.appendChild(input);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        } else if (action === 'reject') {
+            if (confirm('Bạn có chắc chắn muốn từ chối thanh toán này?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/admin/thanh-toan/tu-choi?id=' + paymentId;
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'ghi_chu';
+                input.value = ghiChu;
+                form.appendChild(input);
+                
+                document.body.appendChild(form);
+                form.submit();
             }
         }
-    </script>
-</body>
+    }
+</script>
 
-</html>
+<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>

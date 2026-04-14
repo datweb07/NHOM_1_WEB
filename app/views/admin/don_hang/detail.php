@@ -1,20 +1,21 @@
 <?php
+// Giữ nguyên các hàm và logic xử lý dữ liệu đầu trang
 function e($value): string
 {
     return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 }
 
 $successMessages = [
-    'status_updated' => 'Da cap nhat trang thai don hang.',
-    'refund_initiated' => 'Da khoi tao yeu cau hoan tien thanh cong.',
-    'refund_completed' => 'Hoan tien thanh cong.',
+    'status_updated' => 'Đã cập nhật trạng thái đơn hàng.',
+    'refund_initiated' => 'Đã khởi tạo yêu cầu hoàn tiền thành công.',
+    'refund_completed' => 'Hoàn tiền thành công.',
 ];
 
 $errorMessages = [
-    'invalid_transition' => 'Khong the chuyen trang thai theo luong yeu cau.',
-    'refund_failed' => 'Khong the hoan tien. Vui long thu lai.',
-    'no_payment' => 'Don hang chua co thong tin thanh toan.',
-    'already_refunded' => 'Don hang da duoc hoan tien.',
+    'invalid_transition' => 'Không thể chuyển trạng thái theo luồng yêu cầu.',
+    'refund_failed' => 'Không thể hoàn tiền. Vui lòng thử lại.',
+    'no_payment' => 'Đơn hàng chưa có thông tin thanh toán.',
+    'already_refunded' => 'Đơn hàng đã được hoàn tiền.',
 ];
 
 $donHang = (isset($donHang) && is_array($donHang)) ? $donHang : [];
@@ -23,362 +24,143 @@ $trangThaiKeTiep = (isset($trangThaiKeTiep) && is_array($trangThaiKeTiep)) ? $tr
 $thanhToan = (isset($thanhToan) && is_array($thanhToan)) ? $thanhToan : null;
 $refunds = (isset($refunds) && is_array($refunds)) ? $refunds : [];
 $orderId = (int)($donHang['id'] ?? 0);
+
+// Include Master Layout
+require_once dirname(__DIR__) . '/layouts/header.php';
+require_once dirname(__DIR__) . '/layouts/sidebar.php';
 ?>
-<!DOCTYPE html>
-<html lang="vi">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiết đơn hàng</title>
-    <script src="https://kit.fontawesome.com/1f55434e39.js" crossorigin="anonymous"></script>
-    <link rel="icon" href="<?= ASSET_URL ?>/assets/client/images/header/1.png">
-    <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/client/css/main.css">
-    <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/client/css/grid.css">
-    <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/client/css/reponsive.css">
-    <style>
-        .admin-detail-page {
-            background: linear-gradient(180deg, #f7f8fb 0%, #eef1f7 100%);
-            min-height: 100vh;
-            padding: 22px 0 40px;
-        }
+<main class="app-main">
+    <?php 
+    $breadcrumbs = [
+        ['label' => 'Dashboard', 'url' => '/admin/dashboard'],
+        ['label' => 'Đơn Hàng', 'url' => '/admin/don-hang'],
+        ['label' => 'Chi Tiết Đơn Hàng', 'url' => '']
+    ];
+    require_once dirname(__DIR__) . '/layouts/breadcrumb.php'; 
+    ?>
+    
+    <div class="app-content">
+        <div class="container-fluid">
 
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-
-        .top-bar h1 {
-            margin: 0;
-            font-size: 25px;
-            color: #111827;
-            font-weight: 700;
-        }
-
-        .btn-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            border: 1px solid #d0d5dd;
-            color: #344054;
-            border-radius: 10px;
-            padding: 9px 12px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 13px;
-            background: #fff;
-        }
-
-        .btn-back:hover {
-            color: #cb1c22;
-            border-color: #cb1c22;
-            background: #fff6f6;
-        }
-
-        .fpt-alert {
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            font-size: 14px;
-            border: 1px solid transparent;
-        }
-
-        .fpt-alert.success {
-            background: #ecfdf3;
-            color: #027a48;
-            border-color: #abefc6;
-        }
-
-        .fpt-alert.error {
-            background: #fff1f3;
-            color: #b42318;
-            border-color: #fecdca;
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: 1.1fr .9fr;
-            gap: 14px;
-            margin-bottom: 14px;
-        }
-
-        .fpt-card {
-            background: #fff;
-            border-radius: 18px;
-            border: 1px solid #eceff4;
-            box-shadow: 0 14px 38px rgba(15, 23, 42, 0.08);
-            overflow: hidden;
-        }
-
-        .card-body {
-            padding: 18px;
-        }
-
-        .card-title {
-            margin: 0 0 12px;
-            color: #475467;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-        }
-
-        .info-list {
-            display: grid;
-            gap: 8px;
-            font-size: 14px;
-            color: #344054;
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border-radius: 999px;
-            padding: 5px 10px;
-            font-size: 12px;
-            font-weight: 700;
-            border: 1px solid #fedf89;
-            background: #fffaeb;
-            color: #b54708;
-        }
-
-        .status-actions {
-            margin-bottom: 14px;
-        }
-
-        .status-actions .card-body {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .action-list {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .action-list form {
-            margin: 0;
-        }
-
-        .btn-status {
-            border: 1px solid #d0d5dd;
-            background: #fff;
-            color: #344054;
-            border-radius: 10px;
-            padding: 9px 13px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: .2s ease;
-        }
-
-        .btn-status:hover {
-            border-color: #cb1c22;
-            color: #cb1c22;
-            background: #fff5f5;
-        }
-
-        .btn-status.danger:hover {
-            border-color: #b42318;
-            color: #b42318;
-            background: #fff1f3;
-        }
-
-        .btn-refund {
-            border: 1px solid #d0d5dd;
-            background: #fff;
-            color: #344054;
-            border-radius: 10px;
-            padding: 9px 13px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: .2s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-refund:hover {
-            border-color: #f97316;
-            color: #f97316;
-            background: #fff7ed;
-        }
-
-        .refund-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border-radius: 999px;
-            padding: 5px 10px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .refund-badge.pending {
-            border: 1px solid #fedf89;
-            background: #fffaeb;
-            color: #b54708;
-        }
-
-        .refund-badge.completed {
-            border: 1px solid #abefc6;
-            background: #ecfdf3;
-            color: #027a48;
-        }
-
-        .refund-badge.failed {
-            border: 1px solid #fecdca;
-            background: #fff1f3;
-            color: #b42318;
-        }
-
-        .empty-text {
-            color: #667085;
-            font-size: 14px;
-        }
-
-        .table-wrap {
-            overflow-x: auto;
-        }
-
-        .detail-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 940px;
-        }
-
-        .detail-table thead th {
-            background: #f8fafc;
-            color: #667085;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-            font-weight: 700;
-            text-align: left;
-            padding: 14px;
-            border-bottom: 1px solid #edf1f6;
-        }
-
-        .detail-table tbody td {
-            padding: 14px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 14px;
-            color: #344054;
-        }
-
-        .detail-table tbody tr:hover {
-            background: #fcfcfd;
-        }
-
-        .empty-row {
-            text-align: center;
-            color: #667085;
-            padding: 28px 10px;
-        }
-
-        @media (max-width: 992px) {
-            .summary-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .admin-detail-page {
-                padding-top: 14px;
-            }
-
-            .top-bar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .btn-back {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .action-list {
-                flex-direction: column;
-            }
-
-            .btn-status {
-                width: 100%;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="admin-detail-page">
-        <div class="grid wide">
-            <div class="top-bar">
-                <h1>Chi tiết đơn hàng #<?= $orderId > 0 ? $orderId : '-' ?></h1>
-                <a class="btn-back" href="/admin/don-hang"><i class="fa fa-arrow-left"></i> Quay lại danh sách</a>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="mb-0">Chi tiết đơn hàng #<?= $orderId > 0 ? $orderId : '-' ?></h3>
+                <a href="/admin/don-hang" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Quay lại danh sách
+                </a>
             </div>
 
             <?php if ($orderId <= 0): ?>
-                <div class="fpt-alert error"><i class="fa fa-triangle-exclamation"></i> Khong tim thay du lieu don hang hop le.</div>
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> Không tìm thấy dữ liệu đơn hàng hợp lệ.
+                </div>
             <?php endif; ?>
 
             <?php if (!empty($success) && isset($successMessages[$success])): ?>
-                <div class="fpt-alert success"><i class="fa fa-circle-check"></i> <?= e($successMessages[$success]) ?></div>
-            <?php endif; ?>
-            <?php if (!empty($error) && isset($errorMessages[$error])): ?>
-                <div class="fpt-alert error"><i class="fa fa-triangle-exclamation"></i> <?= e($errorMessages[$error]) ?></div>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle"></i> <?= e($successMessages[$success]) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
             <?php endif; ?>
 
-            <div class="summary-grid">
-                <div class="fpt-card">
-                    <div class="card-body">
-                        <h2 class="card-title">Thông tin đơn hàng</h2>
-                        <div class="info-list">
-                            <div><strong>Mã đơn:</strong> <?= e($donHang['ma_don_hang'] ?? '-') ?></div>
-                            <div><strong>Trạng thái hiện tại:</strong> <span class="status-badge"><i class="fa fa-circle"></i> <?= e($donHang['trang_thai'] ?? '-') ?></span></div>
-                            <div><strong>Tổng tiền hàng:</strong> <?= number_format((float)($donHang['tong_tien'] ?? 0), 0, ',', '.') ?> VND</div>
-                            <div><strong>Phí vận chuyển:</strong> <?= number_format((float)($donHang['phi_van_chuyen'] ?? 0), 0, ',', '.') ?> VND</div>
-                            <div><strong>Tiền giảm giá:</strong> <?= number_format((float)($donHang['tien_giam_gia'] ?? 0), 0, ',', '.') ?> VND</div>
-                            <div><strong>Tổng thanh toán:</strong> <strong><?= number_format((float)($donHang['tong_thanh_toan'] ?? 0), 0, ',', '.') ?> VND</strong></div>
-                            <div><strong>Ngày tạo:</strong> <?= e($donHang['ngay_tao'] ?? '-') ?></div>
+            <?php if (!empty($error) && isset($errorMessages[$error])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> <?= e($errorMessages[$error]) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <?php endif; ?>
+
+            <div class="row mb-4">
+                <div class="col-lg-7 col-md-12 mb-3 mb-lg-0">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h6 class="card-title text-uppercase text-muted mb-0">Thông tin đơn hàng</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Mã đơn:</div>
+                                <div class="col-sm-8 fw-bold"><?= e($donHang['ma_don_hang'] ?? '-') ?></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Trạng thái hiện tại:</div>
+                                <div class="col-sm-8">
+                                    <span class="badge bg-primary px-2 py-1 fs-6">
+                                        <?= e($donHang['trang_thai'] ?? '-') ?>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Tổng tiền hàng:</div>
+                                <div class="col-sm-8"><?= number_format((float)($donHang['tong_tien'] ?? 0), 0, ',', '.') ?> đ</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Phí vận chuyển:</div>
+                                <div class="col-sm-8"><?= number_format((float)($donHang['phi_van_chuyen'] ?? 0), 0, ',', '.') ?> đ</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Tiền giảm giá:</div>
+                                <div class="col-sm-8 text-danger">- <?= number_format((float)($donHang['tien_giam_gia'] ?? 0), 0, ',', '.') ?> đ</div>
+                            </div>
+                            <hr>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted fw-bold">Tổng thanh toán:</div>
+                                <div class="col-sm-8 fw-bold text-primary fs-5"><?= number_format((float)($donHang['tong_thanh_toan'] ?? 0), 0, ',', '.') ?> đ</div>
+                            </div>
+                            <div class="row mb-0">
+                                <div class="col-sm-4 text-muted">Ngày tạo:</div>
+                                <div class="col-sm-8"><?= e($donHang['ngay_tao'] ?? '-') ?></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="fpt-card">
-                    <div class="card-body">
-                        <h2 class="card-title">Khách hàng</h2>
-                        <div class="info-list">
-                            <div><strong>Họ tên:</strong> <?= e($donHang['ho_ten'] ?? 'Khách vãng lai') ?></div>
-                            <div><strong>Email:</strong> <?= e($donHang['email'] ?? '-') ?></div>
-                            <div><strong>Số điện thoại:</strong> <?= e($donHang['sdt'] ?? '-') ?></div>
+                <div class="col-lg-5 col-md-12">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h6 class="card-title text-uppercase text-muted mb-0">Khách hàng</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Họ tên:</div>
+                                <div class="col-sm-8 fw-bold"><?= e($donHang['ho_ten'] ?? 'Khách vãng lai') ?></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Email:</div>
+                                <div class="col-sm-8"><?= e($donHang['email'] ?? '-') ?></div>
+                            </div>
+                            <div class="row mb-0">
+                                <div class="col-sm-4 text-muted">Số điện thoại:</div>
+                                <div class="col-sm-8"><?= e($donHang['sdt'] ?? '-') ?></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="fpt-card status-actions">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="card-title text-uppercase text-muted mb-0">Cập nhật trạng thái</h6>
+                </div>
                 <div class="card-body">
-                    <h2 class="card-title">Cập nhật trạng thái</h2>
                     <?php if (empty($trangThaiKeTiep)): ?>
-                        <div class="empty-text">Đơn hàng đã ở trạng thái cuối, không thể cập nhật tiếp.</div>
+                        <div class="text-muted fst-italic">Đơn hàng đã ở trạng thái cuối, không thể cập nhật tiếp.</div>
                     <?php else: ?>
-                        <div class="action-list">
+                        <div class="d-flex flex-wrap gap-2">
                             <?php foreach ($trangThaiKeTiep as $next): ?>
-                                <form method="POST" action="/admin/don-hang/cap-nhat-trang-thai?id=<?= $orderId ?>">
+                                <form method="POST" action="/admin/don-hang/cap-nhat-trang-thai?id=<?= $orderId ?>" class="m-0">
                                     <input type="hidden" name="trang_thai" value="<?= e($next) ?>">
                                     <?php if ($next === 'DA_HUY'): ?>
-                                        <button class="btn-status danger" type="submit"><i class="fa fa-ban"></i> Chuyển sang DA_HUY</button>
+                                        <button class="btn btn-outline-danger" type="submit">
+                                            <i class="bi bi-x-circle"></i> Chuyển sang DA_HUY
+                                        </button>
                                     <?php elseif ($next === 'DANG_GIAO'): ?>
-                                        <button class="btn-status" type="submit"><i class="fa fa-truck-fast"></i> Chuyển sang DANG_GIAO</button>
+                                        <button class="btn btn-outline-info" type="submit">
+                                            <i class="bi bi-truck"></i> Chuyển sang DANG_GIAO
+                                        </button>
                                     <?php else: ?>
-                                        <button class="btn-status" type="submit"><i class="fa fa-circle-check"></i> Chuyển sang <?= e($next) ?></button>
+                                        <button class="btn btn-outline-primary" type="submit">
+                                            <i class="bi bi-check-circle"></i> Chuyển sang <?= e($next) ?>
+                                        </button>
                                     <?php endif; ?>
                                 </form>
                             <?php endforeach; ?>
@@ -388,118 +170,143 @@ $orderId = (int)($donHang['id'] ?? 0);
             </div>
 
             <?php if ($thanhToan !== null): ?>
-            <div class="fpt-card">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="card-title text-uppercase text-muted mb-0">Thông tin thanh toán & Hoàn tiền</h6>
+                </div>
                 <div class="card-body">
-                    <h2 class="card-title">Thông tin thanh toán & Hoàn tiền</h2>
-                    <div class="info-list">
-                        <div><strong>Phương thức:</strong> <?= e($thanhToan['phuong_thuc'] ?? '-') ?></div>
-                        <div><strong>Số tiền:</strong> <?= number_format((float)($thanhToan['so_tien'] ?? 0), 0, ',', '.') ?> VND</div>
-                        <div><strong>Trạng thái:</strong> <?= e($thanhToan['trang_thai_duyet'] ?? '-') ?></div>
-                        <?php if (!empty($thanhToan['gateway_transaction_id'])): ?>
-                            <div><strong>Mã giao dịch:</strong> <?= e($thanhToan['gateway_transaction_id']) ?></div>
-                        <?php endif; ?>
-                    </div>
-
-                    <?php
-                    $canRefund = false;
-                    $refundMessage = '';
-                    $phuongThuc = $thanhToan['phuong_thuc'] ?? '';
-                    $trangThaiDuyet = $thanhToan['trang_thai_duyet'] ?? '';
-                    $hasRefund = !empty($refunds);
-
-                    if ($phuongThuc === 'COD') {
-                        $refundMessage = 'Đơn hàng COD không cần hoàn tiền qua cổng thanh toán.';
-                    } elseif ($trangThaiDuyet !== 'THANH_CONG') {
-                        $refundMessage = 'Chỉ có thể hoàn tiền cho đơn hàng đã thanh toán thành công.';
-                    } elseif ($hasRefund) {
-                        $refundMessage = 'Đơn hàng đã có yêu cầu hoàn tiền.';
-                    } else {
-                        $canRefund = true;
-                    }
-                    ?>
-
-                    <?php if (!empty($refunds)): ?>
-                        <div style="margin-top: 16px;">
-                            <strong>Lịch sử hoàn tiền:</strong>
-                            <?php foreach ($refunds as $refund): ?>
-                                <div style="margin-top: 8px; padding: 10px; background: #f9fafb; border-radius: 8px;">
-                                    <div><strong>Số tiền:</strong> <?= number_format((float)($refund['amount'] ?? 0), 0, ',', '.') ?> VND</div>
-                                    <div><strong>Trạng thái:</strong> 
-                                        <?php
-                                        $refundStatus = strtolower($refund['status'] ?? 'pending');
-                                        $badgeClass = $refundStatus === 'completed' ? 'completed' : ($refundStatus === 'failed' ? 'failed' : 'pending');
-                                        ?>
-                                        <span class="refund-badge <?= $badgeClass ?>">
-                                            <i class="fa fa-circle"></i> <?= e($refund['status'] ?? '-') ?>
-                                        </span>
-                                    </div>
-                                    <?php if (!empty($refund['gateway_refund_id'])): ?>
-                                        <div><strong>Mã hoàn tiền:</strong> <?= e($refund['gateway_refund_id']) ?></div>
-                                    <?php endif; ?>
-                                    <div><strong>Lý do:</strong> <?= e($refund['reason'] ?? '-') ?></div>
-                                    <div><strong>Ngày tạo:</strong> <?= e($refund['created_at'] ?? '-') ?></div>
-                                    <?php if (!empty($refund['completed_at'])): ?>
-                                        <div><strong>Ngày hoàn thành:</strong> <?= e($refund['completed_at']) ?></div>
-                                    <?php endif; ?>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Phương thức:</div>
+                                <div class="col-sm-8 fw-bold"><?= e($thanhToan['phuong_thuc'] ?? '-') ?></div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Số tiền:</div>
+                                <div class="col-sm-8 text-primary"><?= number_format((float)($thanhToan['so_tien'] ?? 0), 0, ',', '.') ?> đ</div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-sm-4 text-muted">Trạng thái:</div>
+                                <div class="col-sm-8">
+                                    <?php
+                                        $ttDuyet = $thanhToan['trang_thai_duyet'] ?? '';
+                                        $badgeBg = $ttDuyet === 'THANH_CONG' ? 'bg-success' : ($ttDuyet === 'THAT_BAI' ? 'bg-danger' : 'bg-warning text-dark');
+                                    ?>
+                                    <span class="badge <?= $badgeBg ?>"><?= e($ttDuyet) ?></span>
                                 </div>
-                            <?php endforeach; ?>
+                            </div>
+                            <?php if (!empty($thanhToan['gateway_transaction_id'])): ?>
+                                <div class="row mb-2">
+                                    <div class="col-sm-4 text-muted">Mã giao dịch:</div>
+                                    <div class="col-sm-8"><code><?= e($thanhToan['gateway_transaction_id']) ?></code></div>
+                                </div>
+                            <?php endif; ?>
                         </div>
-                    <?php endif; ?>
 
-                    <?php if ($canRefund): ?>
-                        <div style="margin-top: 16px;">
-                            <form method="POST" action="/admin/don-hang/hoan-tien?id=<?= $orderId ?>" onsubmit="return confirm('Bạn có chắc chắn muốn hoàn tiền cho đơn hàng này?');">
-                                <button type="submit" class="btn-refund">
-                                    <i class="fa fa-rotate-left"></i> Khởi tạo hoàn tiền
-                                </button>
-                            </form>
+                        <div class="col-md-6 border-start">
+                            <?php
+                            $canRefund = false;
+                            $refundMessage = '';
+                            $phuongThuc = $thanhToan['phuong_thuc'] ?? '';
+                            $trangThaiDuyet = $thanhToan['trang_thai_duyet'] ?? '';
+                            $hasRefund = !empty($refunds);
+
+                            if ($phuongThuc === 'COD') {
+                                $refundMessage = 'Đơn hàng COD không cần hoàn tiền qua cổng thanh toán.';
+                            } elseif ($trangThaiDuyet !== 'THANH_CONG') {
+                                $refundMessage = 'Chỉ có thể hoàn tiền cho đơn hàng đã thanh toán thành công.';
+                            } elseif ($hasRefund) {
+                                $refundMessage = 'Đơn hàng đã có yêu cầu hoàn tiền.';
+                            } else {
+                                $canRefund = true;
+                            }
+                            ?>
+
+                            <?php if (!empty($refunds)): ?>
+                                <h6 class="mb-3">Lịch sử hoàn tiền:</h6>
+                                <?php foreach ($refunds as $refund): ?>
+                                    <div class="bg-light p-3 rounded mb-2 border">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <strong><?= number_format((float)($refund['amount'] ?? 0), 0, ',', '.') ?> đ</strong>
+                                            <?php
+                                            $refundStatus = strtolower($refund['status'] ?? 'pending');
+                                            $badgeClass = $refundStatus === 'completed' ? 'bg-success' : ($refundStatus === 'failed' ? 'bg-danger' : 'bg-warning text-dark');
+                                            ?>
+                                            <span class="badge <?= $badgeClass ?>"><?= e($refund['status'] ?? '-') ?></span>
+                                        </div>
+                                        <?php if (!empty($refund['gateway_refund_id'])): ?>
+                                            <div class="small text-muted mb-1">Mã: <code><?= e($refund['gateway_refund_id']) ?></code></div>
+                                        <?php endif; ?>
+                                        <div class="small text-muted mb-1">Lý do: <?= e($refund['reason'] ?? '-') ?></div>
+                                        <div class="small text-muted">Ngày: <?= e($refund['created_at'] ?? '-') ?></div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+
+                            <div class="mt-3">
+                                <?php if ($canRefund): ?>
+                                    <form method="POST" action="/admin/don-hang/hoan-tien?id=<?= $orderId ?>" onsubmit="return confirm('Bạn có chắc chắn muốn hoàn tiền cho đơn hàng này?');">
+                                        <button type="submit" class="btn btn-warning">
+                                            <i class="bi bi-arrow-counterclockwise"></i> Khởi tạo hoàn tiền
+                                        </button>
+                                    </form>
+                                <?php else: ?>
+                                    <div class="alert alert-secondary py-2 mb-0 border-0 fs-6">
+                                        <i class="bi bi-info-circle me-1"></i> <?= e($refundMessage) ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                    <?php else: ?>
-                        <div style="margin-top: 16px; color: #667085; font-size: 14px;">
-                            <i class="fa fa-info-circle"></i> <?= e($refundMessage) ?>
-                        </div>
-                    <?php endif; ?>
+                    </div>
                 </div>
             </div>
             <?php endif; ?>
 
-            <div class="fpt-card">
-                <div class="table-wrap">
-                    <table class="detail-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Sản phẩm</th>
-                                <th>Phiên bản</th>
-                                <th>Số lượng</th>
-                                <th>Giá mua</th>
-                                <th>Thành tiền</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (empty($chiTietDon)): ?>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="card-title text-uppercase text-muted mb-0">Danh sách sản phẩm</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped align-middle mb-0">
+                            <thead class="table-light">
                                 <tr>
-                                    <td colspan="6" class="empty-row">Không có chi tiết đơn hàng.</td>
+                                    <th class="ps-3">#</th>
+                                    <th>Sản phẩm</th>
+                                    <th>Phiên bản</th>
+                                    <th class="text-center">Số lượng</th>
+                                    <th class="text-end">Giá mua</th>
+                                    <th class="text-end pe-3">Thành tiền</th>
                                 </tr>
-                            <?php else: ?>
-                                <?php foreach ($chiTietDon as $index => $item): ?>
-                                    <?php $thanhTien = (float)($item['gia_tai_thoi_diem_mua'] ?? 0) * (int)($item['so_luong'] ?? 0); ?>
+                            </thead>
+                            <tbody>
+                                <?php if (empty($chiTietDon)): ?>
                                     <tr>
-                                        <td><?= $index + 1 ?></td>
-                                        <td><?= e($item['ten_san_pham'] ?? '-') ?></td>
-                                        <td><?= e($item['ten_phien_ban'] ?? '-') ?> / <?= e($item['mau_sac'] ?? '-') ?> / <?= e($item['dung_luong'] ?? '-') ?></td>
-                                        <td><?= (int)($item['so_luong'] ?? 0) ?></td>
-                                        <td><?= number_format((float)($item['gia_tai_thoi_diem_mua'] ?? 0), 0, ',', '.') ?> VND</td>
-                                        <td><strong><?= number_format($thanhTien, 0, ',', '.') ?> VND</strong></td>
+                                        <td colspan="6" class="text-center text-muted py-4">Không có chi tiết đơn hàng.</td>
                                     </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                                <?php else: ?>
+                                    <?php foreach ($chiTietDon as $index => $item): ?>
+                                        <?php $thanhTien = (float)($item['gia_tai_thoi_diem_mua'] ?? 0) * (int)($item['so_luong'] ?? 0); ?>
+                                        <tr>
+                                            <td class="ps-3"><?= $index + 1 ?></td>
+                                            <td class="fw-medium"><?= e($item['ten_san_pham'] ?? '-') ?></td>
+                                            <td class="text-muted fs-6">
+                                                <?= e($item['ten_phien_ban'] ?? '-') ?> / 
+                                                <?= e($item['mau_sac'] ?? '-') ?> / 
+                                                <?= e($item['dung_luong'] ?? '-') ?>
+                                            </td>
+                                            <td class="text-center fw-bold"><?= (int)($item['so_luong'] ?? 0) ?></td>
+                                            <td class="text-end"><?= number_format((float)($item['gia_tai_thoi_diem_mua'] ?? 0), 0, ',', '.') ?> đ</td>
+                                            <td class="text-end pe-3 text-primary fw-bold"><?= number_format($thanhTien, 0, ',', '.') ?> đ</td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</body>
 
-</html>
+        </div> </div> </main>
+
+<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
