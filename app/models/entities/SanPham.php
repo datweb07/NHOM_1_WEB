@@ -179,10 +179,17 @@ class SanPham extends BaseModel
             $sortOrder = 'DESC';
         }
 
+        // FIX: Lấy giá thấp nhất từ phiên bản sản phẩm nếu có, nếu không thì lấy gia_hien_thi
         $sql = "SELECT sp.*, dm.ten AS ten_danh_muc,
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
-                        LIMIT 1) as anh_chinh
+                        LIMIT 1) as anh_chinh,
+                       COALESCE(
+                           (SELECT MIN(pb.gia_ban) 
+                            FROM phien_ban_san_pham pb 
+                            WHERE pb.san_pham_id = sp.id),
+                           sp.gia_hien_thi
+                       ) AS gia_hien_thi
                 FROM {$this->table} sp
                 LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.id
                 $whereClause
@@ -246,10 +253,16 @@ class SanPham extends BaseModel
 
     public function layDanhSachChoSoSanh(): array
     {
+        // FIX: Lấy giá thấp nhất từ phiên bản sản phẩm
         $sql = "SELECT sp.id,
                        sp.ten_san_pham,
                        sp.slug,
-                       sp.gia_hien_thi,
+                       COALESCE(
+                           (SELECT MIN(pb.gia_ban) 
+                            FROM phien_ban_san_pham pb 
+                            WHERE pb.san_pham_id = sp.id),
+                           sp.gia_hien_thi
+                       ) AS gia_hien_thi,
                        sp.hang_san_xuat,
                        sp.danh_muc_id,
                        dm.ten AS ten_danh_muc,
@@ -421,10 +434,17 @@ class SanPham extends BaseModel
     public function laySanPhamNoiBat(int $limit = 8): array
     {
         $limit = max(1, (int)$limit);
+        // FIX: Lấy giá thấp nhất từ phiên bản sản phẩm
         $sql = "SELECT sp.*, 
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
-                        LIMIT 1) as anh_chinh
+                        LIMIT 1) as anh_chinh,
+                       COALESCE(
+                           (SELECT MIN(pb.gia_ban) 
+                            FROM phien_ban_san_pham pb 
+                            WHERE pb.san_pham_id = sp.id),
+                           sp.gia_hien_thi
+                       ) AS gia_hien_thi
                 FROM {$this->table} sp
                 WHERE sp.noi_bat = 1 AND sp.trang_thai = 'CON_BAN'
                 ORDER BY sp.ngay_tao DESC
@@ -439,13 +459,20 @@ class SanPham extends BaseModel
     public function laySanPhamKhuyenMai(int $limit = 8): array
     {
         $limit = max(1, (int)$limit);
+        // FIX: Lấy giá thấp nhất từ phiên bản sản phẩm
         $sql = "SELECT sp.*, 
                        km.loai_giam, 
                        km.gia_tri_giam, 
                        km.giam_toi_da,
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
-                        LIMIT 1) as anh_chinh
+                        LIMIT 1) as anh_chinh,
+                       COALESCE(
+                           (SELECT MIN(pb.gia_ban) 
+                            FROM phien_ban_san_pham pb 
+                            WHERE pb.san_pham_id = sp.id),
+                           sp.gia_hien_thi
+                       ) AS gia_hien_thi
                 FROM {$this->table} sp
                 INNER JOIN san_pham_khuyen_mai spkm ON sp.id = spkm.san_pham_id
                 INNER JOIN khuyen_mai km ON spkm.khuyen_mai_id = km.id
@@ -467,10 +494,17 @@ class SanPham extends BaseModel
         $limit = max(1, (int)$limit);
         $slugDanhMuc = mysqli_real_escape_string($this->link, $slugDanhMuc);
 
+        // FIX: Lấy giá thấp nhất từ phiên bản sản phẩm
         $sql = "SELECT sp.*, 
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
-                        LIMIT 1) as anh_chinh
+                        LIMIT 1) as anh_chinh,
+                       COALESCE(
+                           (SELECT MIN(pb.gia_ban) 
+                            FROM phien_ban_san_pham pb 
+                            WHERE pb.san_pham_id = sp.id),
+                           sp.gia_hien_thi
+                       ) AS gia_hien_thi
                 FROM {$this->table} sp
                 INNER JOIN danh_muc dm ON sp.danh_muc_id = dm.id
                 WHERE dm.slug = '$slugDanhMuc' 
@@ -505,8 +539,11 @@ class SanPham extends BaseModel
     {
         $slug = mysqli_real_escape_string($this->link, $slug);
 
-        // BỔ SUNG: AND sp.trang_thai = 'CON_BAN' để chặn xem chi tiết khi đã ngưng bán
-        $sql = "SELECT sp.*, dm.ten AS ten_danh_muc, dm.slug AS slug_danh_muc
+        // FIX: Thêm ảnh chính vào query
+        $sql = "SELECT sp.*, dm.ten AS ten_danh_muc, dm.slug AS slug_danh_muc,
+                       (SELECT url_anh FROM hinh_anh_san_pham 
+                        WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
+                        LIMIT 1) as anh_chinh
                 FROM {$this->table} sp
                 LEFT JOIN danh_muc dm ON sp.danh_muc_id = dm.id
                 WHERE sp.slug = '$slug' AND sp.trang_thai = 'CON_BAN'
