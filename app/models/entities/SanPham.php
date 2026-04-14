@@ -464,6 +464,7 @@ class SanPham extends BaseModel
                        km.loai_giam, 
                        km.gia_tri_giam, 
                        km.giam_toi_da,
+                       km.ngay_ket_thuc,
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
                         LIMIT 1) as anh_chinh,

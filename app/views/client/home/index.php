@@ -324,7 +324,7 @@ ob_start();
                             $tienGiam = (float) ($sp['gia_hien_thi'] ?? 0) - $giaSauGiam;
                             ?>
                             <div class="continuous-slider-item">
-                                <div class="p-2 border rounded-3 bg-white custom-hover-card mx-1" style="height: 380px; display: flex; flex-direction: column;">
+                                <div class="p-2 border rounded-3 bg-white custom-hover-card mx-1" style="height: 420px; display: flex; flex-direction: column;">
                                     <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
                                         class="text-dark text-decoration-none d-flex flex-column h-100">
                                         <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
@@ -356,6 +356,14 @@ ob_start();
                                                 <span class="text-secondary text-decoration-line-through"
                                                     style="font-size: 0.85rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
                                             </div>
+                                            <?php if (!empty($sp['ngay_ket_thuc'])): ?>
+                                            <div class="countdown-timer mb-2 text-center" 
+                                                 data-end-time="<?php echo htmlspecialchars($sp['ngay_ket_thuc']); ?>"
+                                                 style="padding: 6px 10px; border-radius: 8px; font-size: 0.75rem; color: gray; font-weight: 600;">
+                                                <i class="fa fa-clock" style="margin-right: 4px;"></i>
+                                                <span class="countdown-text">Đang tải...</span>
+                                            </div>
+                                            <?php endif; ?>
                                             <div class="bg-light p-2 rounded-3 mt-auto">
                                                 <span class="text-secondary" style="font-size: 0.75rem;">Giảm thêm 150.000đ khi TT
                                                     online 100% qua thẻ Mastercard</span>
@@ -1285,6 +1293,40 @@ document.addEventListener('DOMContentLoaded', function() {
             track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
         });
     }
+
+    // Countdown Timer Logic
+    function updateCountdowns() {
+        const timers = document.querySelectorAll('.countdown-timer');
+        
+        timers.forEach(timer => {
+            const endTimeStr = timer.getAttribute('data-end-time');
+            if (!endTimeStr) return;
+            
+            const endTime = new Date(endTimeStr).getTime();
+            const now = new Date().getTime();
+            const distance = endTime - now;
+            
+            const textElement = timer.querySelector('.countdown-text');
+            if (!textElement) return;
+            
+            if (distance < 0) {
+                textElement.textContent = 'Đã hết hạn';
+                timer.style.background = 'linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%)';
+                return;
+            }
+            
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            textElement.textContent = `Còn ${days} ngày ${hours}h ${minutes}p ${seconds}s`;
+        });
+    }
+    
+    // Update countdown every second
+    updateCountdowns();
+    setInterval(updateCountdowns, 1000);
 });
 </script>
 
