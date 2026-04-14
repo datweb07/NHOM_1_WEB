@@ -7,6 +7,7 @@ require_once dirname(__DIR__, 2) . '/models/entities/PhienBanSanPham.php';
 require_once dirname(__DIR__, 2) . '/models/entities/HinhAnhSanPham.php';
 require_once dirname(__DIR__, 2) . '/models/entities/ThongSoKyThuat.php';
 require_once dirname(__DIR__, 2) . '/models/entities/DanhGia.php';
+require_once dirname(__DIR__, 2) .'/core/EnvSetup.php';
 
 use SanPham;
 use PhienBanSanPham;
@@ -143,8 +144,10 @@ class SanPhamController
     /**
      * Danh sách sản phẩm theo slug danh mục
      */
+
     public function danhSachTheoSlug(string $slugDanhMuc): void
     {
+        $envSetup = new \EnvSetup();
         require_once dirname(__DIR__, 2) . '/models/entities/DanhMuc.php';
         $danhMucModel = new \DanhMuc();
 
