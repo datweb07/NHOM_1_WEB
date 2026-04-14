@@ -304,7 +304,7 @@ class BannerController
             $errors['link_dich'] = 'Link đích không được vượt quá 500 ký tự.';
         }
 
-        $validViTri = ['HOME_HERO', 'HOME_SIDE', 'FLOATING_BOTTOM_LEFT', 'POPUP', 'CATEGORY_TOP'];
+        $validViTri = ['HOME_HERO', 'HOME_MID', 'HOME_SIDE', 'FLOATING_BOTTOM_LEFT', 'POPUP', 'CATEGORY_TOP'];
         if ($viTri === '') {
             $errors['vi_tri'] = 'Vị trí không được để trống.';
         } elseif (!in_array($viTri, $validViTri, true)) {

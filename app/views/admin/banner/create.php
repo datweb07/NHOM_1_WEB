@@ -118,6 +118,7 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                             required>
                                             <option value="">-- Chọn vị trí --</option>
                                             <option value="HOME_HERO" <?= ($old['vi_tri'] ?? '') === 'HOME_HERO' ? 'selected' : '' ?>>Trang chủ - Hero</option>
+                                            <option value="HOME_MID" <?= ($old['vi_tri'] ?? '') === 'HOME_MID' ? 'selected' : '' ?>>Trang chủ - Giữa (2 banner)</option>
                                             <option value="HOME_SIDE" <?= ($old['vi_tri'] ?? '') === 'HOME_SIDE' ? 'selected' : '' ?>>Trang chủ - Sidebar</option>
                                             <option value="FLOATING_BOTTOM_LEFT" <?= ($old['vi_tri'] ?? '') === 'FLOATING_BOTTOM_LEFT' ? 'selected' : '' ?>>Nổi góc dưới trái</option>
                                             <option value="POPUP" <?= ($old['vi_tri'] ?? '') === 'POPUP' ? 'selected' : '' ?>>Popup</option>

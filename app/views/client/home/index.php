@@ -47,6 +47,114 @@ ob_start();
 </div>
 
 <div class="category-wrapper" style="position: relative; z-index: 10; margin-bottom: 30px;">
+    
+    <style>
+    /* Reset và cấu trúc khung */
+    .dual-banner-wrapper {
+        position: relative;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    /* Thanh cuộn chứa banner */
+    .dual-banner-track {
+        display: flex;
+        gap: 16px; /* Khoảng cách giữa 2 ảnh */
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        -ms-overflow-style: none; /* Ẩn scrollbar IE/Edge */
+        scrollbar-width: none;    /* Ẩn scrollbar Firefox */
+    }
+
+    /* Ẩn scrollbar trên Chrome/Safari */
+    .dual-banner-track::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Set cứng kích thước mỗi banner là 50% trừ đi nửa khoảng cách (để thẳng tắp 2 mép) */
+    .dual-banner-item {
+        flex: 0 0 calc(50% - 8px);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .dual-banner-item img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        display: block;
+        border-radius: 12px;
+        transition: transform 0.3s ease;
+    }
+
+    .dual-banner-item:hover img {
+        transform: scale(1.02); /* Hiệu ứng hover nhẹ */
+    }
+
+    /* Nút Next/Prev thiết kế tròn, thò ra ngoài 1 nửa */
+    .btn-dual-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 36px;
+        height: 36px;
+        background-color: #fff;
+        border: 1px solid #eaeaea;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        color: #555;
+        transition: all 0.2s ease;
+    }
+
+    .btn-dual-nav:hover {
+        color: #cb1c22;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .btn-dual-prev { left: -18px; } /* Căn thò ra lề trái */
+    .btn-dual-next { right: -18px; } /* Căn thò ra lề phải */
+
+    /* Mobile Responsive: Hiển thị 1 ảnh */
+    @media (max-width: 768px) {
+        .dual-banner-item {
+            flex: 0 0 100%;
+        }
+        .btn-dual-prev { left: 5px; }
+        .btn-dual-next { right: 5px; }
+    }
+    </style>
+
+    <?php if (!empty($bannerMid)): ?>
+    <div class="container-xl px-0">
+        <div class="dual-banner-wrapper">
+            <div class="dual-banner-track" id="dualBannerTrack">
+                <?php foreach ($bannerMid as $banner): ?>
+                <div class="dual-banner-item">
+                    <a href="<?php echo htmlspecialchars($banner['link_dich']); ?>" class="d-block">
+                        <img src="<?php echo htmlspecialchars($banner['hinh_anh_desktop']); ?>"
+                             alt="<?php echo htmlspecialchars($banner['tieu_de']); ?>">
+                    </a>
+                </div>
+                <?php endforeach; ?>
+            </div>
+
+            <?php if(count($bannerMid) > 2): ?>
+            <button class="btn-dual-nav btn-dual-prev" id="btnDualPrev">
+                <i class="fa fa-chevron-left" style="font-size: 14px;"></i>
+            </button>
+            <button class="btn-dual-nav btn-dual-next" id="btnDualNext">
+                <i class="fa fa-chevron-right" style="font-size: 14px;"></i>
+            </button>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <div class="container-xl category shadow-sm"
         style="background: #fff; border-radius: 12px; border: none; padding: 15px 0;">
 
@@ -1174,6 +1282,31 @@ ob_start();
             }
         }
     })();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const track = document.getElementById('dualBannerTrack');
+    const btnPrev = document.getElementById('btnDualPrev');
+    const btnNext = document.getElementById('btnDualNext');
+
+    if (track && btnPrev && btnNext) {
+        // Click nút NEXT
+        btnNext.addEventListener('click', function() {
+            // Lấy độ rộng của 1 banner + 16px (gap)
+            const itemWidth = track.querySelector('.dual-banner-item').offsetWidth;
+            const scrollAmount = itemWidth + 16;
+            track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        });
+
+        // Click nút PREV
+        btnPrev.addEventListener('click', function() {
+            const itemWidth = track.querySelector('.dual-banner-item').offsetWidth;
+            const scrollAmount = itemWidth + 16;
+            track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        });
+    }
+});
 </script>
 
 <?php
