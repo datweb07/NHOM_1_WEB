@@ -23,8 +23,8 @@ class MaGiamGia extends BaseModel
 
     public function timTheoMaCode(string $maCode): ?array
     {
-        $safeCode = addslashes(trim($maCode));
-        $sql = "SELECT * FROM {$this->table} WHERE ma_code = '$safeCode' LIMIT 1";
+        $safeCode = addslashes(mb_strtoupper(trim($maCode), 'UTF-8'));
+        $sql = "SELECT * FROM {$this->table} WHERE UPPER(ma_code) = '$safeCode' LIMIT 1";
         $rows = $this->query($sql);
         return $rows[0] ?? null;
     }
@@ -77,36 +77,72 @@ class MaGiamGia extends BaseModel
                 $soTienGiam = min($soTienGiam, $giamToiDa);
             }
 
-            return max(0, $soTienGiam);
+            return min(max(0, $soTienGiam), $tongTienDonHang);
         }
 
-        return max(0, $giaTriGiam);
+        return min(max(0, $giaTriGiam), $tongTienDonHang);
+    }
+
+    public function layThongBaoLoiMaGiamGia(string $maCode, float $tongTienDonHang): ?string
+    {
+        $voucher = $this->timTheoMaCode($maCode);
+        if (!$voucher) {
+            return 'Mã giảm giá không tồn tại';
+        }
+
+        if (($voucher['trang_thai'] ?? '') !== 'HOAT_DONG') {
+            return 'Mã giảm giá hiện không hoạt động';
+        }
+
+        if ($tongTienDonHang < (float)($voucher['don_toi_thieu'] ?? 0)) {
+            return 'Đơn hàng chưa đạt giá trị tối thiểu để áp dụng mã';
+        }
+
+        $gioiHan = $voucher['gioi_han_su_dung'] ?? null;
+        $daDung = (int)($voucher['so_luot_da_dung'] ?? 0);
+        if ($gioiHan !== null && $daDung >= (int)$gioiHan) {
+            return 'Mã giảm giá đã hết lượt sử dụng';
+        }
+
+        $now = time();
+        $batDau = strtotime((string)($voucher['ngay_bat_dau'] ?? ''));
+        $ketThuc = strtotime((string)($voucher['ngay_ket_thuc'] ?? ''));
+
+        if ($batDau !== false && $now < $batDau) {
+            return 'Mã giảm giá chưa đến thời gian sử dụng';
+        }
+
+        if ($ketThuc !== false && $now > $ketThuc) {
+            return 'Mã giảm giá đã hết hạn';
+        }
+
+        return null;
     }
 
     // Fixed: Changed ORDER BY from ngay_tao to id (ngay_tao column doesn't exist)
     public function layDanhSach(?string $trangThai = null, int $limit = 20, int $offset = 0): array
     {
         $sql = "SELECT * FROM {$this->table}";
-        
+
         if ($trangThai !== null && $trangThai !== '') {
             $safeTrangThai = addslashes($trangThai);
             $sql .= " WHERE trang_thai = '$safeTrangThai'";
         }
-        
+
         $sql .= " ORDER BY id DESC LIMIT $limit OFFSET $offset";
-        
+
         return $this->query($sql);
     }
 
     public function demMaGiamGia(?string $trangThai = null): int
     {
         $sql = "SELECT COUNT(*) as total FROM {$this->table}";
-        
+
         if ($trangThai !== null && $trangThai !== '') {
             $safeTrangThai = addslashes($trangThai);
             $sql .= " WHERE trang_thai = '$safeTrangThai'";
         }
-        
+
         $rows = $this->query($sql);
         return (int)($rows[0]['total'] ?? 0);
     }
@@ -115,11 +151,11 @@ class MaGiamGia extends BaseModel
     {
         $safeCode = addslashes(trim($maCode));
         $sql = "SELECT COUNT(*) as total FROM {$this->table} WHERE ma_code = '$safeCode'";
-        
+
         if ($excludeId > 0) {
             $sql .= " AND id != $excludeId";
         }
-        
+
         $rows = $this->query($sql);
         return ((int)($rows[0]['total'] ?? 0)) > 0;
     }

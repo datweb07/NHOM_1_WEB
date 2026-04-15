@@ -60,7 +60,7 @@ class ThanhToanController
 
         $gioHang = $this->layGioHangHienTai();
         $chiTietGioList = $this->chiTietGioModel->layChiTietGioHang($gioHang['id']);
-        
+
         if (empty($chiTietGioList)) {
             Session::flash('error', 'Giỏ hàng trống');
             header('Location: /gio-hang');
@@ -70,19 +70,19 @@ class ThanhToanController
 
         $diaChiList = [];
         $diaChiMacDinh = null;
-        
+
         if (Session::has('user_id')) {
             $diaChiList = $this->diaChiModel->layDanhSachTheoUser(Session::get('user_id'));
             $diaChiMacDinh = $this->diaChiModel->layDiaChiMacDinh(Session::get('user_id'));
         }
 
         $tongTien = $this->chiTietGioModel->tinhTongTien($gioHang['id']);
-        $phiVanChuyen = 30000; 
+        $phiVanChuyen = 30000;
 
 
         $vnpayEnabled = (new \VNPayGateway())->isConfigured();
         $momoEnabled = (new \MomoGateway())->isConfigured();
-        
+
         require_once dirname(__DIR__, 2) . '/services/payment/ZaloPayGateway.php';
         $zalopayEnabled = (new \ZaloPayGateway())->isConfigured();
 
@@ -102,7 +102,7 @@ class ThanhToanController
 
         $gioHang = $this->layGioHangHienTai();
         $chiTietGioList = $this->chiTietGioModel->layChiTietGioHang($gioHang['id']);
-        
+
         if (empty($chiTietGioList)) {
             Session::flash('error', 'Giỏ hàng trống');
             header('Location: /gio-hang');
@@ -126,14 +126,20 @@ class ThanhToanController
 
 
         if (!empty($_POST['ma_giam_gia'])) {
-            $maGiamGia = $this->maGiamGiaModel->kiemTraMaGiamGia($_POST['ma_giam_gia'], $tongTien);
+            $maCode = trim((string)$_POST['ma_giam_gia']);
+            $maGiamGia = $this->maGiamGiaModel->kiemTraMaGiamGia($maCode, $tongTien);
             if ($maGiamGia) {
                 $tienGiamGia = $this->maGiamGiaModel->tinhTienGiam($maGiamGia, $tongTien);
                 $maGiamGiaId = $maGiamGia['id'];
+            } else {
+                $lyDoLoi = $this->maGiamGiaModel->layThongBaoLoiMaGiamGia($maCode, $tongTien) ?? 'Mã giảm giá không hợp lệ';
+                Session::flash('error', $lyDoLoi);
+                header('Location: /thanh-toan');
+                exit;
             }
         }
 
-        $tongThanhToan = $tongTien + $phiVanChuyen - $tienGiamGia;
+        $tongThanhToan = max(0, $tongTien + $phiVanChuyen - $tienGiamGia);
 
 
         $diaChiId = null;
@@ -157,7 +163,7 @@ class ThanhToanController
 
 
         $phuongThucThanhToan = $_POST['phuong_thuc_thanh_toan'] ?? 'COD';
-        
+
         if (!\PhuongThucThanhToan::isValid($phuongThucThanhToan)) {
             Session::flash('error', 'Phương thức thanh toán không hợp lệ');
             header('Location: /thanh-toan');
@@ -338,13 +344,19 @@ class ThanhToanController
             exit;
         }
 
-        $maCode = $_POST['ma_code'] ?? '';
+        $maCode = trim((string)($_POST['ma_code'] ?? ''));
         $tongTien = isset($_POST['tong_tien']) ? (float)$_POST['tong_tien'] : 0;
+
+        if ($maCode === '') {
+            echo json_encode(['success' => false, 'message' => 'Vui lòng nhập mã giảm giá']);
+            exit;
+        }
 
         $maGiamGia = $this->maGiamGiaModel->kiemTraMaGiamGia($maCode, $tongTien);
 
         if (!$maGiamGia) {
-            echo json_encode(['success' => false, 'message' => 'Mã giảm giá không hợp lệ']);
+            $lyDoLoi = $this->maGiamGiaModel->layThongBaoLoiMaGiamGia($maCode, $tongTien) ?? 'Mã giảm giá không hợp lệ';
+            echo json_encode(['success' => false, 'message' => $lyDoLoi]);
             exit;
         }
 
@@ -364,21 +376,21 @@ class ThanhToanController
         if (Session::has('user_id')) {
             return $this->gioHangModel->layHoacTaoGioHangUser(Session::get('user_id'));
         }
-        
+
         if (!Session::has('cart_session_id')) {
             Session::set('cart_session_id', session_id());
         }
-        
+
         return $this->gioHangModel->layHoacTaoGioHangGuest(Session::get('cart_session_id'));
     }
 
     public function callbackVNPay(): void
     {
         header('Content-Type: application/json');
-        
+
         $data = $_GET;
         $result = $this->callbackHandler->handleVNPayCallback($data);
-        
+
         echo json_encode($result);
         exit;
     }
@@ -386,10 +398,10 @@ class ThanhToanController
     public function callbackMomo(): void
     {
         header('Content-Type: application/json');
-        
+
         $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
         $result = $this->callbackHandler->handleMomoCallback($data);
-        
+
         echo json_encode($result);
         exit;
     }
@@ -397,11 +409,11 @@ class ThanhToanController
     public function returnVNPay(): void
     {
         $data = $_GET;
-        
+
 
         $gateway = new \VNPayGateway();
         $isValidSignature = $gateway->verifyReturnUrl($data);
-        
+
         if (!$isValidSignature) {
             Session::flash('error', 'Xác thực thanh toán thất bại. Vui lòng liên hệ hỗ trợ.');
             header('Location: /');
@@ -410,7 +422,7 @@ class ThanhToanController
 
 
         $transactionId = $data['vnp_TxnRef'] ?? null;
-        
+
         if (!$transactionId) {
             Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
             header('Location: /');
@@ -418,7 +430,7 @@ class ThanhToanController
         }
 
         $transaction = $this->paymentService->getTransaction($transactionId);
-        
+
         if (!$transaction) {
             Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
             header('Location: /');
@@ -439,18 +451,18 @@ class ThanhToanController
             Session::flash('info', 'Giao dịch đang được xử lý. Vui lòng kiểm tra lại sau.');
             header('Location: /don-hang/' . $donHangId);
         }
-        
+
         exit;
     }
 
     public function returnMomo(): void
     {
         $data = $_GET;
-        
+
 
         $gateway = new \MomoGateway();
         $isValidSignature = $gateway->verifyReturnUrl($data);
-        
+
         if (!$isValidSignature) {
             Session::flash('error', 'Xác thực thanh toán thất bại. Vui lòng liên hệ hỗ trợ.');
             header('Location: /');
@@ -459,7 +471,7 @@ class ThanhToanController
 
 
         $transactionId = $data['orderId'] ?? null;
-        
+
         if (!$transactionId) {
             Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
             header('Location: /');
@@ -467,7 +479,7 @@ class ThanhToanController
         }
 
         $transaction = $this->paymentService->getTransaction($transactionId);
-        
+
         if (!$transaction) {
             Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
             header('Location: /');
@@ -489,17 +501,17 @@ class ThanhToanController
             Session::flash('info', 'Giao dịch đang được xử lý. Vui lòng kiểm tra lại sau.');
             header('Location: /don-hang/' . $donHangId);
         }
-        
+
         exit;
     }
 
     public function callbackZaloPay(): void
     {
         header('Content-Type: application/json');
-        
+
         $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
         $result = $this->callbackHandler->handleZaloPayCallback($data);
-        
+
         echo json_encode($result);
         exit;
     }
@@ -507,11 +519,11 @@ class ThanhToanController
     public function returnZaloPay(): void
     {
         $data = $_GET;
-        
+
         require_once dirname(__DIR__, 2) . '/services/payment/ZaloPayGateway.php';
         $gateway = new \ZaloPayGateway();
         $isValidSignature = $gateway->verifyReturnUrl($data);
-        
+
         if (!$isValidSignature) {
             Session::flash('error', 'Xác thực thanh toán thất bại. Vui lòng liên hệ hỗ trợ.');
             header('Location: /');
@@ -519,7 +531,7 @@ class ThanhToanController
         }
 
         $transactionId = $data['apptransid'] ?? null;
-        
+
         if (!$transactionId) {
             Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
             header('Location: /');
@@ -527,7 +539,7 @@ class ThanhToanController
         }
 
         $transaction = $this->paymentService->getTransaction($transactionId);
-        
+
         if (!$transaction) {
             Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
             header('Location: /');
@@ -548,7 +560,7 @@ class ThanhToanController
             Session::flash('info', 'Giao dịch đang được xử lý. Vui lòng kiểm tra lại sau.');
             header('Location: /don-hang/' . $donHangId);
         }
-        
+
         exit;
     }
 
@@ -556,9 +568,9 @@ class ThanhToanController
     {
         require_once dirname(__DIR__, 2) . '/models/entities/GatewayHealth.php';
         $healthModel = new \GatewayHealth();
-        
+
         $warnings = [];
-        
+
 
         $vnpayHealth = $healthModel->getByGatewayName('VNPay');
         if ($vnpayHealth) {
@@ -571,7 +583,7 @@ class ThanhToanController
                 ];
             }
         }
-        
+
 
         $momoHealth = $healthModel->getByGatewayName('Momo');
         if ($momoHealth) {
@@ -584,7 +596,7 @@ class ThanhToanController
                 ];
             }
         }
-        
+
         $zalopayHealth = $healthModel->getByGatewayName('ZaloPay');
         if ($zalopayHealth) {
             $successRate = $healthModel->getSuccessRate('ZaloPay', 24);
@@ -596,7 +608,7 @@ class ThanhToanController
                 ];
             }
         }
-        
+
         return $warnings;
     }
 
