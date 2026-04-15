@@ -124,19 +124,20 @@ class MomoGateway implements PaymentGatewayInterface
     {
         $isValid = $this->verifySignature($data);
         
-        // Record health based on callback verification
-        if ($isValid) {
-            $resultCode = (string)($data['resultCode'] ?? '99');
-            if ($resultCode === '0') {
-                $this->recordHealthSuccess();
-            } else {
-                $this->recordHealthFailure();
-            }
+        if (!$isValid) {
+            $this->recordHealthFailure();
+            return false;
+        }
+        
+        // Only record health metrics based on actual payment result, not signature validation
+        $resultCode = (string)($data['resultCode'] ?? '99');
+        if ($resultCode === '0') {
+            $this->recordHealthSuccess();
         } else {
             $this->recordHealthFailure();
         }
         
-        return $isValid;
+        return true;
     }
 
     /**

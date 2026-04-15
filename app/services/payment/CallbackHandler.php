@@ -119,6 +119,13 @@ class CallbackHandler
         
 
         if ($responseCode === '00') {
+            error_log(sprintf(
+                "[VNPAY SUCCESS] Transaction: %s, Gateway Transaction: %s, Amount: %s",
+                $transactionId,
+                $gatewayTransactionId,
+                $paidAmount
+            ));
+            
             $this->handleSuccessfulPayment($transaction, $gatewayTransactionId, 'VNPAY', $data);
             
             $result = [
@@ -126,6 +133,16 @@ class CallbackHandler
                 'Message' => 'Success'
             ];
         } else {
+            // Log specific cancellation/failure scenarios
+            $scenario = $responseCode === '24' ? 'USER CANCELED' : 'PAYMENT FAILED';
+            error_log(sprintf(
+                "[VNPAY %s] Transaction: %s, Response Code: %s, Amount: %s",
+                $scenario,
+                $transactionId,
+                $responseCode,
+                $paidAmount
+            ));
+            
             $this->handleFailedPayment($transaction, $responseCode, 'VNPAY', $data);
             
             $result = [
@@ -240,6 +257,13 @@ class CallbackHandler
         $resultCode = $data['resultCode'] ?? '99';
         
         if ($resultCode === '0') {
+            error_log(sprintf(
+                "[MOMO SUCCESS] Transaction: %s, Gateway Transaction: %s, Amount: %s",
+                $transactionId,
+                $gatewayTransactionId,
+                $paidAmount
+            ));
+            
             $this->handleSuccessfulPayment($transaction, $gatewayTransactionId, 'MOMO', $data);
             
             $result = [
@@ -247,6 +271,16 @@ class CallbackHandler
                 'message' => 'Success'
             ];
         } else {
+            // Log specific cancellation/failure scenarios
+            $scenario = in_array($resultCode, ['1003', '1006']) ? 'USER CANCELED' : 'PAYMENT FAILED';
+            error_log(sprintf(
+                "[MOMO %s] Transaction: %s, Result Code: %s, Amount: %s",
+                $scenario,
+                $transactionId,
+                $resultCode,
+                $paidAmount
+            ));
+            
             $this->handleFailedPayment($transaction, $resultCode, 'MOMO', $data);
             
             $result = [
@@ -393,12 +427,29 @@ class CallbackHandler
         $gateway = $gatewayName === 'VNPAY' ? new VNPayGateway() : new MomoGateway();
         $errorMessage = $gateway->getErrorMessage($errorCode);
 
+        // Update payment status to FAILED
         $this->paymentService->updateTransactionStatus($transactionId, 'THAT_BAI', [
             'error_code' => addslashes($errorCode),
             'error_message' => addslashes($errorMessage)
         ]);
 
+        // Update order status to CANCELED
+        $this->donHangModel->update($donHangId, [
+            'trang_thai' => 'DA_HUY'
+        ]);
+
+        // Restore product inventory
         $this->restoreInventory($donHangId);
+
+        // Log the failure with detailed information
+        error_log(sprintf(
+            "[PAYMENT FAILED] Gateway: %s, Transaction: %d, Order: %d, Error Code: %s, Error Message: %s",
+            $gatewayName,
+            $transactionId,
+            $donHangId,
+            $errorCode,
+            $errorMessage
+        ));
 
         $this->transactionLog->logResponse($transactionId, [
             'status' => 'failed',
