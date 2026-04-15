@@ -7,7 +7,7 @@ require_once dirname(__DIR__, 2) . '/models/entities/PhienBanSanPham.php';
 require_once dirname(__DIR__, 2) . '/models/entities/HinhAnhSanPham.php';
 require_once dirname(__DIR__, 2) . '/models/entities/ThongSoKyThuat.php';
 require_once dirname(__DIR__, 2) . '/models/entities/DanhGia.php';
-require_once dirname(__DIR__, 2) .'/core/EnvSetup.php';
+require_once dirname(__DIR__, 2) . '/core/EnvSetup.php';
 
 use SanPham;
 use PhienBanSanPham;
@@ -85,7 +85,7 @@ class SanPhamController
      */
     public function danhSach(): void
     {
-        $keyword = $_GET['keyword'] ?? null;
+        $keyword = $_GET['keyword'] ?? ($_GET['q'] ?? null);
         $danhMucId = isset($_GET['danh_muc']) ? (int)$_GET['danh_muc'] : 0;
         $giaMin = isset($_GET['gia_min']) && $_GET['gia_min'] !== '' ? (float)$_GET['gia_min'] : null;
         $giaMax = isset($_GET['gia_max']) && $_GET['gia_max'] !== '' ? (float)$_GET['gia_max'] : null;
@@ -169,7 +169,7 @@ class SanPhamController
         }
 
         // Get filter parameters
-        $keyword = $_GET['keyword'] ?? null;
+        $keyword = $_GET['keyword'] ?? ($_GET['q'] ?? null);
         $danhMucId = $danhMuc['id']; // Use the ID from slug lookup
         $giaMin = isset($_GET['gia_min']) && $_GET['gia_min'] !== '' ? (float)$_GET['gia_min'] : null;
         $giaMax = isset($_GET['gia_max']) && $_GET['gia_max'] !== '' ? (float)$_GET['gia_max'] : null;

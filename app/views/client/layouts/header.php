@@ -1,6 +1,7 @@
 <?php
 // Load danh mục cho header
 require_once __DIR__ . '/../../../core/HeaderHelper.php';
+
 use App\Core\HeaderHelper;
 
 // SỬ DỤNG HÀM LẤY DANH MỤC PHÂN CẤP CHA-CON
@@ -546,8 +547,8 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                 </div>
 
                 <div class="col-12 mt-2">
-                    <form class="search-form position-relative" action="/tim-kiem" method="GET">
-                        <input class="form-control rounded-pill ps-3" type="search" name="q"
+                    <form class="search-form position-relative" action="/san-pham" method="GET">
+                        <input class="form-control rounded-pill ps-3" type="search" name="keyword"
                             placeholder="Nhập tên sản phẩm..." style="height: 38px;">
                         <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-danger"
                             type="submit" style="text-decoration: none;">
@@ -578,31 +579,31 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
 
                     <div class="mega-col-left">
                         <div class="left-brand-grid px-3 pt-2">
-                            <a href="/tim-kiem?q=Apple" class="left-brand-item p-1"
+                            <a href="/san-pham?keyword=Apple" class="left-brand-item p-1"
                                 onmouseenter="fetchBrandMenu('Apple', this)">
                                 <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/apple_icon_menu_b4ebd564eb.png"
                                     alt="Apple"> Apple
                             </a>
 
-                            <a href="/tim-kiem?q=Samsung" class="left-brand-item p-1"
+                            <a href="/san-pham?keyword=Samsung" class="left-brand-item p-1"
                                 onmouseenter="fetchBrandMenu('Samsung', this)">
                                 <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/samsung_icon_menu_80d224e1c9.png"
                                     alt="Samsung"> Samsung
                             </a>
 
-                            <a href="/tim-kiem?q=LG" class="left-brand-item p-1"
+                            <a href="/san-pham?keyword=LG" class="left-brand-item p-1"
                                 onmouseenter="fetchBrandMenu('LG', this)">
                                 <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/LG_con_menu_8607e6758e.png"
                                     alt="LG"> LG
                             </a>
 
-                            <a href="/tim-kiem?q=Xiaomi" class="left-brand-item p-1"
+                            <a href="/san-pham?keyword=Xiaomi" class="left-brand-item p-1"
                                 onmouseenter="fetchBrandMenu('Xiaomi', this)">
                                 <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/xiaomi_icon_menu_c3719b2a43.png"
                                     alt="Xiaomi"> Xiaomi
                             </a>
 
-                            <a href="/tim-kiem?q=Garmin" class="left-brand-item p-1"
+                            <a href="/san-pham?keyword=Garmin" class="left-brand-item p-1"
                                 onmouseenter="fetchBrandMenu('Garmin', this)">
                                 <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/garmin_menu_d9a8802e3b.png"
                                     alt="Garmin"> Garmin
@@ -615,7 +616,7 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                             $iconClass = HeaderHelper::layIconClass($category['ten']);
                             $categoryUrl = '/danh-muc/' . $category['slug'];
                             $activeClass = ($index === 0) ? 'active' : '';
-                            ?>
+                        ?>
                             <a href="<?= htmlspecialchars($categoryUrl) ?>" class="left-nav-item <?= $activeClass ?>"
                                 onmouseenter="fetchMegaMenu(<?= $category['id'] ?>, this)">
                                 <i class="<?= htmlspecialchars($iconClass) ?>"></i>
@@ -672,9 +673,9 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
             </div>
 
             <div class="flex-grow-1 me-4 position-relative">
-                <form class="search-form d-flex w-100 position-relative" action="/tim-kiem" method="GET"
+                <form class="search-form d-flex w-100 position-relative" action="/san-pham" method="GET"
                     autocomplete="off">
-                    <input class="form-control rounded-pill ps-4" type="search" name="q" id="searchInput"
+                    <input class="form-control rounded-pill ps-4" type="search" name="keyword" id="searchInput"
                         placeholder="Nhập tên điện thoại, laptop, phụ kiện... cần tìm" style="height: 42px;">
                     <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-danger"
                         type="submit" style="text-decoration: none;">
@@ -745,7 +746,7 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                 <?php foreach ($danhMucTree as $category):
                     $iconClass = HeaderHelper::layIconClass($category['ten']);
                     $categoryUrl = '/danh-muc/' . $category['slug'];
-                    ?>
+                ?>
                     <a href="<?= htmlspecialchars($categoryUrl) ?>"
                         class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         <span><i class="<?= htmlspecialchars($iconClass) ?> fa-fw me-2"></i>
@@ -875,7 +876,7 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
         if (data.brands && data.brands.length > 0) {
             html += '<div class="brand-pills">';
             data.brands.forEach(b => {
-                html += `<a href="/tim-kiem?q=${encodeURIComponent(b.hang_san_xuat)}" class="brand-pill">${b.hang_san_xuat}</a>`;
+                html += `<a href="/san-pham?keyword=${encodeURIComponent(b.hang_san_xuat)}" class="brand-pill">${b.hang_san_xuat}</a>`;
             });
             html += '</div>';
         }
@@ -959,7 +960,7 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
         history.forEach(item => {
             html += `
             <div class="history-item" data-keyword="${escapeHtml(item.tu_khoa)}">
-                <a href="/tim-kiem?q=${encodeURIComponent(item.tu_khoa)}" class="keyword">${escapeHtml(item.tu_khoa)}</a>
+                <a href="/san-pham?keyword=${encodeURIComponent(item.tu_khoa)}" class="keyword">${escapeHtml(item.tu_khoa)}</a>
                 <button class="delete-btn" data-keyword="${escapeHtml(item.tu_khoa)}"><i class="fa fa-trash-o"></i></button>
             </div>
         `;
@@ -981,8 +982,12 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
         try {
             const response = await fetch('/tim-kiem/xoa-lich-su', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ keyword: keyword }) // cần sửa backend hỗ trợ xóa 1 từ
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    keyword: keyword
+                }) // cần sửa backend hỗ trợ xóa 1 từ
             });
             const result = await response.json();
             if (result.success) {
@@ -998,7 +1003,9 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
     async function clearAllHistory() {
         if (!confirm('Bạn có chắc muốn xóa toàn bộ lịch sử tìm kiếm?')) return;
         try {
-            const response = await fetch('/tim-kiem/xoa-lich-su', { method: 'POST' });
+            const response = await fetch('/tim-kiem/xoa-lich-su', {
+                method: 'POST'
+            });
             const result = await response.json();
             if (result.success) {
                 loadSearchHistory(5);
@@ -1022,7 +1029,7 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
     });
 
     // Ẩn dropdown khi click ra ngoài
-    document.addEventListener('click', function (e) {
+    document.addEventListener('click', function(e) {
         if (!searchInput.contains(e.target) && !historyDropdown.contains(e.target)) {
             historyDropdown.style.display = 'none';
         }
@@ -1045,7 +1052,7 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
 
     // Helper escape HTML
     function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function (m) {
+        return str.replace(/[&<>]/g, function(m) {
             if (m === '&') return '&amp;';
             if (m === '<') return '&lt;';
             if (m === '>') return '&gt;';
@@ -1061,7 +1068,7 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                 const count = data.count || 0;
                 const cartCountMobile = document.getElementById('cart-count-mobile');
                 const cartCountDesktop = document.getElementById('cart-count-desktop');
-                
+
                 if (cartCountMobile) {
                     cartCountMobile.textContent = count;
                     if (count > 0) {
@@ -1070,7 +1077,7 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                         cartCountMobile.classList.add('d-none');
                     }
                 }
-                
+
                 if (cartCountDesktop) {
                     cartCountDesktop.textContent = count;
                     if (count > 0) {

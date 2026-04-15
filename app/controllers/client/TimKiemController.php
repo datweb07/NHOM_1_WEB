@@ -22,6 +22,18 @@ class TimKiemController
      */
     public function timKiem(): void
     {
+        $params = $_GET;
+        if (isset($params['q']) && !isset($params['keyword'])) {
+            $params['keyword'] = $params['q'];
+        }
+        unset($params['q']);
+
+        $queryString = http_build_query($params);
+        $targetUrl = '/san-pham' . ($queryString !== '' ? ('?' . $queryString) : '');
+
+        header('Location: ' . $targetUrl);
+        exit;
+
         $keyword = $_GET['q'] ?? '';
         $danhMucId = isset($_GET['danh_muc']) ? (int)$_GET['danh_muc'] : 0;
         $giaMin = isset($_GET['gia_min']) ? (float)$_GET['gia_min'] : null;
