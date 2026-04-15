@@ -47,102 +47,113 @@ ob_start();
 </div>
 
 <div class="category-wrapper" style="position: relative; z-index: 10; margin-bottom: 30px;">
-    
+
     <style>
-    .dual-banner-wrapper {
-        position: relative;
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    .dual-banner-track {
-        display: flex;
-        gap: 16px; 
-        overflow-x: auto;
-        scroll-behavior: smooth;
-        -ms-overflow-style: none; 
-        scrollbar-width: none;    
-    }
-
-    .dual-banner-track::-webkit-scrollbar {
-        display: none;
-    }
-
-    .dual-banner-item {
-        flex: 0 0 calc(50% - 8px);
-        border-radius: 12px;
-        overflow: hidden;
-    }
-
-    .dual-banner-item img {
-        width: 100%;
-        height: auto;
-        object-fit: cover;
-        display: block;
-        border-radius: 12px;
-        transition: transform 0.3s ease;
-    }
-
-    .btn-dual-nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 36px;
-        height: 36px;
-        background-color: #fff;
-        border: 1px solid #eaeaea;
-        border-radius: 50%;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 10;
-        color: #555;
-        transition: all 0.2s ease;
-    }
-
-    .btn-dual-nav:hover {
-        color: #cb1c22;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    }
-
-    .btn-dual-prev { left: -18px; }
-    .btn-dual-next { right: -18px; } 
-
-    @media (max-width: 768px) {
-        .dual-banner-item {
-            flex: 0 0 100%;
+        .dual-banner-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 20px;
         }
-        .btn-dual-prev { left: 5px; }
-        .btn-dual-next { right: 5px; }
-    }
+
+        .dual-banner-track {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .dual-banner-track::-webkit-scrollbar {
+            display: none;
+        }
+
+        .dual-banner-item {
+            flex: 0 0 calc(50% - 8px);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .dual-banner-item img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            display: block;
+            border-radius: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-dual-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            background-color: #fff;
+            border: 1px solid #eaeaea;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            color: #555;
+            transition: all 0.2s ease;
+        }
+
+        .btn-dual-nav:hover {
+            color: #cb1c22;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-dual-prev {
+            left: -18px;
+        }
+
+        .btn-dual-next {
+            right: -18px;
+        }
+
+        @media (max-width: 768px) {
+            .dual-banner-item {
+                flex: 0 0 100%;
+            }
+
+            .btn-dual-prev {
+                left: 5px;
+            }
+
+            .btn-dual-next {
+                right: 5px;
+            }
+        }
     </style>
 
     <?php if (!empty($bannerMid)): ?>
-    <div class="container-xl px-0">
-        <div class="dual-banner-wrapper">
-            <div class="dual-banner-track" id="dualBannerTrack">
-                <?php foreach ($bannerMid as $banner): ?>
-                <div class="dual-banner-item">
-                    <a href="<?php echo htmlspecialchars($banner['link_dich']); ?>" class="d-block">
-                        <img src="<?php echo htmlspecialchars($banner['hinh_anh_desktop']); ?>"
-                             alt="<?php echo htmlspecialchars($banner['tieu_de']); ?>">
-                    </a>
+        <div class="container-xl px-0">
+            <div class="dual-banner-wrapper">
+                <div class="dual-banner-track" id="dualBannerTrack">
+                    <?php foreach ($bannerMid as $banner): ?>
+                        <div class="dual-banner-item">
+                            <a href="<?php echo htmlspecialchars($banner['link_dich']); ?>" class="d-block">
+                                <img src="<?php echo htmlspecialchars($banner['hinh_anh_desktop']); ?>"
+                                    alt="<?php echo htmlspecialchars($banner['tieu_de']); ?>">
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-                <?php endforeach; ?>
-            </div>
 
-            <?php if(count($bannerMid) > 2): ?>
-            <button class="btn-dual-nav btn-dual-prev" id="btnDualPrev">
-                <i class="fa fa-chevron-left" style="font-size: 14px;"></i>
-            </button>
-            <button class="btn-dual-nav btn-dual-next" id="btnDualNext">
-                <i class="fa fa-chevron-right" style="font-size: 14px;"></i>
-            </button>
-            <?php endif; ?>
+                <?php if (count($bannerMid) > 2): ?>
+                    <button class="btn-dual-nav btn-dual-prev" id="btnDualPrev">
+                        <i class="fa fa-chevron-left" style="font-size: 14px;"></i>
+                    </button>
+                    <button class="btn-dual-nav btn-dual-next" id="btnDualNext">
+                        <i class="fa fa-chevron-right" style="font-size: 14px;"></i>
+                    </button>
+                <?php endif; ?>
+            </div>
         </div>
-    </div>
     <?php endif; ?>
 
     <div class="container-xl category shadow-sm"
@@ -194,7 +205,7 @@ ob_start();
 
     .continuous-slider-wrapper {
         overflow: hidden;
-        margin: 0 24px; 
+        margin: 0 24px;
         position: relative;
         padding: 0;
     }
@@ -227,7 +238,7 @@ ob_start();
         display: flex;
         flex-wrap: nowrap;
         width: max-content;
-        animation: marquee-scroll 5s linear infinite;
+        animation: marquee-scroll 16s linear infinite;
     }
 
     .continuous-slider-track:hover {
@@ -235,8 +246,13 @@ ob_start();
     }
 
     @keyframes marquee-scroll {
-        0% { transform: translateX(0); }
-        100% { transform: translateX(-50%); }
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
     }
 
     .continuous-slider-item {
@@ -252,24 +268,42 @@ ob_start();
         }
     }
 
-    .custom-hover-card { transition: box-shadow 0.3s ease; }
-    .custom-hover-zoom { transition: transform 0.5s linear; }
-    .custom-hover-card:hover .custom-hover-zoom { transform: scale(1.02); }
-    .category-item, .suggestion-item { transition: all 0.2s ease; }
-    .category-item .category-image img, .suggestion-item .suggestion-image img {
+    .custom-hover-card {
+        transition: box-shadow 0.3s ease;
+    }
+
+    .custom-hover-zoom {
+        transition: transform 0.5s linear;
+    }
+
+    .custom-hover-card:hover .custom-hover-zoom {
+        transform: scale(1.02);
+    }
+
+    .category-item,
+    .suggestion-item {
+        transition: all 0.2s ease;
+    }
+
+    .category-item .category-image img,
+    .suggestion-item .suggestion-image img {
         transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     }
-    .category-item:hover .category-image img, .suggestion-item:hover .suggestion-image img {
+
+    .category-item:hover .category-image img,
+    .suggestion-item:hover .suggestion-image img {
         transform: scale(1.15);
     }
-    
+
     .hero-img-responsive {
         min-height: 450px;
         max-height: 800px;
     }
+
     .category-wrapper {
-        margin-top: -300px; 
+        margin-top: -300px;
     }
+
     .cat-icon-img {
         max-width: 100%;
         height: auto;
@@ -277,22 +311,26 @@ ob_start();
 
     @media (max-width: 768px) {
         .hero-img-responsive {
-            min-height: unset; 
-            height: 200px; 
+            min-height: unset;
+            height: 200px;
             max-height: 300px;
         }
+
         .hero-fade-overlay {
-            height: 80px !important; 
+            height: 80px !important;
         }
+
         .category-wrapper {
-            margin-top: -40px; 
+            margin-top: -40px;
             padding: 0 10px;
         }
+
         .cat-icon-img {
-            max-width: 45px; 
+            max-width: 45px;
         }
+
         .category-title {
-            font-size: 0.7rem !important; 
+            font-size: 0.7rem !important;
         }
     }
 </style>
@@ -322,7 +360,7 @@ ob_start();
                             );
 
                             $tienGiam = (float) ($sp['gia_hien_thi'] ?? 0) - $giaSauGiam;
-                            ?>
+                    ?>
                             <div class="continuous-slider-item">
                                 <div class="p-2 border rounded-3 bg-white custom-hover-card mx-1" style="height: 420px; display: flex; flex-direction: column;">
                                     <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
@@ -357,12 +395,12 @@ ob_start();
                                                     style="font-size: 0.85rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
                                             </div>
                                             <?php if (!empty($sp['ngay_ket_thuc'])): ?>
-                                            <div class="countdown-timer mb-2 text-center" 
-                                                 data-end-time="<?php echo htmlspecialchars($sp['ngay_ket_thuc']); ?>"
-                                                 style="padding: 6px 10px; border-radius: 8px; font-size: 0.75rem; color: gray; font-weight: 600;">
-                                                <i class="fa fa-clock" style="margin-right: 4px;"></i>
-                                                <span class="countdown-text">Đang tải...</span>
-                                            </div>
+                                                <div class="countdown-timer mb-2 text-center"
+                                                    data-end-time="<?php echo htmlspecialchars($sp['ngay_ket_thuc']); ?>"
+                                                    style="padding: 6px 10px; border-radius: 8px; font-size: 0.75rem; color: gray; font-weight: 600;">
+                                                    <i class="fa fa-clock" style="margin-right: 4px;"></i>
+                                                    <span class="countdown-text">Đang tải...</span>
+                                                </div>
                                             <?php endif; ?>
                                             <div class="bg-light p-2 rounded-3 mt-auto">
                                                 <span class="text-secondary" style="font-size: 0.75rem;">Giảm thêm 150.000đ khi TT
@@ -372,7 +410,7 @@ ob_start();
                                     </a>
                                 </div>
                             </div>
-                            <?php
+                    <?php
                         endforeach;
                     endfor;
                     ?>
@@ -564,7 +602,7 @@ ob_start();
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const track = document.getElementById('suggestionTrack');
         const viewport = document.getElementById('suggestionViewport');
         const prevBtn = document.getElementById('sugPrevBtn');
@@ -691,7 +729,7 @@ ob_start();
 
         viewport.addEventListener('mousedown', (e) => {
             isDown = true;
-            isDragging = false; 
+            isDragging = false;
             viewport.style.cursor = 'grabbing';
             viewport.style.scrollBehavior = 'auto';
             startX = e.pageX - viewport.offsetLeft;
@@ -702,7 +740,9 @@ ob_start();
             isDown = false;
             viewport.style.cursor = 'default';
             viewport.style.scrollBehavior = 'smooth';
-            setTimeout(() => { isDragging = false; }, 50);
+            setTimeout(() => {
+                isDragging = false;
+            }, 50);
         });
 
         viewport.addEventListener('mouseup', () => {
@@ -747,7 +787,7 @@ ob_start();
         <div class="container-xl px-0 shadow-sm rounded-3 overflow-hidden">
             <a href="<?php echo htmlspecialchars($bannerMid[1]['link_dich'] ?? '#'); ?>" class="d-block">
                 <img src="<?php echo htmlspecialchars($bannerMid[1]['hinh_anh_desktop']); ?>"
-                     style="width: 100%; display: block; border-radius: 12px;">
+                    style="width: 100%; display: block; border-radius: 12px;">
             </a>
         </div>
     </div>
@@ -804,10 +844,11 @@ ob_start();
 </div>
 
 <?php if (!empty($bannerMid[2])): ?>
-    <div class="banner-3 mt-4 mb-4"> <div class="container-xl px-0 shadow-sm rounded-3 overflow-hidden">
+    <div class="banner-3 mt-4 mb-4">
+        <div class="container-xl px-0 shadow-sm rounded-3 overflow-hidden">
             <a href="<?php echo htmlspecialchars($bannerMid[2]['link_dich'] ?? '#'); ?>" class="d-block">
                 <img src="<?php echo htmlspecialchars($bannerMid[2]['hinh_anh_desktop']); ?>"
-                     style="width: 100%; display: block; border-radius: 12px;">
+                    style="width: 100%; display: block; border-radius: 12px;">
             </a>
         </div>
     </div>
@@ -914,11 +955,11 @@ ob_start();
         <div class="container-xl px-0">
             <div class="d-flex flex-column flex-lg-row gap-3">
                 <?php foreach (array_slice($bannerMid, 3, 3) as $b): ?>
-                    
+
                     <div class="category-bot-item shadow-sm rounded-3 overflow-hidden w-100">
                         <a href="<?php echo htmlspecialchars($b['link_dich'] ?? '#'); ?>" class="d-block h-100">
                             <img src="<?php echo htmlspecialchars($b['hinh_anh_desktop']); ?>"
-                                 style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                style="width: 100%; height: 100%; object-fit: cover; display: block;">
                         </a>
                     </div>
 
@@ -1185,19 +1226,22 @@ ob_start();
 <button id="backToTopBtn" title="Lên đầu trang"><i class="fa fa-arrow-up"></i></button>
 
 <script>
-    (function () {
+    (function() {
         var backBtn = document.getElementById('backToTopBtn');
         if (backBtn) {
-            window.addEventListener('scroll', function () {
+            window.addEventListener('scroll', function() {
                 if (window.scrollY > 300) {
                     backBtn.classList.add('show');
                 } else {
                     backBtn.classList.remove('show');
                 }
             });
-            backBtn.addEventListener('click', function (e) {
+            backBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             });
         }
 
@@ -1244,7 +1288,7 @@ ob_start();
         }
 
         langOptions.forEach(opt => {
-            opt.addEventListener('click', function (e) {
+            opt.addEventListener('click', function(e) {
                 const lang = this.getAttribute('data-lang');
                 setLanguage(lang);
             });
@@ -1257,14 +1301,14 @@ ob_start();
         var zaloClose = document.getElementById('zaloClose');
 
         if (zaloBtn && zaloWidget) {
-            zaloBtn.addEventListener('click', function (e) {
+            zaloBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 zaloWidget.classList.toggle('show');
             });
 
             if (zaloClose) {
-                zaloClose.addEventListener('click', function (e) {
+                zaloClose.addEventListener('click', function(e) {
                     e.stopPropagation();
                     zaloWidget.classList.remove('show');
                 });
@@ -1274,60 +1318,66 @@ ob_start();
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const track = document.getElementById('dualBannerTrack');
-    const btnPrev = document.getElementById('btnDualPrev');
-    const btnNext = document.getElementById('btnDualNext');
+    document.addEventListener('DOMContentLoaded', function() {
+        const track = document.getElementById('dualBannerTrack');
+        const btnPrev = document.getElementById('btnDualPrev');
+        const btnNext = document.getElementById('btnDualNext');
 
-    if (track && btnPrev && btnNext) {
-        btnNext.addEventListener('click', function() {
+        if (track && btnPrev && btnNext) {
+            btnNext.addEventListener('click', function() {
 
-            const itemWidth = track.querySelector('.dual-banner-item').offsetWidth;
-            const scrollAmount = itemWidth + 16;
-            track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-        });
+                const itemWidth = track.querySelector('.dual-banner-item').offsetWidth;
+                const scrollAmount = itemWidth + 16;
+                track.scrollBy({
+                    left: scrollAmount,
+                    behavior: 'smooth'
+                });
+            });
 
-        btnPrev.addEventListener('click', function() {
-            const itemWidth = track.querySelector('.dual-banner-item').offsetWidth;
-            const scrollAmount = itemWidth + 16;
-            track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-        });
-    }
+            btnPrev.addEventListener('click', function() {
+                const itemWidth = track.querySelector('.dual-banner-item').offsetWidth;
+                const scrollAmount = itemWidth + 16;
+                track.scrollBy({
+                    left: -scrollAmount,
+                    behavior: 'smooth'
+                });
+            });
+        }
 
-    // Countdown Timer Logic
-    function updateCountdowns() {
-        const timers = document.querySelectorAll('.countdown-timer');
-        
-        timers.forEach(timer => {
-            const endTimeStr = timer.getAttribute('data-end-time');
-            if (!endTimeStr) return;
-            
-            const endTime = new Date(endTimeStr).getTime();
-            const now = new Date().getTime();
-            const distance = endTime - now;
-            
-            const textElement = timer.querySelector('.countdown-text');
-            if (!textElement) return;
-            
-            if (distance < 0) {
-                textElement.textContent = 'Đã hết hạn';
-                timer.style.background = 'linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%)';
-                return;
-            }
-            
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            textElement.textContent = `Còn ${days} ngày ${hours}h ${minutes}p ${seconds}s`;
-        });
-    }
-    
-    // Update countdown every second
-    updateCountdowns();
-    setInterval(updateCountdowns, 1000);
-});
+        // Countdown Timer Logic
+        function updateCountdowns() {
+            const timers = document.querySelectorAll('.countdown-timer');
+
+            timers.forEach(timer => {
+                const endTimeStr = timer.getAttribute('data-end-time');
+                if (!endTimeStr) return;
+
+                const endTime = new Date(endTimeStr).getTime();
+                const now = new Date().getTime();
+                const distance = endTime - now;
+
+                const textElement = timer.querySelector('.countdown-text');
+                if (!textElement) return;
+
+                if (distance < 0) {
+                    textElement.textContent = 'Đã hết hạn';
+                    timer.style.background = 'linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%)';
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                textElement.textContent = `Còn ${days} ngày ${hours}h ${minutes}p ${seconds}s`;
+            });
+        }
+
+        // Update countdown every second
+        updateCountdowns();
+        setInterval(updateCountdowns, 1000);
+    });
 </script>
 
 <?php
