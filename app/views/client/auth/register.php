@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng ký tài khoản - FPT Shop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="icon" href="<?= ASSET_URL ?>/assets/client/images/header/1.png">
     <style>
         :root {
@@ -30,7 +32,8 @@
             padding: 10px 20px;
         }
 
-        .btn-primary-brand:hover, .btn-primary-brand:focus {
+        .btn-primary-brand:hover,
+        .btn-primary-brand:focus {
             background-color: var(--fpt-red-hover);
             border-color: var(--fpt-red-hover);
             color: white;
@@ -49,7 +52,7 @@
         .text-brand {
             color: var(--fpt-red);
         }
-        
+
         a.text-brand:hover {
             color: var(--fpt-red-hover);
         }
@@ -64,7 +67,7 @@
             text-align: center;
             margin: 24px 0;
         }
-        
+
         .divider-text::before {
             content: "";
             position: absolute;
@@ -104,13 +107,15 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="row justify-content-center align-items-center min-vh-100 py-5">
             <div class="col-md-6 col-lg-5 col-xl-4">
-                
+
                 <div class="text-center mb-4">
-                    <img src="<?= ASSET_URL ?>/assets/client/images/others/fpt-shop-banner.png" alt="FPT Shop" style="height: 100px;">
+                    <img src="<?= ASSET_URL ?>/assets/client/images/others/fpt-shop-banner.png" alt="FPT Shop"
+                        style="height: 100px;">
                 </div>
 
                 <div class="card auth-card">
@@ -138,55 +143,47 @@
 
                         <form method="POST" action="/client/auth/register">
                             <div class="mb-3">
-                                <label for="name" class="form-label fw-medium" style="font-size: 0.9rem;">Họ và tên</label>
-                                <input 
-                                    type="text" 
-                                    class="form-control" 
-                                    id="name" 
-                                    name="name" 
-                                    placeholder="Ví dụ: Nguyễn Văn A"
-                                    required
-                                >
+                                <label for="name" class="form-label fw-medium" style="font-size: 0.9rem;">Họ và
+                                    tên</label>
+                                <input type="text" class="form-control" id="name" name="name"
+                                    placeholder="Ví dụ: Nguyễn Văn A" required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="email" class="form-label fw-medium" style="font-size: 0.9rem;">Email</label>
-                                <input 
-                                    type="email" 
-                                    class="form-control" 
-                                    id="email" 
-                                    name="email" 
-                                    placeholder="Ví dụ: email@gmail.com"
-                                    required
-                                >
+                                <input type="email" class="form-control" id="email" name="email"
+                                    placeholder="Ví dụ: email@gmail.com" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="password" class="form-label fw-medium" style="font-size: 0.9rem;">Mật khẩu</label>
-                                <input 
-                                    type="password" 
-                                    class="form-control" 
-                                    id="password" 
-                                    name="password" 
-                                    placeholder="Tạo mật khẩu (ít nhất 6 ký tự)"
-                                    required
-                                >
+                                <label for="password" class="form-label fw-medium" style="font-size: 0.9rem;">Mật
+                                    khẩu</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control pe-5" id="password" name="password"
+                                        placeholder="Tạo mật khẩu (ít nhất 6 ký tự)" required>
+                                    <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-3 toggle-password"
+                                        style="cursor: pointer; color: #6c757d;"></i>
+                                </div>
                             </div>
 
                             <div class="form-check mb-4">
                                 <input class="form-check-input" type="checkbox" value="" id="termsCheck" required>
                                 <label class="form-check-label text-muted" for="termsCheck" style="font-size: 0.85rem;">
-                                    Tôi đồng ý với các <a href="#" class="text-brand text-decoration-none">Điều khoản sử dụng</a> và <a href="#" class="text-brand text-decoration-none">Chính sách bảo mật</a> của FPT Shop.
+                                    Tôi đồng ý với các <a href="#" class="text-brand text-decoration-none">Điều khoản sử
+                                        dụng</a> và <a href="#" class="text-brand text-decoration-none">Chính sách bảo
+                                        mật</a> của FPT Shop.
                                 </label>
                             </div>
 
                             <div class="d-grid mb-3">
-                                <button type="submit" class="btn btn-primary-brand btn-lg" style="font-size: 1rem;">Đăng ký</button>
+                                <button type="submit" class="btn btn-primary-brand btn-lg" style="font-size: 1rem;">Đăng
+                                    ký</button>
                             </div>
 
                             <div class="text-center mt-3" style="font-size: 0.95rem;">
-                                <span class="text-muted">Đã có tài khoản?</span> 
-                                <a href="/client/auth/login" class="text-decoration-none text-brand fw-medium">Đăng nhập ngay</a>
+                                <span class="text-muted">Đã có tài khoản?</span>
+                                <a href="/client/auth/login" class="text-decoration-none text-brand fw-medium">Đăng nhập
+                                    ngay</a>
                             </div>
                         </form>
                     </div>
@@ -197,11 +194,33 @@
                         &larr; Quay về trang chủ
                     </a>
                 </div>
-                
+
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    document.querySelectorAll('.toggle-password').forEach(function(icon) {
+        icon.addEventListener('click', function() {
+
+            let input = this.previousElementSibling; 
+            
+            if (input.type === "password") {
+                input.type = "text";
+                this.classList.remove('bi-eye-slash');
+                this.classList.add('bi-eye');
+                this.style.color = '#cb1c22'; 
+            } else {
+                input.type = "password";
+                this.classList.remove('bi-eye');
+                this.classList.add('bi-eye-slash');
+                this.style.color = '#6c757d';
+            }
+        });
+    });
+</script>
 </body>
+
 </html>
