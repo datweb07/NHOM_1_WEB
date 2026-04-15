@@ -450,6 +450,14 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	// Banner routes
+	if ($path === 'banner/hide-popup') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/BannerController.php';
+		$controller = new \App\Controllers\Client\BannerController();
+		$controller->hidePopup();
+		return;
+	}
+
 	if ($path === 'quy-che-hoat-dong') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
 		$controller = new \App\Controllers\Client\AboutController();
