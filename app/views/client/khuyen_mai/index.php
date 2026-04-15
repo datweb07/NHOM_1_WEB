@@ -18,7 +18,7 @@ ob_start();
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body">
                             <div class="d-flex align-items-start justify-content-between mb-2">
-                                <h6 class="fw-bold mb-0"><?= htmlspecialchars($km['ten_khuyen_mai']) ?></h6>
+                                <h6 class="fw-bold mb-0\"><?= htmlspecialchars($km['ten_chuong_trinh'] ?? $km['ten_khuyen_mai'] ?? 'Chương trình khuyến mãi') ?></h6>
                                 <?php if ($km['loai_giam'] === 'PHAN_TRAM'): ?>
                                     <span class="badge bg-danger ms-2 text-nowrap">-<?= $km['gia_tri_giam'] ?>%</span>
                                 <?php else: ?>
@@ -33,7 +33,7 @@ ob_start();
                                 <p class="small text-muted mb-3">
                                     <i class="fa fa-clock me-1"></i>
                                     <?php if ($km['ngay_bat_dau']): ?>Từ <?= date('d/m/Y', strtotime($km['ngay_bat_dau'])) ?> <?php endif; ?>
-                                    <?php if ($km['ngay_ket_thuc']): ?>- Đến <?= date('d/m/Y', strtotime($km['ngay_ket_thuc'])) ?><?php endif; ?>
+                                <?php if ($km['ngay_ket_thuc']): ?>- Đến <?= date('d/m/Y', strtotime($km['ngay_ket_thuc'])) ?><?php endif; ?>
                                 </p>
                             <?php endif; ?>
                             <a href="/khuyen-mai/chi-tiet?id=<?= $km['id'] ?>" class="btn btn-outline-danger btn-sm">
