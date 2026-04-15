@@ -4,6 +4,7 @@ namespace App\Controllers\Client;
 
 require_once __DIR__ . '/../../core/Session.php';
 require_once __DIR__ . '/../../core/Functions.php';
+require_once __DIR__ . '/../../core/EnvSetup.php';
 require_once __DIR__ . '/../../models/roles/KhachHang.php';
 
 use App\Core\Session;
@@ -12,17 +13,17 @@ class AuthController
 {
   public static function login(string $email, string $password): bool
   {
-    // --- 1. XÁC THỰC GOOGLE RECAPTCHA V2 ---
-    $recaptchaSecret = '6LdIFrgsAAAAAFL4dCEmsRjJtH6UoF7eXqZfO2mP'; 
+
+    $envConfig = \EnvSetup::env(dirname(__DIR__, 3));
+    $recaptchaSecret = $envConfig('RECAPTCHA_SECRET_KEY', '');
+    
     $recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
 
-    // Kiểm tra xem người dùng đã tick vào captcha chưa
     if (empty($recaptchaResponse)) {
       header('Location: /client/auth/login?error=captcha_missing');
       exit;
     }
 
-    // Gửi request lên Google để xác minh
     $verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
     $data = [
         'secret' => $recaptchaSecret,
@@ -40,7 +41,7 @@ class AuthController
     $verifyResponse = file_get_contents($verifyUrl, false, $context);
     
     if ($verifyResponse === false) {
-        // Lỗi kết nối đến Google
+
         header('Location: /client/auth/login?error=network_error');
         exit;
     }
@@ -48,14 +49,11 @@ class AuthController
     $responseData = json_decode($verifyResponse);
 
     if (!$responseData || !$responseData->success) {
-        // Captcha không hợp lệ (bot, hoặc token hết hạn)
+
         header('Location: /client/auth/login?error=captcha_failed');
         exit;
     }
-    // --- KẾT THÚC XÁC THỰC CAPTCHA ---
 
-
-    // --- 2. XÁC THỰC DỮ LIỆU ĐẦU VÀO ---
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
       header('Location: /client/auth/login?error=invalid_email');
       exit;
@@ -66,7 +64,6 @@ class AuthController
       exit;
     }
 
-    // --- 3. KIỂM TRA DATABASE ---
     $khachHang = new \KhachHang();
     if ($khachHang->dang_nhap($email, $password)) {
       Session::start();

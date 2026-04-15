@@ -1,3 +1,9 @@
+<?php
+
+require_once __DIR__ . '/../../../core/EnvSetup.php';
+$envConfig = \EnvSetup::env(dirname(__DIR__, 3));
+$recaptchaSiteKey = $envConfig('RECAPTCHA_SITE_KEY', '');
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -157,7 +163,7 @@
                             </div>
 
                             <div class="recaptcha-wrapper">
-                                <div class="g-recaptcha" data-sitekey="6LdIFrgsAAAAAEcAXf5wh0DDj_72dPAPVq9R6T3T"></div>
+                                <div class="g-recaptcha" data-sitekey="<?= htmlspecialchars($recaptchaSiteKey) ?>"></div>
                             </div>
                             <div id="captchaError" class="text-danger small text-center mb-3 d-none">
                                 Vui lòng xác nhận bạn không phải là robot.
