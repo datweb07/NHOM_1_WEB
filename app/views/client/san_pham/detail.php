@@ -145,6 +145,41 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
 }
 ?>
 <style>
+    /* CSS cho nút yêu thích */
+    .btn-wishlist {
+        border: 2px solid #dee2e6;
+        background-color: #fff;
+        color: #6c757d;
+        padding: 12px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        min-width: 60px;
+    }
+
+    .btn-wishlist:hover {
+        border-color: #d70018;
+        background-color: #fff;
+        color: #d70018;
+    }
+
+    .btn-wishlist i {
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+    }
+
+    /* Trạng thái đã yêu thích */
+    .btn-wishlist.wishlisted {
+        border-color: #d70018;
+        background-color: #d70018;
+        color: #fff;
+    }
+
+    .btn-wishlist.wishlisted:hover {
+        border-color: #a8151b;
+        background-color: #a8151b;
+        color: #fff;
+    }
+
     .variant-card {
         border: 1px solid #dee2e6;
         border-radius: 8px;
@@ -430,9 +465,9 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                         <i class="fa fa-cart-plus me-1"></i>Thêm vào giỏ hàng
                     </button>
                     <?php if ($isLoggedIn): ?>
-                        <button type="button" class="btn btn-outline-danger btn-wishlist"
-                            data-id="<?= $sanPham['id'] ?>">
-                            <i class="fa fa-heart"></i>
+                        <button type="button" class="btn btn-wishlist <?= $isWishlisted ? 'wishlisted' : '' ?>"
+                            data-id="<?= $sanPham['id'] ?>" data-wishlisted="<?= $isWishlisted ? '1' : '0' ?>">
+                            <i class="<?= $isWishlisted ? 'fas' : 'far' ?> fa-heart"></i>
                         </button>
                     <?php endif; ?>
                 </div>
@@ -943,10 +978,14 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
         });
     }
 
-    // Yêu thích
+    // Yêu thích - Toggle thêm/xóa
     document.querySelector('.btn-wishlist')?.addEventListener('click', function() {
         const id = this.dataset.id;
-        fetch('/yeu-thich/them', {
+        const isWishlisted = this.dataset.wishlisted === '1';
+        const url = isWishlisted ? '/yeu-thich/xoa' : '/yeu-thich/them';
+        const button = this;
+        
+        fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -955,12 +994,26 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
             })
             .then(r => r.json())
             .then(data => {
-                const icon = this.querySelector('i');
                 if (data.success) {
-                    icon.className = 'fas fa-heart text-danger';
+                    const icon = button.querySelector('i');
+                    if (isWishlisted) {
+                        // Đã xóa khỏi yêu thích
+                        button.classList.remove('wishlisted');
+                        button.dataset.wishlisted = '0';
+                        icon.className = 'far fa-heart';
+                    } else {
+                        // Đã thêm vào yêu thích
+                        button.classList.add('wishlisted');
+                        button.dataset.wishlisted = '1';
+                        icon.className = 'fas fa-heart';
+                    }
                 } else {
-                    alert(data.message || 'Đã có trong danh sách yêu thích');
+                    alert(data.message || 'Có lỗi xảy ra');
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra, vui lòng thử lại');
             });
     });
 
@@ -972,6 +1025,28 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
         if (val > 99) val = 99;
         inp.value = val;
     }
+
+    // Xử lý thêm vào giỏ hàng và cập nhật số lượng
+    const addToCartForm = document.querySelector('form[action="/gio-hang/them"]');
+    if (addToCartForm) {
+        addToCartForm.addEventListener('submit', function(e) {
+            // Không prevent default, để form submit bình thường
+            // Nhưng sau khi trang redirect về, số lượng giỏ hàng sẽ được cập nhật
+            // Vì vậy chúng ta sẽ cập nhật ngay sau khi submit
+            setTimeout(() => {
+                if (typeof window.updateCartCount === 'function') {
+                    window.updateCartCount();
+                }
+            }, 500);
+        });
+    }
+
+    // Cập nhật số lượng giỏ hàng khi trang load (nếu có flash message thành công)
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof window.updateCartCount === 'function') {
+            window.updateCartCount();
+        }
+    });
 
     // Đánh giá
     document.getElementById('btn-review')?.addEventListener('click', function() {

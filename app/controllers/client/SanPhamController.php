@@ -67,6 +67,15 @@ class SanPhamController
         // Danh sách toàn bộ sản phẩm để hỗ trợ chọn so sánh ngoài sản phẩm tương tự
         $danhSachSanPhamSoSanh = $this->sanPhamModel->layDanhSachChoSoSanh();
 
+        // Kiểm tra trạng thái yêu thích
+        $isWishlisted = false;
+        if (\App\Core\Session::isLoggedIn() && \App\Core\Session::getUserRole() === 'MEMBER') {
+            require_once dirname(__DIR__, 2) . '/models/relationships/YeuThich.php';
+            $yeuThichModel = new \YeuThich();
+            $userId = \App\Core\Session::getUserId();
+            $isWishlisted = $yeuThichModel->kiemTraDaTonTai($userId, $sanPham['id']);
+        }
+
         // Load view
         require_once dirname(__DIR__, 2) . '/views/client/san_pham/detail.php';
     }

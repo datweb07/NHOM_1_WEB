@@ -96,6 +96,15 @@ class YeuThich extends BaseModel
     }
 
     /**
+     * Đếm số lượng yêu thích (static method để gọi nhanh)
+     */
+    public static function demSoLuongYeuThich(int $nguoiDungId): int
+    {
+        $instance = new self();
+        return $instance->demTheoUser($nguoiDungId);
+    }
+
+    /**
      * Xóa tất cả sản phẩm yêu thích của user
      */
     public function xoaTatCa(int $nguoiDungId): bool
