@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../../core/EnvSetup.php';
-$envConfig = \EnvSetup::env(dirname(__DIR__, 3));
+$envConfig = \EnvSetup::env(dirname(__DIR__, 4));
 $recaptchaSiteKey = $envConfig('RECAPTCHA_SITE_KEY', '');
 ?>
 <!DOCTYPE html>

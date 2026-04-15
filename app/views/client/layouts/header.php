@@ -5,6 +5,40 @@ use App\Core\HeaderHelper;
 
 // SỬ DỤNG HÀM LẤY DANH MỤC PHÂN CẤP CHA-CON
 $danhMucTree = HeaderHelper::layDanhMucNavigation();
+
+// Kiểm tra đăng nhập và lấy số lượng yêu thích
+$isLoggedIn = \App\Core\Session::isLoggedIn();
+$userRole = \App\Core\Session::getUserRole();
+$accountUrl = ($isLoggedIn && $userRole === 'MEMBER') ? '/client/profile' : '/client/auth/login';
+
+// Lấy số lượng sản phẩm yêu thích
+$wishlistCount = 0;
+if ($isLoggedIn && $userRole === 'MEMBER') {
+    require_once __DIR__ . '/../../../models/relationships/YeuThich.php';
+    $userId = \App\Core\Session::getUserId();
+    $wishlistCount = YeuThich::demSoLuongYeuThich($userId);
+}
+
+// Lấy số lượng sản phẩm trong giỏ hàng
+$cartCount = 0;
+require_once __DIR__ . '/../../../models/entities/GioHang.php';
+require_once __DIR__ . '/../../../models/entities/ChiTietGio.php';
+$gioHangModel = new GioHang();
+$chiTietGioModel = new ChiTietGio();
+
+if ($isLoggedIn && $userRole === 'MEMBER') {
+    // User đã đăng nhập
+    $userId = \App\Core\Session::getUserId();
+    $gioHang = $gioHangModel->layHoacTaoGioHangUser($userId);
+    $cartCount = $chiTietGioModel->demSanPham($gioHang['id']);
+} else {
+    // Guest user
+    $sessionId = session_id();
+    if ($sessionId) {
+        $gioHang = $gioHangModel->layHoacTaoGioHangGuest($sessionId);
+        $cartCount = $chiTietGioModel->demSanPham($gioHang['id']);
+    }
+}
 ?>
 <style>
     /* --- BẠN GIỮ NGUYÊN CSS NÀY, TÔI KHÔNG XÓA MỘT CHỮ NÀO --- */
@@ -485,12 +519,29 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
                     </a>
                 </div>
 
-                <div class="col d-flex justify-content-end">
+                <div class="col d-flex justify-content-end gap-3">
+                    <a href="/yeu-thich" class="text-white text-decoration-none position-relative">
+                        <i class="fa fa-heart fs-4"></i>
+                        <?php if ($wishlistCount > 0): ?>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                                style="font-size: 0.6rem;">
+                                <?= $wishlistCount ?>
+                            </span>
+                        <?php endif; ?>
+                    </a>
                     <a href="/gio-hang" class="text-white text-decoration-none position-relative">
                         <i class="fa fa-shopping-cart fs-3"></i>
-                        <span
-                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
-                            style="font-size: 0.6rem;">0</span>
+                        <?php if ($cartCount > 0): ?>
+                            <span id="cart-count-mobile"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                                style="font-size: 0.6rem;">
+                                <?= $cartCount ?>
+                            </span>
+                        <?php else: ?>
+                            <span id="cart-count-mobile"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark d-none"
+                                style="font-size: 0.6rem;">0</span>
+                        <?php endif; ?>
                     </a>
                 </div>
 
@@ -648,20 +699,36 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
                 </div>
             </div>
 
-            <?php
-            $isLoggedIn = \App\Core\Session::isLoggedIn();
-            $userRole = \App\Core\Session::getUserRole();
-            $accountUrl = ($isLoggedIn && $userRole === 'MEMBER') ? '/client/profile' : '/client/auth/login';
-            ?>
             <div class="d-flex gap-3 align-items-center">
                 <a href="<?= $accountUrl ?>" class="btn btn-profile rounded-circle p-2"
                     style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                     <i class="fa fa-user fs-5"></i>
                 </a>
-                <a href="/gio-hang" class="btn btn-dark rounded-pill px-4"
+                <a href="/yeu-thich" class="btn btn-profile rounded-circle p-2 position-relative"
+                    style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa fa-heart fs-5"></i>
+                    <?php if ($wishlistCount > 0): ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                            style="font-size: 0.65rem; padding: 0.25em 0.5em;">
+                            <?= $wishlistCount ?>
+                        </span>
+                    <?php endif; ?>
+                </a>
+                <a href="/gio-hang" class="btn btn-dark rounded-pill px-4 position-relative"
                     style="height: 42px; display: flex; align-items: center; gap: 8px;">
                     <i class="fa fa-shopping-cart text-white fs-5"></i>
                     <span class="text-white fw-bold">Giỏ hàng</span>
+                    <?php if ($cartCount > 0): ?>
+                        <span id="cart-count-desktop"
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                            style="font-size: 0.65rem; padding: 0.25em 0.5em;">
+                            <?= $cartCount ?>
+                        </span>
+                    <?php else: ?>
+                        <span id="cart-count-desktop"
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark d-none"
+                            style="font-size: 0.65rem; padding: 0.25em 0.5em;">0</span>
+                    <?php endif; ?>
                 </a>
             </div>
 
@@ -985,4 +1052,37 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
             return m;
         });
     }
+
+    // Hàm cập nhật số lượng giỏ hàng
+    function updateCartCount() {
+        fetch('/gio-hang/dem-san-pham')
+            .then(response => response.json())
+            .then(data => {
+                const count = data.count || 0;
+                const cartCountMobile = document.getElementById('cart-count-mobile');
+                const cartCountDesktop = document.getElementById('cart-count-desktop');
+                
+                if (cartCountMobile) {
+                    cartCountMobile.textContent = count;
+                    if (count > 0) {
+                        cartCountMobile.classList.remove('d-none');
+                    } else {
+                        cartCountMobile.classList.add('d-none');
+                    }
+                }
+                
+                if (cartCountDesktop) {
+                    cartCountDesktop.textContent = count;
+                    if (count > 0) {
+                        cartCountDesktop.classList.remove('d-none');
+                    } else {
+                        cartCountDesktop.classList.add('d-none');
+                    }
+                }
+            })
+            .catch(error => console.error('Error updating cart count:', error));
+    }
+
+    // Expose hàm updateCartCount ra global scope để các trang khác có thể gọi
+    window.updateCartCount = updateCartCount;
 </script>
