@@ -146,19 +146,92 @@ class ThanhToanController
         $thongTinGuest = null;
 
         if (Session::has('user_id')) {
-            $diaChiId = isset($_POST['dia_chi_id']) ? (int)$_POST['dia_chi_id'] : null;
-            if (!$diaChiId) {
-                Session::flash('error', 'Vui lòng chọn địa chỉ giao hàng');
+            $suDungDiaChiKhac = !empty($_POST['su_dung_dia_chi_khac']);
+
+            if ($suDungDiaChiKhac) {
+                $tenNguoiNhan = trim((string)($_POST['ten_nguoi_nhan'] ?? ''));
+                $sdtNhan = trim((string)($_POST['sdt_nhan'] ?? ''));
+                $diaChiDuong = trim((string)($_POST['dia_chi_duong'] ?? ''));
+                $phuongXa = trim((string)($_POST['phuong_xa'] ?? ''));
+                $quanHuyen = trim((string)($_POST['quan_huyen'] ?? ''));
+                $tinhThanh = trim((string)($_POST['tinh_thanh'] ?? ''));
+
+                if ($tenNguoiNhan === '' || $sdtNhan === '' || $diaChiDuong === '' || $phuongXa === '' || $quanHuyen === '' || $tinhThanh === '') {
+                    Session::flash('error', 'Vui lòng nhập đầy đủ thông tin địa chỉ giao hàng mới');
+                    header('Location: /thanh-toan');
+                    exit;
+                }
+
+                $diaChiDayDu = implode(', ', array_filter([
+                    $diaChiDuong,
+                    $phuongXa,
+                    $quanHuyen,
+                    $tinhThanh,
+                ]));
+
+                $thongTinGuest = json_encode([
+                    'ten' => $tenNguoiNhan,
+                    'sdt' => $sdtNhan,
+                    'dia_chi_duong' => $diaChiDuong,
+                    'phuong_xa' => $phuongXa,
+                    'quan_huyen' => $quanHuyen,
+                    'tinh_thanh' => $tinhThanh,
+                    'dia_chi_day_du' => $diaChiDayDu,
+                    'loai_dia_chi' => 'KHAC_DA_DANG_NHAP',
+                ], JSON_UNESCAPED_UNICODE);
+                $diaChiId = null;
+            } else {
+                $diaChiId = isset($_POST['dia_chi_id']) ? (int)$_POST['dia_chi_id'] : null;
+                if (!$diaChiId) {
+                    Session::flash('error', 'Vui lòng chọn địa chỉ giao hàng');
+                    header('Location: /thanh-toan');
+                    exit;
+                }
+            }
+        } else {
+            $tenNguoiNhan = trim((string)($_POST['ten_nguoi_nhan'] ?? ''));
+            $sdtNhan = trim((string)($_POST['sdt_nhan'] ?? ''));
+            $emailNhan = trim((string)($_POST['email_nhan'] ?? ''));
+            $diaChiDuong = trim((string)($_POST['dia_chi_duong'] ?? $_POST['dia_chi'] ?? ''));
+            $phuongXa = trim((string)($_POST['phuong_xa'] ?? ''));
+            $quanHuyen = trim((string)($_POST['quan_huyen'] ?? ''));
+            $tinhThanh = trim((string)($_POST['tinh_thanh'] ?? ''));
+
+            if ($tenNguoiNhan === '' || $sdtNhan === '' || $emailNhan === '' || $diaChiDuong === '' || $phuongXa === '' || $quanHuyen === '' || $tinhThanh === '') {
+                Session::flash('error', 'Vui lòng nhập đầy đủ thông tin và địa chỉ nhận hàng');
                 header('Location: /thanh-toan');
                 exit;
             }
-        } else {
+
+            if (!filter_var($emailNhan, FILTER_VALIDATE_EMAIL)) {
+                Session::flash('error', 'Email nhận hàng không hợp lệ');
+                header('Location: /thanh-toan');
+                exit;
+            }
+
+            $diaChiDayDu = implode(', ', array_filter([
+                $diaChiDuong,
+                $phuongXa,
+                $quanHuyen,
+                $tinhThanh,
+            ]));
 
             $thongTinGuest = json_encode([
-                'ten' => $_POST['ten_nguoi_nhan'] ?? '',
-                'sdt' => $_POST['sdt_nhan'] ?? '',
-                'dia_chi' => $_POST['dia_chi'] ?? ''
-            ]);
+                'ten' => $tenNguoiNhan,
+                'sdt' => $sdtNhan,
+                'email' => $emailNhan,
+                'dia_chi_duong' => $diaChiDuong,
+                'phuong_xa' => $phuongXa,
+                'quan_huyen' => $quanHuyen,
+                'tinh_thanh' => $tinhThanh,
+                'dia_chi_day_du' => $diaChiDayDu,
+            ], JSON_UNESCAPED_UNICODE);
+        }
+
+        if (!Session::has('user_id') && empty($_POST['xac_nhan_don'])) {
+            Session::flash('error', 'Vui lòng xác nhận đơn hàng trước khi đặt');
+            header('Location: /thanh-toan');
+            exit;
         }
 
 
@@ -251,17 +324,17 @@ class ThanhToanController
             // Gửi email xác nhận đơn hàng COD
             $emailNguoiNhan = '';
             $tenNguoiNhan = '';
-            
+
             if (Session::has('user_id')) {
                 // Trường hợp 1: Người dùng đã đăng nhập
                 // Lấy email trực tiếp từ DB
                 $userId = (int)Session::get('user_id');
                 $sql = "SELECT email, ho_ten FROM nguoi_dung WHERE id = $userId LIMIT 1";
                 $userInfo = $this->diaChiModel->query($sql);
-                
+
                 if (!empty($userInfo)) {
                     $emailNguoiNhan = $userInfo[0]['email'] ?? '';
-                    
+
                     // Lấy tên người nhận từ địa chỉ mà khách đã chọn
                     if ($diaChiId) {
                         $diaChiChon = $this->diaChiModel->getById($diaChiId);
@@ -274,21 +347,21 @@ class ThanhToanController
                         $tenNguoiNhan = $userInfo[0]['ho_ten'] ?? 'Quý khách';
                     }
                 }
-                
+
                 error_log("COD Email - Logged in user. Email: $emailNguoiNhan, Name: $tenNguoiNhan");
             } else {
                 // Trường hợp 2: Khách vãng lai
                 $emailNguoiNhan = trim($_POST['email_nhan'] ?? '');
                 $tenNguoiNhan = trim($_POST['ten_nguoi_nhan'] ?? 'Quý khách');
-                
+
                 error_log("COD Email - Guest user. Email: $emailNguoiNhan, Name: $tenNguoiNhan");
             }
-            
+
             // Gửi email nếu có địa chỉ email hợp lệ
             if (!empty($emailNguoiNhan) && filter_var($emailNguoiNhan, FILTER_VALIDATE_EMAIL)) {
                 try {
                     error_log("COD Email - Preparing to send email to: $emailNguoiNhan for order: $maDonHang");
-                    
+
                     // Tạo nội dung email
                     $emailContent = $this->generateOrderConfirmationEmail(
                         $maDonHang,
@@ -299,14 +372,14 @@ class ThanhToanController
                         $tienGiamGia,
                         $tongThanhToan
                     );
-                    
+
                     // Gửi email
                     $mailSent = sendMail(
                         $emailNguoiNhan,
                         'Xác nhận đơn hàng #' . $maDonHang . ' từ FPT Shop',
                         $emailContent
                     );
-                    
+
                     if ($mailSent) {
                         error_log("COD Email - Email sent successfully to: $emailNguoiNhan");
                     } else {
@@ -626,7 +699,7 @@ class ThanhToanController
     ): string {
         $tenSafe = htmlspecialchars($tenKhachHang);
         $maDonSafe = htmlspecialchars($maDonHang);
-        
+
         $tongTienHangFormat = number_format($tongTienHang, 0, ',', '.') . 'đ';
         $phiVanChuyenFormat = number_format($phiVanChuyen, 0, ',', '.') . 'đ';
         $tienGiamGiaFormat = number_format($tienGiamGia, 0, ',', '.') . 'đ';
@@ -640,16 +713,16 @@ class ThanhToanController
                 $tenPhienBan = htmlspecialchars($item['ten_phien_ban'] ?? '');
                 $sl = (int)($item['so_luong'] ?? 0);
                 $gia = number_format(($item['gia_ban'] ?? 0) * $sl, 0, ',', '.') . 'đ';
-                
+
                 $productListHtml .= "
                 <tr>
                     <td style=\"padding: 10px; border-bottom: 1px solid #eeeeee;\">
                         <strong>{$tenSp}</strong>";
-                
+
                 if (!empty($tenPhienBan)) {
                     $productListHtml .= "<br><small style=\"color: #777;\">{$tenPhienBan}</small>";
                 }
-                
+
                 $productListHtml .= "<br><small style=\"color: #777;\">Số lượng: {$sl}</small>
                     </td>
                     <td align=\"right\" style=\"padding: 10px; border-bottom: 1px solid #eeeeee; font-weight: bold;\">{$gia}</td>
@@ -695,7 +768,7 @@ class ThanhToanController
                                         <td style=\"padding: 10px; color: #555;\">Phí vận chuyển:</td>
                                         <td align=\"right\" style=\"padding: 10px;\">{$phiVanChuyenFormat}</td>
                                     </tr>";
-        
+
         if ($tienGiamGia > 0) {
             $html = "
                                     <tr>
@@ -705,7 +778,7 @@ class ThanhToanController
         } else {
             $html = "";
         }
-        
+
         return $html . "
                                     <tr>
                                         <td style=\"padding: 15px 10px; font-weight: bold; font-size: 16px; border-top: 1px solid #ddd;\">Tổng thanh toán:</td>
