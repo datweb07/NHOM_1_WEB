@@ -121,6 +121,12 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
         font-weight: 500;
     }
 
+    .left-brand-item:hover,
+    .left-brand-item.active {
+        color: #cb1c22;
+        font-weight: 600;
+    }
+
     .left-brand-item img {
         width: 20px;
         height: 20px;
@@ -409,58 +415,61 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
     }
 
     /* Băng rôn chạy */
-.top-banner {
-    background-color: #f5a623;
-    color: #fff;
-    overflow: hidden;
-    white-space: nowrap;
-    padding: 8px 0;
-    font-size: 14px;
-    font-weight: 500;
-    position: relative;
-    z-index: 1031; /* cao hơn header một chút nếu cần */
-}
-
-.marquee {
-    display: inline-block;
-    animation: marquee 20s linear infinite;
-}
-
-.marquee span {
-    display: inline-block;
-    padding-right: 50px;
-}
-
-@keyframes marquee {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-50%);
-    }
-}
-
-/* Responsive trên mobile */
-@media (max-width: 768px) {
     .top-banner {
-        font-size: 12px;
-        padding: 6px 0;
+        background-color: #f5a623;
+        color: #fff;
+        overflow: hidden;
+        white-space: nowrap;
+        padding: 8px 0;
+        font-size: 14px;
+        font-weight: 500;
+        position: relative;
+        z-index: 1031;
+        /* cao hơn header một chút nếu cần */
     }
+
     .marquee {
-        animation-duration: 15s;
+        display: inline-block;
+        animation: marquee 20s linear infinite;
     }
-}
+
+    .marquee span {
+        display: inline-block;
+        padding-right: 50px;
+    }
+
+    @keyframes marquee {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    /* Responsive trên mobile */
+    @media (max-width: 768px) {
+        .top-banner {
+            font-size: 12px;
+            padding: 6px 0;
+        }
+
+        .marquee {
+            animation-duration: 15s;
+        }
+    }
 </style>
 
 <header class="sticky-header">
 
-<!-- Băng rôn chạy phía trên header -->
-<div class="top-banner">
-    <div class="marquee">
-        <span>🔥 ƯU ĐÃI LỚN – GIẢM ĐẾN 50% CHO ĐIỆN THOẠI, LAPTOP – MIỄN PHÍ VẬN CHUYỂN 🔥</span>
-        <span>🔥 ƯU ĐÃI LỚN – GIẢM ĐẾN 50% CHO ĐIỆN THOẠI, LAPTOP – MIỄN PHÍ VẬN CHUYỂN 🔥</span>
+    <!-- Băng rôn chạy phía trên header -->
+    <div class="top-banner">
+        <div class="marquee">
+            <span>🔥 ƯU ĐÃI LỚN – GIẢM ĐẾN 50% CHO ĐIỆN THOẠI, LAPTOP – MIỄN PHÍ VẬN CHUYỂN 🔥</span>
+            <span>🔥 ƯU ĐÃI LỚN – GIẢM ĐẾN 50% CHO ĐIỆN THOẠI, LAPTOP – MIỄN PHÍ VẬN CHUYỂN 🔥</span>
+        </div>
     </div>
-</div>
 
     <div class="d-lg-none d-block">
         <div class="container-xl">
@@ -518,27 +527,32 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
 
                     <div class="mega-col-left">
                         <div class="left-brand-grid px-3 pt-2">
-                            <a href="#" class="left-brand-item">
+                            <a href="/tim-kiem?q=Apple" class="left-brand-item p-1"
+                                onmouseenter="fetchBrandMenu('Apple', this)">
                                 <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/apple_icon_menu_b4ebd564eb.png"
                                     alt="Apple"> Apple
                             </a>
 
-                            <a href="#" class="left-brand-item">
+                            <a href="/tim-kiem?q=Samsung" class="left-brand-item p-1"
+                                onmouseenter="fetchBrandMenu('Samsung', this)">
                                 <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/samsung_icon_menu_80d224e1c9.png"
                                     alt="Samsung"> Samsung
                             </a>
 
-                            <a href="#" class="left-brand-item">
+                            <a href="/tim-kiem?q=LG" class="left-brand-item p-1"
+                                onmouseenter="fetchBrandMenu('LG', this)">
                                 <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/LG_con_menu_8607e6758e.png"
                                     alt="LG"> LG
                             </a>
 
-                            <a href="#" class="left-brand-item">
+                            <a href="/tim-kiem?q=Xiaomi" class="left-brand-item p-1"
+                                onmouseenter="fetchBrandMenu('Xiaomi', this)">
                                 <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/xiaomi_icon_menu_c3719b2a43.png"
                                     alt="Xiaomi"> Xiaomi
                             </a>
 
-                            <a href="#" class="left-brand-item">
+                            <a href="/tim-kiem?q=Garmin" class="left-brand-item p-1"
+                                onmouseenter="fetchBrandMenu('Garmin', this)">
                                 <img src="https://cdn2.fptshop.com.vn/unsafe/48x0/filters:format(webp):quality(75)/small/garmin_menu_d9a8802e3b.png"
                                     alt="Garmin"> Garmin
                             </a>
@@ -568,32 +582,38 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
 
                     <div class="mega-col-right">
                         <a href="/danh-muc/may-doi-tra" class="right-btn">
-                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/may_cu_ca2257f72f.png" alt="" style="width:28px; height:28px;">
+                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/may_cu_ca2257f72f.png"
+                                alt="" style="width:28px; height:28px;">
                             Máy cũ
                         </a>
 
                         <a href="#" class="right-btn">
-                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/thong_tin_hay_cd1d403f02.png" alt="" style="width:28px; height:28px;">
+                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/thong_tin_hay_cd1d403f02.png"
+                                alt="" style="width:28px; height:28px;">
                             Thông tin hay
                         </a>
 
                         <a href="#" class="right-btn">
-                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/Sim_the_15b97bc4ee.png" alt="" style="width:28px; height:28px;">
+                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/Sim_the_15b97bc4ee.png"
+                                alt="" style="width:28px; height:28px;">
                             Sim thẻ Thanh toán
                         </a>
 
                         <a href="#" class="right-btn">
-                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/icon_apple_ccd2f88c95.png" alt="" style="width:28px; height:28px;">
+                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/icon_apple_ccd2f88c95.png"
+                                alt="" style="width:28px; height:28px;">
                             Đặc quyền đối tác
                         </a>
 
                         <a href="#" class="right-btn">
-                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/icon_new_e246d3d0c9.png" alt="" style="width:28px; height:28px;">
+                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/icon_new_e246d3d0c9.png"
+                                alt="" style="width:28px; height:28px;">
                             Chiết khấu DN
                         </a>
 
                         <a href="#" class="right-btn">
-                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/HTKT_9c344ffa37.png" alt="" style="width:28px; height:28px;">
+                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/HTKT_9c344ffa37.png"
+                                alt="" style="width:28px; height:28px;">
                             KTV hỗ trợ
                         </a>
                     </div>
@@ -682,9 +702,11 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
 
 <script>
     const megaMenuCache = {};
+    const brandMenuCache = {}; // Cache mới dành riêng cho thương hiệu
     let currentHoverId = null;
+    let currentHoverBrand = null; // Theo dõi hãng đang hover
 
-    // Load dữ liệu cho danh mục đầu tiên ngay khi vào trang
+    // Load dữ liệu cho danh mục đầu tiên ngay khi vào trang (giữ nguyên)
     document.addEventListener('DOMContentLoaded', () => {
         const firstNavItem = document.querySelector('.left-nav-item');
         if (firstNavItem) {
@@ -698,21 +720,21 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
         }
     });
 
+    // --- HÀM 1: LẤY DỮ LIỆU THEO DANH MỤC (Đã chỉnh sửa để xóa active của Brand) ---
     async function fetchMegaMenu(id, element) {
-        // Đổi màu menu đang hover
-        document.querySelectorAll('.left-nav-item').forEach(el => el.classList.remove('active'));
+        // Tắt active của TẤT CẢ danh mục và thương hiệu
+        document.querySelectorAll('.left-nav-item, .left-brand-item').forEach(el => el.classList.remove('active'));
         element.classList.add('active');
 
+        currentHoverBrand = null; // Reset trạng thái brand
         currentHoverId = id;
         const container = document.getElementById('mega-center-content');
 
-        // Nếu đã cache rồi thì render luôn
         if (megaMenuCache[id]) {
             renderMegaMenu(megaMenuCache[id], container);
             return;
         }
 
-        // Hiện loading
         container.innerHTML = '<div class="text-center py-5 mt-5"><div class="spinner-border text-danger"></div></div>';
 
         try {
@@ -721,13 +743,61 @@ $danhMucTree = HeaderHelper::layDanhMucNavigation();
 
             if (result.success) {
                 megaMenuCache[id] = result.data;
-                // Chống nháy (trường hợp di chuột quá nhanh)
-                if (currentHoverId === id) {
+                if (currentHoverId === id) { // Chống nháy
                     renderMegaMenu(result.data, container);
                 }
             }
         } catch (error) {
             container.innerHTML = '<div class="text-danger p-3 text-center mt-5">Lỗi tải dữ liệu. Vui lòng thử lại.</div>';
+        }
+    }
+
+    // --- HÀM 2: HÀM MỚI LẤY DỮ LIỆU THEO THƯƠNG HIỆU ---
+    async function fetchBrandMenu(brandName, element) {
+        // Tắt active của TẤT CẢ danh mục và thương hiệu
+        document.querySelectorAll('.left-nav-item, .left-brand-item').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+
+        currentHoverId = null; // Reset trạng thái danh mục
+        currentHoverBrand = brandName;
+        const container = document.getElementById('mega-center-content');
+
+        if (brandMenuCache[brandName]) {
+            renderMegaMenu(brandMenuCache[brandName], container);
+            return;
+        }
+
+        container.innerHTML = '<div class="text-center py-5 mt-5"><div class="spinner-border text-danger"></div></div>';
+
+        try {
+
+            const response = await fetch(`/app/api/MegaMenuBrandApi.php?name=${encodeURIComponent(brandName)}`);
+
+            const rawText = await response.text();
+
+            try {
+
+                const result = JSON.parse(rawText);
+
+                if (result.success) {
+                    brandMenuCache[brandName] = result.data;
+                    if (currentHoverBrand === brandName) {
+                        renderMegaMenu(result.data, container);
+                    }
+                } else {
+                    container.innerHTML = `<div class="text-muted p-3 text-center mt-5">${result.message || 'Chưa có dữ liệu cho thương hiệu này.'}</div>`;
+                }
+            } catch (parseError) {
+
+                console.error("Raw response:", rawText);
+                container.innerHTML = `
+                    <div class="text-danger p-3 text-start mt-4" style="max-height: 400px; overflow-y: auto; background: #fff3f3; border-radius: 8px;">
+                        <b>Phát hiện lỗi từ Server (Không phải chuẩn JSON):</b><br/>
+                        <code style="color: #d63384;">${rawText}</code>
+                    </div>`;
+            }
+        } catch (error) {
+            container.innerHTML = '<div class="text-danger p-3 text-center mt-5">Lỗi tải dữ liệu thương hiệu.</div>';
         }
     }
 
