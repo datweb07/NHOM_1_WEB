@@ -650,7 +650,7 @@
     <script src="<?= ASSET_URL ?>/assets/client/js/main.js"></script>
 
     <script>
-        // Cập nhật số lượng giỏ hàng
+
         function updateCartCount() {
             fetch('/gio-hang/dem-san-pham')
                 .then(response => response.json())
@@ -665,7 +665,7 @@
                 .catch(error => console.error('Error:', error));
         }
 
-        // Gọi khi trang load
+
         document.addEventListener('DOMContentLoaded', updateCartCount);
     </script>
 
@@ -674,6 +674,335 @@
             <script src="<?php echo $js; ?>"></script>
         <?php endforeach; ?>
     <?php endif; ?>
+
+
+    <?php
+
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+    
+    require_once dirname(__DIR__, 3) . '/controllers/client/BannerController.php';
+    $bannerController = new \App\Controllers\Client\BannerController();
+    $popupBanners = $bannerController->layBannerPopup();
+    
+    if (!empty($popupBanners)):
+        $popup = $popupBanners[0]; 
+        $popupId = 'popup-banner-' . $popup['id'];
+        $miniPopupId = 'mini-popup-' . $popup['id'];
+        
+
+        if (!isset($_SESSION['popup_shown_' . $popup['id']])):
+    ?>
+    
+
+    <div id="<?= $miniPopupId ?>" class="mini-popup-teaser" style="display: none;">
+        <button class="mini-popup-close" onclick="closeMiniPopup('<?= $miniPopupId ?>', <?= $popup['id'] ?>)">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="mini-popup-image-wrapper" onclick="openFullPopup('<?= $popupId ?>', '<?= $miniPopupId ?>')">
+            <picture>
+                <source media="(max-width: 768px)" srcset="<?= htmlspecialchars($popup['hinh_anh_mobile'] ?? $popup['hinh_anh_desktop']) ?>">
+                <img src="<?= htmlspecialchars($popup['hinh_anh_desktop']) ?>" alt="<?= htmlspecialchars($popup['tieu_de'] ?? 'Popup Banner') ?>" class="mini-popup-image">
+            </picture>
+            <div class="mini-popup-pulse"></div>
+        </div>
+    </div>
+
+    <div id="<?= $popupId ?>" class="banner-popup-overlay" style="display: none;">
+        <div class="banner-popup-content">
+            <button class="banner-popup-close" onclick="closeFullPopup('<?= $popupId ?>', <?= $popup['id'] ?>)">
+                <i class="fas fa-times"></i>
+            </button>
+            <?php if (!empty($popup['link_dich'])): ?>
+                <a href="<?= htmlspecialchars($popup['link_dich']) ?>" target="_blank">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="<?= htmlspecialchars($popup['hinh_anh_mobile'] ?? $popup['hinh_anh_desktop']) ?>">
+                        <img src="<?= htmlspecialchars($popup['hinh_anh_desktop']) ?>" alt="<?= htmlspecialchars($popup['tieu_de'] ?? 'Popup Banner') ?>" class="banner-popup-image">
+                    </picture>
+                </a>
+            <?php else: ?>
+                <picture>
+                    <source media="(max-width: 768px)" srcset="<?= htmlspecialchars($popup['hinh_anh_mobile'] ?? $popup['hinh_anh_desktop']) ?>">
+                    <img src="<?= htmlspecialchars($popup['hinh_anh_desktop']) ?>" alt="<?= htmlspecialchars($popup['tieu_de'] ?? 'Popup Banner') ?>" class="banner-popup-image">
+                </picture>
+            <?php endif; ?>
+            <div class="banner-popup-checkbox">
+                <label>
+                    <input type="checkbox" id="dont-show-again-<?= $popup['id'] ?>">
+                    Không hiển thị lại trong hôm nay
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .mini-popup-teaser {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 9998;
+            cursor: pointer;
+        }
+
+        .mini-popup-image-wrapper {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .mini-popup-image {
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+            display: block;
+        }
+
+        .mini-popup-pulse {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            pointer-events: none;
+        }
+
+        .mini-popup-close {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #000;
+            color: #fff;
+            border: 2px solid #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s;
+        }
+
+        .mini-popup-close:hover {
+            background: #d70018;
+            transform: rotate(90deg);
+        }
+
+        /* Full Popup Overlay Styles */
+        .banner-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .banner-popup-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .banner-popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s;
+        }
+
+        .banner-popup-close:hover {
+            background: rgba(215, 0, 24, 0.9);
+            transform: rotate(90deg);
+        }
+
+        .banner-popup-image {
+            display: block;
+            max-width: 100%;
+            max-height: 50vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .banner-popup-checkbox {
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .banner-popup-checkbox label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .banner-popup-checkbox input[type="checkbox"] {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .mini-popup-teaser {
+                bottom: 15px;
+                left: 15px;
+            }
+
+            .mini-popup-image-wrapper {
+                width: 80px;
+                height: 80px;
+            }
+
+            .banner-popup-content {
+                max-width: 95%;
+            }
+
+            .banner-popup-image {
+                max-height: 70vh;
+            }
+
+            .banner-popup-close {
+                width: 32px;
+                height: 32px;
+                font-size: 16px;
+            }
+        }
+    </style>
+
+    <script>
+        //hiển thị mini popup sau 2 giây
+        setTimeout(function() {
+            const miniPopup = document.getElementById('<?= $miniPopupId ?>');
+            if (miniPopup) {
+                miniPopup.style.display = 'block';
+            }
+        }, 2000);
+
+        //mở full popup khi click vào mini popup
+        function openFullPopup(fullPopupId, miniPopupId) {
+            const fullPopup = document.getElementById(fullPopupId);
+            const miniPopup = document.getElementById(miniPopupId);
+            
+            if (fullPopup) {
+                fullPopup.style.display = 'flex';
+            }
+            
+            if (miniPopup) {
+                miniPopup.style.display = 'none';
+            }
+        }
+
+        //đóng mini popup
+        function closeMiniPopup(miniPopupId, bannerId) {
+            event.stopPropagation(); 
+            
+            const miniPopup = document.getElementById(miniPopupId);
+            if (miniPopup) {
+                miniPopup.style.display = 'none';
+            }
+
+            //lưu vào localStorage
+            const today = new Date().toDateString();
+            localStorage.setItem('popup_hidden_' + bannerId, today);
+            
+            // Gọi API để lưu vào session
+            fetch('/banner/hide-popup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ banner_id: bannerId })
+            });
+        }
+
+        // Đóng full popup
+        function closeFullPopup(fullPopupId, bannerId) {
+            const fullPopup = document.getElementById(fullPopupId);
+            const dontShowAgain = document.getElementById('dont-show-again-' + bannerId);
+            
+            if (fullPopup) {
+                fullPopup.style.display = 'none';
+            }
+
+            // Nếu checkbox được chọn, lưu vào localStorage
+            if (dontShowAgain && dontShowAgain.checked) {
+                const today = new Date().toDateString();
+                localStorage.setItem('popup_hidden_' + bannerId, today);
+                
+                // Gọi API để lưu vào session
+                fetch('/banner/hide-popup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ banner_id: bannerId })
+                });
+            } else {
+                // Nếu không check, hiển thị lại mini popup
+                const miniPopup = document.getElementById('<?= $miniPopupId ?>');
+                if (miniPopup) {
+                    miniPopup.style.display = 'block';
+                }
+            }
+        }
+
+        // Đóng full popup khi click vào overlay
+        document.getElementById('<?= $popupId ?>')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeFullPopup('<?= $popupId ?>', <?= $popup['id'] ?>);
+            }
+        });
+
+        // Kiểm tra localStorage xem popup đã bị ẩn hôm nay chưa
+        (function() {
+            const bannerId = <?= $popup['id'] ?>;
+            const today = new Date().toDateString();
+            const hiddenDate = localStorage.getItem('popup_hidden_' + bannerId);
+            
+            if (hiddenDate === today) {
+                const miniPopup = document.getElementById('<?= $miniPopupId ?>');
+                const fullPopup = document.getElementById('<?= $popupId ?>');
+                
+                if (miniPopup) miniPopup.remove();
+                if (fullPopup) fullPopup.remove();
+            }
+        })();
+    </script>
+    <?php
+        endif; // Kết thúc kiểm tra session
+    endif; // Kết thúc kiểm tra popup banners
+    ?>
 
 </body>
 

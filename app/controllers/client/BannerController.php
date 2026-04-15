@@ -34,4 +34,42 @@ class BannerController
             'bannerMid'  => $this->bannerModel->layBannerTheoViTri('HOME_MID'),
         ];
     }
+
+    /**
+     * Lấy banner popup
+     */
+    public function layBannerPopup(): array
+    {
+        return $this->bannerModel->layBannerTheoViTri('POPUP');
+    }
+
+    /**
+     * Ẩn popup banner trong session
+     */
+    public function hidePopup(): void
+    {
+        header('Content-Type: application/json');
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+            exit;
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        $bannerId = $data['banner_id'] ?? null;
+
+        if (!$bannerId) {
+            echo json_encode(['success' => false, 'message' => 'Banner ID is required']);
+            exit;
+        }
+
+        // Lưu vào session
+        if (!isset($_SESSION)) {
+            session_start();
+        }
+        $_SESSION['popup_shown_' . $bannerId] = true;
+
+        echo json_encode(['success' => true, 'message' => 'Popup hidden successfully']);
+        exit;
+    }
 }
