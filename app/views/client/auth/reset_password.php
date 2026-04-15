@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đặt lại mật khẩu - FPT Shop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="icon" href="<?= ASSET_URL ?>/assets/client/images/header/1.png">
     <style>
         :root {
@@ -30,7 +32,8 @@
             padding: 10px 20px;
         }
 
-        .btn-primary-brand:hover, .btn-primary-brand:focus {
+        .btn-primary-brand:hover,
+        .btn-primary-brand:focus {
             background-color: var(--fpt-red-hover);
             border-color: var(--fpt-red-hover);
             color: white;
@@ -49,19 +52,21 @@
         .text-brand {
             color: var(--fpt-red);
         }
-        
+
         a.text-brand:hover {
             color: var(--fpt-red-hover);
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="row justify-content-center align-items-center min-vh-100 py-5">
             <div class="col-md-6 col-lg-5 col-xl-4">
-                
+
                 <div class="text-center mb-4">
-                    <img src="<?= ASSET_URL ?>/assets/client/images/others/fpt-shop-banner.png" alt="FPT Shop" style="height: 100px;">
+                    <img src="<?= ASSET_URL ?>/assets/client/images/others/fpt-shop-banner.png" alt="FPT Shop"
+                        style="height: 100px;">
                 </div>
 
                 <div class="card reset-card">
@@ -87,36 +92,36 @@
                         <?php endif; ?>
 
                         <form method="POST" action="/client/auth/reset-password">
-                            <input type="hidden" name="token" value="<?php echo htmlspecialchars($token ?? $_GET['token'] ?? ''); ?>">
-                            
+                            <input type="hidden" name="token"
+                                value="<?php echo htmlspecialchars($token ?? $_GET['token'] ?? ''); ?>">
+
                             <div class="mb-3">
-                                <label for="new_password" class="form-label fw-medium" style="font-size: 0.9rem;">Mật khẩu mới</label>
-                                <input 
-                                    type="password" 
-                                    class="form-control" 
-                                    id="new_password" 
-                                    name="new_password" 
-                                    placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)"
-                                    required
-                                    minlength="6"
-                                >
+                                <label for="new_password" class="form-label fw-medium" style="font-size: 0.9rem;">Mật
+                                    khẩu mới</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control pe-5" id="new_password"
+                                        name="new_password" placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)" required
+                                        minlength="6">
+                                    <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-3 toggle-password"
+                                        style="cursor: pointer; color: #6c757d;"></i>
+                                </div>
                             </div>
 
                             <div class="mb-4">
-                                <label for="confirm_password" class="form-label fw-medium" style="font-size: 0.9rem;">Xác nhận mật khẩu mới</label>
-                                <input 
-                                    type="password" 
-                                    class="form-control" 
-                                    id="confirm_password" 
-                                    name="confirm_password" 
-                                    placeholder="Nhập lại mật khẩu mới"
-                                    required
-                                    minlength="6"
-                                >
+                                <label for="confirm_password" class="form-label fw-medium"
+                                    style="font-size: 0.9rem;">Xác nhận mật khẩu mới</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control pe-5" id="confirm_password"
+                                        name="confirm_password" placeholder="Nhập lại mật khẩu mới" required
+                                        minlength="6">
+                                    <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-3 toggle-password"
+                                        style="cursor: pointer; color: #6c757d;"></i>
+                                </div>
                             </div>
 
                             <div class="d-grid mb-3">
-                                <button type="submit" class="btn btn-primary-brand btn-lg" style="font-size: 1rem;">Đặt lại mật khẩu</button>
+                                <button type="submit" class="btn btn-primary-brand btn-lg" style="font-size: 1rem;">Đặt
+                                    lại mật khẩu</button>
                             </div>
                         </form>
                     </div>
@@ -127,11 +132,33 @@
                         &larr; Quay về trang đăng nhập
                     </a>
                 </div>
-                
+
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    document.querySelectorAll('.toggle-password').forEach(function(icon) {
+        icon.addEventListener('click', function() {
+
+            let input = this.previousElementSibling; 
+            
+            if (input.type === "password") {
+                input.type = "text";
+                this.classList.remove('bi-eye-slash');
+                this.classList.add('bi-eye');
+                this.style.color = '#cb1c22';
+            } else {
+                input.type = "password";
+                this.classList.remove('bi-eye');
+                this.classList.add('bi-eye-slash');
+                this.style.color = '#6c757d'; 
+            }
+        });
+    });
+</script>
 </body>
+
 </html>
