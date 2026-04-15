@@ -115,9 +115,15 @@ function isMenuOpen($paths) {
                 </a>
                 <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="/admin/thanh-toan" class="nav-link <?= isActive('/admin/thanh-toan') ?>">
+                    <a href="/admin/thanh-toan" class="nav-link <?= isActive('/admin/thanh-toan') && !strpos($currentPath, '/health') ? 'active' : '' ?>">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Duyệt Thanh Toán</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/admin/thanh-toan/health" class="nav-link <?= isActive('/admin/thanh-toan/health') ?>">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tình Trạng Gateway</p>
                     </a>
                   </li>
                 </ul>
