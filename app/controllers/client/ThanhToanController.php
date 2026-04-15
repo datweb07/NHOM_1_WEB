@@ -11,6 +11,7 @@ require_once dirname(__DIR__, 2) . '/models/entities/DiaChi.php';
 require_once dirname(__DIR__, 2) . '/models/entities/MaGiamGia.php';
 require_once dirname(__DIR__, 2) . '/models/entities/PhienBanSanPham.php';
 require_once dirname(__DIR__, 2) . '/core/Session.php';
+require_once dirname(__DIR__, 2) . '/core/Functions.php';
 require_once dirname(__DIR__, 2) . '/services/payment/PaymentService.php';
 require_once dirname(__DIR__, 2) . '/services/payment/CallbackHandler.php';
 require_once dirname(__DIR__, 2) . '/services/payment/VNPayGateway.php';
@@ -241,6 +242,76 @@ class ThanhToanController
 
 
         if ($phuongThucThanhToan === 'COD') {
+            // Gửi email xác nhận đơn hàng COD
+            $emailNguoiNhan = '';
+            $tenNguoiNhan = '';
+            
+            if (Session::has('user_id')) {
+                // Trường hợp 1: Người dùng đã đăng nhập
+                // Lấy email trực tiếp từ DB
+                $userId = (int)Session::get('user_id');
+                $sql = "SELECT email, ho_ten FROM nguoi_dung WHERE id = $userId LIMIT 1";
+                $userInfo = $this->diaChiModel->query($sql);
+                
+                if (!empty($userInfo)) {
+                    $emailNguoiNhan = $userInfo[0]['email'] ?? '';
+                    
+                    // Lấy tên người nhận từ địa chỉ mà khách đã chọn
+                    if ($diaChiId) {
+                        $diaChiChon = $this->diaChiModel->getById($diaChiId);
+                        if ($diaChiChon) {
+                            $tenNguoiNhan = $diaChiChon['ten_nguoi_nhan'] ?? $userInfo[0]['ho_ten'] ?? 'Quý khách';
+                        } else {
+                            $tenNguoiNhan = $userInfo[0]['ho_ten'] ?? 'Quý khách';
+                        }
+                    } else {
+                        $tenNguoiNhan = $userInfo[0]['ho_ten'] ?? 'Quý khách';
+                    }
+                }
+                
+                error_log("COD Email - Logged in user. Email: $emailNguoiNhan, Name: $tenNguoiNhan");
+            } else {
+                // Trường hợp 2: Khách vãng lai
+                $emailNguoiNhan = trim($_POST['email_nhan'] ?? '');
+                $tenNguoiNhan = trim($_POST['ten_nguoi_nhan'] ?? 'Quý khách');
+                
+                error_log("COD Email - Guest user. Email: $emailNguoiNhan, Name: $tenNguoiNhan");
+            }
+            
+            // Gửi email nếu có địa chỉ email hợp lệ
+            if (!empty($emailNguoiNhan) && filter_var($emailNguoiNhan, FILTER_VALIDATE_EMAIL)) {
+                try {
+                    error_log("COD Email - Preparing to send email to: $emailNguoiNhan for order: $maDonHang");
+                    
+                    // Tạo nội dung email
+                    $emailContent = $this->generateOrderConfirmationEmail(
+                        $maDonHang,
+                        $tenNguoiNhan,
+                        $chiTietGioList,
+                        $tongTien,
+                        $phiVanChuyen,
+                        $tienGiamGia,
+                        $tongThanhToan
+                    );
+                    
+                    // Gửi email
+                    $mailSent = sendMail(
+                        $emailNguoiNhan,
+                        'Xác nhận đơn hàng #' . $maDonHang . ' từ FPT Shop',
+                        $emailContent
+                    );
+                    
+                    if ($mailSent) {
+                        error_log("COD Email - Email sent successfully to: $emailNguoiNhan");
+                    } else {
+                        error_log("COD Email - Failed to send email to: $emailNguoiNhan");
+                    }
+                } catch (\Exception $e) {
+                    error_log("COD Email - Exception occurred: " . $e->getMessage());
+                }
+            } else {
+                error_log("COD Email - Email validation failed or empty. Email: '$emailNguoiNhan'. POST data: " . print_r($_POST, true));
+            }
 
             Session::flash('success', 'Đặt hàng thành công! Mã đơn hàng: ' . $maDonHang);
             header('Location: /don-hang/' . $donHangId);
@@ -527,5 +598,127 @@ class ThanhToanController
         }
         
         return $warnings;
+    }
+
+    /**
+     * Tạo nội dung HTML cho email xác nhận đơn hàng
+     */
+    private function generateOrderConfirmationEmail(
+        string $maDonHang,
+        string $tenKhachHang,
+        array $chiTietDon,
+        float $tongTienHang,
+        float $phiVanChuyen,
+        float $tienGiamGia,
+        float $tongThanhToan
+    ): string {
+        $tenSafe = htmlspecialchars($tenKhachHang);
+        $maDonSafe = htmlspecialchars($maDonHang);
+        
+        $tongTienHangFormat = number_format($tongTienHang, 0, ',', '.') . 'đ';
+        $phiVanChuyenFormat = number_format($phiVanChuyen, 0, ',', '.') . 'đ';
+        $tienGiamGiaFormat = number_format($tienGiamGia, 0, ',', '.') . 'đ';
+        $tongThanhToanFormat = number_format($tongThanhToan, 0, ',', '.') . 'đ';
+
+        // Tạo chuỗi HTML cho danh sách sản phẩm
+        $productListHtml = '';
+        if (!empty($chiTietDon)) {
+            foreach ($chiTietDon as $item) {
+                $tenSp = htmlspecialchars($item['ten_san_pham'] ?? '');
+                $tenPhienBan = htmlspecialchars($item['ten_phien_ban'] ?? '');
+                $sl = (int)($item['so_luong'] ?? 0);
+                $gia = number_format(($item['gia_ban'] ?? 0) * $sl, 0, ',', '.') . 'đ';
+                
+                $productListHtml .= "
+                <tr>
+                    <td style=\"padding: 10px; border-bottom: 1px solid #eeeeee;\">
+                        <strong>{$tenSp}</strong>";
+                
+                if (!empty($tenPhienBan)) {
+                    $productListHtml .= "<br><small style=\"color: #777;\">{$tenPhienBan}</small>";
+                }
+                
+                $productListHtml .= "<br><small style=\"color: #777;\">Số lượng: {$sl}</small>
+                    </td>
+                    <td align=\"right\" style=\"padding: 10px; border-bottom: 1px solid #eeeeee; font-weight: bold;\">{$gia}</td>
+                </tr>";
+            }
+        }
+
+        // Trả về chuỗi HTML template
+        return "<!doctype html>
+<html lang=\"vi\">
+<head>
+    <meta charset=\"UTF-8\" />
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />
+    <title>Xác nhận đơn hàng - FPT Shop</title>
+</head>
+<body style=\"margin: 0; padding: 0; background-color: #f4f4f4; font-family: 'Roboto', Arial, sans-serif;\">
+    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color: #f4f4f4; padding: 40px 0\">
+        <tr>
+            <td align=\"center\">
+                <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width: 600px; width: 100%; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;\">
+                    <tr>
+                        <td bgcolor=\"#cb1c22\" style=\"padding: 20px 40px; text-align: center;\">
+                            <h1 style=\"margin: 0; color: #ffffff; font-size: 24px;\">FPT Shop</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style=\"padding: 40px 40px 30px\">
+                            <h2 style=\"margin: 0 0 20px; font-size: 20px; color: #333333; font-weight: 600;\">Đặt hàng thành công!</h2>
+                            <p style=\"margin: 0 0 16px; font-size: 15px; color: #333333\">Xin chào <strong>{$tenSafe}</strong>,</p>
+                            <p style=\"margin: 0 0 24px; font-size: 15px; color: #555555; line-height: 1.6;\">
+                                Cảm ơn bạn đã mua sắm tại FPT Shop. Đơn hàng <strong>#{$maDonSafe}</strong> của bạn đã được ghi nhận và đang trong quá trình xử lý.
+                                Bạn đã chọn phương thức <strong>Thanh toán khi nhận hàng (COD)</strong>. Vui lòng chuẩn bị tiền mặt khi nhân viên giao hàng liên hệ.
+                            </p>
+                            <div style=\"background-color: #f9f9f9; padding: 20px; border-radius: 6px; margin-bottom: 24px;\">
+                                <h3 style=\"margin: 0 0 15px; font-size: 16px; border-bottom: 2px solid #cb1c22; padding-bottom: 5px; display: inline-block;\">Chi tiết đơn hàng</h3>
+                                <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"font-size: 14px;\">
+                                    {$productListHtml}
+                                    <tr>
+                                        <td style=\"padding: 10px; padding-top: 20px; color: #555;\">Tổng tiền hàng:</td>
+                                        <td align=\"right\" style=\"padding: 10px; padding-top: 20px;\">{$tongTienHangFormat}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style=\"padding: 10px; color: #555;\">Phí vận chuyển:</td>
+                                        <td align=\"right\" style=\"padding: 10px;\">{$phiVanChuyenFormat}</td>
+                                    </tr>";
+        
+        if ($tienGiamGia > 0) {
+            $html = "
+                                    <tr>
+                                        <td style=\"padding: 10px; color: #555;\">Giảm giá:</td>
+                                        <td align=\"right\" style=\"padding: 10px; color: #28a745;\">-{$tienGiamGiaFormat}</td>
+                                    </tr>";
+        } else {
+            $html = "";
+        }
+        
+        return $html . "
+                                    <tr>
+                                        <td style=\"padding: 15px 10px; font-weight: bold; font-size: 16px; border-top: 1px solid #ddd;\">Tổng thanh toán:</td>
+                                        <td align=\"right\" style=\"padding: 15px 10px; font-weight: bold; font-size: 18px; color: #cb1c22; border-top: 1px solid #ddd;\">{$tongThanhToanFormat}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <p style=\"margin: 0 0 8px; font-size: 14px; color: #666666\">
+                                Nhân viên tổng đài có thể sẽ liên hệ với bạn qua số điện thoại để xác nhận đơn hàng trước khi giao.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style=\"background-color: #f8f9fa; border-top: 1px solid #eeeeee; padding: 20px 40px; text-align: center;\">
+                            <p style=\"margin: 0 0 8px; font-size: 12px; color: #888888\">© 2024 FPT Shop. Tất cả quyền được bảo lưu.</p>
+                            <p style=\"margin: 0; font-size: 12px; color: #aaaaaa\">
+                                Đây là email tự động, vui lòng không trả lời. Nếu cần hỗ trợ, gọi hotline: 1800 6601.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>";
     }
 }
