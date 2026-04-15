@@ -11,8 +11,8 @@ ob_start();
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h6 class="fw-bold mb-3"><i class="fa fa-filter text-danger me-2"></i>Bộ lọc</h6>
-                    <form method="GET" action="/tim-kiem">
-                        <input type="hidden" name="q" value="<?= htmlspecialchars($keyword ?? '') ?>">
+                    <form method="GET" action="/san-pham">
+                        <input type="hidden" name="keyword" value="<?= htmlspecialchars($keyword ?? '') ?>">
 
                         <div class="mb-3">
                             <label class="form-label small fw-medium">Danh mục</label>
@@ -68,11 +68,11 @@ ob_start();
                             <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
                                 <div class="card border-0 shadow-sm h-100">
                                     <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png') ?>"
-                                         class="card-img-top p-2"
-                                         alt="<?= htmlspecialchars($sp['ten_san_pham']) ?>"
-                                         style="height:150px;object-fit:contain;">
+                                        class="card-img-top p-2"
+                                        alt="<?= htmlspecialchars($sp['ten_san_pham']) ?>"
+                                        style="height:150px;object-fit:contain;">
                                     <div class="card-body pt-0 px-3 pb-3">
-                                        <p class="small mb-1 text-dark" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                        <p class="small mb-1 text-dark" style="display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
                                             <?= htmlspecialchars($sp['ten_san_pham']) ?>
                                         </p>
                                         <p class="text-danger fw-bold mb-0 small"><?= number_format($sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>
