@@ -10,79 +10,123 @@ use App\Core\Session;
 
 class AuthController
 {
-    public static function login(string $email, string $password): bool
-    {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            header('Location: /client/auth/login?error=invalid_email');
-            exit;
-        }
+  public static function login(string $email, string $password): bool
+  {
+    // --- 1. XÁC THỰC GOOGLE RECAPTCHA V2 ---
+    $recaptchaSecret = '6LdIFrgsAAAAAFL4dCEmsRjJtH6UoF7eXqZfO2mP'; 
+    $recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
 
-        if (empty(trim($password))) {
-            header('Location: /client/auth/login?error=empty_password');
-            exit;
-        }
+    // Kiểm tra xem người dùng đã tick vào captcha chưa
+    if (empty($recaptchaResponse)) {
+      header('Location: /client/auth/login?error=captcha_missing');
+      exit;
+    }
 
-        //check database
-        $khachHang = new \KhachHang();
-        if ($khachHang->dang_nhap($email, $password)) {
-            Session::start();
+    // Gửi request lên Google để xác minh
+    $verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
+    $data = [
+        'secret' => $recaptchaSecret,
+        'response' => $recaptchaResponse
+    ];
 
-            $userData = [
-                'id' => $khachHang->getId(),
-                'email' => $khachHang->getEmail(),
-                'ho_ten' => $khachHang->getHoTen(),
-                'loai_tai_khoan' => 'MEMBER',
-                'avatar_url' => $khachHang->getAvatarUrl()
-            ];
-
-            Session::login($userData);
-
-            header('Location: /client/profile');
-            exit;
-        }
-
-        //lỗi
-        header('Location: /client/auth/login?error=invalid_credentials');
+    $options = [
+        'http' => [
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => http_build_query($data)
+        ]
+    ];
+    $context  = stream_context_create($options);
+    $verifyResponse = file_get_contents($verifyUrl, false, $context);
+    
+    if ($verifyResponse === false) {
+        // Lỗi kết nối đến Google
+        header('Location: /client/auth/login?error=network_error');
         exit;
     }
 
-    public static function register(string $email, string $password, string $name): bool
-    {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            header('Location: /client/auth/register?error=invalid_email');
-            exit;
-        }
+    $responseData = json_decode($verifyResponse);
 
-        if (empty(trim($password))) {
-            header('Location: /client/auth/register?error=empty_password');
-            exit;
-        }
+    if (!$responseData || !$responseData->success) {
+        // Captcha không hợp lệ (bot, hoặc token hết hạn)
+        header('Location: /client/auth/login?error=captcha_failed');
+        exit;
+    }
+    // --- KẾT THÚC XÁC THỰC CAPTCHA ---
 
-        if (empty(trim($name))) {
-            header('Location: /client/auth/register?error=empty_name');
-            exit;
-        }
 
-        //thực hiện register
-        $khachHang = new \KhachHang();
-        $result = $khachHang->dang_ky($email, $password, $name);
+    // --- 2. XÁC THỰC DỮ LIỆU ĐẦU VÀO ---
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      header('Location: /client/auth/login?error=invalid_email');
+      exit;
+    }
 
-        if ($result === null) {
-            header('Location: /client/auth/register?error=email_exists');
-            exit;
-        }
+    if (empty(trim($password))) {
+      header('Location: /client/auth/login?error=empty_password');
+      exit;
+    }
 
-        if ($result) {
-            $token = $result['token'];
+    // --- 3. KIỂM TRA DATABASE ---
+    $khachHang = new \KhachHang();
+    if ($khachHang->dang_nhap($email, $password)) {
+      Session::start();
 
-            //lấy url
-            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-            $host = $_SERVER['HTTP_HOST'] ?? 'localhost:3000';
-            $verifyUrl = $scheme . '://' . $host . '/client/auth/verify-email?token=' . $token;
+      $userData = [
+        'id' => $khachHang->getId(),
+        'email' => $khachHang->getEmail(),
+        'ho_ten' => $khachHang->getHoTen(),
+        'loai_tai_khoan' => 'MEMBER',
+        'avatar_url' => $khachHang->getAvatarUrl()
+      ];
 
-            //email content
-            $nameSafe = htmlspecialchars($name);
-            $emailContent = "<!doctype html>
+      Session::login($userData);
+
+      header('Location: /client/profile');
+      exit;
+    }
+
+    // Lỗi sai email hoặc mật khẩu
+    header('Location: /client/auth/login?error=invalid_credentials');
+    exit;
+  }
+
+  public static function register(string $email, string $password, string $name): bool
+  {
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      header('Location: /client/auth/register?error=invalid_email');
+      exit;
+    }
+
+    if (empty(trim($password))) {
+      header('Location: /client/auth/register?error=empty_password');
+      exit;
+    }
+
+    if (empty(trim($name))) {
+      header('Location: /client/auth/register?error=empty_name');
+      exit;
+    }
+
+    //thực hiện register
+    $khachHang = new \KhachHang();
+    $result = $khachHang->dang_ky($email, $password, $name);
+
+    if ($result === null) {
+      header('Location: /client/auth/register?error=email_exists');
+      exit;
+    }
+
+    if ($result) {
+      $token = $result['token'];
+
+      //lấy url
+      $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+      $host = $_SERVER['HTTP_HOST'] ?? 'localhost:3000';
+      $verifyUrl = $scheme . '://' . $host . '/client/auth/verify-email?token=' . $token;
+
+      //email content
+      $nameSafe = htmlspecialchars($name);
+      $emailContent = "<!doctype html>
 <html lang=\"vi\">
   <head>
     <meta charset=\"UTF-8\" />
@@ -221,91 +265,91 @@ class AuthController
   </body>
 </html>";
 
-            $mailSent = sendMail($email, 'Xác thực tài khoản FPT Shop của bạn', $emailContent);
+      $mailSent = sendMail($email, 'Xác thực tài khoản FPT Shop của bạn', $emailContent);
 
-            if ($mailSent) {
-                //kiểm tra mail
-                header('Location: /client/auth/check-email?email=' . urlencode($email));
-                exit;
-            } else {
-                //gửi mail thất bại
-                header('Location: /client/auth/register?error=mail_failed');
-                exit;
-            }
-        }
-
-        //lỗi
-        header('Location: /client/auth/register?error=registration_failed');
+      if ($mailSent) {
+        //kiểm tra mail
+        header('Location: /client/auth/check-email?email=' . urlencode($email));
         exit;
+      } else {
+        //gửi mail thất bại
+        header('Location: /client/auth/register?error=mail_failed');
+        exit;
+      }
     }
 
-    public static function verifyEmail(string $token): void
-    {
-        if (empty(trim($token))) {
-            header('Location: /client/auth/register?error=invalid_token');
-            exit;
-        }
+    //lỗi
+    header('Location: /client/auth/register?error=registration_failed');
+    exit;
+  }
 
-        $khachHang = new \KhachHang();
-        $verified = $khachHang->xac_thuc_email($token);
-
-        if (!$verified) {
-            header('Location: /client/auth/verify-failed');
-            exit;
-        }
-
-        //xác thực thành công
-        Session::start();
-        $userData = [
-            'id' => $khachHang->getId(),
-            'email' => $khachHang->getEmail(),
-            'ho_ten' => $khachHang->getHoTen(),
-            'loai_tai_khoan' => 'MEMBER',
-            'avatar_url' => $khachHang->getAvatarUrl()
-        ];
-        Session::login($userData);
-
-        header('Location: /client/auth/verified');
-        exit;
+  public static function verifyEmail(string $token): void
+  {
+    if (empty(trim($token))) {
+      header('Location: /client/auth/register?error=invalid_token');
+      exit;
     }
 
-    public static function logout(): void
-    {
-        Session::start();
-        Session::logout();
+    $khachHang = new \KhachHang();
+    $verified = $khachHang->xac_thuc_email($token);
 
-        header('Location: /client/auth/login');
-        exit;
+    if (!$verified) {
+      header('Location: /client/auth/verify-failed');
+      exit;
     }
 
-    /**
-     * Xử lý yêu cầu đặt lại mật khẩu
-     * 
-     * @param string $email Email người dùng
-     * @return void Redirect to check-email page
-     */
-    public static function requestPasswordReset(string $email): void
-    {
-        // Validate email format
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            header('Location: /client/auth/forgot-password?error=invalid_email');
-            exit;
-        }
+    //xác thực thành công
+    Session::start();
+    $userData = [
+      'id' => $khachHang->getId(),
+      'email' => $khachHang->getEmail(),
+      'ho_ten' => $khachHang->getHoTen(),
+      'loai_tai_khoan' => 'MEMBER',
+      'avatar_url' => $khachHang->getAvatarUrl()
+    ];
+    Session::login($userData);
 
-        // Gọi KhachHang->tao_reset_token()
-        $khachHang = new \KhachHang();
-        $token = $khachHang->tao_reset_token($email);
+    header('Location: /client/auth/verified');
+    exit;
+  }
 
-        // Nếu token được tạo (email tồn tại), gửi email
-        if ($token !== null) {
-            // Tạo reset URL với token
-            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-            $host = $_SERVER['HTTP_HOST'] ?? 'localhost:3000';
-            $resetUrl = $scheme . '://' . $host . '/client/auth/reset-password?token=' . $token;
+  public static function logout(): void
+  {
+    Session::start();
+    Session::logout();
 
-            // Tạo email content
-            $emailSafe = htmlspecialchars($email);
-            $emailContent = "<!doctype html>
+    header('Location: /client/auth/login');
+    exit;
+  }
+
+  /**
+   * Xử lý yêu cầu đặt lại mật khẩu
+   * 
+   * @param string $email Email người dùng
+   * @return void Redirect to check-email page
+   */
+  public static function requestPasswordReset(string $email): void
+  {
+    // Validate email format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      header('Location: /client/auth/forgot-password?error=invalid_email');
+      exit;
+    }
+
+    // Gọi KhachHang->tao_reset_token()
+    $khachHang = new \KhachHang();
+    $token = $khachHang->tao_reset_token($email);
+
+    // Nếu token được tạo (email tồn tại), gửi email
+    if ($token !== null) {
+      // Tạo reset URL với token
+      $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+      $host = $_SERVER['HTTP_HOST'] ?? 'localhost:3000';
+      $resetUrl = $scheme . '://' . $host . '/client/auth/reset-password?token=' . $token;
+
+      // Tạo email content
+      $emailSafe = htmlspecialchars($email);
+      $emailContent = "<!doctype html>
 <html lang=\"vi\">
   <head>
     <meta charset=\"UTF-8\" />
@@ -451,111 +495,111 @@ class AuthController
   </body>
 </html>";
 
-            // Gửi email chứa reset link
-            sendMail($email, 'Đặt lại mật khẩu FPT Shop của bạn', $emailContent);
-        }
-
-        // Redirect đến check-email page với message nhất quán
-        // (không tiết lộ thông tin email có tồn tại hay không)
-        header('Location: /client/auth/check-email?email=' . urlencode($email) . '&type=password_reset');
-        exit;
+      // Gửi email chứa reset link
+      sendMail($email, 'Đặt lại mật khẩu FPT Shop của bạn', $emailContent);
     }
 
-    /**
-     * Xác thực reset token và hiển thị form đặt lại mật khẩu
-     * 
-     * @param string $token Reset token từ URL
-     * @return void Display form or redirect with error
-     */
-    public static function verifyResetToken(string $token): void
-    {
-        // Trích xuất token từ URL query parameter (đã được truyền vào)
-        // Kiểm tra token không rỗng
-        if (empty(trim($token))) {
-            header('Location: /client/auth/forgot-password?error=invalid_token');
-            exit;
-        }
+    // Redirect đến check-email page với message nhất quán
+    // (không tiết lộ thông tin email có tồn tại hay không)
+    header('Location: /client/auth/check-email?email=' . urlencode($email) . '&type=password_reset');
+    exit;
+  }
 
-        // Tạo instance KhachHang để kiểm tra token
-        $khachHang = new \KhachHang();
-        
-        // Gọi xac_thuc_reset_token để kiểm tra token
-        $userData = $khachHang->xac_thuc_reset_token($token);
-        
-        // Nếu token hợp lệ và chưa hết hạn
-        if ($userData !== false) {
-            // Token hợp lệ - hiển thị form reset password
-            require_once __DIR__ . '/../../views/client/auth/reset_password.php';
-            return;
-        }
-        
-        // Token không hợp lệ hoặc đã hết hạn
-        // Cần phân biệt giữa invalid và expired để hiển thị message phù hợp
-        // Tạo một instance mới để query (vì xac_thuc_reset_token đã escape token)
-        $khachHangCheck = new \KhachHang();
-        
-        // Validate token format trước (64 hex chars)
-        if (!preg_match('/^[0-9a-f]{64}$/i', $token)) {
-            header('Location: /client/auth/forgot-password?error=invalid_token');
-            exit;
-        }
-        
-        // Query để kiểm tra token có tồn tại không
-        // Sử dụng prepared statement pattern với query method
-        $escapedToken = addslashes($token);
-        $tokenCheck = $khachHangCheck->query("SELECT forget_token_created_at FROM nguoi_dung WHERE forget_token = '$escapedToken' LIMIT 1");
-        
-        // Nếu token không tồn tại trong database
-        if (empty($tokenCheck)) {
-            header('Location: /client/auth/forgot-password?error=invalid_token');
-            exit;
-        }
-        
-        // Token tồn tại nhưng đã hết hạn
-        header('Location: /client/auth/forgot-password?error=expired_token');
-        exit;
+  /**
+   * Xác thực reset token và hiển thị form đặt lại mật khẩu
+   * 
+   * @param string $token Reset token từ URL
+   * @return void Display form or redirect with error
+   */
+  public static function verifyResetToken(string $token): void
+  {
+    // Trích xuất token từ URL query parameter (đã được truyền vào)
+    // Kiểm tra token không rỗng
+    if (empty(trim($token))) {
+      header('Location: /client/auth/forgot-password?error=invalid_token');
+      exit;
     }
 
-    /**
-     * Xử lý đặt lại mật khẩu
-     * 
-     * @param string $token Reset token
-     * @param string $newPassword Mật khẩu mới
-     * @param string $confirmPassword Xác nhận mật khẩu
-     * @return void Redirect to success or error page
-     */
-    public static function resetPassword(string $token, string $newPassword, string $confirmPassword): void
-    {
-        // Validate password mới không rỗng
-        if (empty(trim($newPassword))) {
-            header('Location: /client/auth/reset-password?token=' . urlencode($token) . '&error=empty_password');
-            exit;
-        }
+    // Tạo instance KhachHang để kiểm tra token
+    $khachHang = new \KhachHang();
 
-        // Validate password >= 6 ký tự
-        if (strlen(trim($newPassword)) < 6) {
-            header('Location: /client/auth/reset-password?token=' . urlencode($token) . '&error=password_too_short');
-            exit;
-        }
+    // Gọi xac_thuc_reset_token để kiểm tra token
+    $userData = $khachHang->xac_thuc_reset_token($token);
 
-        // Validate password và confirm password khớp nhau
-        if ($newPassword !== $confirmPassword) {
-            header('Location: /client/auth/reset-password?token=' . urlencode($token) . '&error=password_mismatch');
-            exit;
-        }
-
-        // Gọi KhachHang->dat_lai_mat_khau()
-        $khachHang = new \KhachHang();
-        $result = $khachHang->dat_lai_mat_khau($token, $newPassword);
-
-        // Nếu thất bại
-        if (!$result) {
-            header('Location: /client/auth/reset-password?token=' . urlencode($token) . '&error=update_failed');
-            exit;
-        }
-
-        // Redirect đến reset-success page nếu thành công
-        header('Location: /client/auth/reset-success');
-        exit;
+    // Nếu token hợp lệ và chưa hết hạn
+    if ($userData !== false) {
+      // Token hợp lệ - hiển thị form reset password
+      require_once __DIR__ . '/../../views/client/auth/reset_password.php';
+      return;
     }
+
+    // Token không hợp lệ hoặc đã hết hạn
+    // Cần phân biệt giữa invalid và expired để hiển thị message phù hợp
+    // Tạo một instance mới để query (vì xac_thuc_reset_token đã escape token)
+    $khachHangCheck = new \KhachHang();
+
+    // Validate token format trước (64 hex chars)
+    if (!preg_match('/^[0-9a-f]{64}$/i', $token)) {
+      header('Location: /client/auth/forgot-password?error=invalid_token');
+      exit;
+    }
+
+    // Query để kiểm tra token có tồn tại không
+    // Sử dụng prepared statement pattern với query method
+    $escapedToken = addslashes($token);
+    $tokenCheck = $khachHangCheck->query("SELECT forget_token_created_at FROM nguoi_dung WHERE forget_token = '$escapedToken' LIMIT 1");
+
+    // Nếu token không tồn tại trong database
+    if (empty($tokenCheck)) {
+      header('Location: /client/auth/forgot-password?error=invalid_token');
+      exit;
+    }
+
+    // Token tồn tại nhưng đã hết hạn
+    header('Location: /client/auth/forgot-password?error=expired_token');
+    exit;
+  }
+
+  /**
+   * Xử lý đặt lại mật khẩu
+   * 
+   * @param string $token Reset token
+   * @param string $newPassword Mật khẩu mới
+   * @param string $confirmPassword Xác nhận mật khẩu
+   * @return void Redirect to success or error page
+   */
+  public static function resetPassword(string $token, string $newPassword, string $confirmPassword): void
+  {
+    // Validate password mới không rỗng
+    if (empty(trim($newPassword))) {
+      header('Location: /client/auth/reset-password?token=' . urlencode($token) . '&error=empty_password');
+      exit;
+    }
+
+    // Validate password >= 6 ký tự
+    if (strlen(trim($newPassword)) < 6) {
+      header('Location: /client/auth/reset-password?token=' . urlencode($token) . '&error=password_too_short');
+      exit;
+    }
+
+    // Validate password và confirm password khớp nhau
+    if ($newPassword !== $confirmPassword) {
+      header('Location: /client/auth/reset-password?token=' . urlencode($token) . '&error=password_mismatch');
+      exit;
+    }
+
+    // Gọi KhachHang->dat_lai_mat_khau()
+    $khachHang = new \KhachHang();
+    $result = $khachHang->dat_lai_mat_khau($token, $newPassword);
+
+    // Nếu thất bại
+    if (!$result) {
+      header('Location: /client/auth/reset-password?token=' . urlencode($token) . '&error=update_failed');
+      exit;
+    }
+
+    // Redirect đến reset-success page nếu thành công
+    header('Location: /client/auth/reset-success');
+    exit;
+  }
 }

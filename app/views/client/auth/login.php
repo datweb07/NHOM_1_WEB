@@ -6,6 +6,9 @@
     <title>Đăng nhập tài khoản - FPT Shop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="<?= ASSET_URL ?>/assets/client/images/header/1.png">
+    
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    
     <style>
         :root {
             --fpt-red: #cb1c22;
@@ -78,6 +81,13 @@
             position: relative;
             z-index: 2;
         }
+        
+        /* Căn giữa reCAPTCHA */
+        .recaptcha-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -104,6 +114,8 @@
                                     'invalid_email' => 'Email không hợp lệ.',
                                     'empty_password' => 'Vui lòng nhập mật khẩu.',
                                     'invalid_credentials' => 'Email hoặc mật khẩu không đúng.',
+                                    'captcha_failed' => 'Xác thực reCAPTCHA thất bại. Vui lòng thử lại.', // Thêm thông báo lỗi captcha
+                                    'captcha_missing' => 'Vui lòng xác nhận bạn không phải là robot.', // Thêm thông báo lỗi chưa tick captcha
                                     'oauth_failed' => 'Bạn đã từ chối cấp quyền đăng nhập.',
                                     'no_token' => 'Đăng nhập thất bại, vui lòng thử lại.',
                                     'invalid_token' => 'Phiên đăng nhập không hợp lệ.',
@@ -116,7 +128,7 @@
                             </div>
                         <?php endif; ?>
 
-                        <form method="POST" action="/client/auth/login">
+                        <form method="POST" action="/client/auth/login" id="loginForm">
                             <div class="mb-3">
                                 <label for="email" class="form-label fw-medium" style="font-size: 0.9rem;">Email của bạn</label>
                                 <input 
@@ -142,6 +154,13 @@
                                     placeholder="Nhập mật khẩu"
                                     required
                                 >
+                            </div>
+
+                            <div class="recaptcha-wrapper">
+                                <div class="g-recaptcha" data-sitekey="6LdIFrgsAAAAAEcAXf5wh0DDj_72dPAPVq9R6T3T"></div>
+                            </div>
+                            <div id="captchaError" class="text-danger small text-center mb-3 d-none">
+                                Vui lòng xác nhận bạn không phải là robot.
                             </div>
 
                             <div class="d-grid mb-3">
@@ -188,5 +207,19 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            var response = grecaptcha.getResponse();
+            if(response.length == 0) {
+                // Hủy submit form
+                event.preventDefault();
+                // Hiển thị dòng báo lỗi
+                document.getElementById('captchaError').classList.remove('d-none');
+            } else {
+                document.getElementById('captchaError').classList.add('d-none');
+            }
+        });
+    </script>
 </body>
 </html>
