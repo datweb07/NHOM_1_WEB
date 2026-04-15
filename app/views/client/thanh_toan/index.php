@@ -71,6 +71,11 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
                                 <input type="tel" name="sdt_nhan" class="form-control" placeholder="Nhập số điện thoại" required>
                             </div>
                             <div class="mb-3">
+                                <label class="form-label small fw-medium">Email <span class="text-danger">*</span></label>
+                                <input type="email" name="email_nhan" class="form-control" placeholder="Nhập email để nhận xác nhận đơn hàng" required>
+                                <small class="text-muted">Email sẽ được sử dụng để gửi thông tin xác nhận đơn hàng</small>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label small fw-medium">Địa chỉ giao hàng <span class="text-danger">*</span></label>
                                 <input type="text" name="dia_chi" class="form-control" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành" required>
                             </div>
