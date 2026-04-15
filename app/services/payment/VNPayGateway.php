@@ -97,18 +97,20 @@ class VNPayGateway implements PaymentGatewayInterface
     {
         $isValid = $this->verifySignature($data);
 
-        if ($isValid) {
-            $responseCode = $data['vnp_ResponseCode'] ?? '99';
-            if ($responseCode === '00') {
-                $this->recordHealthSuccess();
-            } else {
-                $this->recordHealthFailure();
-            }
+        if (!$isValid) {
+            $this->recordHealthFailure();
+            return false;
+        }
+
+        // Only record health metrics based on actual payment result, not signature validation
+        $responseCode = $data['vnp_ResponseCode'] ?? '99';
+        if ($responseCode === '00') {
+            $this->recordHealthSuccess();
         } else {
             $this->recordHealthFailure();
         }
 
-        return $isValid;
+        return true;
     }
 
     public function verifyReturnUrl(array $data): bool
