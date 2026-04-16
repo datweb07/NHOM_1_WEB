@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 16, 2026 lúc 09:13 PM
+-- Thời gian đã tạo: Th4 16, 2026 lúc 10:10 PM
 -- Phiên bản máy phục vụ: 8.0.44
 -- Phiên bản PHP: 8.2.12
 
@@ -595,7 +595,19 @@ INSERT INTO `chi_tiet_don` (`id`, `don_hang_id`, `phien_ban_id`, `so_luong`, `gi
 (42, 42, 19, 1, 440000.00),
 (43, 43, 19, 1, 440000.00),
 (44, 44, 19, 1, 440000.00),
-(45, 45, 19, 1, 440000.00);
+(45, 45, 19, 1, 440000.00),
+(46, 46, 18, 1, 8990000.00),
+(47, 47, 13, 1, 9999999.00),
+(48, 48, 17, 1, 4190000.00),
+(49, 49, 17, 1, 4190000.00),
+(50, 50, 17, 1, 4190000.00),
+(51, 51, 18, 1, 8990000.00),
+(52, 52, 19, 1, 440000.00),
+(53, 53, 19, 1, 440000.00),
+(54, 54, 19, 1, 440000.00),
+(55, 55, 19, 1, 440000.00),
+(56, 56, 19, 1, 440000.00),
+(57, 57, 17, 1, 4190000.00);
 
 -- --------------------------------------------------------
 
@@ -799,7 +811,19 @@ INSERT INTO `don_hang` (`id`, `ma_don_hang`, `nguoi_dung_id`, `dia_chi_id`, `ma_
 (42, 'DH20260416195647', 3, 2, 1, 'HOAN_THANH', 440000.00, 30000.00, 200000.00, 270000.00, NULL, '', NULL, '2026-04-17 00:56:47', '2026-04-17 01:00:22'),
 (43, 'DH20260416205309', 3, 2, 1, 'DA_HUY', 440000.00, 30000.00, 200000.00, 270000.00, NULL, '', NULL, '2026-04-17 01:53:09', '2026-04-17 01:54:01'),
 (44, 'DH20260416205424', 3, 4, 1, 'DA_HUY', 440000.00, 30000.00, 200000.00, 270000.00, NULL, '', NULL, '2026-04-17 01:54:24', '2026-04-17 01:56:20'),
-(45, 'DH20260416210038', 3, 4, 1, 'DANG_GIAO', 440000.00, 30000.00, 200000.00, 270000.00, NULL, '', NULL, '2026-04-17 02:00:38', '2026-04-17 02:08:19');
+(45, 'DH20260416210038', 3, 4, 1, 'DANG_GIAO', 440000.00, 30000.00, 200000.00, 270000.00, NULL, '', NULL, '2026-04-17 02:00:38', '2026-04-17 02:08:19'),
+(46, 'DH20260416212557', 3, 2, 1, 'CHO_DUYET', 8990000.00, 30000.00, 200000.00, 8820000.00, NULL, '', NULL, '2026-04-17 02:25:57', '2026-04-17 02:25:57'),
+(47, 'DH20260416212751', 3, 4, 1, 'CHO_DUYET', 9999999.00, 30000.00, 200000.00, 9829999.00, NULL, '', NULL, '2026-04-17 02:27:51', '2026-04-17 02:27:51'),
+(48, 'DH20260416212921', 3, 4, 1, 'CHO_DUYET', 4190000.00, 30000.00, 200000.00, 4020000.00, NULL, '', NULL, '2026-04-17 02:29:21', '2026-04-17 02:29:21'),
+(49, 'DH20260416213326', 3, 4, 1, 'CHO_DUYET', 4190000.00, 30000.00, 200000.00, 4020000.00, NULL, '', NULL, '2026-04-17 02:33:26', '2026-04-17 02:33:26'),
+(50, 'DH20260416213427', 3, 4, NULL, 'CHO_DUYET', 4190000.00, 30000.00, 0.00, 4220000.00, NULL, '', NULL, '2026-04-17 02:34:27', '2026-04-17 02:34:27'),
+(51, 'DH20260416213554', 3, 4, NULL, 'CHO_DUYET', 8990000.00, 30000.00, 0.00, 9020000.00, NULL, '', NULL, '2026-04-17 02:35:54', '2026-04-17 02:35:54'),
+(52, 'DH20260416213654', 3, 4, NULL, 'CHO_DUYET', 440000.00, 30000.00, 0.00, 470000.00, NULL, '', NULL, '2026-04-17 02:36:54', '2026-04-17 02:36:54'),
+(53, 'DH20260416213951', 3, 4, 1, 'CHO_DUYET', 440000.00, 30000.00, 200000.00, 270000.00, NULL, '', NULL, '2026-04-17 02:39:51', '2026-04-17 02:39:51'),
+(54, 'DH20260416214300', 3, 4, 1, 'CHO_DUYET', 440000.00, 30000.00, 200000.00, 270000.00, NULL, '', NULL, '2026-04-17 02:43:00', '2026-04-17 02:43:00'),
+(55, 'DH20260416214548', 3, 4, 1, 'CHO_DUYET', 440000.00, 30000.00, 200000.00, 270000.00, NULL, '', NULL, '2026-04-17 02:45:48', '2026-04-17 02:45:48'),
+(56, 'DH20260416215151', 3, 4, 1, 'DA_XAC_NHAN', 440000.00, 30000.00, 200000.00, 270000.00, NULL, '', NULL, '2026-04-17 02:51:51', '2026-04-17 02:52:06'),
+(57, 'DH20260416215457', 3, 4, 1, 'DA_XAC_NHAN', 4190000.00, 30000.00, 200000.00, 4020000.00, NULL, '', NULL, '2026-04-17 02:54:57', '2026-04-17 02:55:06');
 
 -- --------------------------------------------------------
 
@@ -823,7 +847,8 @@ CREATE TABLE `gateway_health` (
 
 INSERT INTO `gateway_health` (`id`, `gateway_name`, `success_count`, `failure_count`, `last_success_at`, `last_failure_at`, `updated_at`) VALUES
 (1, 'VNPay', 24, 0, '2026-04-17 00:56:47', NULL, '2026-04-17 00:56:47'),
-(28, 'VietQR', 15, 0, '2026-04-17 02:07:08', NULL, '2026-04-17 02:07:08');
+(28, 'VietQR', 17, 0, '2026-04-17 02:29:21', NULL, '2026-04-17 02:29:21'),
+(44, 'PayPal', 4, 7, '2026-04-17 02:54:59', '2026-04-17 02:39:53', '2026-04-17 02:54:59');
 
 -- --------------------------------------------------------
 
@@ -988,7 +1013,7 @@ CREATE TABLE `ma_giam_gia` (
 --
 
 INSERT INTO `ma_giam_gia` (`id`, `ma_code`, `mo_ta`, `loai_giam`, `gia_tri_giam`, `giam_toi_da`, `don_toi_thieu`, `so_luot_da_dung`, `gioi_han_su_dung`, `ngay_bat_dau`, `ngay_ket_thuc`, `trang_thai`) VALUES
-(1, 'SUMMER2026', 'Mã giảm giá mùa hè 2026', 'PHAN_TRAM', 50.00, 200000.00, 0.00, 6, NULL, '2026-04-14 21:27:00', '2026-04-30 21:28:00', 'HOAT_DONG');
+(1, 'SUMMER2026', 'Mã giảm giá mùa hè 2026', 'PHAN_TRAM', 50.00, 200000.00, 0.00, 15, NULL, '2026-04-14 21:27:00', '2026-04-30 21:28:00', 'HOAT_DONG');
 
 -- --------------------------------------------------------
 
@@ -1060,13 +1085,13 @@ INSERT INTO `phien_ban_san_pham` (`id`, `san_pham_id`, `sku`, `ten_phien_ban`, `
 (10, 7, 'IP15PM-256-TITAN', 'iPhone 15 Pro Max 256GB Titan Tự Nhiên', 'Titan Tự Nhiên', '{\"RAM\": \"128GB\"}', NULL, 34990000.00, 34990000.00, 40, 'CON_HANG'),
 (11, 7, 'IP15PM-256-TIM', 'iPhone 15 Pro Max 256GB Tím', 'Tím', '{\"RAM\": \"128GB\"}', NULL, 34.99, 34.99, 44, 'CON_HANG'),
 (12, 2, 'samsung-galaxy-s26-12gb-256gb', 'Samsung Galaxy S26 5G 12GB 256GB', 'Đen', NULL, NULL, 20490000.00, 25990000.00, 93, 'CON_HANG'),
-(13, 10, 'CI1-TRANG', 'Máy lạnh Comfee Inverter 1 HP CFS-10VGP Trắng', 'Trắng', '{\"Cong_suat_Dung_tich\": \"1 HP - 9.350 BTU\"}', NULL, 9999999.00, 999999999.00, 100, 'CON_HANG'),
+(13, 10, 'CI1-TRANG', 'Máy lạnh Comfee Inverter 1 HP CFS-10VGP Trắng', 'Trắng', '{\"Cong_suat_Dung_tich\": \"1 HP - 9.350 BTU\"}', NULL, 9999999.00, 999999999.00, 99, 'CON_HANG'),
 (14, 7, 'iphone-15-128gb', 'iPhone 15 128GB', 'Hồng', '{\"RAM\": \"128GB\"}', NULL, 17890000.00, 19590000.00, 99, 'CON_HANG'),
 (15, 7, 'iphone-15-256gb', 'iPhone 15 256GB', 'Xanh dương', '{\"RAM\": \"256GB\"}', NULL, 20890000.00, 22490000.00, 100, 'CON_HANG'),
 (16, 7, 'iphone-15-128gb-xanh-duong', 'iPhone 15 128GB', 'Xanh dương', '{\"RAM\": \"128GB\"}', NULL, 17890000.00, 19590000.00, 100, 'CON_HANG'),
-(17, 12, '00920820', 'Xiaomi Google TV QLED 32 inch HD A Pro 2026 L32MB-APSEA', 'Đen', '{\"Màn hình\": \"32 inch\"}', NULL, 4190000.00, 4490000.00, 100, 'CON_HANG'),
-(18, 11, '00907960', 'Máy lọc nước nóng lạnh RO Hydrogen Kangaroo KG11A6 11 lõi', 'Đen', NULL, NULL, 8990000.00, 11590000.00, 100, 'CON_HANG'),
-(19, 13, '00922445', 'Củ sạc nhanh 1 cổng 25W USB-C PPS Wall Charger Belkin', 'Trắng', NULL, NULL, 440000.00, 490000.00, 95, 'CON_HANG');
+(17, 12, '00920820', 'Xiaomi Google TV QLED 32 inch HD A Pro 2026 L32MB-APSEA', 'Đen', '{\"Màn hình\": \"32 inch\"}', NULL, 4190000.00, 4490000.00, 96, 'CON_HANG'),
+(18, 11, '00907960', 'Máy lọc nước nóng lạnh RO Hydrogen Kangaroo KG11A6 11 lõi', 'Đen', NULL, NULL, 8990000.00, 11590000.00, 98, 'CON_HANG'),
+(19, 13, '00922445', 'Củ sạc nhanh 1 cổng 25W USB-C PPS Wall Charger Belkin', 'Trắng', NULL, NULL, 440000.00, 490000.00, 90, 'CON_HANG');
 
 -- --------------------------------------------------------
 
@@ -1224,7 +1249,19 @@ INSERT INTO `thanh_toan` (`id`, `don_hang_id`, `nguoi_duyet_id`, `gateway_transa
 (41, 42, 4, NULL, 'VNPAY', '2026-04-16 20:11:47', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=27000000&vnp_Command=pay&vnp_CreateDate=20260417005647&vnp_CurrCode=VND&vnp_ExpireDate=20260417011147&vnp_IpAddr=127.0.0.1&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+42&vnp_OrderType=billpayment&vnp_ReturnUrl=http%3A%2F%2Flocalhost%3A3000%2Fthanh-toan%2Freturn%2Fvnpay&vnp_TmnCode=NUIPDZDI&vnp_TxnRef=41&vnp_Version=2.1.0&vnp_SecureHash=f317405f8a83c603ca2d0398e0557ea4ca00b06e569c0e616a31e5c3d22c52598965d3e559d03943285497f408cc8eecf448cb3a11c82d2dc077dbd11f58c67d', NULL, NULL, 'CHUYEN_KHOAN', 270000.00, NULL, 'THANH_CONG', NULL, '2026-04-16 19:56:47', '2026-04-16 20:00:45'),
 (42, 43, 4, NULL, 'VIETQR', '2026-04-16 21:08:09', 'https://img.vietqr.io/image/VTB-104882641761-compact2.png?amount=270000&addInfo=DH43&accountName=TRUONG+THANH+DAT', NULL, NULL, 'VIETQR', 270000.00, NULL, 'THAT_BAI', NULL, '2026-04-16 20:53:09', '2026-04-16 20:56:55'),
 (43, 44, 4, NULL, 'VIETQR', '2026-04-16 21:09:24', 'https://img.vietqr.io/image/VTB-104882641761-compact2.png?amount=270000&addInfo=DH44&accountName=TRUONG+THANH+DAT', NULL, NULL, 'VIETQR', 270000.00, NULL, 'THAT_BAI', NULL, '2026-04-16 20:54:24', '2026-04-16 20:56:47'),
-(44, 45, 4, NULL, 'VIETQR', '2026-04-16 21:15:38', 'https://img.vietqr.io/image/ICB-104882641761-compact2.png?amount=270000&addInfo=DH45&accountName=TRUONG+THANH+DAT', NULL, NULL, 'VIETQR', 270000.00, NULL, 'THANH_CONG', NULL, '2026-04-16 21:00:38', '2026-04-16 21:08:07');
+(44, 45, 4, NULL, 'VIETQR', '2026-04-16 21:15:38', 'https://img.vietqr.io/image/ICB-104882641761-compact2.png?amount=270000&addInfo=DH45&accountName=TRUONG+THANH+DAT', NULL, NULL, 'VIETQR', 270000.00, NULL, 'THANH_CONG', NULL, '2026-04-16 21:00:38', '2026-04-16 21:08:07'),
+(45, 46, NULL, NULL, 'PAYPAL', '2026-04-16 21:40:57', NULL, NULL, NULL, 'PAYPAL', 8820000.00, NULL, 'CHO_DUYET', NULL, '2026-04-16 21:25:57', NULL),
+(46, 47, NULL, NULL, 'PAYPAL', '2026-04-16 21:42:51', NULL, NULL, NULL, 'PAYPAL', 9829999.00, NULL, 'CHO_DUYET', NULL, '2026-04-16 21:27:51', NULL),
+(47, 48, NULL, NULL, 'VIETQR', '2026-04-16 21:44:21', 'https://img.vietqr.io/image/ICB-104882641761-compact2.png?amount=4020000&addInfo=DH48&accountName=TRUONG+THANH+DAT', NULL, NULL, 'VIETQR', 4020000.00, NULL, 'CHO_DUYET', NULL, '2026-04-16 21:29:21', NULL),
+(48, 49, NULL, NULL, 'PAYPAL', '2026-04-16 21:48:26', NULL, NULL, NULL, 'PAYPAL', 4020000.00, NULL, 'CHO_DUYET', NULL, '2026-04-16 21:33:26', NULL),
+(49, 50, NULL, NULL, 'PAYPAL', '2026-04-16 21:49:27', NULL, NULL, NULL, 'PAYPAL', 4220000.00, NULL, 'CHO_DUYET', NULL, '2026-04-16 21:34:27', NULL),
+(50, 51, NULL, NULL, 'PAYPAL', '2026-04-16 21:50:54', NULL, NULL, NULL, 'PAYPAL', 9020000.00, NULL, 'CHO_DUYET', NULL, '2026-04-16 21:35:54', NULL),
+(51, 52, NULL, NULL, 'PAYPAL', '2026-04-16 21:51:54', NULL, NULL, NULL, 'PAYPAL', 470000.00, NULL, 'CHO_DUYET', NULL, '2026-04-16 21:36:54', NULL),
+(52, 53, NULL, NULL, 'PAYPAL', '2026-04-16 21:54:51', NULL, NULL, NULL, 'PAYPAL', 270000.00, NULL, 'CHO_DUYET', NULL, '2026-04-16 21:39:51', NULL),
+(53, 54, NULL, '1GA732028T6890613', 'PAYPAL', '2026-04-16 21:58:00', 'https://www.sandbox.paypal.com/checkoutnow?token=1GA732028T6890613', NULL, NULL, 'PAYPAL', 270000.00, NULL, 'CHO_DUYET', NULL, '2026-04-16 21:43:00', NULL),
+(54, 55, NULL, '6SE79415EK2134249', 'PAYPAL', '2026-04-16 22:00:48', 'https://www.sandbox.paypal.com/checkoutnow?token=1BJ15454YS758752J', NULL, NULL, 'PAYPAL', 270000.00, NULL, 'THANH_CONG', NULL, '2026-04-16 21:49:49', NULL),
+(55, 56, NULL, '18U72217FV8315940', 'PAYPAL', '2026-04-16 22:06:51', 'https://www.sandbox.paypal.com/checkoutnow?token=7LH31957U49675322', NULL, NULL, 'PAYPAL', 270000.00, NULL, 'THANH_CONG', NULL, '2026-04-16 21:52:06', NULL),
+(56, 57, NULL, '2TR17181J83990820', 'PAYPAL', '2026-04-16 22:09:57', 'https://www.sandbox.paypal.com/checkoutnow?token=4N800447EJ768920X', NULL, NULL, 'PAYPAL', 4020000.00, NULL, 'THANH_CONG', NULL, '2026-04-16 21:55:06', NULL);
 
 -- --------------------------------------------------------
 
@@ -1335,7 +1372,20 @@ INSERT INTO `transaction_log` (`id`, `thanh_toan_id`, `gateway_transaction_id`, 
 (46, 41, NULL, 'REFUND', '{\"action\":\"REFUND_COMPLETED\",\"refund_id\":4,\"amount\":270000,\"reason\":\"test\",\"gateway_refund_id\":\"REFUND_41_1776362964\",\"admin_id\":4,\"timestamp\":\"2026-04-16 20:09:24\"}', NULL, NULL, 'PENDING', '2026-04-17 01:09:24'),
 (47, 42, NULL, 'VIETQR', '{\"don_hang_id\":43,\"amount\":270000,\"payment_method\":\"VIETQR\",\"expiration_time\":\"2026-04-16 21:08:09\"}', NULL, NULL, 'PENDING', '2026-04-17 01:53:09'),
 (48, 43, NULL, 'VIETQR', '{\"don_hang_id\":44,\"amount\":270000,\"payment_method\":\"VIETQR\",\"expiration_time\":\"2026-04-16 21:09:24\"}', NULL, NULL, 'PENDING', '2026-04-17 01:54:24'),
-(49, 44, NULL, 'VIETQR', '{\"don_hang_id\":45,\"amount\":270000,\"payment_method\":\"VIETQR\",\"expiration_time\":\"2026-04-16 21:15:38\"}', NULL, NULL, 'PENDING', '2026-04-17 02:00:38');
+(49, 44, NULL, 'VIETQR', '{\"don_hang_id\":45,\"amount\":270000,\"payment_method\":\"VIETQR\",\"expiration_time\":\"2026-04-16 21:15:38\"}', NULL, NULL, 'PENDING', '2026-04-17 02:00:38'),
+(50, 45, NULL, 'PAYPAL', '{\"don_hang_id\":46,\"amount\":8820000,\"payment_method\":\"PAYPAL\",\"expiration_time\":\"2026-04-16 21:40:57\"}', NULL, NULL, 'PENDING', '2026-04-17 02:25:57'),
+(51, 46, NULL, 'PAYPAL', '{\"don_hang_id\":47,\"amount\":9829999,\"payment_method\":\"PAYPAL\",\"expiration_time\":\"2026-04-16 21:42:51\"}', NULL, NULL, 'PENDING', '2026-04-17 02:27:51'),
+(52, 47, NULL, 'VIETQR', '{\"don_hang_id\":48,\"amount\":4020000,\"payment_method\":\"VIETQR\",\"expiration_time\":\"2026-04-16 21:44:21\"}', NULL, NULL, 'PENDING', '2026-04-17 02:29:21'),
+(53, 48, NULL, 'PAYPAL', '{\"don_hang_id\":49,\"amount\":4020000,\"payment_method\":\"PAYPAL\",\"expiration_time\":\"2026-04-16 21:48:26\"}', NULL, NULL, 'PENDING', '2026-04-17 02:33:26'),
+(54, 49, NULL, 'PAYPAL', '{\"don_hang_id\":50,\"amount\":4220000,\"payment_method\":\"PAYPAL\",\"expiration_time\":\"2026-04-16 21:49:27\"}', NULL, NULL, 'PENDING', '2026-04-17 02:34:27'),
+(55, 50, NULL, 'PAYPAL', '{\"don_hang_id\":51,\"amount\":9020000,\"payment_method\":\"PAYPAL\",\"expiration_time\":\"2026-04-16 21:50:54\"}', NULL, NULL, 'PENDING', '2026-04-17 02:35:54'),
+(56, 51, NULL, 'PAYPAL', '{\"don_hang_id\":52,\"amount\":470000,\"payment_method\":\"PAYPAL\",\"expiration_time\":\"2026-04-16 21:51:54\"}', NULL, NULL, 'PENDING', '2026-04-17 02:36:54'),
+(57, 52, NULL, 'PAYPAL', '{\"don_hang_id\":53,\"amount\":270000,\"payment_method\":\"PAYPAL\",\"expiration_time\":\"2026-04-16 21:54:51\"}', NULL, NULL, 'PENDING', '2026-04-17 02:39:51'),
+(58, 53, NULL, 'PAYPAL', '{\"don_hang_id\":54,\"amount\":270000,\"payment_method\":\"PAYPAL\",\"expiration_time\":\"2026-04-16 21:58:00\"}', NULL, NULL, 'PENDING', '2026-04-17 02:43:00'),
+(59, 54, NULL, 'PAYPAL', '{\"don_hang_id\":55,\"amount\":270000,\"payment_method\":\"PAYPAL\",\"expiration_time\":\"2026-04-16 22:00:48\"}', NULL, NULL, 'PENDING', '2026-04-17 02:45:48'),
+(60, 55, NULL, 'PAYPAL', '{\"don_hang_id\":56,\"amount\":270000,\"payment_method\":\"PAYPAL\",\"expiration_time\":\"2026-04-16 22:06:51\"}', NULL, NULL, 'PENDING', '2026-04-17 02:51:51'),
+(61, 56, NULL, 'PAYPAL', '{\"don_hang_id\":57,\"amount\":4020000,\"payment_method\":\"PAYPAL\",\"expiration_time\":\"2026-04-16 22:09:57\"}', NULL, NULL, 'PENDING', '2026-04-17 02:54:57'),
+(62, 56, '2TR17181J83990820', 'PAYPAL', '{\"token\":\"4N800447EJ768920X\"}', '{\"id\":\"4N800447EJ768920X\",\"status\":\"COMPLETED\",\"payment_source\":{\"paypal\":{\"email_address\":\"sb-lgm8g50631707@personal.example.com\",\"account_id\":\"KT3L4Q2ZDJGZ6\",\"account_status\":\"VERIFIED\",\"name\":{\"given_name\":\"John\",\"surname\":\"Doe\"},\"address\":{\"country_code\":\"VN\"}}},\"purchase_units\":[{\"reference_id\":\"DH_57\",\"shipping\":{\"name\":{\"full_name\":\"John Doe\"},\"address\":{\"address_line_1\":\"Vietnam Main Street\",\"admin_area_2\":\"Hanoi\",\"admin_area_1\":\"VIETNAM\",\"postal_code\":\"100000\",\"country_code\":\"VN\"}},\"payments\":{\"captures\":[{\"id\":\"2TR17181J83990820\",\"status\":\"COMPLETED\",\"amount\":{\"currency_code\":\"USD\",\"value\":\"160.80\"},\"final_capture\":true,\"seller_protection\":{\"status\":\"ELIGIBLE\",\"dispute_categories\":[\"ITEM_NOT_RECEIVED\",\"UNAUTHORIZED_TRANSACTION\"]},\"seller_receivable_breakdown\":{\"gross_amount\":{\"currency_code\":\"USD\",\"value\":\"160.80\"},\"paypal_fee\":{\"currency_code\":\"USD\",\"value\":\"5.77\"},\"net_amount\":{\"currency_code\":\"USD\",\"value\":\"155.03\"}},\"links\":[{\"href\":\"https://api.sandbox.paypal.com/v2/payments/captures/2TR17181J83990820\",\"rel\":\"self\",\"method\":\"GET\"},{\"href\":\"https://api.sandbox.paypal.com/v2/payments/captures/2TR17181J83990820/refund\",\"rel\":\"refund\",\"method\":\"POST\"},{\"href\":\"https://api.sandbox.paypal.com/v2/checkout/orders/4N800447EJ768920X\",\"rel\":\"up\",\"method\":\"GET\"}],\"create_time\":\"2026-04-16T19:55:06Z\",\"update_time\":\"2026-04-16T19:55:06Z\"}]}}],\"payer\":{\"name\":{\"given_name\":\"John\",\"surname\":\"Doe\"},\"email_address\":\"sb-lgm8g50631707@personal.example.com\",\"payer_id\":\"KT3L4Q2ZDJGZ6\",\"address\":{\"country_code\":\"VN\"}},\"links\":[{\"href\":\"https://api.sandbox.paypal.com/v2/checkout/orders/4N800447EJ768920X\",\"rel\":\"self\",\"method\":\"GET\"}]}', NULL, 'SUCCESS', '2026-04-17 02:55:06');
 
 -- --------------------------------------------------------
 
@@ -1599,13 +1649,13 @@ ALTER TABLE `dia_chi`
 -- AUTO_INCREMENT cho bảng `don_hang`
 --
 ALTER TABLE `don_hang`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT cho bảng `gateway_health`
 --
 ALTER TABLE `gateway_health`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT cho bảng `gio_hang`
@@ -1665,7 +1715,7 @@ ALTER TABLE `san_pham`
 -- AUTO_INCREMENT cho bảng `thanh_toan`
 --
 ALTER TABLE `thanh_toan`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT cho bảng `thong_so_ky_thuat`
@@ -1683,7 +1733,7 @@ ALTER TABLE `thuoc_tinh_danh_muc`
 -- AUTO_INCREMENT cho bảng `transaction_log`
 --
 ALTER TABLE `transaction_log`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
