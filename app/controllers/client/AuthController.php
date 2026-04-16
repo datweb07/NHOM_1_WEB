@@ -65,6 +65,25 @@ class AuthController
     }
 
     $khachHang = new \KhachHang();
+
+    $emailSafe = addslashes(trim($email));
+    $checkUser = $khachHang->query("SELECT trang_thai FROM nguoi_dung WHERE email = '$emailSafe' LIMIT 1");
+
+    if (!empty($checkUser)) {
+        $trangThai = $checkUser[0]['trang_thai'];
+        
+        // Nếu admin đã set trạng thái là BLOCKED
+        if ($trangThai === 'BLOCKED') {
+            header('Location: /client/auth/login?error=account_blocked');
+            exit;
+        }
+        
+        // Tùy chọn thêm: Nếu bạn muốn chặn luôn những người chưa xác thực email
+        // if ($trangThai === 'UNVERIFIED') {
+        //     header('Location: /client/auth/login?error=unverified_account');
+        //     exit;
+        // }
+    }
     if ($khachHang->dang_nhap($email, $password)) {
       Session::start();
 

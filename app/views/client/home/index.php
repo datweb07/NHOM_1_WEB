@@ -353,15 +353,15 @@ ob_start();
             if (!function_exists('tinhGiaHienThi')) {
                 function tinhGiaHienThi($sp, $spModel) {
                     $giaHienThi = (float)($sp['gia_hien_thi'] ?? 0);
-                    $giaGoc = isset($sp['gia_goc']) ? (float)$sp['gia_goc'] : 0;
                     
                     $giaThucTe = $giaHienThi;
                     $giaGachNgang = 0;
+                    $phanTramGiam = 0; 
 
                     $spId = (int)($sp['id'] ?? 0);
                     if ($spId > 0) {
-                        // Tự động kiểm tra khuyến mãi khớp với sản phẩm này
-                        $sql = "
+                        // 1. Kiểm tra Khuyến Mãi
+                        $sqlKM = "
                             SELECT km.* FROM khuyen_mai km
                             INNER JOIN san_pham_khuyen_mai spkm ON km.id = spkm.khuyen_mai_id
                             WHERE spkm.san_pham_id = $spId
@@ -370,10 +370,10 @@ ob_start();
                               AND (km.ngay_ket_thuc IS NULL OR km.ngay_ket_thuc >= NOW())
                             ORDER BY km.id DESC LIMIT 1
                         ";
-                        $kmResult = $spModel->query($sql);
+                        $kmResult = $spModel->query($sqlKM);
                         
                         if (!empty($kmResult)) {
-                            // CÓ KHUYẾN MÃI: Tính giá giảm, gạch giá gốc (hoặc giá hiển thị)
+                            // CÓ KHUYẾN MÃI
                             $km = $kmResult[0];
                             if ($km['loai_giam'] === 'PHAN_TRAM') {
                                 $mucGiam = $giaHienThi * ($km['gia_tri_giam'] / 100);
@@ -386,15 +386,41 @@ ob_start();
                             }
                             $giaThucTe = max(0, $giaThucTe);
                             $giaGachNgang = $giaHienThi; 
-                        } elseif ($giaGoc > $giaHienThi) {
-                            // KHÔNG CÓ KM nhưng CÓ GIÁ GỐC do Admin set
-                            $giaGachNgang = $giaGoc;
+                            
+                            if ($giaGachNgang > 0) {
+                                $phanTramGiam = round((($giaGachNgang - $giaThucTe) / $giaGachNgang) * 100);
+                            }
+                        } else {
+                            // 2. KHÔNG CÓ KM -> Chọc vào bảng phien_ban_san_pham để lấy Giá Gốc
+                            $sqlPhienBan = "
+                                SELECT gia_goc 
+                                FROM phien_ban_san_pham 
+                                WHERE san_pham_id = $spId 
+                                  AND trang_thai = 'CON_HANG' 
+                                  AND gia_goc IS NOT NULL 
+                                  AND gia_goc > gia_ban
+                                ORDER BY gia_ban ASC 
+                                LIMIT 1
+                            ";
+                            $pbResult = $spModel->query($sqlPhienBan);
+                            
+                            if (!empty($pbResult)) {
+                                $giaGachNgang = (float)$pbResult[0]['gia_goc'];
+                                if ($giaGachNgang > $giaThucTe) {
+                                    $phanTramGiam = round((($giaGachNgang - $giaThucTe) / $giaGachNgang) * 100);
+                                } else {
+                                    // Chống trường hợp Admin nhập bậy (giá gốc lại rẻ hơn giá bán)
+                                    $giaGachNgang = 0;
+                                    $phanTramGiam = 0;
+                                }
+                            }
                         }
                     }
 
                     return [
                         'giaThucTe' => $giaThucTe,
-                        'giaGachNgang' => $giaGachNgang
+                        'giaGachNgang' => $giaGachNgang,
+                        'phanTramGiam' => $phanTramGiam
                     ];
                 }
             }

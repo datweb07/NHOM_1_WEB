@@ -638,6 +638,12 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                                 alt="" style="width:28px; height:28px;">
                             Máy cũ
                         </a>
+
+                        <a href="/khuyen-mai" class="right-btn">
+                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/thong_tin_hay_cd1d403f02.png"
+                                alt="" style="width:28px; height:28px;">
+                            Thông tin khuyến mãi
+                        </a>
                     </div>
                 </div>
             </div>
