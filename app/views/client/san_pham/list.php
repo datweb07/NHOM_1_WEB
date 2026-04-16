@@ -19,6 +19,9 @@ $giaSliderMin = isset($giaSliderMin) ? (float)$giaSliderMin : 0;
 $giaSliderMax = isset($giaSliderMax) ? (float)$giaSliderMax : 0;
 $giaMin = isset($giaMin) ? (float)$giaMin : $giaSliderMin;
 $giaMax = isset($giaMax) ? (float)$giaMax : $giaSliderMax;
+$sortBy = isset($sortBy) ? (string)$sortBy : 'ngay_tao';
+$sortOrder = isset($sortOrder) ? strtoupper((string)$sortOrder) : 'DESC';
+$selectedSortPreset = $sortBy . ':' . $sortOrder;
 
 if ($giaSliderMax < $giaSliderMin) {
     [$giaSliderMin, $giaSliderMax] = [$giaSliderMax, $giaSliderMin];
@@ -312,6 +315,8 @@ $mucGiaPreset = [
                             <input type="hidden" name="sort_order" value="<?= htmlspecialchars($sortOrder) ?>">
                         <?php endif; ?>
 
+
+
                         <div class="mb-3">
                             <label class="form-label small fw-medium">Danh mục</label>
                             <select name="danh_muc" class="form-select form-select-sm" onchange="resetPriceFiltersOnCategoryChange(this.form)">
@@ -323,7 +328,16 @@ $mucGiaPreset = [
                                 <?php endforeach; ?>
                             </select>
                         </div>
-
+                        <div class="mb-3">
+                            <label class="form-label small fw-medium d-block mb-2">Sắp xếp</label>
+                            <select class="form-select form-select-sm" id="sort-preset-select">
+                                <option value="ngay_tao:DESC" <?= $selectedSortPreset === 'ngay_tao:DESC' ? 'selected' : '' ?>>Mới nhất</option>
+                                <option value="gia_hien_thi:ASC" <?= $selectedSortPreset === 'gia_hien_thi:ASC' ? 'selected' : '' ?>>Giá thấp đến cao</option>
+                                <option value="gia_hien_thi:DESC" <?= $selectedSortPreset === 'gia_hien_thi:DESC' ? 'selected' : '' ?>>Giá cao đến thấp</option>
+                                <option value="ten_san_pham:ASC" <?= $selectedSortPreset === 'ten_san_pham:ASC' ? 'selected' : '' ?>>A-Z</option>
+                                <option value="ten_san_pham:DESC" <?= $selectedSortPreset === 'ten_san_pham:DESC' ? 'selected' : '' ?>>Z-A</option>
+                            </select>
+                        </div>
                         <div class="mb-3">
                             <label class="form-label small fw-medium d-block mb-2">Hãng sản xuất</label>
                             <div id="brand-list" class="d-flex flex-wrap gap-2">
@@ -670,6 +684,20 @@ $mucGiaPreset = [
     const priceMinLabel = document.getElementById('price-min-label');
     const priceMaxLabel = document.getElementById('price-max-label');
     const priceSliderActive = document.getElementById('price-slider-active');
+    const sortPresetSelect = document.getElementById('sort-preset-select');
+
+    if (sortPresetSelect && filterForm) {
+        sortPresetSelect.addEventListener('change', () => {
+            const [sortByValue, sortOrderValue] = sortPresetSelect.value.split(':');
+            const sortByInput = filterForm.querySelector('input[name="sort_by"]');
+            const sortOrderInput = filterForm.querySelector('input[name="sort_order"]');
+
+            if (sortByInput) sortByInput.value = sortByValue || 'ngay_tao';
+            if (sortOrderInput) sortOrderInput.value = sortOrderValue || 'DESC';
+
+            filterForm.submit();
+        });
+    }
 
     const formatVnd = (value) => Number(value || 0).toLocaleString('vi-VN') + 'đ';
 
