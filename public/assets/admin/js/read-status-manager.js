@@ -26,10 +26,6 @@ class ReadStatusManager {
     async markAsRead(notificationId, urlRedirect) {
         console.log('[ReadStatusManager] Marking as read:', notificationId);
 
-        // Optimistic UI update
-        this.updateNotificationUI(notificationId, true);
-        this.updateBadgeCounter(-1);
-
         try {
             const response = await fetch('/admin/api/notifications/mark-read', {
                 method: 'POST',
@@ -53,6 +49,10 @@ class ReadStatusManager {
 
             console.log('[ReadStatusManager] Marked as read successfully');
 
+            // Optimistic UI update AFTER successful API call
+            this.updateNotificationUI(notificationId, true);
+            this.updateBadgeCounter(-1);
+
             // Push history state for undo functionality
             if (urlRedirect) {
                 const currentUrl = window.location.href;
@@ -75,10 +75,6 @@ class ReadStatusManager {
 
         } catch (error) {
             console.error('[ReadStatusManager] Mark as read failed:', error);
-
-            // Revert UI changes
-            this.updateNotificationUI(notificationId, false);
-            this.updateBadgeCounter(1);
 
             // Show error message
             this.showError('Không thể đánh dấu thông báo đã đọc. Vui lòng thử lại.');

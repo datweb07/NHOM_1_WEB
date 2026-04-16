@@ -59,11 +59,21 @@ class RedisService
             
             $response = $this->redis->ping();
             
-            if ($response === 'PONG' || $response === true) {
+            // Predis returns a Status object, not a string
+            $responsePayload = null;
+            if (is_object($response) && method_exists($response, 'getPayload')) {
+                $responsePayload = $response->getPayload();
+            } elseif (is_string($response)) {
+                $responsePayload = $response;
+            } elseif ($response === true) {
+                $responsePayload = 'PONG';
+            }
+            
+            if ($responsePayload === 'PONG' || $response === true) {
                 $this->connected = true;
                 error_log('[RedisService] Connected to Redis via Predis successfully');
             } else {
-                throw new Exception("Redis PING failed");
+                throw new Exception("Redis PING failed - unexpected response: " . var_export($response, true));
             }
         } catch (Exception $e) {
             error_log('[RedisService] Predis connection failed: ' . $e->getMessage());
@@ -99,10 +109,13 @@ class RedisService
 
         try {
             if ($ttl !== null) {
-                return $this->redis->setex($key, $ttl, $value);
+                $result = $this->redis->setex($key, $ttl, $value);
             } else {
-                return $this->redis->set($key, $value);
+                $result = $this->redis->set($key, $value);
             }
+            
+            // Predis returns Status objects for SET/SETEX commands
+            return $this->convertStatusToBool($result);
         } catch (Exception $e) {
             error_log('[RedisService] Set failed for key ' . $key . ': ' . $e->getMessage());
             return false;
@@ -144,7 +157,9 @@ class RedisService
         }
 
         try {
-            return $this->redis->expire($key, $ttl);
+            $result = $this->redis->expire($key, $ttl);
+            // EXPIRE returns 1 if successful, 0 if key doesn't exist
+            return (int)$result === 1;
         } catch (Exception $e) {
             error_log('[RedisService] Expire failed for key ' . $key . ': ' . $e->getMessage());
             return false;
@@ -283,6 +298,24 @@ class RedisService
             $this->redis = null;
             $this->connected = false;
         }
+    }
+
+    /**
+     * Convert Predis Status object to boolean
+     * Predis returns Status objects for commands like SET, SETEX
+     */
+    private function convertStatusToBool($result): bool
+    {
+        if (is_object($result) && method_exists($result, 'getPayload')) {
+            $payload = $result->getPayload();
+            return $payload === 'OK' || $payload === true;
+        }
+        
+        if (is_string($result)) {
+            return $result === 'OK';
+        }
+        
+        return (bool)$result;
     }
 
     private function __clone() {}
