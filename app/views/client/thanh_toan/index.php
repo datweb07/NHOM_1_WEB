@@ -246,37 +246,7 @@ $hasSavedAddresses = !empty($diaChiList);
                             </div>
                         <?php endif; ?>
 
-                        <?php if (isset($momoEnabled) && $momoEnabled): ?>
-                            <div class="form-check mb-3 border rounded p-3 payment-method-option <?= isset($gatewayWarnings['momo']) ? 'border-warning' : '' ?>" data-method="VI_DIEN_TU">
-                                <input class="form-check-input" type="radio" name="phuong_thuc_thanh_toan" id="tt_momo" value="VI_DIEN_TU" <?= isset($gatewayWarnings['momo']) ? 'disabled' : '' ?>>
-                                <label class="form-check-label w-100" for="tt_momo" style="cursor: pointer;">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <i class="fa fa-mobile-alt text-danger fs-4"></i>
-                                        <div class="flex-grow-1">
-                                            <div class="fw-medium">Thanh toán qua ví Momo</div>
-                                            <small class="text-muted">Thanh toán qua ví điện tử Momo</small>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if (isset($zalopayEnabled) && $zalopayEnabled): ?>
-                            <div class="form-check mb-3 border rounded p-3 payment-method-option <?= isset($gatewayWarnings['zalopay']) ? 'border-warning' : '' ?>" data-method="ZALOPAY">
-                                <input class="form-check-input" type="radio" name="phuong_thuc_thanh_toan" id="tt_zalopay" value="ZALOPAY" <?= isset($gatewayWarnings['zalopay']) ? 'disabled' : '' ?>>
-                                <label class="form-check-label w-100" for="tt_zalopay" style="cursor: pointer;">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <i class="fa fa-wallet text-info fs-4"></i>
-                                        <div class="flex-grow-1">
-                                            <div class="fw-medium">Thanh toán qua ZaloPay</div>
-                                            <small class="text-muted">Thanh toán tiện lợi qua ứng dụng Zalo hoặc ZaloPay</small>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if ((!isset($vnpayEnabled) || !$vnpayEnabled) && (!isset($momoEnabled) || !$momoEnabled) && (!isset($zalopayEnabled) || !$zalopayEnabled)): ?>
+                        <?php if (!isset($vnpayEnabled) || !$vnpayEnabled): ?>
                             <div class="alert alert-info small mb-0 mt-2">
                                 <i class="fa fa-info-circle me-1"></i>
                                 Hiện tại chỉ hỗ trợ thanh toán COD. Các phương thức thanh toán online đang được cập nhật.

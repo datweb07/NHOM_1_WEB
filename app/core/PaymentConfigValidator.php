@@ -16,19 +16,12 @@ class PaymentConfigValidator
         }
 
 
-        $momoResult = self::validateMomo();
-        if (!$momoResult['valid']) {
-            $warnings[] = $momoResult['message'];
-        }
-
-
         if (!empty($warnings)) {
             error_log('[Payment Config] ' . implode(' | ', $warnings));
         }
 
         return [
             'vnpay_configured' => $vnpayResult['valid'],
-            'momo_configured' => $momoResult['valid'],
             'warnings' => $warnings,
             'errors' => $errors
         ];
@@ -66,37 +59,7 @@ class PaymentConfigValidator
         ];
     }
 
-    private static function validateMomo(): array
-    {
-        $required = ['MOMO_PARTNER_CODE', 'MOMO_ACCESS_KEY', 'MOMO_SECRET_KEY', 'MOMO_URL'];
-        $missing = [];
 
-        foreach ($required as $key) {
-            if (empty($_ENV[$key])) {
-                $missing[] = $key;
-            }
-        }
-
-        if (!empty($missing)) {
-            return [
-                'valid' => false,
-                'message' => 'Momo gateway disabled: Missing configuration - ' . implode(', ', $missing)
-            ];
-        }
-
-
-        if (!filter_var($_ENV['MOMO_URL'], FILTER_VALIDATE_URL)) {
-            return [
-                'valid' => false,
-                'message' => 'Momo gateway disabled: Invalid MOMO_URL format'
-            ];
-        }
-
-        return [
-            'valid' => true,
-            'message' => 'Momo gateway configured successfully'
-        ];
-    }
 
     public static function getStatus(): array
     {
@@ -107,11 +70,6 @@ class PaymentConfigValidator
                 'enabled' => $validation['vnpay_configured'],
                 'label' => 'VNPay',
                 'icon' => 'fa-university'
-            ],
-            'momo' => [
-                'enabled' => $validation['momo_configured'],
-                'label' => 'Momo',
-                'icon' => 'fa-mobile-alt'
             ],
             'cod' => [
                 'enabled' => true, 
@@ -134,10 +92,6 @@ class PaymentConfigValidator
 
         if ($validation['vnpay_configured']) {
             $methods[] = 'CHUYEN_KHOAN';
-        }
-
-        if ($validation['momo_configured']) {
-            $methods[] = 'VI_DIEN_TU';
         }
 
         return $methods;

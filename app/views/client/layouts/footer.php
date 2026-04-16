@@ -93,12 +93,9 @@
                     <img src="https://cdn2.fptshop.com.vn/svg/jcb_icon_214783937c.svg" alt="JCB" class="img-fluid">
                     <img src="https://cdn2.fptshop.com.vn/svg/amex_icon_d6fb68108d.svg" alt="Amex" class="img-fluid">
                     <img src="https://cdn2.fptshop.com.vn/svg/vnpay_icon_f42045057d.svg" alt="VNPAY" class="img-fluid">
-                    <img src="https://cdn2.fptshop.com.vn/svg/zalopay_icon_26d64ea93f.svg" alt="ZaloPay"
-                        class="img-fluid">
                     <img src="https://cdn2.fptshop.com.vn/svg/napas_icon_94d5330e3c.svg" alt="Napas" class="img-fluid">
                     <img src="https://cdn2.fptshop.com.vn/svg/kredivo_icon_04f72baf36.svg" alt="Kredivo"
                         class="img-fluid">
-                    <img src="https://cdn2.fptshop.com.vn/svg/momo_icon_baef21b5f7.svg" alt="MoMo" class="img-fluid">
                     <img src="https://cdn2.fptshop.com.vn/svg/foxpay_icon_063b36c1f8.svg" alt="Foxpay"
                         class="img-fluid">
                     <img src="https://cdn2.fptshop.com.vn/svg/alepay_icon_20d5310617.svg" alt="Alepay"

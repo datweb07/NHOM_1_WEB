@@ -15,7 +15,6 @@ $ts = $trangThaiMap[$donHang['trang_thai']] ?? ['label' => $donHang['trang_thai'
 $ptMap = [
     'COD'            => 'Thanh toán khi nhận hàng',
     'CHUYEN_KHOAN'   => 'Chuyển khoản ngân hàng',
-    'MOMO'           => 'Ví MoMo',
     'TIEN_MAT'       => 'Tiền mặt',
 ];
 ?>

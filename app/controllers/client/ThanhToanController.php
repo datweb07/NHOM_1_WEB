@@ -15,7 +15,6 @@ require_once dirname(__DIR__, 2) . '/core/Functions.php';
 require_once dirname(__DIR__, 2) . '/services/payment/PaymentService.php';
 require_once dirname(__DIR__, 2) . '/services/payment/CallbackHandler.php';
 require_once dirname(__DIR__, 2) . '/services/payment/VNPayGateway.php';
-require_once dirname(__DIR__, 2) . '/services/payment/MomoGateway.php';
 require_once dirname(__DIR__, 2) . '/enums/PhuongThucThanhToan.php';
 
 use GioHang;
@@ -81,10 +80,6 @@ class ThanhToanController
 
 
         $vnpayEnabled = (new \VNPayGateway())->isConfigured();
-        $momoEnabled = (new \MomoGateway())->isConfigured();
-
-        require_once dirname(__DIR__, 2) . '/services/payment/ZaloPayGateway.php';
-        $zalopayEnabled = (new \ZaloPayGateway())->isConfigured();
 
 
         $gatewayWarnings = $this->checkGatewayHealth();
@@ -248,21 +243,6 @@ class ThanhToanController
             $vnpayGateway = new \VNPayGateway();
             if (!$vnpayGateway->isConfigured()) {
                 Session::flash('error', 'Phương thức thanh toán VNPay hiện không khả dụng');
-                header('Location: /thanh-toan');
-                exit;
-            }
-        } elseif ($phuongThucThanhToan === 'VI_DIEN_TU') {
-            $momoGateway = new \MomoGateway();
-            if (!$momoGateway->isConfigured()) {
-                Session::flash('error', 'Phương thức thanh toán Momo hiện không khả dụng');
-                header('Location: /thanh-toan');
-                exit;
-            }
-        } elseif ($phuongThucThanhToan === 'ZALOPAY') {
-            require_once dirname(__DIR__, 2) . '/services/payment/ZaloPayGateway.php';
-            $zalopayGateway = new \ZaloPayGateway();
-            if (!$zalopayGateway->isConfigured()) {
-                Session::flash('error', 'Phương thức thanh toán ZaloPay hiện không khả dụng');
                 header('Location: /thanh-toan');
                 exit;
             }
@@ -468,16 +448,7 @@ class ThanhToanController
         exit;
     }
 
-    public function callbackMomo(): void
-    {
-        header('Content-Type: application/json');
 
-        $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
-        $result = $this->callbackHandler->handleMomoCallback($data);
-
-        echo json_encode($result);
-        exit;
-    }
 
     public function returnVNPay(): void
     {
@@ -528,114 +499,11 @@ class ThanhToanController
         exit;
     }
 
-    public function returnMomo(): void
-    {
-        $data = $_GET;
 
 
-        $gateway = new \MomoGateway();
-        $isValidSignature = $gateway->verifyReturnUrl($data);
-
-        if (!$isValidSignature) {
-            Session::flash('error', 'Xác thực thanh toán thất bại. Vui lòng liên hệ hỗ trợ.');
-            header('Location: /');
-            exit;
-        }
 
 
-        $transactionId = $data['orderId'] ?? null;
 
-        if (!$transactionId) {
-            Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
-            header('Location: /');
-            exit;
-        }
-
-        $transaction = $this->paymentService->getTransaction($transactionId);
-
-        if (!$transaction) {
-            Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
-            header('Location: /');
-            exit;
-        }
-
-        $donHangId = $transaction['don_hang_id'];
-        $status = $transaction['trang_thai_duyet'];
-
-
-        if ($status === 'THANH_CONG') {
-            Session::flash('success', 'Thanh toán thành công!');
-            header('Location: /don-hang/' . $donHangId);
-        } elseif ($status === 'THAT_BAI') {
-            $errorMessage = $transaction['error_message'] ?? 'Thanh toán thất bại';
-            Session::flash('error', $errorMessage);
-            header('Location: /don-hang/' . $donHangId);
-        } else {
-            Session::flash('info', 'Giao dịch đang được xử lý. Vui lòng kiểm tra lại sau.');
-            header('Location: /don-hang/' . $donHangId);
-        }
-
-        exit;
-    }
-
-    public function callbackZaloPay(): void
-    {
-        header('Content-Type: application/json');
-
-        $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
-        $result = $this->callbackHandler->handleZaloPayCallback($data);
-
-        echo json_encode($result);
-        exit;
-    }
-
-    public function returnZaloPay(): void
-    {
-        $data = $_GET;
-
-        require_once dirname(__DIR__, 2) . '/services/payment/ZaloPayGateway.php';
-        $gateway = new \ZaloPayGateway();
-        $isValidSignature = $gateway->verifyReturnUrl($data);
-
-        if (!$isValidSignature) {
-            Session::flash('error', 'Xác thực thanh toán thất bại. Vui lòng liên hệ hỗ trợ.');
-            header('Location: /');
-            exit;
-        }
-
-        $transactionId = $data['apptransid'] ?? null;
-
-        if (!$transactionId) {
-            Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
-            header('Location: /');
-            exit;
-        }
-
-        $transaction = $this->paymentService->getTransaction($transactionId);
-
-        if (!$transaction) {
-            Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
-            header('Location: /');
-            exit;
-        }
-
-        $donHangId = $transaction['don_hang_id'];
-        $status = $transaction['trang_thai_duyet'];
-
-        if ($status === 'THANH_CONG') {
-            Session::flash('success', 'Thanh toán thành công!');
-            header('Location: /don-hang/' . $donHangId);
-        } elseif ($status === 'THAT_BAI') {
-            $errorMessage = $transaction['error_message'] ?? 'Thanh toán thất bại';
-            Session::flash('error', $errorMessage);
-            header('Location: /don-hang/' . $donHangId);
-        } else {
-            Session::flash('info', 'Giao dịch đang được xử lý. Vui lòng kiểm tra lại sau.');
-            header('Location: /don-hang/' . $donHangId);
-        }
-
-        exit;
-    }
 
     private function checkGatewayHealth(): array
     {
@@ -652,31 +520,6 @@ class ThanhToanController
                 $warnings['vnpay'] = [
                     'gateway' => 'VNPay',
                     'message' => 'Cổng thanh toán VNPay đang gặp sự cố. Vui lòng chọn phương thức thanh toán khác.',
-                    'success_rate' => $successRate
-                ];
-            }
-        }
-
-
-        $momoHealth = $healthModel->getByGatewayName('Momo');
-        if ($momoHealth) {
-            $successRate = $healthModel->getSuccessRate('Momo', 24);
-            if ($successRate < 50 && ($momoHealth['success_count'] + $momoHealth['failure_count']) >= 10) {
-                $warnings['momo'] = [
-                    'gateway' => 'Momo',
-                    'message' => 'Cổng thanh toán Momo đang gặp sự cố. Vui lòng chọn phương thức thanh toán khác.',
-                    'success_rate' => $successRate
-                ];
-            }
-        }
-
-        $zalopayHealth = $healthModel->getByGatewayName('ZaloPay');
-        if ($zalopayHealth) {
-            $successRate = $healthModel->getSuccessRate('ZaloPay', 24);
-            if ($successRate < 50 && ($zalopayHealth['success_count'] + $zalopayHealth['failure_count']) >= 10) {
-                $warnings['zalopay'] = [
-                    'gateway' => 'ZaloPay',
-                    'message' => 'Cổng thanh toán ZaloPay đang gặp sự cố. Vui lòng chọn phương thức thanh toán khác.',
                     'success_rate' => $successRate
                 ];
             }

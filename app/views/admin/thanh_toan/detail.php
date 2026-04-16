@@ -245,8 +245,6 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                     $refundDisabledReason = 'Đã hoàn tiền';
                                 } elseif ($phuongThuc === 'COD') {
                                     // Hide button completely for COD
-                                } elseif ($phuongThuc === 'ZALOPAY') {
-                                    $refundDisabledReason = 'ZaloPay chưa hỗ trợ hoàn tiền';
                                 } else {
                                     $canShowRefund = true;
                                 }

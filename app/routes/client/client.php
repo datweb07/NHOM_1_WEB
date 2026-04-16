@@ -275,39 +275,11 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	if ($path === 'thanh-toan/callback/momo') {
-		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
-		$controller = new \App\Controllers\Client\ThanhToanController();
-		$controller->callbackMomo();
-		return;
-	}
-
-	if ($path === 'thanh-toan/callback/zalopay') {
-		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
-		$controller = new \App\Controllers\Client\ThanhToanController();
-		$controller->callbackZaloPay();
-		return;
-	}
-
 	// Payment gateway return URL routes
 	if ($path === 'thanh-toan/return/vnpay') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
 		$controller = new \App\Controllers\Client\ThanhToanController();
 		$controller->returnVNPay();
-		return;
-	}
-
-	if ($path === 'thanh-toan/return/momo') {
-		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
-		$controller = new \App\Controllers\Client\ThanhToanController();
-		$controller->returnMomo();
-		return;
-	}
-
-	if ($path === 'thanh-toan/return/zalopay') {
-		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
-		$controller = new \App\Controllers\Client\ThanhToanController();
-		$controller->returnZaloPay();
 		return;
 	}
 
