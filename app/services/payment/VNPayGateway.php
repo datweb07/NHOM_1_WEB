@@ -199,6 +199,26 @@ class VNPayGateway implements PaymentGatewayInterface
             return ['success' => false, 'message' => 'VNPay chưa được cấu hình', 'refund_id' => null];
         }
 
+        $isSandbox = strpos($this->url, 'sandbox') !== false;
+        
+        if ($isSandbox) {
+            //vì vnpay ko hỗ trợ refund, nên nhóm tạo VNPay sanbox mock để mô phỏng hoàn tiền
+            error_log(sprintf(
+                "[VNPAY REFUND MOCK] Transaction: %s, Amount: %s, Reason: %s, Timestamp: %s",
+                $transactionId,
+                $amount,
+                $reason,
+                date('Y-m-d H:i:s')
+            ));
+            
+            return [
+                'success' => true,
+                'message' => 'Hoàn tiền thành công (Sandbox Mode - Simulated)',
+                'refund_id' => 'REFUND_' . $transactionId . '_' . time(),
+            ];
+        }
+
+
         $refundUrl = str_replace('/paymentv2/vpcpay.html', '/merchant_webapi/api/transaction', $this->url);
 
         $vnpRequestId = time() . rand(1000, 9999);

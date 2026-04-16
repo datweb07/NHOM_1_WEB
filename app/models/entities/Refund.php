@@ -9,17 +9,17 @@ class Refund extends BaseModel
         parent::__construct('refund');
     }
 
-    public function createRefund(int $thanhToanId, float $amount, string $reason)
+    public function createRefund(int $thanhToanId, float $amount, string $reason, ?int $adminId = null)
     {
-        $sql = "INSERT INTO refund (thanh_toan_id, amount, status, reason, created_at) 
-                VALUES (?, ?, 'PENDING', ?, NOW())";
+        $sql = "INSERT INTO refund (thanh_toan_id, amount, status, reason, admin_id, created_at) 
+                VALUES (?, ?, 'PENDING', ?, ?, NOW())";
         
         $stmt = $this->link->prepare($sql);
         if (!$stmt) {
             return false;
         }
         
-        $stmt->bind_param('ids', $thanhToanId, $amount, $reason);
+        $stmt->bind_param('idsi', $thanhToanId, $amount, $reason, $adminId);
         
         if ($stmt->execute()) {
             return $this->link->insert_id;
@@ -91,5 +91,64 @@ class Refund extends BaseModel
         $refund = $result->fetch_assoc();
         
         return $refund ?: null;
+    }
+
+    /**
+     * Check if payment has any completed refunds
+     * 
+     * @param int $thanhToanId Payment ID
+     * @return bool True if payment has at least one COMPLETED refund
+     */
+    public function hasCompletedRefund(int $thanhToanId): bool
+    {
+        $sql = "SELECT COUNT(*) as count FROM refund 
+                WHERE thanh_toan_id = ? AND status = 'COMPLETED'";
+        
+        $stmt = $this->link->prepare($sql);
+        if (!$stmt) {
+            return false;
+        }
+        
+        $stmt->bind_param('i', $thanhToanId);
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        
+        return ($row['count'] ?? 0) > 0;
+    }
+
+    /**
+     * Get refund statistics for a payment
+     * 
+     * @param int $thanhToanId Payment ID
+     * @return array Array with 'total_refunded' (sum of amounts) and 'refund_count' (number of refunds)
+     */
+    public function getRefundStats(int $thanhToanId): array
+    {
+        $sql = "SELECT 
+                    COALESCE(SUM(amount), 0) as total_refunded,
+                    COUNT(*) as refund_count
+                FROM refund 
+                WHERE thanh_toan_id = ? AND status = 'COMPLETED'";
+        
+        $stmt = $this->link->prepare($sql);
+        if (!$stmt) {
+            return [
+                'total_refunded' => 0.0,
+                'refund_count' => 0
+            ];
+        }
+        
+        $stmt->bind_param('i', $thanhToanId);
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        
+        return [
+            'total_refunded' => (float)($row['total_refunded'] ?? 0),
+            'refund_count' => (int)($row['refund_count'] ?? 0)
+        ];
     }
 }

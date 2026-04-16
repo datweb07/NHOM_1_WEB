@@ -75,10 +75,16 @@ class ThanhToanController
         $transactionLogModel = new TransactionLog();
         $transactionLogs = $transactionLogModel->getByThanhToanId($id);
 
+        // Fetch refund records for this payment
+        require_once dirname(__DIR__, 2) . '/models/entities/Refund.php';
+        $refundModel = new Refund();
+        $refunds = $refundModel->findByThanhToanId($id);
+
         $data = [
             'thanhToan' => $thanhToan,
             'donHang' => $donHang,
             'transactionLogs' => $transactionLogs,
+            'refunds' => $refunds,
             'success' => $_GET['success'] ?? '',
             'error' => $_GET['error'] ?? '',
         ];
@@ -402,5 +408,85 @@ class ThanhToanController
 
         extract($data);
         require_once dirname(__DIR__, 2) . '/views/admin/thanh_toan/health.php';
+    }
+
+    public function showRefundForm($id): void
+    {
+        $id = (int)$id;
+        if ($id <= 0) {
+            header('Location: /admin/thanh-toan?error=invalid_id');
+            exit;
+        }
+
+        $thanhToan = $this->thanhToanModel->getById($id);
+        if ($thanhToan === null) {
+            header('Location: /admin/thanh-toan?error=not_found');
+            exit;
+        }
+
+        header('Location: /admin/thanh-toan/chi-tiet?id=' . $id);
+        exit;
+    }
+
+    public function processRefund($id): void
+    {
+        // Validate POST request
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            header('Location: /admin/thanh-toan');
+            exit;
+        }
+
+        // Validate payment ID
+        $id = (int)$id;
+        if ($id <= 0) {
+            header('Location: /admin/thanh-toan?error=invalid_id');
+            exit;
+        }
+
+        // Get payment record
+        $thanhToan = $this->thanhToanModel->getById($id);
+        if ($thanhToan === null) {
+            header('Location: /admin/thanh-toan?error=payment_not_found');
+            exit;
+        }
+
+        // Validate POST data: amount (numeric) and reason (required string)
+        $amount = isset($_POST['amount']) ? (float)$_POST['amount'] : 0;
+        $reason = trim((string)($_POST['reason'] ?? ''));
+
+        if ($amount <= 0) {
+            header('Location: /admin/thanh-toan/chi-tiet?id=' . $id . '&error=invalid_amount');
+            exit;
+        }
+
+        if ($reason === '') {
+            header('Location: /admin/thanh-toan/chi-tiet?id=' . $id . '&error=reason_required');
+            exit;
+        }
+
+        // Get admin user ID from session
+        require_once dirname(__DIR__, 2) . '/core/Session.php';
+        \App\Core\Session::start();
+        $adminId = \App\Core\Session::getUserId();
+        
+        if ($adminId === null) {
+            header('Location: /admin/auth/login');
+            exit;
+        }
+
+        // Instantiate RefundService and call initiateRefund
+        require_once dirname(__DIR__, 2) . '/services/refund/RefundService.php';
+        $refundService = new RefundService();
+        
+        $result = $refundService->initiateRefund($id, $amount, $reason, $adminId);
+
+        // Redirect to payment detail page with success or error message
+        if ($result['success']) {
+            header('Location: /admin/thanh-toan/chi-tiet?id=' . $id . '&success=refund_completed');
+        } else {
+            $errorMessage = urlencode($result['message']);
+            header('Location: /admin/thanh-toan/chi-tiet?id=' . $id . '&error=' . $errorMessage);
+        }
+        exit;
     }
 }

@@ -8,6 +8,7 @@ $successMessages = [
     'approved' => 'Đã duyệt thanh toán thành công.',
     'rejected' => 'Đã từ chối thanh toán.',
     'cod_confirmed' => 'Đã xác nhận thanh toán COD thành công.',
+    'refund_completed' => 'Hoàn tiền thành công.',
 ];
 
 $errorMessages = [
@@ -15,13 +16,20 @@ $errorMessages = [
     'not_found' => 'Không tìm thấy thanh toán.',
     'not_cod' => 'Chỉ có thể xác nhận thanh toán COD.',
     'already_processed' => 'Thanh toán đã được xử lý.',
+    'payment_not_found' => 'Không tìm thấy thông tin thanh toán.',
+    'invalid_amount' => 'Số tiền hoàn không hợp lệ.',
+    'reason_required' => 'Vui lòng nhập lý do hoàn tiền.',
+    'gateway_not_configured' => 'Cổng thanh toán chưa được cấu hình.',
+    'unsupported_method' => 'Phương thức thanh toán này không hỗ trợ hoàn tiền tự động.',
 ];
 
 $thanhToan = (isset($thanhToan) && is_array($thanhToan)) ? $thanhToan : [];
 $donHang = (isset($donHang) && is_array($donHang)) ? $donHang : [];
 $transactionLogs = (isset($transactionLogs) && is_array($transactionLogs)) ? $transactionLogs : [];
+$refunds = (isset($refunds) && is_array($refunds)) ? $refunds : [];
 $paymentId = (int)($thanhToan['id'] ?? 0);
 $trangThaiDuyet = (string)($thanhToan['trang_thai_duyet'] ?? '');
+$phuongThuc = (string)($thanhToan['phuong_thuc'] ?? '');
 
 // Include Master Layout
 require_once dirname(__DIR__) . '/layouts/header.php';
@@ -61,9 +69,14 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                 </div>
             <?php endif; ?>
 
-            <?php if (!empty($error) && isset($errorMessages[$error])): ?>
+            <?php if (!empty($error)): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle"></i> <?= e($errorMessages[$error]) ?>
+                    <i class="bi bi-exclamation-triangle"></i> 
+                    <?php if (isset($errorMessages[$error])): ?>
+                        <?= e($errorMessages[$error]) ?>
+                    <?php else: ?>
+                        <?= e(urldecode($error)) ?>
+                    <?php endif; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             <?php endif; ?>
@@ -193,7 +206,7 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                             <h6 class="card-title text-uppercase text-muted mb-0">Hành động xử lý</h6>
                         </div>
                         <div class="card-body">
-                            <?php if ($trangThaiDuyet === 'CHO_DUYET' && ($thanhToan['phuong_thuc'] ?? '') === 'COD'): ?>
+                            <?php if ($trangThaiDuyet === 'CHO_DUYET' && $phuongThuc === 'COD'): ?>
                                 <h5 class="mb-3">Xác nhận thanh toán COD</h5>
                                 <p class="text-muted mb-4">Đánh dấu thanh toán COD này là đã hoàn thành sau khi khách hàng đã thanh toán cho shipper.</p>
                                 <form method="POST" action="/admin/thanh-toan/xac-nhan-cod?id=<?= $paymentId ?>" onsubmit="return confirm('Bạn có chắc chắn muốn xác nhận thanh toán COD này đã hoàn thành?');">
@@ -218,6 +231,45 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                         </button>
                                     </div>
                                 </form>
+
+                            <?php elseif ($trangThaiDuyet === 'THANH_CONG'): ?>
+                                <?php
+                                // Determine if refund button should be shown
+                                $canShowRefund = false;
+                                $refundDisabledReason = '';
+                                
+                                // Check if already refunded
+                                $hasCompletedRefund = !empty($refunds) && count(array_filter($refunds, fn($r) => ($r['status'] ?? '') === 'COMPLETED')) > 0;
+                                
+                                if ($hasCompletedRefund) {
+                                    $refundDisabledReason = 'Đã hoàn tiền';
+                                } elseif ($phuongThuc === 'COD') {
+                                    // Hide button completely for COD
+                                } elseif ($phuongThuc === 'ZALOPAY') {
+                                    $refundDisabledReason = 'ZaloPay chưa hỗ trợ hoàn tiền';
+                                } else {
+                                    $canShowRefund = true;
+                                }
+                                ?>
+                                
+                                <h5 class="mb-3">Hoàn tiền</h5>
+                                
+                                <?php if ($canShowRefund): ?>
+                                    <p class="text-muted mb-4">Hoàn tiền cho khách hàng qua cổng thanh toán.</p>
+                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#refundModal">
+                                        <i class="bi bi-arrow-counterclockwise me-1"></i> Hoàn tiền
+                                    </button>
+                                <?php elseif ($refundDisabledReason): ?>
+                                    <p class="text-muted mb-4"><?= e($refundDisabledReason) ?></p>
+                                    <button type="button" class="btn btn-secondary" disabled title="<?= e($refundDisabledReason) ?>">
+                                        <i class="bi bi-arrow-counterclockwise me-1"></i> Hoàn tiền
+                                    </button>
+                                <?php else: ?>
+                                    <div class="alert alert-info border-0 mb-0">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        Không hỗ trợ hoàn tiền cho phương thức thanh toán này.
+                                    </div>
+                                <?php endif; ?>
 
                             <?php else: ?>
                                 <div class="alert alert-secondary border-0 mb-0 d-flex align-items-center">
@@ -292,7 +344,96 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                 </div>
             <?php endif; ?>
 
+            <?php if (!empty($refunds)): ?>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="card-title text-uppercase text-muted mb-0">Lịch sử hoàn tiền</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-3">Số tiền</th>
+                                        <th>Trạng thái</th>
+                                        <th>Lý do</th>
+                                        <th>Mã GD Gateway</th>
+                                        <th>Ngày tạo</th>
+                                        <th class="pe-3">Ngày hoàn thành</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($refunds as $refund): ?>
+                                        <tr>
+                                            <td class="ps-3 fw-bold text-danger"><?= number_format((float)($refund['amount'] ?? 0), 0, ',', '.') ?> đ</td>
+                                            <td>
+                                                <?php
+                                                $refundStatus = $refund['status'] ?? '';
+                                                if ($refundStatus === 'COMPLETED'):
+                                                ?>
+                                                    <span class="badge bg-success">Hoàn thành</span>
+                                                <?php elseif ($refundStatus === 'PENDING'): ?>
+                                                    <span class="badge bg-warning text-dark">Đang xử lý</span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-danger">Thất bại</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?= e($refund['reason'] ?? '-') ?></td>
+                                            <td>
+                                                <?php if (!empty($refund['gateway_refund_id'])): ?>
+                                                    <code><?= e($refund['gateway_refund_id']) ?></code>
+                                                <?php else: ?>
+                                                    <span class="text-muted">N/A</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td><?= !empty($refund['created_at']) ? date('d/m/Y H:i', strtotime($refund['created_at'])) : '-' ?></td>
+                                            <td class="pe-3"><?= !empty($refund['completed_at']) ? date('d/m/Y H:i', strtotime($refund['completed_at'])) : '-' ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
         </div> </div> </main>
+
+<!-- Refund Modal -->
+<div class="modal fade" id="refundModal" tabindex="-1" aria-labelledby="refundModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="/admin/thanh-toan/refund?id=<?= $paymentId ?>">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="refundModalLabel">Xác nhận hoàn tiền</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Hành động này sẽ hoàn tiền cho khách hàng qua cổng thanh toán.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="refund_amount" class="form-label">Số tiền hoàn</label>
+                        <input type="number" class="form-control" id="refund_amount" name="amount" 
+                               value="<?= (float)($thanhToan['so_tien'] ?? 0) ?>" readonly>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="refund_reason" class="form-label">Lý do hoàn tiền <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="refund_reason" name="reason" rows="3" required 
+                                  placeholder="Nhập lý do hoàn tiền..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-warning">Xác nhận hoàn tiền</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
     function submitApproval(action) {

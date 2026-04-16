@@ -52,15 +52,10 @@ class DashboardController
         $pendingPayments = $pendingPaymentsResult[0]['total'] ?? 0;
 
         // Calculate monthly revenue (current month)
-        $currentMonth = date('Y-m');
-        $monthlyRevenueSql = "SELECT COALESCE(SUM(tong_thanh_toan), 0) as revenue 
-                              FROM don_hang 
-                              WHERE DATE_FORMAT(ngay_tao, '%Y-%m') = '$currentMonth'
-                              AND trang_thai NOT IN ('DA_HUY', 'TRA_HANG')";
-        $monthlyRevenueResult = $this->donHangModel->query($monthlyRevenueSql);
-        $monthlyRevenue = $monthlyRevenueResult[0]['revenue'] ?? 0;
+        $monthlyRevenue = $this->calculateMonthlyRevenue();
 
         // Calculate monthly orders count (current month)
+        $currentMonth = date('Y-m');
         $monthlyOrdersSql = "SELECT COUNT(*) as total 
                              FROM don_hang 
                              WHERE DATE_FORMAT(ngay_tao, '%Y-%m') = '$currentMonth'";
@@ -82,5 +77,54 @@ class DashboardController
 
         // Load dashboard view (admin views don't use layout wrapper)
         View::render('admin/dashboard/index', $data, null);
+    }
+
+    /**
+     * Calculate monthly revenue with corrected logic
+     * - Only include orders with THANH_CONG payment approval
+     * - Exclude orders with COMPLETED refunds
+     * - Exclude cancelled/returned orders
+     * 
+     * @return float Monthly revenue amount
+     */
+    private function calculateMonthlyRevenue(): float
+    {
+        $currentMonth = date('Y-m');
+        
+        $sql = "SELECT COALESCE(SUM(don_hang.tong_thanh_toan), 0) as revenue 
+                FROM don_hang 
+                INNER JOIN thanh_toan ON don_hang.id = thanh_toan.don_hang_id
+                LEFT JOIN refund ON thanh_toan.id = refund.thanh_toan_id AND refund.status = 'COMPLETED'
+                WHERE DATE_FORMAT(don_hang.ngay_tao, '%Y-%m') = '$currentMonth'
+                AND thanh_toan.trang_thai_duyet = 'THANH_CONG'
+                AND don_hang.trang_thai NOT IN ('DA_HUY', 'TRA_HANG')
+                AND refund.id IS NULL";
+        
+        $result = $this->donHangModel->query($sql);
+        
+        return (float)($result[0]['revenue'] ?? 0);
+    }
+
+    /**
+     * Calculate total revenue with corrected logic
+     * - Only include orders with THANH_CONG payment approval
+     * - Exclude orders with COMPLETED refunds
+     * - Exclude cancelled/returned orders
+     * 
+     * @return float Total revenue amount
+     */
+    private function calculateTotalRevenue(): float
+    {
+        $sql = "SELECT COALESCE(SUM(don_hang.tong_thanh_toan), 0) as revenue 
+                FROM don_hang 
+                INNER JOIN thanh_toan ON don_hang.id = thanh_toan.don_hang_id
+                LEFT JOIN refund ON thanh_toan.id = refund.thanh_toan_id AND refund.status = 'COMPLETED'
+                WHERE thanh_toan.trang_thai_duyet = 'THANH_CONG'
+                AND don_hang.trang_thai NOT IN ('DA_HUY', 'TRA_HANG')
+                AND refund.id IS NULL";
+        
+        $result = $this->donHangModel->query($sql);
+        
+        return (float)($result[0]['revenue'] ?? 0);
     }
 }
