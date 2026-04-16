@@ -539,7 +539,7 @@ class ThanhToanController
     {
         $data = $_GET;
 
-
+        // Xác thực chữ ký từ VNPay
         $gateway = new \VNPayGateway();
         $isValidSignature = $gateway->verifyReturnUrl($data);
 
@@ -549,8 +549,10 @@ class ThanhToanController
             exit;
         }
 
-
+        // Lấy thông tin từ VNPay response
         $transactionId = $data['vnp_TxnRef'] ?? null;
+        $vnpayTransactionNo = $data['vnp_TransactionNo'] ?? null; // Mã giao dịch từ VNPay
+        $responseCode = $data['vnp_ResponseCode'] ?? '99';
 
         if (!$transactionId) {
             Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
@@ -558,26 +560,68 @@ class ThanhToanController
             exit;
         }
 
-        $transaction = $this->paymentService->getTransaction($transactionId);
+        // Lấy transaction từ database
+        $transaction = $this->thanhToanModel->findById($transactionId);
 
         if (!$transaction) {
-            Session::flash('error', 'Không tìm thấy thông tin giao dịch.');
+            Session::flash('error', 'Không tìm thấy thông tin giao dịch trong hệ thống.');
             header('Location: /');
             exit;
         }
 
         $donHangId = $transaction['don_hang_id'];
-        $status = $transaction['trang_thai_duyet'];
 
-        if ($status === 'THANH_CONG') {
-            Session::flash('success', 'Thanh toán thành công!');
-            header('Location: /don-hang/' . $donHangId);
-        } elseif ($status === 'THAT_BAI') {
-            $errorMessage = $transaction['error_message'] ?? 'Thanh toán thất bại';
-            Session::flash('error', $errorMessage);
+        // Xử lý kết quả thanh toán
+        if ($responseCode === '00') {
+            // Thanh toán thành công
+            
+            // Cập nhật trạng thái thanh toán
+            $this->thanhToanModel->update($transaction['id'], [
+                'trang_thai_duyet' => 'THANH_CONG',
+                'gateway_transaction_id' => $vnpayTransactionNo,
+                'ngay_thanh_toan' => date('Y-m-d H:i:s')
+            ]);
+
+            // Cập nhật trạng thái đơn hàng - Tự động xác nhận
+            $this->donHangModel->capNhatTrangThai($donHangId, 'DA_XAC_NHAN');
+
+            // Log transaction vào transaction_log
+            require_once dirname(__DIR__, 2) . '/models/entities/TransactionLog.php';
+            $transactionLog = new \TransactionLog();
+            $transactionLog->create([
+                'thanh_toan_id' => $transaction['id'],
+                'gateway_name' => 'VNPAY',
+                'gateway_transaction_id' => $vnpayTransactionNo,
+                'request_data' => json_encode(['vnp_TxnRef' => $transactionId]),
+                'response_data' => json_encode($data),
+                'status' => 'SUCCESS'
+            ]);
+
+            Session::flash('success', 'Thanh toán VNPay thành công!');
             header('Location: /don-hang/' . $donHangId);
         } else {
-            Session::flash('info', 'Giao dịch đang được xử lý. Vui lòng kiểm tra lại sau.');
+            // Thanh toán thất bại
+            
+            // Cập nhật trạng thái thanh toán
+            $this->thanhToanModel->update($transaction['id'], [
+                'trang_thai_duyet' => 'THAT_BAI',
+                'gateway_transaction_id' => $vnpayTransactionNo
+            ]);
+
+            // Log transaction thất bại
+            require_once dirname(__DIR__, 2) . '/models/entities/TransactionLog.php';
+            $transactionLog = new \TransactionLog();
+            $transactionLog->create([
+                'thanh_toan_id' => $transaction['id'],
+                'gateway_name' => 'VNPAY',
+                'gateway_transaction_id' => $vnpayTransactionNo,
+                'request_data' => json_encode(['vnp_TxnRef' => $transactionId]),
+                'response_data' => json_encode($data),
+                'status' => 'FAILED'
+            ]);
+
+            $errorMessage = $gateway->getErrorMessage($responseCode);
+            Session::flash('error', $errorMessage);
             header('Location: /don-hang/' . $donHangId);
         }
 
