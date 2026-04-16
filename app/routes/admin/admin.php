@@ -201,6 +201,11 @@ function adminRoute(string $uri): void
         return;
     }
 
+    if (preg_match('#^admin/thanh-toan/duyet/(\d+)$#', $path, $matches) && $method === 'POST') {
+        $thanhToanController->duyetThanhToan((int)$matches[1]);
+        return;
+    }
+
     if ($path === 'admin/san-pham' && $method === 'GET') {
         $sanPhamController->index();
         return;

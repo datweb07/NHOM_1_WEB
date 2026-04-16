@@ -283,6 +283,21 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	// VietQR routes
+	if ($path === 'thanh-toan/vietqr') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
+		$controller = new \App\Controllers\Client\ThanhToanController();
+		$controller->vietqr();
+		return;
+	}
+
+	if (preg_match('#^thanh-toan/kiem-tra-trang-thai/(\d+)$#', $path, $matches)) {
+		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
+		$controller = new \App\Controllers\Client\ThanhToanController();
+		$controller->kiemTraTrangThai((int)$matches[1]);
+		return;
+	}
+
 	// Đơn hàng routes
 	if ($path === 'don-hang/huy') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/DonHangController.php';

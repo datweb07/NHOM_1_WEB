@@ -162,7 +162,8 @@ class PaymentService
     {
         $gatewayMap = [
             'COD' => 'CODHandler',
-            'CHUYEN_KHOAN' => 'VNPayGateway'
+            'CHUYEN_KHOAN' => 'VNPayGateway',
+            'VIETQR' => 'VietQRGateway'
         ];
         
         $gatewayClass = $gatewayMap[$paymentMethod] ?? null;
@@ -186,7 +187,8 @@ class PaymentService
     {
         $gatewayMap = [
             'COD' => 'COD',
-            'CHUYEN_KHOAN' => 'VNPAY'
+            'CHUYEN_KHOAN' => 'VNPAY',
+            'VIETQR' => 'VIETQR'
         ];
         
         return $gatewayMap[$paymentMethod] ?? 'UNKNOWN';

@@ -246,6 +246,26 @@ $hasSavedAddresses = !empty($diaChiList);
                             </div>
                         <?php endif; ?>
 
+                        <?php if (isset($vietqrEnabled) && $vietqrEnabled): ?>
+                            <div class="form-check mb-3 border rounded p-3 payment-method-option <?= isset($gatewayWarnings['vietqr']) ? 'border-warning' : '' ?>" data-method="VIETQR">
+                                <input class="form-check-input" type="radio" name="phuong_thuc_thanh_toan" id="tt_vietqr" value="VIETQR" <?= isset($gatewayWarnings['vietqr']) ? 'disabled' : '' ?>>
+                                <label class="form-check-label w-100" for="tt_vietqr" style="cursor: pointer;">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <i class="fa fa-qrcode text-info fs-4"></i>
+                                        <div class="flex-grow-1">
+                                            <div class="fw-medium">Chuyển khoản qua VietQR</div>
+                                            <small class="text-muted">Quét mã QR để chuyển khoản ngân hàng</small>
+                                            <?php if (isset($gatewayWarnings['vietqr'])): ?>
+                                                <span class="badge bg-warning text-dark ms-2">
+                                                    <i class="fa fa-exclamation-triangle"></i> Đang gặp sự cố
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        <?php endif; ?>
+
                         <?php if (!isset($vnpayEnabled) || !$vnpayEnabled): ?>
                             <div class="alert alert-info small mb-0 mt-2">
                                 <i class="fa fa-info-circle me-1"></i>
