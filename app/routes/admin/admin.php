@@ -448,6 +448,54 @@ function adminRoute(string $uri): void
         return;
     }
 
+    // API: Lấy thông báo cho admin
+    if ($path === 'admin/api/notifications' && $method === 'GET') {
+        require_once dirname(__DIR__, 2) . '/controllers/admin/NotificationController.php';
+        $notificationController = new NotificationController();
+        $notificationController->index();
+        return;
+    }
+
+    // API: Đánh dấu thông báo đã đọc
+    if ($path === 'admin/api/notifications/mark-read' && $method === 'POST') {
+        require_once dirname(__DIR__, 2) . '/controllers/admin/NotificationController.php';
+        $notificationController = new NotificationController();
+        $notificationController->markAsRead();
+        return;
+    }
+
+    // API: Đánh dấu thông báo chưa đọc
+    if ($path === 'admin/api/notifications/mark-unread' && $method === 'POST') {
+        require_once dirname(__DIR__, 2) . '/controllers/admin/NotificationController.php';
+        $notificationController = new NotificationController();
+        $notificationController->markAsUnread();
+        return;
+    }
+
+    // API: Đánh dấu tất cả thông báo đã đọc
+    if ($path === 'admin/api/notifications/mark-all-read' && $method === 'POST') {
+        require_once dirname(__DIR__, 2) . '/controllers/admin/NotificationController.php';
+        $notificationController = new NotificationController();
+        $notificationController->markAllAsRead();
+        return;
+    }
+
+    // API: Lấy danh sách thông báo với phân trang và lọc
+    if ($path === 'admin/api/notifications/list' && $method === 'GET') {
+        require_once dirname(__DIR__, 2) . '/controllers/admin/NotificationController.php';
+        $notificationController = new NotificationController();
+        $notificationController->getNotificationList();
+        return;
+    }
+
+    // Trang danh sách thông báo
+    if ($path === 'admin/notifications' && $method === 'GET') {
+        require_once dirname(__DIR__, 2) . '/controllers/admin/NotificationController.php';
+        $notificationController = new NotificationController();
+        $notificationController->notificationListPage();
+        return;
+    }
+
     http_response_code(404);
     require_once dirname(__DIR__, 2) . '/views/errors/404.php';
 }

@@ -48,6 +48,54 @@ class AuthController
     public static function logout(): void
     {
         Session::start();
+        
+        // Clear notification state from Redis before logout
+        $adminId = Session::getUserId();
+        if ($adminId) {
+            try {
+                // Load all required dependencies for NotificationService
+                require_once __DIR__ . '/../../services/redis/RedisService.php';
+                require_once __DIR__ . '/../../services/notification/NotificationService.php';
+                require_once __DIR__ . '/../../models/entities/DonHang.php';
+                require_once __DIR__ . '/../../models/entities/ThanhToan.php';
+                require_once __DIR__ . '/../../models/entities/Refund.php';
+                require_once __DIR__ . '/../../models/entities/PhienBanSanPham.php';
+                require_once __DIR__ . '/../../models/entities/DanhGia.php';
+                require_once __DIR__ . '/../../models/entities/TransactionLog.php';
+                require_once __DIR__ . '/../../models/entities/GatewayHealth.php';
+                require_once __DIR__ . '/../../models/entities/MaGiamGia.php';
+                
+                // Initialize all dependencies
+                $redis = \RedisService::getInstance();
+                $donHangModel = new \DonHang();
+                $thanhToanModel = new \ThanhToan();
+                $refundModel = new \Refund();
+                $phienBanModel = new \PhienBanSanPham();
+                $danhGiaModel = new \DanhGia();
+                $transactionLogModel = new \TransactionLog();
+                $gatewayHealthModel = new \GatewayHealth();
+                $maGiamGiaModel = new \MaGiamGia();
+                
+                // Create NotificationService with all dependencies
+                $notificationService = new \NotificationService(
+                    $redis,
+                    $donHangModel,
+                    $thanhToanModel,
+                    $refundModel,
+                    $phienBanModel,
+                    $danhGiaModel,
+                    $transactionLogModel,
+                    $gatewayHealthModel,
+                    $maGiamGiaModel
+                );
+                
+                $notificationService->clearNotificationState($adminId);
+            } catch (\Exception $e) {
+                // Log error but don't block logout
+                error_log('[AuthController] Failed to clear notification state: ' . $e->getMessage());
+            }
+        }
+        
         Session::logout();
         
         header('Location: /admin/auth/login');

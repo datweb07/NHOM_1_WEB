@@ -1,0 +1,323 @@
+/**
+ * Admin Notification System Styles
+ * 
+ * Custom styles for the notification dropdown and badge counter
+ * 
+ * @author Admin Notification System
+ * @version 1.0.0
+ */
+
+/* Notification Badge */
+.notification-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0.65rem;
+    padding: 0.25em 0.5em;
+    border-radius: 10px;
+    font-weight: 600;
+    min-width: 18px;
+    text-align: center;
+}
+
+/* Notification Dropdown Container */
+.notification-dropdown .dropdown-menu {
+    min-width: 320px;
+    max-width: 400px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* Notification Dropdown Content Area */
+.notification-dropdown-content {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Individual Notification Item */
+.notification-item {
+    padding: 0.75rem 1rem;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
+
+.notification-item:hover {
+    background-color: #f8f9fa;
+    border-left-color: #0d6efd;
+    text-decoration: none;
+}
+
+.notification-item i {
+    font-size: 1.1rem;
+    min-width: 24px;
+}
+
+.notification-item span {
+    flex: 1;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Priority Indicators */
+.notification-item .text-danger {
+    color: #dc3545 !important;
+}
+
+.notification-item .text-warning {
+    color: #ffc107 !important;
+}
+
+/* Count Badge within Notification */
+.notification-item .badge {
+    font-size: 0.7rem;
+    padding: 0.25em 0.5em;
+}
+
+/* Warning Message */
+.notification-warning {
+    background-color: #fff3cd;
+    border-left: 3px solid #ffc107;
+    color: #856404;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+}
+
+.notification-warning i {
+    color: #ffc107;
+}
+
+/* Category Headers */
+.notification-dropdown-content .dropdown-header {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #495057;
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Empty State */
+.notification-dropdown-content .text-muted {
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Scrollbar Styling for Dropdown */
+.notification-dropdown-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notification-dropdown-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.notification-dropdown-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.notification-dropdown-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Dropdown Footer */
+.notification-dropdown .dropdown-footer {
+    font-weight: 500;
+    color: #0d6efd;
+    padding: 0.75rem 1rem;
+}
+
+.notification-dropdown .dropdown-footer:hover {
+    background-color: #f8f9fa;
+    text-decoration: none;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+    .notification-dropdown .dropdown-menu {
+        min-width: 280px;
+        max-width: 90vw;
+    }
+    
+    .notification-item {
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .notification-item span {
+        font-size: 0.85rem;
+    }
+}
+
+/* Read/Unread Notification Styles */
+
+/* Unread notification in dropdown */
+.notification-item.notification-unread {
+    opacity: 1;
+    font-weight: 500;
+    background-color: #ffffff;
+}
+
+/* Read notification in dropdown */
+.notification-item.notification-read {
+    opacity: 0.6;
+    font-weight: normal;
+    background-color: #f8f9fa;
+}
+
+/* Smooth transition between states */
+.notification-item {
+    transition: opacity 0.3s ease, background-color 0.3s ease, font-weight 0.3s ease;
+}
+
+/* Notification List Page Styles */
+
+/* Notification list item container */
+.notification-list-item {
+    padding: 1rem;
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.notification-list-item:hover {
+    background-color: #f8f9fa;
+    border-left-color: #0d6efd;
+}
+
+/* Unread notification in list page */
+.notification-list-item.notification-unread {
+    font-weight: 600;
+    background-color: #ffffff;
+    border-left-color: #0d6efd;
+}
+
+.notification-list-item.notification-unread h6 {
+    font-weight: 700;
+}
+
+/* Read notification in list page */
+.notification-list-item.notification-read {
+    font-weight: normal;
+    background-color: #f8f9fa;
+    border-left-color: transparent;
+}
+
+.notification-list-item.notification-read h6 {
+    font-weight: 500;
+}
+
+/* Unread indicator (blue dot) */
+.unread-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #0d6efd;
+    border-radius: 50%;
+    position: absolute;
+    left: 0.5rem;
+    top: 1.5rem;
+}
+
+/* Notification content area */
+.notification-content {
+    cursor: pointer;
+    padding-left: 1rem;
+}
+
+/* Notification meta information */
+.notification-meta {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* Notification actions */
+.notification-actions {
+    margin-left: 1rem;
+}
+
+.mark-unread-btn {
+    white-space: nowrap;
+}
+
+/* Responsive styles for notification list page */
+@media (max-width: 768px) {
+    .notification-list-item {
+        padding: 0.75rem;
+    }
+
+    .notification-content {
+        padding-left: 0.5rem;
+    }
+
+    .notification-actions {
+        margin-left: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .mark-unread-btn {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .unread-indicator {
+        left: 0.25rem;
+        top: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .notification-list-item {
+        padding: 0.5rem;
+    }
+
+    .notification-list-item h6 {
+        font-size: 0.9rem;
+    }
+
+    .notification-meta {
+        font-size: 0.85rem;
+    }
+
+    .notification-meta .badge {
+        font-size: 0.7rem;
+    }
+
+    .notification-actions {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 0.75rem;
+    }
+
+    .mark-unread-btn {
+        width: 100%;
+    }
+}
+
+/* Loading and empty states */
+#loading-state,
+#empty-state {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Pagination styles */
+#pagination-container {
+    margin-top: 2rem;
+}
+
+#pagination-info {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
