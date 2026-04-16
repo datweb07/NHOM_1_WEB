@@ -153,5 +153,21 @@ if (revenueChartEl) {
         }, 50); // Đợi AdminLTE init xong
       });
     </script>
+    <!--begin::Notification System Script-->
+    <script src="<?= ASSET_URL ?>/assets/admin/js/read-status-manager.js"></script>
+    <script src="<?= ASSET_URL ?>/assets/admin/js/notification-poller.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Initialize ReadStatusManager
+        window.readStatusManager = new ReadStatusManager();
+        
+        // Initialize notification poller with 45-second interval
+        const notificationPoller = new NotificationPoller('/admin/api/notifications', 45000);
+        notificationPoller.start();
+        
+        console.log('[Admin] Notification system initialized');
+      });
+    </script>
+    <!--end::Notification System Script-->
     </body>
   </html>

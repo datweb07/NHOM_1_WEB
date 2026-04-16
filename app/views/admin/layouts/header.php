@@ -42,6 +42,9 @@
     <!--begin::Required Plugin(AdminLTE)-->
     <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/admin/css/admin.css" />
     <!--end::Required Plugin(AdminLTE)-->
+    <!--begin::Notification System CSS-->
+    <link rel="stylesheet" href="<?= ASSET_URL ?>/assets/admin/css/notifications.css" />
+    <!--end::Notification System CSS-->
     <!-- apexcharts -->
     <link
       rel="stylesheet"
@@ -99,30 +102,19 @@
             <!--end::Navbar Search-->
             
             <!--begin::Notifications Dropdown Menu-->
-            <li class="nav-item dropdown">
-              <a class="nav-link" data-bs-toggle="dropdown" href="#">
+            <li class="nav-item dropdown notification-dropdown">
+              <a class="nav-link" data-bs-toggle="dropdown" href="#" role="button">
                 <i class="bi bi-bell-fill"></i>
-                <span class="navbar-badge badge text-bg-warning">15</span>
+                <span class="navbar-badge badge text-bg-danger notification-badge" style="display: none;">0</span>
               </a>
               <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <span class="dropdown-item dropdown-header">15 Notifications</span>
+                <span class="dropdown-item dropdown-header">Thông báo</span>
                 <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <i class="bi bi-envelope me-2"></i> 4 new messages
-                  <span class="float-end text-secondary fs-7">3 mins</span>
-                </a>
+                <div class="notification-dropdown-content">
+                  <div class="dropdown-item text-center text-muted py-3">Đang tải...</div>
+                </div>
                 <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <i class="bi bi-people-fill me-2"></i> 8 friend requests
-                  <span class="float-end text-secondary fs-7">12 hours</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <i class="bi bi-file-earmark-fill me-2"></i> 3 new reports
-                  <span class="float-end text-secondary fs-7">2 days</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer"> See All Notifications </a>
+                <a href="/admin/notifications" class="dropdown-item dropdown-footer text-center">Xem tất cả</a>
               </div>
             </li>
             <!--end::Notifications Dropdown Menu-->
