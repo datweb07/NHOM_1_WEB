@@ -16,10 +16,10 @@ $isLoggedIn = \App\Core\Session::isLoggedIn();
 $goiYSoSanh = [];
 if (!empty($sanPhamTuongTu)) {
     foreach ($sanPhamTuongTu as $spTuongTu) {
-        if ((int)($spTuongTu['id'] ?? 0) === (int)($sanPham['id'] ?? 0)) {
+        if ((int) ($spTuongTu['id'] ?? 0) === (int) ($sanPham['id'] ?? 0)) {
             continue;
         }
-        if ((int)($spTuongTu['danh_muc_id'] ?? 0) !== (int)($sanPham['danh_muc_id'] ?? 0)) {
+        if ((int) ($spTuongTu['danh_muc_id'] ?? 0) !== (int) ($sanPham['danh_muc_id'] ?? 0)) {
             continue;
         }
         if (empty($spTuongTu['slug'])) {
@@ -32,18 +32,18 @@ if (!empty($sanPhamTuongTu)) {
 $danhSachSanPhamSoSanh = $danhSachSanPhamSoSanh ?? [];
 $optionsSanPhamKhacHtml = '<option value="">-- Chọn ngoài sản phẩm tương tự --</option>';
 foreach ($danhSachSanPhamSoSanh as $spSoSanhThem) {
-    $slugSpThem = (string)($spSoSanhThem['slug'] ?? '');
-    if ($slugSpThem === '' || $slugSpThem === (string)($sanPham['slug'] ?? '')) {
+    $slugSpThem = (string) ($spSoSanhThem['slug'] ?? '');
+    if ($slugSpThem === '' || $slugSpThem === (string) ($sanPham['slug'] ?? '')) {
         continue;
     }
-    $tenSpThem = (string)($spSoSanhThem['ten_san_pham'] ?? $slugSpThem);
+    $tenSpThem = (string) ($spSoSanhThem['ten_san_pham'] ?? $slugSpThem);
     $optionsSanPhamKhacHtml .= '<option value="' . htmlspecialchars($slugSpThem, ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($tenSpThem, ENT_QUOTES, 'UTF-8') . '</option>';
 }
 
 $phienBanMacDinh = null;
 if (!empty($phienBanList)) {
     foreach ($phienBanList as $pbTmp) {
-        if ((int)($pbTmp['so_luong_ton'] ?? 0) > 0) {
+        if ((int) ($pbTmp['so_luong_ton'] ?? 0) > 0) {
             $phienBanMacDinh = $pbTmp;
             break;
         }
@@ -58,7 +58,7 @@ $thuocTinhUngVien = [];
 foreach (($phienBanList ?? []) as $pb) {
     $thuocTinhBienThe = [];
 
-    $mauSac = trim((string)($pb['mau_sac'] ?? ''));
+    $mauSac = trim((string) ($pb['mau_sac'] ?? ''));
     if ($mauSac !== '') {
         $thuocTinhBienThe['Màu sắc'] = $mauSac;
         $thuocTinhUngVien['Màu sắc'] = true;
@@ -80,8 +80,8 @@ foreach (($phienBanList ?? []) as $pb) {
                 continue;
             }
 
-            $tenThuocTinh = trim(str_replace('_', ' ', (string)$ten));
-            $giaTriThuocTinh = trim((string)$giaTri);
+            $tenThuocTinh = trim(str_replace('_', ' ', (string) $ten));
+            $giaTriThuocTinh = trim((string) $giaTri);
             if ($tenThuocTinh === '' || $giaTriThuocTinh === '') {
                 continue;
             }
@@ -94,10 +94,11 @@ foreach (($phienBanList ?? []) as $pb) {
     }
 
     $bienTheTam[] = [
-        'id' => (int)($pb['id'] ?? 0),
-        'name' => (string)($pb['ten_phien_ban'] ?? ''),
-        'price' => (float)($pb['gia_ban'] ?? 0),
-        'stock' => (int)($pb['so_luong_ton'] ?? 0),
+        'id' => (int) ($pb['id'] ?? 0),
+        'name' => (string) ($pb['ten_phien_ban'] ?? ''),
+        'price' => (float) ($pb['gia_ban'] ?? 0),
+        'original_price' => (float)($pb['gia_goc'] ?? 0),
+        'stock' => (int) ($pb['so_luong_ton'] ?? 0),
         'attributes' => $thuocTinhBienThe,
     ];
 }
@@ -122,6 +123,48 @@ foreach ($thuocTinhHienThi as $tenThuocTinh) {
     $attributeOptions[$tenThuocTinh] = [];
 }
 
+// foreach ($bienTheTam as $bienThe) {
+//     $thuocTinhRutGon = [];
+//     foreach ($thuocTinhHienThi as $tenThuocTinh) {
+//         $giaTriThuocTinh = (string) ($bienThe['attributes'][$tenThuocTinh] ?? 'Không xác định');
+//         $thuocTinhRutGon[$tenThuocTinh] = $giaTriThuocTinh;
+//         $attributeOptions[$tenThuocTinh][$giaTriThuocTinh] = true;
+//     }
+
+//     // --- TÍNH TOÁN GIÁ SAU KHUYẾN MÃI DỰA TRÊN LOGIC DB ---
+//     $giaGoc = $bienThe['price'];
+//     $giaSauGiam = $giaGoc;
+//     $coKhuyenMai = false;
+//     $badgeText = '';
+
+//     if (!empty($khuyenMaiApDung)) {
+//         $coKhuyenMai = true;
+//         if ($khuyenMaiApDung['loai_giam'] === 'PHAN_TRAM') {
+//             $mucGiam = $giaGoc * ($khuyenMaiApDung['gia_tri_giam'] / 100);
+//             if ($khuyenMaiApDung['giam_toi_da'] > 0 && $mucGiam > $khuyenMaiApDung['giam_toi_da']) {
+//                 $mucGiam = $khuyenMaiApDung['giam_toi_da'];
+//             }
+//             $giaSauGiam = $giaGoc - $mucGiam;
+//             $badgeText = 'Giảm ' . (float) $khuyenMaiApDung['gia_tri_giam'] . '%';
+//         } else {
+//             $giaSauGiam = $giaGoc - $khuyenMaiApDung['gia_tri_giam'];
+//             $badgeText = 'Giảm ' . number_format($khuyenMaiApDung['gia_tri_giam'], 0, ',', '.') . 'đ';
+//         }
+//         $giaSauGiam = max(0, $giaSauGiam); // Chống giá âm
+//     }
+
+//     // SỬA LẠI MẢNG JS: Đẩy cả giá gốc và giá giảm vào
+//     $productVariantsForJs[] = [
+//         'id' => $bienThe['id'],
+//         'name' => $bienThe['name'],
+//         'price_original' => $giaGoc,
+//         'price_discounted' => $giaSauGiam,
+//         'has_promo' => $coKhuyenMai,
+//         'promo_badge_text' => $badgeText,
+//         'stock' => $bienThe['stock'],
+//         'attributes' => $thuocTinhRutGon,
+//     ];
+// }
 foreach ($bienTheTam as $bienThe) {
     $thuocTinhRutGon = [];
     foreach ($thuocTinhHienThi as $tenThuocTinh) {
@@ -130,34 +173,49 @@ foreach ($bienTheTam as $bienThe) {
         $attributeOptions[$tenThuocTinh][$giaTriThuocTinh] = true;
     }
 
-    // --- TÍNH TOÁN GIÁ SAU KHUYẾN MÃI DỰA TRÊN LOGIC DB ---
-    $giaGoc = $bienThe['price'];
-    $giaSauGiam = $giaGoc;
+    // --- TÍNH TOÁN GIÁ: KHUYẾN MÃI VÀ GIÁ GỐC ---
+    $giaBan = $bienThe['price'];
+    $giaGocDb = $bienThe['original_price'];
+    
+    $giaHienThiThucTe = $giaBan;
+    $giaGachNgang = 0;
+    $hienThiGachNgang = false;
     $coKhuyenMai = false;
     $badgeText = '';
 
     if (!empty($khuyenMaiApDung)) {
+        // TRƯỜNG HỢP 1: CÓ KHUYẾN MÃI
         $coKhuyenMai = true;
         if ($khuyenMaiApDung['loai_giam'] === 'PHAN_TRAM') {
-            $mucGiam = $giaGoc * ($khuyenMaiApDung['gia_tri_giam'] / 100);
+            $mucGiam = $giaBan * ($khuyenMaiApDung['gia_tri_giam'] / 100);
             if ($khuyenMaiApDung['giam_toi_da'] > 0 && $mucGiam > $khuyenMaiApDung['giam_toi_da']) {
                 $mucGiam = $khuyenMaiApDung['giam_toi_da'];
             }
-            $giaSauGiam = $giaGoc - $mucGiam;
+            $giaHienThiThucTe = $giaBan - $mucGiam;
             $badgeText = 'Giảm ' . (float)$khuyenMaiApDung['gia_tri_giam'] . '%';
         } else {
-            $giaSauGiam = $giaGoc - $khuyenMaiApDung['gia_tri_giam'];
+            $giaHienThiThucTe = $giaBan - $khuyenMaiApDung['gia_tri_giam'];
             $badgeText = 'Giảm ' . number_format($khuyenMaiApDung['gia_tri_giam'], 0, ',', '.') . 'đ';
         }
-        $giaSauGiam = max(0, $giaSauGiam); // Chống giá âm
+        $giaHienThiThucTe = max(0, $giaHienThiThucTe);
+        
+        $hienThiGachNgang = true;
+        $giaGachNgang = $giaBan; 
+    } else {
+        // TRƯỜNG HỢP 2: KHÔNG CÓ KM -> KIỂM TRA GIÁ GỐC
+        if ($giaGocDb > $giaBan) {
+            $hienThiGachNgang = true;
+            $giaGachNgang = $giaGocDb;
+        }
     }
 
-    // SỬA LẠI MẢNG JS: Đẩy cả giá gốc và giá giảm vào
+    // Nạp dữ liệu vào mảng JSON cho Javascript thao tác
     $productVariantsForJs[] = [
         'id' => $bienThe['id'],
         'name' => $bienThe['name'],
-        'price_original' => $giaGoc,
-        'price_discounted' => $giaSauGiam,
+        'price_current' => $giaHienThiThucTe,
+        'price_crossed' => $giaGachNgang,
+        'show_crossed' => $hienThiGachNgang,
         'has_promo' => $coKhuyenMai,
         'promo_badge_text' => $badgeText,
         'stock' => $bienThe['stock'],
@@ -365,8 +423,7 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
         <div class="col-md-5">
             <div class="card border-0 shadow-sm p-3">
                 <img id="main-img" src="<?= htmlspecialchars($anhChinh) ?>"
-                    alt="<?= htmlspecialchars($sanPham['ten_san_pham']) ?>"
-                    class="img-fluid mx-auto d-block mb-3"
+                    alt="<?= htmlspecialchars($sanPham['ten_san_pham']) ?>" class="img-fluid mx-auto d-block mb-3"
                     style="max-height:320px;object-fit:contain; transition: opacity 0.2s;">
 
                 <?php if (count($hinhAnhList) > 1): ?>
@@ -376,8 +433,7 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                             // Nếu ảnh có phien_ban_id thì in id đó ra, nếu không (Chung) thì in chữ 'all'
                             $variantDataId = !empty($img['phien_ban_id']) ? $img['phien_ban_id'] : 'all';
                             ?>
-                            <img src="<?= htmlspecialchars($img['url_anh']) ?>"
-                                alt="" class="thumb-img border rounded"
+                            <img src="<?= htmlspecialchars($img['url_anh']) ?>" alt="" class="thumb-img border rounded"
                                 data-variant-id="<?= $variantDataId ?>"
                                 style="width:60px;height:60px;object-fit:contain;cursor:pointer;border:2px solid transparent; transition: all 0.2s;"
                                 onclick="document.getElementById('main-img').src=this.src; document.querySelectorAll('.thumb-img').forEach(t=>t.style.borderColor='transparent'); this.style.borderColor='#d70018';">
@@ -401,38 +457,51 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
 
             <div class="mb-3 d-flex align-items-center flex-wrap">
                 <?php
-                // 1. Lấy giá gốc của phiên bản mặc định
-                $giaBan = $sanPham['gia_hien_thi'];
-                if ($phienBanMacDinh) $giaBan = $phienBanMacDinh['gia_ban'];
+                // TÍNH TOÁN CHO LẦN LOAD ĐẦU TIÊN
+                $giaBanMacDinh = $sanPham['gia_hien_thi'];
+                $giaGocDbMacDinh = $sanPham['gia_goc'] ?? 0;
+                if ($phienBanMacDinh) {
+                    $giaBanMacDinh = $phienBanMacDinh['gia_ban'];
+                    $giaGocDbMacDinh = $phienBanMacDinh['gia_goc'] ?? 0;
+                }
 
-                // 2. Tính toán giá giảm cho lần load đầu tiên
-                $giaSauGiamMacDinh = $giaBan;
+                $giaHienThiMacDinh = $giaBanMacDinh;
+                $giaGachNgangMacDinh = 0;
+                $showGachNgangMacDinh = false;
                 $coKhuyenMaiMacDinh = false;
                 $badgeTextMacDinh = '';
 
                 if (!empty($khuyenMaiApDung)) {
                     $coKhuyenMaiMacDinh = true;
                     if ($khuyenMaiApDung['loai_giam'] === 'PHAN_TRAM') {
-                        $mucGiam = $giaBan * ($khuyenMaiApDung['gia_tri_giam'] / 100);
+                        $mucGiam = $giaBanMacDinh * ($khuyenMaiApDung['gia_tri_giam'] / 100);
                         if ($khuyenMaiApDung['giam_toi_da'] > 0 && $mucGiam > $khuyenMaiApDung['giam_toi_da']) {
                             $mucGiam = $khuyenMaiApDung['giam_toi_da'];
                         }
-                        $giaSauGiamMacDinh = $giaBan - $mucGiam;
+                        $giaHienThiMacDinh = $giaBanMacDinh - $mucGiam;
                         $badgeTextMacDinh = 'Giảm ' . (float)$khuyenMaiApDung['gia_tri_giam'] . '%';
                     } else {
-                        $giaSauGiamMacDinh = $giaBan - $khuyenMaiApDung['gia_tri_giam'];
+                        $giaHienThiMacDinh = $giaBanMacDinh - $khuyenMaiApDung['gia_tri_giam'];
                         $badgeTextMacDinh = 'Giảm ' . number_format($khuyenMaiApDung['gia_tri_giam'], 0, ',', '.') . 'đ';
                     }
-                    $giaSauGiamMacDinh = max(0, $giaSauGiamMacDinh);
+                    $giaHienThiMacDinh = max(0, $giaHienThiMacDinh);
+                    
+                    $showGachNgangMacDinh = true;
+                    $giaGachNgangMacDinh = $giaBanMacDinh;
+                } else {
+                    if ($giaGocDbMacDinh > $giaBanMacDinh) {
+                        $showGachNgangMacDinh = true;
+                        $giaGachNgangMacDinh = $giaGocDbMacDinh;
+                    }
                 }
                 ?>
                 
                 <span class="text-danger fw-bold fs-3 me-3" id="current-price">
-                    <?= number_format($giaSauGiamMacDinh, 0, ',', '.') ?>đ
+                    <?= number_format($giaHienThiMacDinh, 0, ',', '.') ?>đ
                 </span>
                 
-                <span class="text-muted text-decoration-line-through fs-5 me-2" id="original-price" style="<?= $coKhuyenMaiMacDinh ? 'display: inline-block;' : 'display: none;' ?>">
-                    <?= number_format($giaBan, 0, ',', '.') ?>đ
+                <span class="text-muted text-decoration-line-through fs-5 me-2" id="original-price" style="<?= $showGachNgangMacDinh ? 'display: inline-block;' : 'display: none;' ?>">
+                    <?= number_format($giaGachNgangMacDinh, 0, ',', '.') ?>đ
                 </span>
                 
                 <span class="badge bg-danger align-middle fs-6" id="promo-badge" style="<?= $coKhuyenMaiMacDinh ? 'display: inline-block;' : 'display: none;' ?>">
@@ -446,13 +515,12 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                     <?php if (!empty($thuocTinhHienThi) && !empty($productVariantsForJs)): ?>
                         <div id="variant-attribute-groups" class="d-flex flex-column gap-3">
                             <?php foreach ($thuocTinhHienThi as $tenThuocTinh): ?>
-                                <div class="variant-attr-group" data-attribute-name="<?= htmlspecialchars($tenThuocTinh, ENT_QUOTES, 'UTF-8') ?>">
+                                <div class="variant-attr-group"
+                                    data-attribute-name="<?= htmlspecialchars($tenThuocTinh, ENT_QUOTES, 'UTF-8') ?>">
                                     <div class="small fw-semibold mb-2"><?= htmlspecialchars($tenThuocTinh) ?>:</div>
                                     <div class="d-flex flex-wrap gap-2">
                                         <?php foreach (($attributeOptions[$tenThuocTinh] ?? []) as $giaTriThuocTinh): ?>
-                                            <button
-                                                type="button"
-                                                class="btn btn-sm btn-outline-secondary attr-option-btn"
+                                            <button type="button" class="btn btn-sm btn-outline-secondary attr-option-btn"
                                                 data-attr-name="<?= htmlspecialchars($tenThuocTinh, ENT_QUOTES, 'UTF-8') ?>"
                                                 data-attr-value="<?= htmlspecialchars($giaTriThuocTinh, ENT_QUOTES, 'UTF-8') ?>">
                                                 <?= htmlspecialchars($giaTriThuocTinh) ?>
@@ -467,30 +535,29 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                             <?php foreach ($phienBanList as $idx => $pb): ?>
                                 <?php
                                 $isOutOfStock = $pb['so_luong_ton'] <= 0;
-                                $isActive = ($phienBanMacDinh && (int)$pb['id'] === (int)$phienBanMacDinh['id']) ? 'active' : '';
+                                $isActive = ($phienBanMacDinh && (int) $pb['id'] === (int) $phienBanMacDinh['id']) ? 'active' : '';
                                 ?>
                                 <div class="col-4">
                                     <div class="variant-card variant-btn <?= $isActive ?> <?= $isOutOfStock ? 'disabled' : '' ?>"
-                                        data-id="<?= $pb['id'] ?>"
-                                        data-price="<?= $pb['gia_ban'] ?>"
+                                        data-id="<?= $pb['id'] ?>" data-price="<?= $pb['gia_ban'] ?>"
                                         data-stock="<?= $pb['so_luong_ton'] ?>">
 
                                         <div class="fw-bold text-wrap" style="font-size: 0.85rem;">
                                             <?= htmlspecialchars($pb['ten_phien_ban']) ?>
                                         </div>
                                         <div class="variant-price-label <?= $isActive ? 'text-danger fw-medium' : 'text-muted' ?>">
-      <?php 
-         // Tìm giá giảm trong mảng JS vừa tạo ở trên
-         $giaHienThiOThe = $pb['gia_ban'];
-         foreach($productVariantsForJs as $jsVar) {
-             if($jsVar['id'] == $pb['id']) {
-                 $giaHienThiOThe = $jsVar['price_discounted'];
-                 break;
-             }
-         }
-      ?>
-      <?= number_format($giaHienThiOThe, 0, ',', '.') ?>đ
-</div>
+                                            <?php
+                                            // Tìm giá giảm trong mảng JS vừa tạo ở trên
+                                            $giaHienThiOThe = $pb['gia_ban'];
+                                            foreach ($productVariantsForJs as $jsVar) {
+                                                if ($jsVar['id'] == $pb['id']) {
+                                                    $giaHienThiOThe = $jsVar['price_discounted'];
+                                                    break;
+                                                }
+                                            }
+                                            ?>
+                                            <?= number_format($giaHienThiOThe, 0, ',', '.') ?>đ
+                                        </div>
 
                                     </div>
                                 </div>
@@ -498,11 +565,12 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                         </div>
                     <?php endif; ?>
 
-                    <small id="stock-info" class="mt-2 d-block <?= ($phienBanMacDinh['so_luong_ton'] ?? 0) > 0 ? 'text-success' : 'text-danger' ?>">
+                    <small id="stock-info"
+                        class="mt-2 d-block <?= ($phienBanMacDinh['so_luong_ton'] ?? 0) > 0 ? 'text-success' : 'text-danger' ?>">
                         <?= ($phienBanMacDinh['so_luong_ton'] ?? 0) > 0 ? '<i class="fa fa-check-circle me-1"></i>Còn lại: ' . $phienBanMacDinh['so_luong_ton'] . ' sản phẩm' : '<i class="fa fa-times-circle me-1"></i>Đã hết hàng' ?>
                     </small>
                     <small id="variant-selected-name" class="text-muted d-block mt-1">
-                        <?= htmlspecialchars((string)($phienBanMacDinh['ten_phien_ban'] ?? '')) ?>
+                        <?= htmlspecialchars((string) ($phienBanMacDinh['ten_phien_ban'] ?? '')) ?>
                     </small>
                 </div>
             <?php endif; ?>
@@ -515,10 +583,9 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                     <div class="input-group" style="width:110px;">
                         <button class="btn btn-outline-secondary btn-sm" type="button"
                             onclick="changeQty(-1)">-</button>
-                        <input type="number" name="so_luong" id="qty-input" class="form-control text-center"
-                            value="1" min="1" max="99" style="font-size:0.88rem;">
-                        <button class="btn btn-outline-secondary btn-sm" type="button"
-                            onclick="changeQty(1)">+</button>
+                        <input type="number" name="so_luong" id="qty-input" class="form-control text-center" value="1"
+                            min="1" max="99" style="font-size:0.88rem;">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="changeQty(1)">+</button>
                     </div>
                 </div>
                 <div class="d-flex gap-2">
@@ -601,7 +668,8 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                         <tbody>
                             <?php foreach ($thongSoList as $ts): ?>
                                 <tr>
-                                    <td class="fw-medium small py-2" style="width:40%;"><?= htmlspecialchars($ts['ten_thong_so']) ?></td>
+                                    <td class="fw-medium small py-2" style="width:40%;">
+                                        <?= htmlspecialchars($ts['ten_thong_so']) ?></td>
                                     <td class="small py-2"><?= htmlspecialchars($ts['gia_tri']) ?></td>
                                 </tr>
                             <?php endforeach; ?>
@@ -623,7 +691,8 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                                         <i class="fa<?= $i <= $dg['so_sao'] ? 's' : 'r' ?> fa-star"></i>
                                     <?php endfor; ?>
                                 </div>
-                                <span class="text-muted" style="font-size:0.72rem;"><?= date('d/m/Y', strtotime($dg['ngay_viet'])) ?></span>
+                                <span class="text-muted"
+                                    style="font-size:0.72rem;"><?= date('d/m/Y', strtotime($dg['ngay_viet'])) ?></span>
                             </div>
                             <p class="small mb-0"><?= htmlspecialchars($dg['noi_dung']) ?></p>
                         </div>
@@ -649,11 +718,13 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                             <textarea id="noi_dung" class="form-control form-control-sm" rows="3"
                                 placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
                         </div>
-                        <button type="button" class="btn btn-danger btn-sm" id="btn-review" data-id="<?= $sanPham['id'] ?>">Gửi đánh giá</button>
+                        <button type="button" class="btn btn-danger btn-sm" id="btn-review"
+                            data-id="<?= $sanPham['id'] ?>">Gửi đánh giá</button>
                     </div>
                 <?php else: ?>
                     <div class="alert alert-info small mt-4 mb-0">
-                        <i class="fa fa-info-circle me-1"></i> <a href="/client/auth/login" class="text-danger fw-bold text-decoration-none">Đăng nhập</a> để gửi đánh giá.
+                        <i class="fa fa-info-circle me-1"></i> <a href="/client/auth/login"
+                            class="text-danger fw-bold text-decoration-none">Đăng nhập</a> để gửi đánh giá.
                     </div>
                 <?php endif; ?>
             </div>
@@ -665,20 +736,22 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
             <h5 class="fw-bold mb-3 border-start border-danger border-3 ps-2">Sản phẩm tương tự</h5>
             <div class="row g-3">
                 <?php foreach ($sanPhamTuongTu as $sp): ?>
-                    <?php if ($sp['id'] == $sanPham['id']) continue; ?>
+                    <?php if ($sp['id'] == $sanPham['id'])
+                        continue; ?>
                     <div class="col-6 col-md-3">
                         <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
                             <div class="card border-0 shadow-sm h-100 custom-hover-card">
                                 <div class="overflow-hidden p-2">
                                     <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png') ?>"
-                                        class="card-img-top custom-hover-zoom" alt=""
-                                        style="height:150px;object-fit:contain;">
+                                        class="card-img-top custom-hover-zoom" alt="" style="height:150px;object-fit:contain;">
                                 </div>
                                 <div class="card-body pt-0 px-3 pb-3">
-                                    <p class="small mb-1 text-dark fw-medium" style="display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                    <p class="small mb-1 text-dark fw-medium"
+                                        style="display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
                                         <?= htmlspecialchars($sp['ten_san_pham']) ?>
                                     </p>
-                                    <p class="text-danger fw-bold mb-0 small"><?= number_format($sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>
+                                    <p class="text-danger fw-bold mb-0 small">
+                                        <?= number_format($sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>
                                 </div>
                             </div>
                         </a>
@@ -695,26 +768,26 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                     <h5 class="fw-bold mb-0">
                         <i class="fa fa-balance-scale text-danger me-2"></i>So sánh sản phẩm tương tự
                     </h5>
-                    <span class="small text-muted">Chỉ hiển thị sản phẩm cùng danh mục, có thể chọn nhiều sản phẩm để so sánh</span>
+                    <span class="small text-muted">Chỉ hiển thị sản phẩm cùng danh mục, có thể chọn nhiều sản phẩm để so
+                        sánh</span>
                 </div>
 
                 <form method="GET" action="/so-sanh" id="compare-similar-form">
                     <div class="row g-2 g-md-3 mb-3">
                         <?php foreach ($goiYSoSanh as $idx => $sp): ?>
-                            <?php if ($idx >= 8) break; ?>
+                            <?php if ($idx >= 8)
+                                break; ?>
                             <div class="col-12 col-sm-6 col-lg-4">
                                 <label class="compare-similar-option d-flex align-items-start gap-2">
-                                    <input
-                                        class="form-check-input mt-1 compare-similar-checkbox"
-                                        type="checkbox"
-                                        name="slug[]"
+                                    <input class="form-check-input mt-1 compare-similar-checkbox" type="checkbox" name="slug[]"
                                         value="<?= htmlspecialchars($sp['slug']) ?>">
                                     <div class="flex-grow-1">
-                                        <div class="small fw-semibold text-dark mb-1" style="display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                        <div class="small fw-semibold text-dark mb-1"
+                                            style="display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
                                             <?= htmlspecialchars($sp['ten_san_pham']) ?>
                                         </div>
                                         <div class="small text-danger fw-bold">
-                                            <?= number_format((float)($sp['gia_hien_thi'] ?? 0), 0, ',', '.') ?>đ
+                                            <?= number_format((float) ($sp['gia_hien_thi'] ?? 0), 0, ',', '.') ?>đ
                                         </div>
                                     </div>
                                 </label>
@@ -746,7 +819,8 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                 <div id="compare-inline-result" class="mt-3 d-none">
                     <div class="card border-0 shadow-sm overflow-hidden">
                         <div class="table-responsive" style="max-height: 70vh;">
-                            <table class="table table-bordered align-middle mb-0 inline-compare-table" id="compare-inline-table"></table>
+                            <table class="table table-bordered align-middle mb-0 inline-compare-table"
+                                id="compare-inline-table"></table>
                         </div>
                     </div>
                 </div>
@@ -803,30 +877,33 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
         const selectedVariantInput = document.getElementById('selected-variant');
         if (selectedVariantInput) selectedVariantInput.value = selectedVariantId;
 
-        // --- CẬP NHẬT GIÁ HIỂN THỊ (GIAO DIỆN KHUYẾN MÃI) ---
+        // --- CẬP NHẬT GIÁ HIỂN THỊ (GIAO DIỆN KHUYẾN MÃI VÀ GIÁ GỐC) ---
         const priceEl = document.getElementById('current-price');
         const originalPriceEl = document.getElementById('original-price');
         const promoBadgeEl = document.getElementById('promo-badge');
 
         if (priceEl) {
-            // Giá bôi đỏ bự nhất luôn là Giá đã giảm (nếu có)
-            priceEl.textContent = formatCurrency(variant.price_discounted);
+            priceEl.textContent = formatCurrency(variant.price_current);
         }
 
-        if (originalPriceEl && promoBadgeEl) {
-            if (variant.has_promo) {
-                // Bật hiển thị giá gốc gạch ngang và Badge khuyến mãi
+        if (originalPriceEl) {
+            if (variant.show_crossed) {
                 originalPriceEl.style.display = 'inline-block';
-                originalPriceEl.textContent = formatCurrency(variant.price_original);
-                
+                originalPriceEl.textContent = formatCurrency(variant.price_crossed);
+            } else {
+                originalPriceEl.style.display = 'none';
+            }
+        }
+
+        if (promoBadgeEl) {
+            if (variant.has_promo) {
                 promoBadgeEl.style.display = 'inline-block';
                 promoBadgeEl.textContent = variant.promo_badge_text;
             } else {
-                // Tắt đi nếu không có khuyến mãi
-                originalPriceEl.style.display = 'none';
                 promoBadgeEl.style.display = 'none';
             }
         }
+        // ------------------------------------------------
 
         const stockInfo = document.getElementById('stock-info');
         if (stockInfo) {
@@ -921,7 +998,7 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
         }
 
         attributeButtons.forEach((btn) => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 if (this.disabled) {
                     return;
                 }
@@ -1010,12 +1087,13 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
         filterImagesByVariant(selectedVariantId);
     }
 
-    // Sự kiện khi Click chọn phiên bản
+    // Sự kiện khi Click chọn phiên bản (Dành cho giao diện không có nhóm thuộc tính)
     if (!hasAttributeSelector) {
         document.querySelectorAll('.variant-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 if (this.classList.contains('disabled')) return;
 
+                // 1. Tự động đổi màu UI Button
                 document.querySelectorAll('.variant-btn').forEach(b => {
                     b.classList.remove('active');
                     const priceLabel = b.querySelector('.variant-price-label');
@@ -1032,42 +1110,31 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                     activePriceLabel.classList.add('text-danger', 'fw-medium');
                 }
 
-                const price = parseInt(this.dataset.price);
-                const stock = parseInt(this.dataset.stock);
-                selectedVariantId = this.dataset.id;
-
-                document.getElementById('selected-variant').value = selectedVariantId;
-                document.getElementById('current-price').textContent = price.toLocaleString('vi-VN') + 'đ';
-
-                const stockInfo = document.getElementById('stock-info');
-                if (stock > 0) {
-                    stockInfo.className = 'mt-2 d-block text-success';
-                    stockInfo.innerHTML = '<i class="fa fa-check-circle me-1"></i>Còn lại: ' + stock + ' sản phẩm';
-                } else {
-                    stockInfo.className = 'mt-2 d-block text-danger';
-                    stockInfo.innerHTML = '<i class="fa fa-times-circle me-1"></i>Đã hết hàng';
+                // 2. Chọc vào Data thay vì đọc HTML
+                const clickedVariantId = this.dataset.id;
+                const selectedVariantData = productVariants.find(v => String(v.id) === String(clickedVariantId));
+                
+                if (selectedVariantData) {
+                    syncVariantUIByData(selectedVariantData);
                 }
-
-                setAddToCartState(stock);
-                filterImagesByVariant(selectedVariantId);
             });
         });
     }
 
     // Yêu thích - Toggle thêm/xóa
-    document.querySelector('.btn-wishlist')?.addEventListener('click', function() {
+    document.querySelector('.btn-wishlist')?.addEventListener('click', function () {
         const id = this.dataset.id;
         const isWishlisted = this.dataset.wishlisted === '1';
         const url = isWishlisted ? '/yeu-thich/xoa' : '/yeu-thich/them';
         const button = this;
-        
+
         fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'san_pham_id=' + id
-            })
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'san_pham_id=' + id
+        })
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
@@ -1105,7 +1172,7 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
     // Xử lý thêm vào giỏ hàng và cập nhật số lượng
     const addToCartForm = document.querySelector('form[action="/gio-hang/them"]');
     if (addToCartForm) {
-        addToCartForm.addEventListener('submit', function(e) {
+        addToCartForm.addEventListener('submit', function (e) {
             // Không prevent default, để form submit bình thường
             // Nhưng sau khi trang redirect về, số lượng giỏ hàng sẽ được cập nhật
             // Vì vậy chúng ta sẽ cập nhật ngay sau khi submit
@@ -1118,14 +1185,14 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
     }
 
     // Cập nhật số lượng giỏ hàng khi trang load (nếu có flash message thành công)
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         if (typeof window.updateCartCount === 'function') {
             window.updateCartCount();
         }
     });
 
     // Đánh giá
-    document.getElementById('btn-review')?.addEventListener('click', function() {
+    document.getElementById('btn-review')?.addEventListener('click', function () {
         const sanPhamId = this.dataset.id;
         const soSao = document.getElementById('so_sao').value;
         const noiDung = document.getElementById('noi_dung').value.trim();
@@ -1137,12 +1204,12 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
         }
 
         fetch('/danh-gia/them', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'san_pham_id=' + sanPhamId + '&so_sao=' + soSao + '&noi_dung=' + encodeURIComponent(noiDung)
-            })
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'san_pham_id=' + sanPhamId + '&so_sao=' + soSao + '&noi_dung=' + encodeURIComponent(noiDung)
+        })
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
@@ -1257,9 +1324,9 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                 <tr>
                     <th class="bg-light">Tổng tồn kho</th>
                     ${products.map((p) => {
-                        const ton = Number(p.tong_ton_kho || 0);
-                        return `<td class="${ton > 0 ? 'text-success' : 'text-danger'}">${ton > 0 ? `${ton} sản phẩm` : 'Hết hàng'}</td>`;
-                    }).join('')}
+                const ton = Number(p.tong_ton_kho || 0);
+                return `<td class="${ton > 0 ? 'text-success' : 'text-danger'}">${ton > 0 ? `${ton} sản phẩm` : 'Hết hàng'}</td>`;
+            }).join('')}
                 </tr>
             `);
 
