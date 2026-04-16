@@ -266,6 +266,26 @@ $hasSavedAddresses = !empty($diaChiList);
                             </div>
                         <?php endif; ?>
 
+                        <?php if (isset($paypalEnabled) && $paypalEnabled): ?>
+                            <div class="form-check mb-3 border rounded p-3 payment-method-option <?= isset($gatewayWarnings['paypal']) ? 'border-warning' : '' ?>" data-method="PAYPAL">
+                                <input class="form-check-input" type="radio" name="phuong_thuc_thanh_toan" id="tt_paypal" value="PAYPAL" <?= isset($gatewayWarnings['paypal']) ? 'disabled' : '' ?>>
+                                <label class="form-check-label w-100" for="tt_paypal" style="cursor: pointer;">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <i class="fab fa-paypal text-primary fs-4"></i>
+                                        <div class="flex-grow-1">
+                                            <div class="fw-medium">Thanh toán qua PayPal</div>
+                                            <small class="text-muted">Thanh toán quốc tế qua PayPal (USD)</small>
+                                            <?php if (isset($gatewayWarnings['paypal'])): ?>
+                                                <span class="badge bg-warning text-dark ms-2">
+                                                    <i class="fa fa-exclamation-triangle"></i> Đang gặp sự cố
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        <?php endif; ?>
+
                         <?php if (!isset($vnpayEnabled) || !$vnpayEnabled): ?>
                             <div class="alert alert-info small mb-0 mt-2">
                                 <i class="fa fa-info-circle me-1"></i>

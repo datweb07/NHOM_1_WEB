@@ -7,6 +7,7 @@ abstract class PhuongThucThanhToan
     const THE_TIN_DUNG = 'THE_TIN_DUNG';
     const COD = 'COD';
     const VIETQR = 'VIETQR';
+    const PAYPAL = 'PAYPAL';
 
 
     public static function getAll(): array
@@ -16,7 +17,8 @@ abstract class PhuongThucThanhToan
             self::CHUYEN_KHOAN,
             self::THE_TIN_DUNG,
             self::COD,
-            self::VIETQR
+            self::VIETQR,
+            self::PAYPAL
         ];
     }
 
@@ -42,6 +44,8 @@ abstract class PhuongThucThanhToan
                 return 'Thanh toán khi nhận hàng (COD)';
             case self::VIETQR:
                 return 'Chuyển khoản qua VietQR';
+            case self::PAYPAL:
+                return 'Thanh toán qua PayPal';
             default:
                 return 'Không xác định';
         }
@@ -53,7 +57,8 @@ abstract class PhuongThucThanhToan
         return in_array($phuongThuc, [
             self::CHUYEN_KHOAN,
             self::THE_TIN_DUNG,
-            self::VIETQR
+            self::VIETQR,
+            self::PAYPAL
         ]);
     }
 
@@ -62,7 +67,8 @@ abstract class PhuongThucThanhToan
         $gatewayMap = [
             self::COD => 'CODHandler',
             self::CHUYEN_KHOAN => 'VNPayGateway',
-            self::VIETQR => 'VietQRGateway'
+            self::VIETQR => 'VietQRGateway',
+            self::PAYPAL => 'PayPalGateway'
         ];
 
         return $gatewayMap[$paymentMethod] ?? null;
@@ -73,7 +79,8 @@ abstract class PhuongThucThanhToan
         $gatewayMap = [
             self::COD => 'COD',
             self::CHUYEN_KHOAN => 'VNPAY',
-            self::VIETQR => 'VIETQR'
+            self::VIETQR => 'VIETQR',
+            self::PAYPAL => 'PAYPAL'
         ];
 
         return $gatewayMap[$paymentMethod] ?? 'UNKNOWN';
@@ -85,7 +92,8 @@ abstract class PhuongThucThanhToan
             self::COD => 'fa-money-bill-wave',
             self::CHUYEN_KHOAN => 'fa-university',
             self::THE_TIN_DUNG => 'fa-credit-card',
-            self::VIETQR => 'fa-qrcode'
+            self::VIETQR => 'fa-qrcode',
+            self::PAYPAL => 'fa-paypal'
         ];
 
         return $iconMap[$paymentMethod] ?? 'fa-wallet';

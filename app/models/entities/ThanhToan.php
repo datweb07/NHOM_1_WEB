@@ -102,6 +102,18 @@ class ThanhToan extends BaseModel
         return !empty($result) ? $result[0] : null;
     }
 
+    public function findByGatewayTransactionId(string $gatewayTransactionId): ?array
+    {
+        $safeId = addslashes($gatewayTransactionId);
+        
+        $sql = "SELECT * FROM {$this->table}
+                WHERE gateway_transaction_id = '$safeId'
+                LIMIT 1";
+        
+        $result = $this->query($sql);
+        return !empty($result) ? $result[0] : null;
+    }
+
     public function layDanhSachVoiFilter(
         string $paymentMethod = '',
         string $status = '',
