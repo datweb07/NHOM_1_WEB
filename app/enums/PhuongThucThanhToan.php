@@ -6,6 +6,7 @@ abstract class PhuongThucThanhToan
     const CHUYEN_KHOAN = 'CHUYEN_KHOAN';
     const THE_TIN_DUNG = 'THE_TIN_DUNG';
     const COD = 'COD';
+    const VIETQR = 'VIETQR';
 
 
     public static function getAll(): array
@@ -14,7 +15,8 @@ abstract class PhuongThucThanhToan
             // self::TIEN_MAT,
             self::CHUYEN_KHOAN,
             self::THE_TIN_DUNG,
-            self::COD
+            self::COD,
+            self::VIETQR
         ];
     }
 
@@ -38,6 +40,8 @@ abstract class PhuongThucThanhToan
                 return 'Thẻ tín dụng/Ghi nợ';
             case self::COD:
                 return 'Thanh toán khi nhận hàng (COD)';
+            case self::VIETQR:
+                return 'Chuyển khoản qua VietQR';
             default:
                 return 'Không xác định';
         }
@@ -48,7 +52,8 @@ abstract class PhuongThucThanhToan
     {
         return in_array($phuongThuc, [
             self::CHUYEN_KHOAN,
-            self::THE_TIN_DUNG
+            self::THE_TIN_DUNG,
+            self::VIETQR
         ]);
     }
 
@@ -56,7 +61,8 @@ abstract class PhuongThucThanhToan
     {
         $gatewayMap = [
             self::COD => 'CODHandler',
-            self::CHUYEN_KHOAN => 'VNPayGateway'
+            self::CHUYEN_KHOAN => 'VNPayGateway',
+            self::VIETQR => 'VietQRGateway'
         ];
 
         return $gatewayMap[$paymentMethod] ?? null;
@@ -66,7 +72,8 @@ abstract class PhuongThucThanhToan
     {
         $gatewayMap = [
             self::COD => 'COD',
-            self::CHUYEN_KHOAN => 'VNPAY'
+            self::CHUYEN_KHOAN => 'VNPAY',
+            self::VIETQR => 'VIETQR'
         ];
 
         return $gatewayMap[$paymentMethod] ?? 'UNKNOWN';
@@ -77,7 +84,8 @@ abstract class PhuongThucThanhToan
         $iconMap = [
             self::COD => 'fa-money-bill-wave',
             self::CHUYEN_KHOAN => 'fa-university',
-            self::THE_TIN_DUNG => 'fa-credit-card'
+            self::THE_TIN_DUNG => 'fa-credit-card',
+            self::VIETQR => 'fa-qrcode'
         ];
 
         return $iconMap[$paymentMethod] ?? 'fa-wallet';

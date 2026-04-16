@@ -81,6 +81,9 @@ class ThanhToanController
 
         $vnpayEnabled = (new \VNPayGateway())->isConfigured();
 
+        require_once dirname(__DIR__, 2) . '/services/payment/VietQRGateway.php';
+        $vietqrGateway = new \VietQRGateway();
+        $vietqrEnabled = $vietqrGateway->isConfigured();
 
         $gatewayWarnings = $this->checkGatewayHealth();
 
@@ -300,7 +303,11 @@ class ThanhToanController
         $this->chiTietGioModel->xoaTatCa($gioHang['id']);
 
 
-        if ($phuongThucThanhToan === 'COD') {
+        if ($phuongThucThanhToan === 'VIETQR') {
+            $_SESSION['last_transaction_id'] = $transactionId;
+            header('Location: /thanh-toan/vietqr?id=' . $transactionId);
+            exit;
+        } elseif ($phuongThucThanhToan === 'COD') {
             // Gửi email xác nhận đơn hàng COD
             $emailNguoiNhan = '';
             $tenNguoiNhan = '';
@@ -420,6 +427,61 @@ class ThanhToanController
             'message' => 'Áp dụng mã giảm giá thành công',
             'tien_giam' => $tienGiam,
             'mo_ta' => $maGiamGia['mo_ta']
+        ]);
+        exit;
+    }
+
+    public function vietqr(): void
+    {
+        $thanhToanId = $_GET['id'] ?? $_SESSION['last_transaction_id'] ?? null;
+        
+        if (!$thanhToanId) {
+            Session::flash('error', 'Không tìm thấy giao dịch');
+            header('Location: /thanh-toan');
+            exit;
+        }
+        
+        $thanhToan = $this->thanhToanModel->findById($thanhToanId);
+        
+        if (!$thanhToan) {
+            Session::flash('error', 'Giao dịch không tồn tại');
+            header('Location: /thanh-toan');
+            exit;
+        }
+        
+        $donHang = $this->donHangModel->layChiTietDonHang($thanhToan['don_hang_id']);
+        
+        if (!$donHang) {
+            Session::flash('error', 'Không tìm thấy đơn hàng');
+            header('Location: /thanh-toan');
+            exit;
+        }
+        
+        require_once dirname(__DIR__, 2) . '/services/payment/VietQRGateway.php';
+        $vietqrGateway = new \VietQRGateway();
+        $qrInfo = $vietqrGateway->getQRInfo($thanhToan);
+        
+        // Debug: Log QR info
+        error_log("VietQR Info: " . json_encode($qrInfo, JSON_UNESCAPED_UNICODE));
+        
+        require_once dirname(__DIR__, 2) . '/views/client/thanh_toan/vietqr.php';
+    }
+
+    public function kiemTraTrangThai($thanhToanId): void
+    {
+        header('Content-Type: application/json');
+        
+        $thanhToanModel = new ThanhToan();
+        $thanhToan = $thanhToanModel->findById($thanhToanId);
+        
+        if (!$thanhToan) {
+            echo json_encode(['success' => false, 'message' => 'Không tìm thấy giao dịch']);
+            exit;
+        }
+        
+        echo json_encode([
+            'success' => true,
+            'status' => $thanhToan['trang_thai_duyet']
         ]);
         exit;
     }

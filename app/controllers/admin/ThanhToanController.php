@@ -489,4 +489,38 @@ class ThanhToanController
         }
         exit;
     }
+
+    public function duyetThanhToan($thanhToanId): void
+    {
+        if (!\App\Core\Session::isAdmin()) {
+            $_SESSION['error'] = 'Bạn không có quyền thực hiện thao tác này';
+            header('Location: /admin/thanh-toan');
+            exit;
+        }
+        
+        require_once dirname(__DIR__, 2) . '/core/Session.php';
+        \App\Core\Session::start();
+        $adminId = \App\Core\Session::getUserId();
+        
+        $thanhToanModel = new ThanhToan();
+        
+        $result = $thanhToanModel->duyetThanhToan($thanhToanId, $adminId, 'THANH_CONG', 'Đã xác nhận thanh toán VietQR');
+        
+        if ($result) {
+            // Update order status
+            $thanhToan = $thanhToanModel->findById($thanhToanId);
+            require_once dirname(__DIR__, 2) . '/models/entities/DonHang.php';
+            $donHangModel = new DonHang();
+            $donHangModel->update($thanhToan['don_hang_id'], [
+                'trang_thai' => 'DA_XAC_NHAN'
+            ]);
+            
+            $_SESSION['success'] = 'Đã duyệt thanh toán thành công';
+        } else {
+            $_SESSION['error'] = 'Có lỗi xảy ra khi duyệt thanh toán';
+        }
+        
+        header('Location: /admin/thanh-toan/chi-tiet/' . $thanhToanId);
+        exit;
+    }
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 16, 2026 lúc 08:15 PM
+-- Thời gian đã tạo: Th4 16, 2026 lúc 08:35 PM
 -- Phiên bản máy phục vụ: 8.0.44
 -- Phiên bản PHP: 8.2.12
 
@@ -817,9 +817,7 @@ CREATE TABLE `gateway_health` (
 --
 
 INSERT INTO `gateway_health` (`id`, `gateway_name`, `success_count`, `failure_count`, `last_success_at`, `last_failure_at`, `updated_at`) VALUES
-(1, 'VNPay', 24, 0, '2026-04-17 00:56:47', NULL, '2026-04-17 00:56:47'),
-(2, 'Momo', 0, 0, NULL, NULL, '2026-04-10 09:43:47'),
-(22, 'ZaloPay', 0, 0, NULL, NULL, '2026-04-11 21:38:14');
+(1, 'VNPay', 24, 0, '2026-04-17 00:56:47', NULL, '2026-04-17 00:56:47');
 
 -- --------------------------------------------------------
 
@@ -1197,15 +1195,15 @@ INSERT INTO `thanh_toan` (`id`, `don_hang_id`, `nguoi_duyet_id`, `gateway_transa
 (18, 18, NULL, NULL, 'VNPAY', '2026-04-11 16:30:54', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=3003400&vnp_Command=pay&vnp_CreateDate=20260411211554&vnp_CurrCode=VND&vnp_ExpireDate=20260411213054&vnp_IpAddr=127.0.0.1&vnp_Locale=vn&vnp_OrderInfo=ThanhToanDH&vnp_OrderType=billpayment&vnp_ReturnUrl=http%3A%2F%2Flocalhost%3A3000%2Fthanh-toan%2Freturn%2Fvnpay&vnp_TmnCode=NUIPDZDI&vnp_TxnRef=1775916954&vnp_Version=2.1.0&vnp_SecureHash=5cbc0c5f016f836e0d46223326e5b85ad8de2dbf7c2fcae1a61311ac47de064e17afd7ea4a0b677af0cc5edd486984ecb85d62448a9e254df5a73f712bd931ca', NULL, NULL, 'CHUYEN_KHOAN', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-11 16:15:54', NULL),
 (19, 19, NULL, NULL, 'VNPAY', '2026-04-11 16:34:59', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=3003400&vnp_Command=pay&vnp_CreateDate=20260411211959&vnp_CurrCode=VND&vnp_ExpireDate=20260411213459&vnp_IpAddr=127.0.0.1&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+19&vnp_OrderType=billpayment&vnp_ReturnUrl=http%3A%2F%2Flocalhost%3A3000%2Fthanh-toan%2Freturn%2Fvnpay&vnp_TmnCode=NUIPDZDI&vnp_TxnRef=19&vnp_Version=2.1.0&vnp_SecureHash=03d2179fab13d2b4780d6e31f47458086c5b6122103b6f0ee3f309d45e91bdebc1422d897efc8cca5f9f0cce5503f8837ffc5215e9b99693037ce79252121f89', NULL, NULL, 'CHUYEN_KHOAN', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-11 16:19:59', NULL),
 (20, 20, NULL, NULL, 'VNPAY', '2026-04-11 16:36:38', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=3003400&vnp_Command=pay&vnp_CreateDate=20260411212138&vnp_CurrCode=VND&vnp_ExpireDate=20260411213638&vnp_IpAddr=127.0.0.1&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+20&vnp_OrderType=billpayment&vnp_ReturnUrl=http%3A%2F%2Flocalhost%3A3000%2Fthanh-toan%2Freturn%2Fvnpay&vnp_TmnCode=NUIPDZDI&vnp_TxnRef=20&vnp_Version=2.1.0&vnp_SecureHash=7e7b4e63406aec459de6afddfad66d8b188c37cd8f3b83a51f49d07705a26ad884b4f5650a2c9052c8e3dae731ed1067edb351cc15350f4b11343724e8d7fc8e', NULL, NULL, 'CHUYEN_KHOAN', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-11 16:21:38', NULL),
-(21, 22, NULL, NULL, 'ZALOPAY', '2026-04-11 16:53:35', NULL, NULL, NULL, 'ZALOPAY', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-11 16:38:35', NULL),
-(22, 23, NULL, NULL, 'ZALOPAY', '2026-04-11 16:56:52', NULL, NULL, NULL, 'ZALOPAY', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-11 16:41:52', NULL),
-(23, 24, NULL, NULL, 'ZALOPAY', '2026-04-11 16:59:22', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQ3Faam9aNHViUGJGSUtrMDluaEVxdmciLCJhcHBpZCI6MjU1M30=', NULL, NULL, 'ZALOPAY', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-11 16:44:22', NULL),
-(24, 25, NULL, NULL, 'ZALOPAY', '2026-04-11 17:09:48', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQ0pSMUdXeW1VUGNhU1hpc2pwNlNXMlEiLCJhcHBpZCI6MjU1M30=', NULL, NULL, 'ZALOPAY', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-11 16:54:48', NULL),
-(25, 26, NULL, NULL, 'ZALOPAY', '2026-04-12 14:00:06', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQ0FYZFJNbnBncFhUanhQN0w4akx4dmciLCJhcHBpZCI6MjU1M30=', NULL, NULL, 'ZALOPAY', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-12 13:45:06', NULL),
-(26, 27, NULL, NULL, 'ZALOPAY', '2026-04-12 14:15:34', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQ0VWdHRSVS1iZExwZnRkaEZNZ1Fyb3ciLCJhcHBpZCI6MjU1M30=', NULL, NULL, 'ZALOPAY', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-12 14:00:34', NULL),
-(27, 28, NULL, NULL, 'ZALOPAY', '2026-04-12 14:19:21', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQzlrTW04UWR6a3hLRXNHWC00SkUxV1EiLCJhcHBpZCI6MjU1M30=', NULL, NULL, 'ZALOPAY', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-12 14:04:21', NULL),
-(28, 29, NULL, NULL, 'ZALOPAY', '2026-04-12 14:21:35', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQzA3Nk5mSFpXcEt4eDFIdDlURmNDd2ciLCJhcHBpZCI6MjU1M30=', NULL, NULL, 'ZALOPAY', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-12 14:06:35', NULL),
-(29, 30, NULL, NULL, 'ZALOPAY', '2026-04-12 14:24:09', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQ202NlZNRG5tb1FocWZQTGZYRzgyS3ciLCJhcHBpZCI6MjU1M30=', NULL, NULL, 'ZALOPAY', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-12 14:09:09', NULL),
+(21, 22, NULL, NULL, 'ZALOPAY', '2026-04-11 16:53:35', NULL, NULL, ' [Migrated from COD - Gateway removed]', 'COD', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-11 16:38:35', NULL),
+(22, 23, NULL, NULL, 'ZALOPAY', '2026-04-11 16:56:52', NULL, NULL, ' [Migrated from COD - Gateway removed]', 'COD', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-11 16:41:52', NULL),
+(23, 24, NULL, NULL, 'ZALOPAY', '2026-04-11 16:59:22', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQ3Faam9aNHViUGJGSUtrMDluaEVxdmciLCJhcHBpZCI6MjU1M30=', NULL, ' [Migrated from COD - Gateway removed]', 'COD', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-11 16:44:22', NULL),
+(24, 25, NULL, NULL, 'ZALOPAY', '2026-04-11 17:09:48', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQ0pSMUdXeW1VUGNhU1hpc2pwNlNXMlEiLCJhcHBpZCI6MjU1M30=', NULL, ' [Migrated from COD - Gateway removed]', 'COD', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-11 16:54:48', NULL),
+(25, 26, NULL, NULL, 'ZALOPAY', '2026-04-12 14:00:06', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQ0FYZFJNbnBncFhUanhQN0w4akx4dmciLCJhcHBpZCI6MjU1M30=', NULL, ' [Migrated from COD - Gateway removed]', 'COD', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-12 13:45:06', NULL),
+(26, 27, NULL, NULL, 'ZALOPAY', '2026-04-12 14:15:34', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQ0VWdHRSVS1iZExwZnRkaEZNZ1Fyb3ciLCJhcHBpZCI6MjU1M30=', NULL, ' [Migrated from COD - Gateway removed]', 'COD', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-12 14:00:34', NULL),
+(27, 28, NULL, NULL, 'ZALOPAY', '2026-04-12 14:19:21', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQzlrTW04UWR6a3hLRXNHWC00SkUxV1EiLCJhcHBpZCI6MjU1M30=', NULL, ' [Migrated from COD - Gateway removed]', 'COD', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-12 14:04:21', NULL),
+(28, 29, NULL, NULL, 'ZALOPAY', '2026-04-12 14:21:35', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQzA3Nk5mSFpXcEt4eDFIdDlURmNDd2ciLCJhcHBpZCI6MjU1M30=', NULL, ' [Migrated from COD - Gateway removed]', 'COD', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-12 14:06:35', NULL),
+(29, 30, NULL, NULL, 'ZALOPAY', '2026-04-12 14:24:09', 'https://qcgateway.zalopay.vn/openinapp?order=eyJ6cHRyYW5zdG9rZW4iOiJBQ202NlZNRG5tb1FocWZQTGZYRzgyS3ciLCJhcHBpZCI6MjU1M30=', NULL, ' [Migrated from COD - Gateway removed]', 'COD', 30034.99, NULL, 'CHO_DUYET', NULL, '2026-04-12 14:09:09', NULL),
 (30, 31, NULL, NULL, 'COD', '2026-04-14 16:45:32', NULL, NULL, NULL, 'COD', 17920000.00, NULL, 'CHO_DUYET', NULL, '2026-04-14 16:30:32', NULL),
 (31, 32, NULL, NULL, 'COD', '2026-04-14 17:17:02', NULL, NULL, NULL, 'COD', 35020000.00, NULL, 'CHO_DUYET', NULL, '2026-04-14 17:02:02', NULL),
 (32, 33, NULL, NULL, 'COD', '2026-04-15 02:33:46', NULL, NULL, NULL, 'COD', 35020000.00, NULL, 'CHO_DUYET', NULL, '2026-04-15 02:18:46', NULL),
@@ -1275,7 +1273,7 @@ CREATE TABLE `transaction_log` (
   `id` int NOT NULL,
   `thanh_toan_id` int NOT NULL COMMENT 'Foreign key to thanh_toan table',
   `gateway_transaction_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Unique transaction ID from payment gateway (VNPay/Momo)',
-  `gateway_name` enum('COD','VNPAY','MOMO','ZALOPAY','REFUND') COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Payment gateway identifier (VNPAY, MOMO, COD, ZALOPAY) or REFUND for refund operations',
+  `gateway_name` enum('VNPAY','COD','REFUND') COLLATE utf8mb4_unicode_ci NOT NULL,
   `request_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'JSON: Payment request sent to gateway',
   `response_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'JSON: Response received from gateway',
   `callback_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'JSON: Callback/IPN data received from gateway',
@@ -1308,14 +1306,6 @@ INSERT INTO `transaction_log` (`id`, `thanh_toan_id`, `gateway_transaction_id`, 
 (18, 18, NULL, 'VNPAY', '{\"don_hang_id\":18,\"amount\":30034.99,\"payment_method\":\"CHUYEN_KHOAN\",\"expiration_time\":\"2026-04-11 16:30:54\"}', NULL, NULL, 'PENDING', '2026-04-11 21:15:54'),
 (19, 19, NULL, 'VNPAY', '{\"don_hang_id\":19,\"amount\":30034.99,\"payment_method\":\"CHUYEN_KHOAN\",\"expiration_time\":\"2026-04-11 16:34:59\"}', NULL, NULL, 'PENDING', '2026-04-11 21:19:59'),
 (20, 20, NULL, 'VNPAY', '{\"don_hang_id\":20,\"amount\":30034.99,\"payment_method\":\"CHUYEN_KHOAN\",\"expiration_time\":\"2026-04-11 16:36:38\"}', NULL, NULL, 'PENDING', '2026-04-11 21:21:38'),
-(21, 22, NULL, 'ZALOPAY', '{\"don_hang_id\":23,\"amount\":30034.99,\"payment_method\":\"ZALOPAY\",\"expiration_time\":\"2026-04-11 16:56:52\"}', NULL, NULL, 'PENDING', '2026-04-11 21:41:52'),
-(22, 23, NULL, 'ZALOPAY', '{\"don_hang_id\":24,\"amount\":30034.99,\"payment_method\":\"ZALOPAY\",\"expiration_time\":\"2026-04-11 16:59:22\"}', NULL, NULL, 'PENDING', '2026-04-11 21:44:22'),
-(23, 24, NULL, 'ZALOPAY', '{\"don_hang_id\":25,\"amount\":30034.99,\"payment_method\":\"ZALOPAY\",\"expiration_time\":\"2026-04-11 17:09:48\"}', NULL, NULL, 'PENDING', '2026-04-11 21:54:48'),
-(24, 25, NULL, 'ZALOPAY', '{\"don_hang_id\":26,\"amount\":30034.99,\"payment_method\":\"ZALOPAY\",\"expiration_time\":\"2026-04-12 14:00:06\"}', NULL, NULL, 'PENDING', '2026-04-12 18:45:06'),
-(25, 26, NULL, 'ZALOPAY', '{\"don_hang_id\":27,\"amount\":30034.99,\"payment_method\":\"ZALOPAY\",\"expiration_time\":\"2026-04-12 14:15:34\"}', NULL, NULL, 'PENDING', '2026-04-12 19:00:34'),
-(26, 27, NULL, 'ZALOPAY', '{\"don_hang_id\":28,\"amount\":30034.99,\"payment_method\":\"ZALOPAY\",\"expiration_time\":\"2026-04-12 14:19:21\"}', NULL, NULL, 'PENDING', '2026-04-12 19:04:21'),
-(27, 28, NULL, 'ZALOPAY', '{\"don_hang_id\":29,\"amount\":30034.99,\"payment_method\":\"ZALOPAY\",\"expiration_time\":\"2026-04-12 14:21:35\"}', NULL, NULL, 'PENDING', '2026-04-12 19:06:35'),
-(28, 29, NULL, 'ZALOPAY', '{\"don_hang_id\":30,\"amount\":30034.99,\"payment_method\":\"ZALOPAY\",\"expiration_time\":\"2026-04-12 14:24:09\"}', NULL, NULL, 'PENDING', '2026-04-12 19:09:09'),
 (29, 30, NULL, 'COD', '{\"don_hang_id\":31,\"amount\":17920000,\"payment_method\":\"COD\",\"expiration_time\":\"2026-04-14 16:45:32\"}', NULL, NULL, 'PENDING', '2026-04-14 21:30:32'),
 (30, 31, NULL, 'COD', '{\"don_hang_id\":32,\"amount\":35020000,\"payment_method\":\"COD\",\"expiration_time\":\"2026-04-14 17:17:02\"}', NULL, NULL, 'PENDING', '2026-04-14 22:02:02'),
 (31, 32, NULL, 'COD', '{\"don_hang_id\":33,\"amount\":35020000,\"payment_method\":\"COD\",\"expiration_time\":\"2026-04-15 02:33:46\"}', NULL, NULL, 'PENDING', '2026-04-15 07:18:46'),
