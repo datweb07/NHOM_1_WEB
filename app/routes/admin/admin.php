@@ -189,6 +189,18 @@ function adminRoute(string $uri): void
         return;
     }
 
+    if ($path === 'admin/thanh-toan/refund' && $method === 'GET') {
+        $id = $_GET['id'] ?? null;
+        $thanhToanController->showRefundForm($id);
+        return;
+    }
+
+    if ($path === 'admin/thanh-toan/refund' && $method === 'POST') {
+        $id = $_GET['id'] ?? null;
+        $thanhToanController->processRefund($id);
+        return;
+    }
+
     if ($path === 'admin/san-pham' && $method === 'GET') {
         $sanPhamController->index();
         return;
