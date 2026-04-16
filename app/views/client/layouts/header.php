@@ -638,36 +638,6 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                                 alt="" style="width:28px; height:28px;">
                             Máy cũ
                         </a>
-
-                        <a href="#" class="right-btn">
-                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/thong_tin_hay_cd1d403f02.png"
-                                alt="" style="width:28px; height:28px;">
-                            Thông tin hay
-                        </a>
-
-                        <a href="#" class="right-btn">
-                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/Sim_the_15b97bc4ee.png"
-                                alt="" style="width:28px; height:28px;">
-                            Sim thẻ Thanh toán
-                        </a>
-
-                        <a href="#" class="right-btn">
-                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/icon_apple_ccd2f88c95.png"
-                                alt="" style="width:28px; height:28px;">
-                            Đặc quyền đối tác
-                        </a>
-
-                        <a href="#" class="right-btn">
-                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/icon_new_e246d3d0c9.png"
-                                alt="" style="width:28px; height:28px;">
-                            Chiết khấu DN
-                        </a>
-
-                        <a href="#" class="right-btn">
-                            <img src="https://cdn2.fptshop.com.vn/unsafe/96x0/filters:format(webp):quality(75)/small/HTKT_9c344ffa37.png"
-                                alt="" style="width:28px; height:28px;">
-                            KTV hỗ trợ
-                        </a>
                     </div>
                 </div>
             </div>

@@ -346,6 +346,58 @@ ob_start();
             <?php
             require_once dirname(__DIR__, 3) . '/models/entities/SanPham.php';
             $spModel = new SanPham();
+
+            // =========================================================================
+            // HÀM HELPER: Dùng chung để tính Giá Thực Tế và Giá Gạch Ngang cho toàn trang
+            // =========================================================================
+            if (!function_exists('tinhGiaHienThi')) {
+                function tinhGiaHienThi($sp, $spModel) {
+                    $giaHienThi = (float)($sp['gia_hien_thi'] ?? 0);
+                    $giaGoc = isset($sp['gia_goc']) ? (float)$sp['gia_goc'] : 0;
+                    
+                    $giaThucTe = $giaHienThi;
+                    $giaGachNgang = 0;
+
+                    $spId = (int)($sp['id'] ?? 0);
+                    if ($spId > 0) {
+                        // Tự động kiểm tra khuyến mãi khớp với sản phẩm này
+                        $sql = "
+                            SELECT km.* FROM khuyen_mai km
+                            INNER JOIN san_pham_khuyen_mai spkm ON km.id = spkm.khuyen_mai_id
+                            WHERE spkm.san_pham_id = $spId
+                              AND km.trang_thai = 'HOAT_DONG'
+                              AND (km.ngay_bat_dau IS NULL OR km.ngay_bat_dau <= NOW())
+                              AND (km.ngay_ket_thuc IS NULL OR km.ngay_ket_thuc >= NOW())
+                            ORDER BY km.id DESC LIMIT 1
+                        ";
+                        $kmResult = $spModel->query($sql);
+                        
+                        if (!empty($kmResult)) {
+                            // CÓ KHUYẾN MÃI: Tính giá giảm, gạch giá gốc (hoặc giá hiển thị)
+                            $km = $kmResult[0];
+                            if ($km['loai_giam'] === 'PHAN_TRAM') {
+                                $mucGiam = $giaHienThi * ($km['gia_tri_giam'] / 100);
+                                if ($km['giam_toi_da'] > 0 && $mucGiam > $km['giam_toi_da']) {
+                                    $mucGiam = $km['giam_toi_da'];
+                                }
+                                $giaThucTe = $giaHienThi - $mucGiam;
+                            } else {
+                                $giaThucTe = $giaHienThi - $km['gia_tri_giam'];
+                            }
+                            $giaThucTe = max(0, $giaThucTe);
+                            $giaGachNgang = $giaHienThi; 
+                        } elseif ($giaGoc > $giaHienThi) {
+                            // KHÔNG CÓ KM nhưng CÓ GIÁ GỐC do Admin set
+                            $giaGachNgang = $giaGoc;
+                        }
+                    }
+
+                    return [
+                        'giaThucTe' => $giaThucTe,
+                        'giaGachNgang' => $giaGachNgang
+                    ];
+                }
+            }
             ?>
             <div class="continuous-slider-track">
                 <?php if (!empty($sanPhamKhuyenMai)): ?>
@@ -388,12 +440,11 @@ ob_start();
                                             <h3 class="fs-6 fw-semibold mb-2 text-truncate">
                                                 <?php echo htmlspecialchars($sp['ten_san_pham']); ?>
                                             </h3>
-                                            <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-                                                <span class="px-2 py-1 rounded-pill text-white fw-bold"
-                                                    style="background-color: #eb0501; font-size: 0.9rem;"><?php echo number_format($giaSauGiam, 0, ',', '.'); ?>đ</span>
-                                                <span class="text-secondary text-decoration-line-through"
-                                                    style="font-size: 0.85rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
+                                            <div class="d-flex align-items-center flex-wrap gap-2 mb-2 mt-1">
+                                                <span class="text-danger fw-bold" style="font-size: 1.05rem;"><?php echo number_format($giaSauGiam, 0, ',', '.'); ?>đ</span>
+                                                <span class="text-muted text-decoration-line-through" style="font-size: 0.85rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
                                             </div>
+                                            
                                             <?php if (!empty($sp['ngay_ket_thuc'])): ?>
                                                 <div class="countdown-timer mb-2 text-center"
                                                     data-end-time="<?php echo htmlspecialchars($sp['ngay_ket_thuc']); ?>"
@@ -434,7 +485,7 @@ ob_start();
                     <?php foreach ($danhMucGoiY as $dm): ?>
                         <div class="suggestion-slide-item">
                             <div class="suggestion-item" style="border: none; text-align: center;">
-                                <a href="/san-pham/<?php echo htmlspecialchars($dm['slug']); ?>" class="text-decoration-none">
+                                <a href="/danh-muc/<?php echo htmlspecialchars($dm['slug']); ?>" class="text-decoration-none">
                                     <div class="suggestion-image" style="background: transparent;">
                                         <?php if (!empty($dm['icon_url'])): ?>
                                             <img src="<?php echo htmlspecialchars($dm['icon_url']); ?>"
@@ -757,7 +808,7 @@ ob_start();
 
         viewport.addEventListener('mousemove', (e) => {
             if (!isDown) return;
-            e.preventDefault(); //ngăn bôi đen văn bản
+            e.preventDefault(); 
 
             const x = e.pageX - viewport.offsetLeft;
             const walk = (x - startX) * 2;
@@ -802,9 +853,9 @@ ob_start();
             <?php if (!empty($sanPhamDienThoai)): ?>
                 <?php foreach ($sanPhamDienThoai as $sp): ?>
                     <div class="col-lg-3 col-md-4 col-6 mb-4">
-                        <div class="p-2 border rounded-3 bg-white custom-hover-card h-100">
+                        <div class="p-2 border rounded-3 bg-white custom-hover-card h-100 d-flex flex-column">
                             <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
-                                class="text-dark text-decoration-none d-block">
+                                class="text-dark text-decoration-none d-flex flex-column h-100">
                                 <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
                                     style="height: 250px; background-color: #fff;">
                                     <?php if (!empty($sp['anh_chinh'])): ?>
@@ -821,15 +872,24 @@ ob_start();
                                             style="background-color: #66cd42; font-size: 0.75rem;">Trả góp 0%</span>
                                     </div>
                                 </div>
-                                <div class="mt-3 px-1">
-                                    <h3 class="fs-6 fw-semibold mb-3 text-truncate">
+                                <div class="mt-3 px-1 d-flex flex-column flex-grow-1">
+                                    <h3 class="fs-6 fw-semibold mb-2 text-truncate">
                                         <?php echo htmlspecialchars($sp['ten_san_pham']); ?>
                                     </h3>
-                                    <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-                                        <span class="px-2 py-1 rounded-pill text-white fw-bold"
-                                            style="background-color: #eb0501; font-size: 0.9rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
+                                    
+                                    <?php $priceData = tinhGiaHienThi($sp, $spModel); ?>
+                                    <div class="d-flex align-items-center flex-wrap gap-2 mb-2 mt-1">
+                                        <span class="text-danger fw-bold" style="font-size: 1.05rem;">
+                                            <?php echo number_format($priceData['giaThucTe'], 0, ',', '.'); ?>đ
+                                        </span>
+                                        <?php if ($priceData['giaGachNgang'] > $priceData['giaThucTe']): ?>
+                                            <span class="text-muted text-decoration-line-through" style="font-size: 0.85rem;">
+                                                <?php echo number_format($priceData['giaGachNgang'], 0, ',', '.'); ?>đ
+                                            </span>
+                                        <?php endif; ?>
                                     </div>
-                                    <div class="bg-light p-2 rounded-3 mt-3">
+                                    
+                                    <div class="bg-light p-2 rounded-3 mt-auto">
                                         <span class="text-secondary" style="font-size: 0.75rem;">Giảm thêm 150.000đ khi TT
                                             online 100% qua thẻ Mastercard</span>
                                     </div>
@@ -838,6 +898,10 @@ ob_start();
                         </div>
                     </div>
                 <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-12">
+                    <p class="text-muted small p-3">Chưa có sản phẩm điện thoại</p>
+                </div>
             <?php endif; ?>
         </div>
     </div>
@@ -863,9 +927,9 @@ ob_start();
             <?php if (!empty($sanPhamLaptop)): ?>
                 <?php foreach ($sanPhamLaptop as $sp): ?>
                     <div class="col-lg-3 col-md-4 col-6 mb-4">
-                        <div class="p-2 border rounded-3 bg-white custom-hover-card h-100">
+                        <div class="p-2 border rounded-3 bg-white custom-hover-card h-100 d-flex flex-column">
                             <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
-                                class="text-dark text-decoration-none d-block">
+                                class="text-dark text-decoration-none d-flex flex-column h-100">
                                 <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
                                     style="height: 250px; background-color: #fff;">
                                     <?php if (!empty($sp['anh_chinh'])): ?>
@@ -882,15 +946,24 @@ ob_start();
                                             style="background-color: #66cd42; font-size: 0.75rem;">Trả góp 0%</span>
                                     </div>
                                 </div>
-                                <div class="mt-3 px-1">
-                                    <h3 class="fs-6 fw-semibold mb-3 text-truncate">
+                                <div class="mt-3 px-1 d-flex flex-column flex-grow-1">
+                                    <h3 class="fs-6 fw-semibold mb-2 text-truncate">
                                         <?php echo htmlspecialchars($sp['ten_san_pham']); ?>
                                     </h3>
-                                    <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-                                        <span class="px-2 py-1 rounded-pill text-white fw-bold"
-                                            style="background-color: #eb0501; font-size: 0.9rem;"><?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ</span>
+                                    
+                                    <?php $priceData = tinhGiaHienThi($sp, $spModel); ?>
+                                    <div class="d-flex align-items-center flex-wrap gap-2 mb-2 mt-1">
+                                        <span class="text-danger fw-bold" style="font-size: 1.05rem;">
+                                            <?php echo number_format($priceData['giaThucTe'], 0, ',', '.'); ?>đ
+                                        </span>
+                                        <?php if ($priceData['giaGachNgang'] > $priceData['giaThucTe']): ?>
+                                            <span class="text-muted text-decoration-line-through" style="font-size: 0.85rem;">
+                                                <?php echo number_format($priceData['giaGachNgang'], 0, ',', '.'); ?>đ
+                                            </span>
+                                        <?php endif; ?>
                                     </div>
-                                    <div class="bg-light p-2 rounded-3 mt-3">
+
+                                    <div class="bg-light p-2 rounded-3 mt-auto">
                                         <span class="text-secondary" style="font-size: 0.75rem;">Giảm thêm 150.000đ khi TT
                                             online 100% qua thẻ Mastercard</span>
                                     </div>
@@ -917,25 +990,32 @@ ob_start();
             <?php if (!empty($sanPhamPhuKien)): ?>
                 <?php foreach (array_slice($sanPhamPhuKien, 0, 12) as $sp): ?>
                     <div class="col-lg-2 col-md-4 col-6 mb-4">
-                        <div class="p-2 border rounded-3 bg-white custom-hover-card h-100">
+                        <div class="p-2 border rounded-3 bg-white custom-hover-card h-100 d-flex flex-column">
                             <a href="/san-pham/<?php echo htmlspecialchars($sp['slug']); ?>"
-                                class="text-dark text-decoration-none d-block">
+                                class="text-dark text-decoration-none d-flex flex-column h-100">
                                 <div class="position-relative w-100 d-flex justify-content-center overflow-hidden rounded-3"
                                     style="height: 250px;">
                                     <img src="<?php echo htmlspecialchars($sp['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png'); ?>"
                                         alt="<?php echo htmlspecialchars($sp['ten_san_pham']); ?>"
                                         class="w-100 h-100 object-fit-cover custom-hover-zoom">
                                 </div>
-                                <div class="mt-3 px-1">
-                                    <h3 class="fs-6 fw-semibold mb-3 text-truncate">
+                                <div class="mt-3 px-1 d-flex flex-column flex-grow-1">
+                                    <h3 class="fs-6 fw-semibold mb-2 text-truncate">
                                         <?php echo htmlspecialchars($sp['ten_san_pham']); ?>
                                     </h3>
-                                    <div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-                                        <span class="px-2 py-1 rounded-pill text-white fw-bold"
-                                            style="background-color: #eb0501; font-size: 0.9rem;">
-                                            <?php echo number_format($sp['gia_hien_thi'], 0, ',', '.'); ?>đ
+                                    
+                                    <?php $priceData = tinhGiaHienThi($sp, $spModel); ?>
+                                    <div class="d-flex align-items-center flex-wrap gap-2 mb-2 mt-1">
+                                        <span class="text-danger fw-bold" style="font-size: 1.05rem;">
+                                            <?php echo number_format($priceData['giaThucTe'], 0, ',', '.'); ?>đ
                                         </span>
+                                        <?php if ($priceData['giaGachNgang'] > $priceData['giaThucTe']): ?>
+                                            <span class="text-muted text-decoration-line-through" style="font-size: 0.85rem;">
+                                                <?php echo number_format($priceData['giaGachNgang'], 0, ',', '.'); ?>đ
+                                            </span>
+                                        <?php endif; ?>
                                     </div>
+                                    
                                 </div>
                             </a>
                         </div>
@@ -968,7 +1048,6 @@ ob_start();
         </div>
     </div>
 <?php endif; ?>
-
 
 <style>
     .zalo-floating-button {
@@ -1374,7 +1453,6 @@ ob_start();
             });
         }
 
-        // Update countdown every second
         updateCountdowns();
         setInterval(updateCountdowns, 1000);
     });
