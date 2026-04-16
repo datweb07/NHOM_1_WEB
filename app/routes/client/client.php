@@ -283,6 +283,13 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	if ($path === 'thanh-toan/return/paypal') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
+		$controller = new \App\Controllers\Client\ThanhToanController();
+		$controller->returnPayPal();
+		return;
+	}
+
 	// VietQR routes
 	if ($path === 'thanh-toan/vietqr') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';

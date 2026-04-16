@@ -85,6 +85,10 @@ class ThanhToanController
         $vietqrGateway = new \VietQRGateway();
         $vietqrEnabled = $vietqrGateway->isConfigured();
 
+        require_once dirname(__DIR__, 2) . '/services/payment/PayPalGateway.php';
+        $paypalGateway = new \PayPalGateway();
+        $paypalEnabled = $paypalGateway->isConfigured();
+
         $gatewayWarnings = $this->checkGatewayHealth();
 
         require_once dirname(__DIR__, 2) . '/views/client/thanh_toan/index.php';
@@ -251,6 +255,16 @@ class ThanhToanController
             }
         }
 
+        if ($phuongThucThanhToan === 'PAYPAL') {
+            require_once dirname(__DIR__, 2) . '/services/payment/PayPalGateway.php';
+            $paypalGateway = new \PayPalGateway();
+            if (!$paypalGateway->isConfigured()) {
+                Session::flash('error', 'Phương thức thanh toán PayPal hiện không khả dụng');
+                header('Location: /thanh-toan');
+                exit;
+            }
+        }
+
 
         $maDonHang = 'DH' . date('YmdHis');
         $ghiChu = $_POST['ghi_chu'] ?? '';
@@ -307,6 +321,15 @@ class ThanhToanController
             $_SESSION['last_transaction_id'] = $transactionId;
             header('Location: /thanh-toan/vietqr?id=' . $transactionId);
             exit;
+        } elseif ($phuongThucThanhToan === 'PAYPAL') {
+            if (!empty($paymentResult['payment_url'])) {
+                header('Location: ' . $paymentResult['payment_url']);
+                exit;
+            } else {
+                Session::flash('error', 'Không thể tạo liên kết thanh toán PayPal. Vui lòng thử lại.');
+                header('Location: /thanh-toan');
+                exit;
+            }
         } elseif ($phuongThucThanhToan === 'COD') {
             // Gửi email xác nhận đơn hàng COD
             $emailNguoiNhan = '';
@@ -558,6 +581,65 @@ class ThanhToanController
             header('Location: /don-hang/' . $donHangId);
         }
 
+        exit;
+    }
+
+    public function returnPayPal(): void
+    {
+        $token = $_GET['token'] ?? null;
+
+        if (!$token) {
+            Session::flash('error', 'Không tìm thấy thông tin giao dịch PayPal.');
+            header('Location: /');
+            exit;
+        }
+
+        require_once dirname(__DIR__, 2) . '/services/payment/PayPalGateway.php';
+        $paypalGateway = new \PayPalGateway();
+
+        // Capture payment (chốt giao dịch)
+        $captureResult = $paypalGateway->capturePayment($token);
+
+        if (!$captureResult['success']) {
+            Session::flash('error', $captureResult['message'] ?? 'Thanh toán PayPal thất bại. Vui lòng thử lại.');
+            header('Location: /thanh-toan');
+            exit;
+        }
+
+        // Tìm transaction trong DB dựa vào gateway_transaction_id hoặc token
+        // Vì PayPal Order ID được lưu trong gateway_transaction_id khi tạo payment URL
+        $transaction = $this->thanhToanModel->findByGatewayTransactionId($token);
+
+        if (!$transaction) {
+            Session::flash('error', 'Không tìm thấy thông tin giao dịch trong hệ thống.');
+            header('Location: /');
+            exit;
+        }
+
+        // Cập nhật trạng thái thanh toán
+        $this->thanhToanModel->update($transaction['id'], [
+            'trang_thai_duyet' => 'THANH_CONG',
+            'gateway_transaction_id' => $captureResult['gateway_transaction_id'],
+            'ngay_thanh_toan' => date('Y-m-d H:i:s')
+        ]);
+
+        // Cập nhật trạng thái đơn hàng
+        $this->donHangModel->capNhatTrangThai($transaction['don_hang_id'], 'DA_XAC_NHAN');
+
+        // Log transaction
+        require_once dirname(__DIR__, 2) . '/models/entities/TransactionLog.php';
+        $transactionLog = new \TransactionLog();
+        $transactionLog->create([
+            'thanh_toan_id' => $transaction['id'],
+            'gateway_name' => 'PAYPAL',
+            'gateway_transaction_id' => $captureResult['gateway_transaction_id'],
+            'request_data' => json_encode(['token' => $token]),
+            'response_data' => json_encode($captureResult['full_data'] ?? []),
+            'status' => 'SUCCESS'
+        ]);
+
+        Session::flash('success', 'Thanh toán PayPal thành công!');
+        header('Location: /don-hang/' . $transaction['don_hang_id']);
         exit;
     }
 
