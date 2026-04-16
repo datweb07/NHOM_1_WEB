@@ -130,10 +130,36 @@ foreach ($bienTheTam as $bienThe) {
         $attributeOptions[$tenThuocTinh][$giaTriThuocTinh] = true;
     }
 
+    // --- TÍNH TOÁN GIÁ SAU KHUYẾN MÃI DỰA TRÊN LOGIC DB ---
+    $giaGoc = $bienThe['price'];
+    $giaSauGiam = $giaGoc;
+    $coKhuyenMai = false;
+    $badgeText = '';
+
+    if (!empty($khuyenMaiApDung)) {
+        $coKhuyenMai = true;
+        if ($khuyenMaiApDung['loai_giam'] === 'PHAN_TRAM') {
+            $mucGiam = $giaGoc * ($khuyenMaiApDung['gia_tri_giam'] / 100);
+            if ($khuyenMaiApDung['giam_toi_da'] > 0 && $mucGiam > $khuyenMaiApDung['giam_toi_da']) {
+                $mucGiam = $khuyenMaiApDung['giam_toi_da'];
+            }
+            $giaSauGiam = $giaGoc - $mucGiam;
+            $badgeText = 'Giảm ' . (float)$khuyenMaiApDung['gia_tri_giam'] . '%';
+        } else {
+            $giaSauGiam = $giaGoc - $khuyenMaiApDung['gia_tri_giam'];
+            $badgeText = 'Giảm ' . number_format($khuyenMaiApDung['gia_tri_giam'], 0, ',', '.') . 'đ';
+        }
+        $giaSauGiam = max(0, $giaSauGiam); // Chống giá âm
+    }
+
+    // SỬA LẠI MẢNG JS: Đẩy cả giá gốc và giá giảm vào
     $productVariantsForJs[] = [
         'id' => $bienThe['id'],
         'name' => $bienThe['name'],
-        'price' => $bienThe['price'],
+        'price_original' => $giaGoc,
+        'price_discounted' => $giaSauGiam,
+        'has_promo' => $coKhuyenMai,
+        'promo_badge_text' => $badgeText,
         'stock' => $bienThe['stock'],
         'attributes' => $thuocTinhRutGon,
     ];
@@ -373,20 +399,45 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                 <span class="text-muted small"><?= $tongDanhGia ?> đánh giá</span>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 d-flex align-items-center flex-wrap">
                 <?php
+                // 1. Lấy giá gốc của phiên bản mặc định
                 $giaBan = $sanPham['gia_hien_thi'];
-                // Nếu có phiên bản chọn thì lấy giá phiên bản
                 if ($phienBanMacDinh) $giaBan = $phienBanMacDinh['gia_ban'];
+
+                // 2. Tính toán giá giảm cho lần load đầu tiên
+                $giaSauGiamMacDinh = $giaBan;
+                $coKhuyenMaiMacDinh = false;
+                $badgeTextMacDinh = '';
+
+                if (!empty($khuyenMaiApDung)) {
+                    $coKhuyenMaiMacDinh = true;
+                    if ($khuyenMaiApDung['loai_giam'] === 'PHAN_TRAM') {
+                        $mucGiam = $giaBan * ($khuyenMaiApDung['gia_tri_giam'] / 100);
+                        if ($khuyenMaiApDung['giam_toi_da'] > 0 && $mucGiam > $khuyenMaiApDung['giam_toi_da']) {
+                            $mucGiam = $khuyenMaiApDung['giam_toi_da'];
+                        }
+                        $giaSauGiamMacDinh = $giaBan - $mucGiam;
+                        $badgeTextMacDinh = 'Giảm ' . (float)$khuyenMaiApDung['gia_tri_giam'] . '%';
+                    } else {
+                        $giaSauGiamMacDinh = $giaBan - $khuyenMaiApDung['gia_tri_giam'];
+                        $badgeTextMacDinh = 'Giảm ' . number_format($khuyenMaiApDung['gia_tri_giam'], 0, ',', '.') . 'đ';
+                    }
+                    $giaSauGiamMacDinh = max(0, $giaSauGiamMacDinh);
+                }
                 ?>
-                <span class="text-danger fw-bold fs-3" id="current-price">
+                
+                <span class="text-danger fw-bold fs-3 me-3" id="current-price">
+                    <?= number_format($giaSauGiamMacDinh, 0, ',', '.') ?>đ
+                </span>
+                
+                <span class="text-muted text-decoration-line-through fs-5 me-2" id="original-price" style="<?= $coKhuyenMaiMacDinh ? 'display: inline-block;' : 'display: none;' ?>">
                     <?= number_format($giaBan, 0, ',', '.') ?>đ
                 </span>
-                <?php if (!empty($sanPham['gia_goc']) && $sanPham['gia_goc'] > $giaBan): ?>
-                    <span class="text-muted text-decoration-line-through ms-2">
-                        <?= number_format($sanPham['gia_goc'], 0, ',', '.') ?>đ
-                    </span>
-                <?php endif; ?>
+                
+                <span class="badge bg-danger align-middle fs-6" id="promo-badge" style="<?= $coKhuyenMaiMacDinh ? 'display: inline-block;' : 'display: none;' ?>">
+                    <?= $badgeTextMacDinh ?>
+                </span>
             </div>
 
             <?php if (!empty($phienBanList)): ?>
@@ -428,8 +479,18 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                                             <?= htmlspecialchars($pb['ten_phien_ban']) ?>
                                         </div>
                                         <div class="variant-price-label <?= $isActive ? 'text-danger fw-medium' : 'text-muted' ?>">
-                                            <?= number_format($pb['gia_ban'], 0, ',', '.') ?>đ
-                                        </div>
+      <?php 
+         // Tìm giá giảm trong mảng JS vừa tạo ở trên
+         $giaHienThiOThe = $pb['gia_ban'];
+         foreach($productVariantsForJs as $jsVar) {
+             if($jsVar['id'] == $pb['id']) {
+                 $giaHienThiOThe = $jsVar['price_discounted'];
+                 break;
+             }
+         }
+      ?>
+      <?= number_format($giaHienThiOThe, 0, ',', '.') ?>đ
+</div>
 
                                     </div>
                                 </div>
@@ -736,20 +797,35 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
     }
 
     function syncVariantUIByData(variant) {
-        if (!variant) {
-            return;
-        }
+        if (!variant) return;
 
         selectedVariantId = String(variant.id);
-
         const selectedVariantInput = document.getElementById('selected-variant');
-        if (selectedVariantInput) {
-            selectedVariantInput.value = selectedVariantId;
+        if (selectedVariantInput) selectedVariantInput.value = selectedVariantId;
+
+        // --- CẬP NHẬT GIÁ HIỂN THỊ (GIAO DIỆN KHUYẾN MÃI) ---
+        const priceEl = document.getElementById('current-price');
+        const originalPriceEl = document.getElementById('original-price');
+        const promoBadgeEl = document.getElementById('promo-badge');
+
+        if (priceEl) {
+            // Giá bôi đỏ bự nhất luôn là Giá đã giảm (nếu có)
+            priceEl.textContent = formatCurrency(variant.price_discounted);
         }
 
-        const priceEl = document.getElementById('current-price');
-        if (priceEl) {
-            priceEl.textContent = formatCurrency(variant.price);
+        if (originalPriceEl && promoBadgeEl) {
+            if (variant.has_promo) {
+                // Bật hiển thị giá gốc gạch ngang và Badge khuyến mãi
+                originalPriceEl.style.display = 'inline-block';
+                originalPriceEl.textContent = formatCurrency(variant.price_original);
+                
+                promoBadgeEl.style.display = 'inline-block';
+                promoBadgeEl.textContent = variant.promo_badge_text;
+            } else {
+                // Tắt đi nếu không có khuyến mãi
+                originalPriceEl.style.display = 'none';
+                promoBadgeEl.style.display = 'none';
+            }
         }
 
         const stockInfo = document.getElementById('stock-info');
