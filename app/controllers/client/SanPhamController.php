@@ -76,6 +76,18 @@ class SanPhamController
             $isWishlisted = $yeuThichModel->kiemTraDaTonTai($userId, $sanPham['id']);
         }
 
+        $sqlKhuyenMai = "
+            SELECT km.* FROM khuyen_mai km
+            INNER JOIN san_pham_khuyen_mai spkm ON km.id = spkm.khuyen_mai_id
+            WHERE spkm.san_pham_id = {$sanPham['id']}
+              AND km.trang_thai = 'HOAT_DONG'
+              AND (km.ngay_bat_dau IS NULL OR km.ngay_bat_dau <= NOW())
+              AND (km.ngay_ket_thuc IS NULL OR km.ngay_ket_thuc >= NOW())
+            ORDER BY km.id DESC LIMIT 1
+        ";
+        $resultKM = $this->sanPhamModel->query($sqlKhuyenMai);
+        $khuyenMaiApDung = !empty($resultKM) ? $resultKM[0] : null;
+
         // Load view
         require_once dirname(__DIR__, 2) . '/views/client/san_pham/detail.php';
     }
