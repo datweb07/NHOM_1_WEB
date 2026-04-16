@@ -5,8 +5,6 @@ abstract class PhuongThucThanhToan
     // const TIEN_MAT = 'TIEN_MAT';
     const CHUYEN_KHOAN = 'CHUYEN_KHOAN';
     const THE_TIN_DUNG = 'THE_TIN_DUNG';
-    const VI_DIEN_TU = 'VI_DIEN_TU';
-    const ZALOPAY = 'ZALOPAY';
     const COD = 'COD';
 
 
@@ -16,8 +14,6 @@ abstract class PhuongThucThanhToan
             // self::TIEN_MAT,
             self::CHUYEN_KHOAN,
             self::THE_TIN_DUNG,
-            self::VI_DIEN_TU,
-            self::ZALOPAY,
             self::COD
         ];
     }
@@ -40,10 +36,6 @@ abstract class PhuongThucThanhToan
                 return 'Thanh toán qua VNPay';
             case self::THE_TIN_DUNG:
                 return 'Thẻ tín dụng/Ghi nợ';
-            case self::VI_DIEN_TU:
-                return 'Thanh toán qua ví Momo';
-            case self::ZALOPAY:
-                return 'Thanh toán qua ZaloPay';
             case self::COD:
                 return 'Thanh toán khi nhận hàng (COD)';
             default:
@@ -56,9 +48,7 @@ abstract class PhuongThucThanhToan
     {
         return in_array($phuongThuc, [
             self::CHUYEN_KHOAN,
-            self::THE_TIN_DUNG,
-            self::VI_DIEN_TU,
-            self::ZALOPAY
+            self::THE_TIN_DUNG
         ]);
     }
 
@@ -66,9 +56,7 @@ abstract class PhuongThucThanhToan
     {
         $gatewayMap = [
             self::COD => 'CODHandler',
-            self::CHUYEN_KHOAN => 'VNPayGateway',
-            self::VI_DIEN_TU => 'MomoGateway',
-            self::ZALOPAY => 'ZaloPayGateway'
+            self::CHUYEN_KHOAN => 'VNPayGateway'
         ];
 
         return $gatewayMap[$paymentMethod] ?? null;
@@ -78,9 +66,7 @@ abstract class PhuongThucThanhToan
     {
         $gatewayMap = [
             self::COD => 'COD',
-            self::CHUYEN_KHOAN => 'VNPAY',
-            self::VI_DIEN_TU => 'MOMO',
-            self::ZALOPAY => 'ZALOPAY'
+            self::CHUYEN_KHOAN => 'VNPAY'
         ];
 
         return $gatewayMap[$paymentMethod] ?? 'UNKNOWN';
@@ -91,8 +77,6 @@ abstract class PhuongThucThanhToan
         $iconMap = [
             self::COD => 'fa-money-bill-wave',
             self::CHUYEN_KHOAN => 'fa-university',
-            self::VI_DIEN_TU => 'fa-mobile-alt',
-            self::ZALOPAY => 'fa-wallet',
             self::THE_TIN_DUNG => 'fa-credit-card'
         ];
 

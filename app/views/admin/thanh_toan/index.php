@@ -58,7 +58,6 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                         <option value="">Tất cả</option>
                         <option value="COD" <?= ($paymentMethod ?? '') === 'COD' ? 'selected' : '' ?>>COD</option>
                         <option value="CHUYEN_KHOAN" <?= ($paymentMethod ?? '') === 'CHUYEN_KHOAN' ? 'selected' : '' ?>>VNPay</option>
-                        <option value="VI_DIEN_TU" <?= ($paymentMethod ?? '') === 'VI_DIEN_TU' ? 'selected' : '' ?>>Momo</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -127,7 +126,6 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                             $methodLabels = [
                                 'COD' => 'COD',
                                 'CHUYEN_KHOAN' => 'VNPay',
-                                'VI_DIEN_TU' => 'Momo',
                             ];
                             ?>
                             <tr>

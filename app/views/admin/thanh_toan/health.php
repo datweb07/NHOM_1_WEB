@@ -179,7 +179,7 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                 <li><strong class="text-danger">B1:</strong> Kiểm tra trạng thái cấu hình Secret Key, Partner Code trong file <code>.env</code>.</li>
                                 <li><strong class="text-danger">B2:</strong> Kiểm tra log hệ thống (Storage/Logs) để trích xuất mã lỗi cụ thể từ Gateway.</li>
                                 <li><strong class="text-danger">B3:</strong> Tạm thời vô hiệu hóa cổng thanh toán đang lỗi trong cài đặt để tránh rủi ro cho khách hàng.</li>
-                                <li><strong class="text-danger">B4:</strong> Liên hệ đội ngũ Support kỹ thuật của đối tác (VNPay/Momo/ZaloPay).</li>
+                                <li><strong class="text-danger">B4:</strong> Liên hệ đội ngũ Support kỹ thuật của đối tác (VNPay).</li>
                             </ul>
                         </div>
                     </div>

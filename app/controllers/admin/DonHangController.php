@@ -283,22 +283,6 @@ class DonHangController
             exit;
         }
 
-        $gateway = null;
-        
-        if ($phuongThuc === 'VI_DIEN_TU') {
-            $gatewayName = $thanhToan['gateway_name'] ?? '';
-            
-            if ($gatewayName === 'vnpay' || strpos($gatewayTransactionId, 'VNP') !== false) {
-                require_once dirname(__DIR__, 2) . '/services/payment/VNPayGateway.php';
-                $gateway = new VNPayGateway();
-                $gatewayType = 'vnpay';
-            } elseif ($gatewayName === 'momo' || strpos($gatewayTransactionId, 'MOMO') !== false) {
-                require_once dirname(__DIR__, 2) . '/services/payment/MomoGateway.php';
-                $gateway = new MomoGateway();
-                $gatewayType = 'momo';
-            }
-        }
-
         if ($gateway === null || empty($gatewayTransactionId)) {
             header('Location: /admin/don-hang/chi-tiet?id=' . $id . '&error=refund_failed');
             exit;

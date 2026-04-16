@@ -42,12 +42,7 @@ class RefundService
         }
 
 
-        if (isset($thanhToan['phuong_thuc']) && $thanhToan['phuong_thuc'] === 'ZALOPAY') {
-            return [
-                'can_refund' => false,
-                'reason' => 'ZaloPay chưa hỗ trợ hoàn tiền tự động'
-            ];
-        }
+
 
 
         if (isset($thanhToan['id']) && $this->refundModel->hasCompletedRefund($thanhToan['id'])) {
@@ -186,9 +181,7 @@ class RefundService
     private function getGatewayInstance(string $paymentMethod): ?object
     {
         $gatewayMap = [
-            'CHUYEN_KHOAN' => 'VNPayGateway',
-            'VI_DIEN_TU' => 'MomoGateway',
-            'ZALOPAY' => 'ZaloPayGateway'
+            'CHUYEN_KHOAN' => 'VNPayGateway'
         ];
         
         $gatewayClass = $gatewayMap[$paymentMethod] ?? null;

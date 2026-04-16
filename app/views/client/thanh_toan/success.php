@@ -62,8 +62,7 @@ $sanPhamList = $sanPhamList ?? [];
                                 <?php
                                 $phuongThucMap = [
                                     'COD' => 'Thanh toán khi nhận hàng',
-                                    'CHUYEN_KHOAN' => 'Chuyển khoản VNPay',
-                                    'VI_DIEN_TU' => 'Ví điện tử Momo'
+                                    'CHUYEN_KHOAN' => 'Chuyển khoản VNPay'
                                 ];
                                 echo $phuongThucMap[$thanhToan['phuong_thuc']] ?? $thanhToan['phuong_thuc'];
                                 ?>

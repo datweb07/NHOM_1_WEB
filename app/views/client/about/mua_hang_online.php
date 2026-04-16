@@ -169,12 +169,6 @@
                 <ul>
                     <li>Bằng QR Code, thẻ ATM nội địa: Thanh toán nhanh chóng qua các ngân hàng trong nước.</li>
                     <li>Bằng thẻ quốc tế Visa, Master, JCB, AMEX, Apple Pay, Google Pay, Samsung Pay: Dùng các loại thẻ quốc tế phổ biến cùng các ưu đãi hấp dẫn.</li>
-                    <li>Qua ví điện tử:
-                        <ul>
-                            <li>MoMo</li>
-                            <li>ZaloPay</li>
-                        </ul>
-                    </li>
                 </ul>
 
                 <p class="fw-bold text-dark mt-3 mb-1">3. Thanh toán trả góp: <a href="#" class="fw-normal">Xem thêm chính sách trả góp tại đây</a></p>
