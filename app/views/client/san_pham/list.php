@@ -94,6 +94,11 @@ $mucGiaPreset = [
         color: #fff;
     }
 
+    .btn-compare-toggle.is-locked {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
     .compare-floating-bar {
         position: fixed;
         bottom: 16px;
@@ -504,6 +509,7 @@ $mucGiaPreset = [
                                         type="button"
                                         class="btn btn-outline-danger btn-sm w-100 btn-compare-toggle"
                                         data-slug="<?= htmlspecialchars($sp['slug']) ?>"
+                                        data-category-id="<?= (int)($sp['danh_muc_id'] ?? 0) ?>"
                                         data-name="<?= htmlspecialchars($sp['ten_san_pham']) ?>">
                                         <i class="fa fa-plus me-1"></i>Chọn so sánh
                                     </button>
@@ -561,16 +567,28 @@ $mucGiaPreset = [
 
 <script>
     const COMPARE_STORAGE_KEY = 'fptshop_compare_slugs';
+    const COMPARE_CATEGORY_STORAGE_KEY = 'fptshop_compare_category_id';
     const selectedCompareSlugs = new Set();
+    let selectedCompareCategoryId = null;
     const compareButtons = Array.from(document.querySelectorAll('.btn-compare-toggle'));
     const compareFloatingBar = document.getElementById('compare-floating-bar');
     const compareCount = document.getElementById('compare-count');
     const compareClearBtn = document.getElementById('compare-clear-btn');
     const compareSubmitBtn = document.getElementById('compare-submit-btn');
 
+    function parseCategoryId(rawValue) {
+        const parsed = Number(rawValue);
+        return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+    }
+
     function saveCompareState() {
         try {
             localStorage.setItem(COMPARE_STORAGE_KEY, JSON.stringify(Array.from(selectedCompareSlugs)));
+            if (selectedCompareCategoryId === null) {
+                localStorage.removeItem(COMPARE_CATEGORY_STORAGE_KEY);
+            } else {
+                localStorage.setItem(COMPARE_CATEGORY_STORAGE_KEY, String(selectedCompareCategoryId));
+            }
         } catch (e) {
 
         }
@@ -587,6 +605,12 @@ $mucGiaPreset = [
                     selectedCompareSlugs.add(slug);
                 }
             });
+
+            selectedCompareCategoryId = parseCategoryId(localStorage.getItem(COMPARE_CATEGORY_STORAGE_KEY));
+            if (selectedCompareCategoryId === null && selectedCompareSlugs.size > 0) {
+                const firstMatchedBtn = compareButtons.find((btn) => selectedCompareSlugs.has(btn.dataset.slug));
+                selectedCompareCategoryId = parseCategoryId(firstMatchedBtn?.dataset.categoryId ?? null);
+            }
         } catch (e) {
 
         }
@@ -599,10 +623,26 @@ $mucGiaPreset = [
         compareButtons.forEach((btn) => {
             const slug = btn.dataset.slug;
             const isSelected = selectedCompareSlugs.has(slug);
+            const buttonCategoryId = parseCategoryId(btn.dataset.categoryId ?? null);
+            const isLockedByCategory =
+                selectedCompareCategoryId !== null &&
+                buttonCategoryId !== null &&
+                buttonCategoryId !== selectedCompareCategoryId &&
+                !isSelected;
+
             btn.classList.toggle('active', isSelected);
+            btn.classList.toggle('is-locked', isLockedByCategory);
             btn.innerHTML = isSelected ?
                 '<i class="fa fa-check me-1"></i>Đã chọn so sánh' :
                 '<i class="fa fa-plus me-1"></i>Chọn so sánh';
+
+            if (isLockedByCategory) {
+                btn.title = 'Chỉ so sánh những sản phẩm cùng danh mục';
+                btn.setAttribute('aria-disabled', 'true');
+            } else {
+                btn.removeAttribute('title');
+                btn.removeAttribute('aria-disabled');
+            }
         });
 
         if (count > 0) {
@@ -622,10 +662,23 @@ $mucGiaPreset = [
             const slug = btn.dataset.slug;
             if (!slug) return;
 
+            const buttonCategoryId = parseCategoryId(btn.dataset.categoryId ?? null);
+
             if (selectedCompareSlugs.has(slug)) {
                 selectedCompareSlugs.delete(slug);
+                if (selectedCompareSlugs.size === 0) {
+                    selectedCompareCategoryId = null;
+                }
             } else {
+                if (selectedCompareCategoryId !== null && buttonCategoryId !== null && buttonCategoryId !== selectedCompareCategoryId) {
+                    alert('Bạn chỉ có thể chọn sản phẩm cùng danh mục để so sánh.');
+                    return;
+                }
+
                 selectedCompareSlugs.add(slug);
+                if (selectedCompareCategoryId === null && buttonCategoryId !== null) {
+                    selectedCompareCategoryId = buttonCategoryId;
+                }
             }
 
             renderCompareState();
@@ -634,6 +687,7 @@ $mucGiaPreset = [
 
     compareClearBtn?.addEventListener('click', () => {
         selectedCompareSlugs.clear();
+        selectedCompareCategoryId = null;
         renderCompareState();
     });
 

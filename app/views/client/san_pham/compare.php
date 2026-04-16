@@ -10,6 +10,15 @@ for ($i = 0; $i < 4; $i++) {
 }
 
 $selectedSlugSet = array_values(array_filter($selectedSlugsForForm, static fn($slug) => $slug !== ''));
+$danhMucKhoaForPicker = null;
+
+foreach (($sanPhamSoSanh ?? []) as $spDangSoSanh) {
+    $dmId = isset($spDangSoSanh['danh_muc_id']) ? (int)$spDangSoSanh['danh_muc_id'] : 0;
+    if ($dmId > 0) {
+        $danhMucKhoaForPicker = $dmId;
+        break;
+    }
+}
 
 $danhMucDangSoSanh = [];
 $hangDangSoSanh = [];
@@ -130,6 +139,12 @@ if (empty($sanPhamTuongTuGoiY)) {
         </div>
     </div>
 
+    <?php if (!empty($compareValidationMessage ?? '')): ?>
+        <div class="alert alert-warning border-0 shadow-sm">
+            <?= htmlspecialchars((string)$compareValidationMessage) ?>
+        </div>
+    <?php endif; ?>
+
     <div class="card compare-picker-card border-0 shadow-sm mb-4">
         <div class="card-body">
             <form method="GET" action="/so-sanh" class="row g-3 align-items-end">
@@ -140,6 +155,12 @@ if (empty($sanPhamTuongTuGoiY)) {
                             <select class="form-select form-select-sm" name="slug[]">
                                 <option value="">-- Chọn sản phẩm --</option>
                                 <?php foreach ($danhSachSanPham as $sp): ?>
+                                    <?php
+                                    $dmIdOption = isset($sp['danh_muc_id']) ? (int)$sp['danh_muc_id'] : 0;
+                                    if ($danhMucKhoaForPicker !== null && $dmIdOption > 0 && $dmIdOption !== $danhMucKhoaForPicker) {
+                                        continue;
+                                    }
+                                    ?>
                                     <option value="<?= htmlspecialchars($sp['slug']) ?>"
                                         <?= $selectedSlugsForForm[$i] === $sp['slug'] ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($sp['ten_san_pham']) ?>
@@ -235,7 +256,7 @@ if (empty($sanPhamTuongTuGoiY)) {
                             <?php foreach ($sanPhamSoSanh as $sp): ?>
                                 <td><?= htmlspecialchars($sp['phien_ban_mac_dinh']['mau_sac'] ?? '-') ?></td>
                             <?php endforeach; ?>
-                        </tr>                   
+                        </tr>
                         <tr>
                             <th class="bg-light">Tổng tồn kho</th>
                             <?php foreach ($sanPhamSoSanh as $sp): ?>

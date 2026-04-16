@@ -265,10 +265,22 @@ class SanPhamController
         $sanPhamSoSanh = [];
         $thongSoTheoSanPham = [];
         $tenThongSoMap = [];
+        $compareValidationMessage = '';
+        $danhMucSoSanhId = null;
 
         foreach ($selectedSlugs as $slug) {
             $sanPham = $this->sanPhamModel->layChiTietTheoSlug($slug);
             if (!$sanPham) {
+                continue;
+            }
+
+            $danhMucId = isset($sanPham['danh_muc_id']) ? (int)$sanPham['danh_muc_id'] : 0;
+            if ($danhMucSoSanhId === null && $danhMucId > 0) {
+                $danhMucSoSanhId = $danhMucId;
+            }
+
+            if ($danhMucSoSanhId !== null && $danhMucId > 0 && $danhMucId !== $danhMucSoSanhId) {
+                $compareValidationMessage = 'Chỉ có thể so sánh các sản phẩm cùng danh mục. Một số sản phẩm khác danh mục đã bị bỏ qua.';
                 continue;
             }
 
@@ -401,11 +413,25 @@ class SanPhamController
 
         $products = [];
         $specNameMap = [];
+        $danhMucSoSanhId = null;
 
         foreach ($slugs as $slug) {
             $sanPham = $this->sanPhamModel->layChiTietTheoSlug($slug);
             if (!$sanPham) {
                 continue;
+            }
+
+            $danhMucId = isset($sanPham['danh_muc_id']) ? (int)$sanPham['danh_muc_id'] : 0;
+            if ($danhMucSoSanhId === null && $danhMucId > 0) {
+                $danhMucSoSanhId = $danhMucId;
+            }
+
+            if ($danhMucSoSanhId !== null && $danhMucId > 0 && $danhMucId !== $danhMucSoSanhId) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Chỉ có thể so sánh các sản phẩm cùng danh mục.'
+                ]);
+                exit;
             }
 
             $phienBanList = $this->phienBanModel->layPhienBanTheoSanPham((int)$sanPham['id']);
@@ -444,6 +470,7 @@ class SanPhamController
                 'id' => (int)$sanPham['id'],
                 'slug' => (string)$sanPham['slug'],
                 'ten_san_pham' => (string)$sanPham['ten_san_pham'],
+                'danh_muc_id' => $danhMucId,
                 'hang_san_xuat' => (string)($sanPham['hang_san_xuat'] ?? '-'),
                 'ten_danh_muc' => (string)($sanPham['ten_danh_muc'] ?? '-'),
                 'gia_hien_thi' => $gia,
