@@ -923,7 +923,7 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
 
         try {
 
-            const response = await fetch(`/app/api/MegaMenuBrandApi.php?name=${encodeURIComponent(brandName)}`);
+            const response = await fetch(`/api/brand-menu.php?name=${encodeURIComponent(brandName)}`);
 
             const rawText = await response.text();
 
