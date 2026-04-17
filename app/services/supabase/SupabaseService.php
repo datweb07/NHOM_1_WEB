@@ -11,7 +11,7 @@ class SupabaseAuthService
         $baseUrl = $envConfig('SUPABASE_URL') ?? '';
         $appUrl = $envConfig('APP_URL') ?? '';
         
-        $redirectUrl = $appUrl . '/app/views/client/auth/callback.php'; 
+        $redirectUrl = $appUrl . '/client/auth/callback'; 
         
         return $baseUrl . '/auth/v1/authorize?provider=google&redirect_to=' . urlencode($redirectUrl);
     }

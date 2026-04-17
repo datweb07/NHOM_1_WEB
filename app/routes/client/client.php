@@ -46,6 +46,16 @@ function clientRoute(string $uri): void
 	}
 
 	//auth routes
+	if ($path === 'client/auth/callback') {
+		require_once dirname(__DIR__, 2) . '/views/client/auth/callback.php';
+		return;
+	}
+
+	if ($path === 'client/auth/process-login') {
+		require_once dirname(__DIR__, 2) . '/views/client/auth/process_login.php';
+		return;
+	}
+
 	if ($path === 'client/auth/login') {
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			require_once dirname(__DIR__, 2) . '/controllers/client/AuthController.php';
