@@ -13,8 +13,24 @@ while (ob_get_level()) {
 header('Content-Type: application/xml; charset=utf-8');
 
 try {
-    // Include required files
-    require_once dirname(__DIR__, 2) . '/app/models/entities/SanPham.php';
+    // Include config and autoload
+    $basePath = dirname(__DIR__, 2);
+    $configPath = $basePath . '/config/config.php';
+    
+    if (!file_exists($configPath)) {
+        throw new \Exception("Config file not found");
+    }
+    
+    require_once $configPath;
+    
+    // Include required model
+    $modelPath = $basePath . '/app/models/entities/SanPham.php';
+    
+    if (!file_exists($modelPath)) {
+        throw new \Exception("SanPham model not found");
+    }
+    
+    require_once $modelPath;
     
     // Get search keyword
     $keyword = $_GET['q'] ?? '';
