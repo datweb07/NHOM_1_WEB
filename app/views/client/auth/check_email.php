@@ -80,7 +80,7 @@
                             </div>
                             <h4 class="fw-bold mb-3">Kiểm tra email của bạn</h4>
                             <p class="text-muted" style="font-size: 0.95rem;">
-                                Nếu email tồn tại, bạn sẽ nhận được link đặt lại mật khẩu
+                                Nếu email tồn tại, bạn sẽ nhận được link kích hoạt tài khoản
                             </p>
                         </div>
 

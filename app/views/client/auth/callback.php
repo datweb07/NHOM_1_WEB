@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '../../../../../config/config.php'; ?>
+<?php require_once __DIR__ . '/../../../../config/config.php'; ?>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -99,7 +99,7 @@
                     encodeURIComponent(errorDescription || 'Đăng nhập thất bại');
             }, 2000);
         } else if (accessToken) {
-            fetch('process_login.php', {
+            fetch('/client/auth/process-login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
