@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Services\Events;
+
 /**
  * ObserverInterface
  * 

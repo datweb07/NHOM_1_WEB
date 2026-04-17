@@ -190,6 +190,45 @@ class CallbackHandler
                 $this->transactionLog->updateGatewayTransactionId($logs[0]['id'], $gatewayTransactionId);
             }
         }
+
+        // Trigger PAYMENT_SUCCESS event for email notification
+        try {
+            require_once dirname(__DIR__, 2) . '/services/events/EventManager.php';
+            require_once dirname(__DIR__, 2) . '/services/events/EmailObserver.php';
+            require_once dirname(__DIR__, 2) . '/services/mailer/MailerService.php';
+            
+            // Lấy email từ đơn hàng
+            $emailNhan = null;
+            $orders = $this->donHangModel->query("SELECT thong_tin_guest FROM don_hang WHERE id = $donHangId LIMIT 1");
+            if (!empty($orders)) {
+                $thongTinGuest = $orders[0]['thong_tin_guest'] ?? null;
+                if ($thongTinGuest) {
+                    $guestInfo = json_decode($thongTinGuest, true);
+                    $emailNhan = $guestInfo['email'] ?? null;
+                }
+            }
+            
+            if ($emailNhan) {
+                $eventManager = new \App\Services\Events\EventManager();
+                $mailerService = new \MailerService();
+                $emailObserver = new \App\Services\Events\EmailObserver($mailerService);
+                $eventManager->attach($emailObserver);
+                
+                $eventManager->notify('PAYMENT_SUCCESS', [
+                    'order_id' => $donHangId,
+                    'payment_method' => $this->formatPaymentMethodForEmail($gatewayName),
+                    'transaction_id' => $gatewayTransactionId ?? 'N/A',
+                    'email' => $emailNhan, // Thêm email vào event data
+                    'timestamp' => date('Y-m-d H:i:s')
+                ]);
+                
+                error_log("CallbackHandler: Triggered PAYMENT_SUCCESS event with email: $emailNhan");
+            } else {
+                error_log("CallbackHandler: Cannot send PAYMENT_SUCCESS email - no email found for order #$donHangId");
+            }
+        } catch (\Exception $e) {
+            error_log("Failed to trigger PAYMENT_SUCCESS event: " . $e->getMessage());
+        }
     }
 
     private function handleFailedPayment(array $transaction, string $errorCode, string $gatewayName, array $callbackData): void
@@ -307,5 +346,19 @@ class CallbackHandler
             'details' => $details,
             'timestamp' => date('Y-m-d H:i:s')
         ], $violationType);
+    }
+
+    /**
+     * Format payment method for email display
+     */
+    private function formatPaymentMethodForEmail(string $gatewayName): string
+    {
+        $methods = [
+            'VNPAY' => 'Chuyển khoản ngân hàng (VNPay)',
+            'PAYPAL' => 'Thanh toán PayPal',
+            'VIETQR' => 'Chuyển khoản VietQR'
+        ];
+
+        return $methods[$gatewayName] ?? $gatewayName;
     }
 }

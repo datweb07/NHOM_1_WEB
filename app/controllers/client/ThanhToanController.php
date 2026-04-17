@@ -18,7 +18,9 @@ require_once dirname(__DIR__, 2) . '/services/payment/VNPayGateway.php';
 require_once dirname(__DIR__, 2) . '/enums/PhuongThucThanhToan.php';
 require_once dirname(__DIR__, 2) . '/services/events/EventManager.php';
 require_once dirname(__DIR__, 2) . '/services/events/OrderObserver.php';
+require_once dirname(__DIR__, 2) . '/services/events/EmailObserver.php';
 require_once dirname(__DIR__, 2) . '/services/notification/NotificationService.php';
+require_once dirname(__DIR__, 2) . '/services/mailer/MailerService.php';
 
 use GioHang;
 use ChiTietGio;
@@ -28,6 +30,9 @@ use ThanhToan;
 use DiaChi;
 use MaGiamGia;
 use PhienBanSanPham;
+use App\Services\Events\EventManager;
+use App\Services\Events\OrderObserver;
+use App\Services\Events\EmailObserver;
 use \App\Core\Session;
 
 class ThanhToanController
@@ -149,6 +154,7 @@ class ThanhToanController
 
         $diaChiId = null;
         $thongTinGuest = null;
+        $emailNhan = trim((string)($_POST['email_nhan'] ?? '')); // Lấy email cho tất cả trường hợp
 
         if (Session::has('user_id')) {
             $suDungDiaChiKhac = !empty($_POST['su_dung_dia_chi_khac']);
@@ -177,6 +183,7 @@ class ThanhToanController
                 $thongTinGuest = json_encode([
                     'ten' => $tenNguoiNhan,
                     'sdt' => $sdtNhan,
+                    'email' => $emailNhan,
                     'dia_chi_duong' => $diaChiDuong,
                     'phuong_xa' => $phuongXa,
                     'quan_huyen' => $quanHuyen,
@@ -193,10 +200,22 @@ class ThanhToanController
                     exit;
                 }
             }
+            
+            // Validate email cho user đăng nhập
+            if ($emailNhan === '') {
+                Session::flash('error', 'Vui lòng nhập email để nhận xác nhận đơn hàng');
+                header('Location: /thanh-toan');
+                exit;
+            }
+            
+            if (!filter_var($emailNhan, FILTER_VALIDATE_EMAIL)) {
+                Session::flash('error', 'Email nhận hàng không hợp lệ');
+                header('Location: /thanh-toan');
+                exit;
+            }
         } else {
             $tenNguoiNhan = trim((string)($_POST['ten_nguoi_nhan'] ?? ''));
             $sdtNhan = trim((string)($_POST['sdt_nhan'] ?? ''));
-            $emailNhan = trim((string)($_POST['email_nhan'] ?? ''));
             $diaChiDuong = trim((string)($_POST['dia_chi_duong'] ?? $_POST['dia_chi'] ?? ''));
             $phuongXa = trim((string)($_POST['phuong_xa'] ?? ''));
             $quanHuyen = trim((string)($_POST['quan_huyen'] ?? ''));
@@ -286,16 +305,33 @@ class ThanhToanController
             'ghi_chu' => $ghiChu
         ]);
 
-        // Trigger order_created event using Observer Pattern
+        // Insert order items FIRST before triggering events
+        foreach ($chiTietGioList as $item) {
+            $this->chiTietDonModel->themChiTiet(
+                $donHangId,
+                $item['phien_ban_id'],
+                $item['so_luong'],
+                $item['gia_ban']
+            );
+
+            // Reduce inventory
+            $this->phienBanModel->giamTonKho($item['phien_ban_id'], $item['so_luong']);
+        }
+
+        // Trigger order_created event using Observer Pattern AFTER items are inserted
         try {
             require_once dirname(__DIR__, 2) . '/services/redis/RedisService.php';
             require_once dirname(__DIR__, 2) . '/models/entities/Refund.php';
             require_once dirname(__DIR__, 2) . '/models/entities/TransactionLog.php';
             require_once dirname(__DIR__, 2) . '/models/entities/GatewayHealth.php';
             require_once dirname(__DIR__, 2) . '/models/entities/DanhGia.php';
+            require_once dirname(__DIR__, 2) . '/services/events/EmailObserver.php';
+            require_once dirname(__DIR__, 2) . '/services/mailer/MailerService.php';
             
-            $eventManager = new \EventManager();
+            $eventManager = new EventManager();
             $redis = \RedisService::getInstance();
+            
+            // Initialize NotificationService for OrderObserver
             $notificationService = new \NotificationService(
                 $redis,
                 $this->donHangModel,
@@ -307,9 +343,31 @@ class ThanhToanController
                 new \GatewayHealth(),
                 $this->maGiamGiaModel
             );
-            $orderObserver = new \OrderObserver($notificationService);
+            $orderObserver = new OrderObserver($notificationService);
             
+            // Initialize MailerService for EmailObserver
+            $mailerService = new \MailerService();
+            $emailObserver = new EmailObserver($mailerService);
+            
+            // Attach both observers
             $eventManager->attach($orderObserver);
+            $eventManager->attach($emailObserver);
+            
+            // Trigger ORDER_PLACED event (for all payment methods)
+            $eventManager->notify('ORDER_PLACED', [
+                'order_id' => $donHangId,
+                'user_id' => Session::has('user_id') ? Session::get('user_id') : null,
+                'total_amount' => $tongThanhToan,
+                'email' => $emailNhan, // Truyền email trực tiếp
+                'payment_method' => $phuongThucThanhToan, // Truyền phương thức thanh toán chính xác
+                'subtotal' => $tongTien, // Tổng tiền hàng
+                'shipping_fee' => $phiVanChuyen, // Phí vận chuyển
+                'discount_amount' => $tienGiamGia, // Số tiền giảm giá
+                'discount_code' => !empty($_POST['ma_giam_gia']) ? trim($_POST['ma_giam_gia']) : null, // Mã giảm giá
+                'timestamp' => date('Y-m-d H:i:s')
+            ]);
+            
+            // Keep old event for backward compatibility
             $eventManager->notify('order_created', [
                 'order_id' => $donHangId,
                 'user_id' => Session::has('user_id') ? Session::get('user_id') : null,
@@ -318,19 +376,7 @@ class ThanhToanController
             ]);
         } catch (\Exception $e) {
             // Log error but don't block order processing
-            error_log("Failed to trigger order_created event: " . $e->getMessage());
-        }
-
-        foreach ($chiTietGioList as $item) {
-            $this->chiTietDonModel->themChiTiet(
-                $donHangId,
-                $item['phien_ban_id'],
-                $item['so_luong'],
-                $item['gia_ban']
-            );
-
-
-            $this->phienBanModel->giamTonKho($item['phien_ban_id'], $item['so_luong']);
+            error_log("Failed to trigger order events: " . $e->getMessage());
         }
 
 

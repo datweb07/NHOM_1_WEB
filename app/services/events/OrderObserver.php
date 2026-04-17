@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Services\Events;
+
 require_once __DIR__ . '/ObserverInterface.php';
 require_once __DIR__ . '/../notification/NotificationService.php';
 
@@ -11,14 +13,14 @@ require_once __DIR__ . '/../notification/NotificationService.php';
  */
 class OrderObserver implements ObserverInterface
 {
-    private NotificationService $notificationService;
+    private $notificationService; // Remove type hint for compatibility
 
     /**
      * Constructor
      * 
      * @param NotificationService $notificationService Notification service instance
      */
-    public function __construct(NotificationService $notificationService)
+    public function __construct($notificationService)
     {
         $this->notificationService = $notificationService;
     }
@@ -68,7 +70,7 @@ class OrderObserver implements ObserverInterface
             error_log("[OrderObserver] Order #{$orderId} notification will be available in admin panel");
             error_log("[OrderObserver] Order details - User: {$userId}, Amount: {$totalAmount}, Time: {$timestamp}");
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             error_log("[OrderObserver] Failed to process order_created event: " . $e->getMessage());
             // Don't rethrow - we don't want to break the order creation process
         }
