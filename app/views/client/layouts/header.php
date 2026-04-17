@@ -42,13 +42,29 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
 }
 ?>
 <style>
-    /* --- BẠN GIỮ NGUYÊN CSS NÀY, TÔI KHÔNG XÓA MỘT CHỮ NÀO --- */
+    /* --- BẠN GIỮ NGUYÊN CSS NÀY, CHỈ ĐIỀU CHỈNH FPT-BTN-MENU ĐỂ CÂN BẰNG CHIỀU CAO --- */
     .sticky-header {
         position: sticky;
         top: 0;
         z-index: 1030;
         background-color: #cb1c22;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .sticky-header.scrolled {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(10px);
+        z-index: 1030 !important;
+    }
+
+    body.sticky-active {
+        padding-top: 80px;
     }
 
     .navbar-main {
@@ -58,17 +74,16 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
     /* FPT Shop để cả thanh đỏ */
     .fpt-menu-wrapper {
         position: relative;
-        height: 100%;
         display: flex;
-        align-items: center;
+        align-items: flex-start; /* ĐỔI THÀNH FLEX-START ĐỂ KHÔNG BỊ CĂN GIỮA NẾU HEADER CAO LÊN */
     }
 
-    /* Nút Danh mục */
+    /* Nút Danh mục - ĐÃ ĐIỀU CHỈNH ĐỂ CAO ĐÚNG BẰNG THANH SEARCH (42px) */
     .fpt-btn-menu {
         background-color: rgba(0, 0, 0, 0.15);
-        /* Nền hơi tối nhẹ */
         color: #fff;
-        padding: 8px 16px;
+        padding: 0 16px; 
+        height: 42px; /* Force chiều cao 42px cho bằng với Form tìm kiếm */
         border-radius: 8px;
         font-weight: 500;
         display: flex;
@@ -89,11 +104,14 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
         top: 100%;
         left: 0;
         width: 100%;
-        height: 10px;
-        /* bằng với khoảng cách top của panel */
+        height: 15px; /* Tăng khoảng hở để dễ di chuột xuống menu */
         background: transparent;
         pointer-events: auto;
-        /* quan trọng: nhận di chuột */
+    }
+
+    /* --- HIỆU ỨNG GẠCH CHÂN CHO TỪ KHÓA TÌM KIẾM THEO YÊU CẦU --- */
+    .quick-search-tags a:hover {
+        text-decoration: underline !important;
     }
 
     /* --- MEGA MENU PANEL KHỔNG LỒ --- */
@@ -103,23 +121,19 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
         left: 0;
         width: 1200px;
         max-width: 100vw;
-        /* Độ rộng fix chuẩn PC */
         background: #fff;
         border-radius: 12px;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
         display: none;
-        /* Ẩn mặc định */
         flex-direction: row;
         z-index: 1050;
         overflow: hidden;
     }
 
-    /* Hiển thị khi hover vào wrapper */
     .fpt-menu-wrapper:hover .mega-menu-panel {
         display: flex;
     }
 
-    /* --- CỘT 1: BÊN TRÁI (260px) --- */
     .mega-col-left {
         width: 260px;
         background: #fff;
@@ -129,7 +143,6 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
         overflow-y: auto;
     }
 
-    /* Scrollbar custom cho cột trái */
     .mega-col-left::-webkit-scrollbar {
         width: 4px;
     }
@@ -214,7 +227,6 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
         color: #cb1c22;
     }
 
-    /* --- CỘT 2: Ở GIỮA (Phần lớn) --- */
     .mega-col-center {
         flex: 1;
         padding: 20px;
@@ -313,11 +325,9 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
         color: #cb1c22;
     }
 
-    /* --- CỘT 3: BÊN PHẢI (Utilities - 260px) --- */
     .mega-col-right {
         width: 260px;
         background: #f8f9fa;
-        /* Nền xám nhẹ */
         padding: 20px;
         border-left: 1px solid #f0f0f0;
         display: flex;
@@ -365,7 +375,6 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
         display: block;
     }
 
-    /* Ẩn offcanvas trên PC để tránh đụng độ */
     .offcanvas {
         z-index: 1050 !important;
     }
@@ -543,63 +552,9 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
     .xml-search-error {
         color: #dc3545;
     }
-
-    /* Băng rôn chạy */
-    .top-banner {
-        background-color: #f5a623;
-        color: #fff;
-        overflow: hidden;
-        white-space: nowrap;
-        padding: 8px 0;
-        font-size: 14px;
-        font-weight: 500;
-        position: relative;
-        z-index: 1031;
-        /* cao hơn header một chút nếu cần */
-    }
-
-    .marquee {
-        display: inline-block;
-        animation: marquee 20s linear infinite;
-    }
-
-    .marquee span {
-        display: inline-block;
-        padding-right: 50px;
-    }
-
-    @keyframes marquee {
-        0% {
-            transform: translateX(0);
-        }
-
-        100% {
-            transform: translateX(-50%);
-        }
-    }
-
-    /* Responsive trên mobile */
-    @media (max-width: 768px) {
-        .top-banner {
-            font-size: 12px;
-            padding: 6px 0;
-        }
-
-        .marquee {
-            animation-duration: 15s;
-        }
-    }
 </style>
 
 <header class="sticky-header">
-
-    <!-- Băng rôn chạy phía trên header -->
-    <div class="top-banner">
-        <div class="marquee">
-            <span>🔥 ƯU ĐÃI LỚN – GIẢM ĐẾN 50% CHO ĐIỆN THOẠI, LAPTOP – MIỄN PHÍ VẬN CHUYỂN 🔥</span>
-            <span>🔥 ƯU ĐÃI LỚN – GIẢM ĐẾN 50% CHO ĐIỆN THOẠI, LAPTOP – MIỄN PHÍ VẬN CHUYỂN 🔥</span>
-        </div>
-    </div>
 
     <div class="d-lg-none d-block">
         <div class="container-xl">
@@ -644,21 +599,32 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                 <div class="col-12 mt-2">
                     <form class="search-form position-relative" action="/san-pham" method="GET">
                         <input class="form-control rounded-pill ps-3" type="search" name="keyword"
-                            placeholder="Nhập tên sản phẩm..." style="height: 38px;">
+                            placeholder="Nhập tên điện thoại, laptop, phụ kiện... cần tìm" style="height: 38px;">
                         <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-danger"
                             type="submit" style="text-decoration: none;">
                             <i class="fa fa-magnifying-glass"></i>
                         </button>
                     </form>
+                    
+                    <div class="quick-search-tags mt-2 d-flex flex-wrap justify-content-center gap-3 px-1" style="font-size: 0.8rem;">
+                        <a href="/san-pham?keyword=iphone+17" class="text-white text-decoration-none text-nowrap">iphone 17</a>
+                        <a href="/san-pham?keyword=laptop" class="text-white text-decoration-none text-nowrap">laptop</a>
+                        <a href="/san-pham?keyword=samsung" class="text-white text-decoration-none text-nowrap">samsung</a>
+                        <a href="/san-pham?keyword=iphone+16" class="text-white text-decoration-none text-nowrap">iphone 16</a>
+                        <a href="/san-pham?keyword=macbook" class="text-white text-decoration-none text-nowrap">macbook</a>
+                        <a href="/san-pham?keyword=ipad" class="text-white text-decoration-none text-nowrap">ipad</a>
+                        <a href="/san-pham?keyword=macbook+neo" class="text-white text-decoration-none text-nowrap">macbook neo</a>
+                        <a href="/san-pham?keyword=may+lanh" class="text-white text-decoration-none text-nowrap">máy lạnh</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <nav class="navbar-main d-none d-lg-block py-2">
-        <div class="container-xl d-flex align-items-center">
+        <div class="container-xl d-flex align-items-start">
 
-            <div class="col-auto me-3">
+            <div class="col-auto me-3" style="margin-top: 1px;">
                 <a href="/" style="display:inline-block; line-height:0;">
                     <img src="https://cdn2.fptshop.com.vn/unsafe/360x0/filters:format(webp):quality(75)/small/logo_main_c9fbde96f1.png"
                         alt="FPT Shop" style="height:40px;">
@@ -753,7 +719,18 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                         <i class="fa fa-magnifying-glass fs-5"></i>
                     </button>
                 </form>
-                <!-- Dropdown lịch sử tìm kiếm -->
+
+                <div class="quick-search-tags mt-2 d-flex justify-content-between px-3 w-100" style="font-size: 0.85rem;">
+                    <a href="/san-pham?keyword=iphone+17" class="text-white text-decoration-none text-nowrap">iphone 17</a>
+                    <a href="/san-pham?keyword=laptop" class="text-white text-decoration-none text-nowrap">laptop</a>
+                    <a href="/san-pham?keyword=samsung" class="text-white text-decoration-none text-nowrap">samsung</a>
+                    <a href="/san-pham?keyword=iphone+16" class="text-white text-decoration-none text-nowrap">iphone 16</a>
+                    <a href="/san-pham?keyword=macbook" class="text-white text-decoration-none text-nowrap">macbook</a>
+                    <a href="/san-pham?keyword=ipad" class="text-white text-decoration-none text-nowrap">ipad</a>
+                    <a href="/san-pham?keyword=macbook+neo" class="text-white text-decoration-none text-nowrap">macbook neo</a>
+                    <a href="/san-pham?keyword=may+lanh" class="text-white text-decoration-none text-nowrap">máy lạnh</a>
+                </div>  
+                
                 <div id="searchHistoryDropdown" class="search-history-dropdown" style="display: none;">
                     <div class="dropdown-header d-flex justify-content-between align-items-center px-3 py-2">
                         <span class="fw-bold">Lịch sử tìm kiếm</span>
@@ -763,28 +740,26 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                             <a href="#" id="clearAllHistory" class="text-decoration-none text-danger"
                                 style="font-size: 0.8rem;">Xóa tất cả</a>
                         </div>
+                    </div> 
 
-                <!-- XML Search Results Container -->
-                <div id="xml-search-results" data-xml-search-results style="display: none;"></div>
-                
-                <!-- XML Search Loading Indicator -->
-                <div id="xml-search-loading" data-xml-search-loading style="display: none;">
-                    <div class="text-center py-3">
-                        <div class="spinner-border spinner-border-sm text-danger" role="status">
-                            <span class="visually-hidden">Đang tìm kiếm...</span>
+                    <div id="xml-search-results" data-xml-search-results style="display: none;"></div>
+                    
+                    <div id="xml-search-loading" data-xml-search-loading style="display: none;">
+                        <div class="text-center py-3">
+                            <div class="spinner-border spinner-border-sm text-danger" role="status">
+                                <span class="visually-hidden">Đang tìm kiếm...</span>
+                            </div>
+                            <div class="mt-2 text-muted small">Đang tìm kiếm...</div>
                         </div>
-                        <div class="mt-2 text-muted small">Đang tìm kiếm...</div>
                     </div>
-                </div>
-                    </div>
+                    
                     <div id="historyList" class="history-list">
-                        <!-- Danh sách sẽ được load bằng JS -->
                         <div class="text-muted text-center py-2">Đang tải...</div>
                     </div>
                 </div>
             </div>
 
-            <div class="d-flex gap-3 align-items-center">
+            <div class="d-flex gap-3 align-items-start">
                 <a href="<?= $accountUrl ?>" class="btn btn-profile rounded-circle p-2"
                     style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                     <i class="fa fa-user fs-5"></i>
@@ -1176,4 +1151,39 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
 
     // Expose hàm updateCartCount ra global scope để các trang khác có thể gọi
     window.updateCartCount = updateCartCount;
+
+    // ========== STICKY HEADER BEHAVIOR ==========
+    // Force sticky behavior with JavaScript
+    const stickyHeader = document.querySelector('.sticky-header');
+    let headerHeight = 0;
+    
+    if (stickyHeader) {
+        // Get header height after DOM is loaded
+        headerHeight = stickyHeader.offsetHeight;
+        
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Force sticky behavior
+            if (scrollTop > 10) {
+                stickyHeader.classList.add('scrolled');
+                document.body.classList.add('sticky-active');
+                
+                // Update padding based on actual header height
+                document.body.style.paddingTop = headerHeight + 'px';
+            } else {
+                stickyHeader.classList.remove('scrolled');
+                document.body.classList.remove('sticky-active');
+                document.body.style.paddingTop = '0';
+            }
+        });
+        
+        // Recalculate height on resize
+        window.addEventListener('resize', function() {
+            headerHeight = stickyHeader.offsetHeight;
+            if (stickyHeader.classList.contains('scrolled')) {
+                document.body.style.paddingTop = headerHeight + 'px';
+            }
+        });
+    }
 </script>
