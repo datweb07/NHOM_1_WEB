@@ -335,6 +335,13 @@ function clientRoute(string $uri): void
 		return;
 	}
 
+	if ($path === 'san-pham/tim-kiem-xml') {
+		require_once dirname(__DIR__, 2) . '/controllers/client/TimKiemController.php';
+		$controller = new \App\Controllers\Client\TimKiemController();
+		$controller->timKiemXML();
+		return;
+	}
+
 	if ($path === 'tim-kiem/lich-su') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/TimKiemController.php';
 		$controller = new \App\Controllers\Client\TimKiemController();

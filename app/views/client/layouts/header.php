@@ -449,6 +449,101 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
         font-size: 0.85rem;
     }
 
+    /* XML Search Results Styles */
+    #xml-search-results,
+    #xml-search-loading {
+        position: absolute;
+        top: calc(100% + 5px);
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        z-index: 1060;
+        max-height: 500px;
+        overflow-y: auto;
+        border: 1px solid #eee;
+    }
+
+    .xml-search-results-list {
+        padding: 10px;
+    }
+
+    .xml-search-result-item {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: inherit;
+        transition: background 0.2s;
+        margin-bottom: 8px;
+    }
+
+    .xml-search-result-item:hover {
+        background: #f8f9fa;
+    }
+
+    .xml-search-result-image {
+        width: 60px;
+        height: 60px;
+        flex-shrink: 0;
+        margin-right: 12px;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .xml-search-result-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .xml-search-result-no-image {
+        font-size: 0.7rem;
+        color: #999;
+        text-align: center;
+    }
+
+    .xml-search-result-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .xml-search-result-name {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 4px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .xml-search-result-price {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #cb1c22;
+    }
+
+    .xml-search-error,
+    .xml-search-no-results {
+        padding: 20px;
+        text-align: center;
+        color: #999;
+        font-size: 0.9rem;
+    }
+
+    .xml-search-error {
+        color: #dc3545;
+    }
+
     /* Băng rôn chạy */
     .top-banner {
         background-color: #f5a623;
@@ -651,7 +746,7 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
             <div class="flex-grow-1 me-4 position-relative">
                 <form class="search-form d-flex w-100 position-relative" action="/san-pham" method="GET"
                     autocomplete="off">
-                    <input class="form-control rounded-pill ps-4" type="search" name="keyword" id="searchInput"
+                    <input class="form-control rounded-pill ps-4" type="search" name="keyword" id="searchInput" data-xml-search-input
                         placeholder="Nhập tên điện thoại, laptop, phụ kiện... cần tìm" style="height: 42px;">
                     <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-danger"
                         type="submit" style="text-decoration: none;">
@@ -668,6 +763,19 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                             <a href="#" id="clearAllHistory" class="text-decoration-none text-danger"
                                 style="font-size: 0.8rem;">Xóa tất cả</a>
                         </div>
+
+                <!-- XML Search Results Container -->
+                <div id="xml-search-results" data-xml-search-results style="display: none;"></div>
+                
+                <!-- XML Search Loading Indicator -->
+                <div id="xml-search-loading" data-xml-search-loading style="display: none;">
+                    <div class="text-center py-3">
+                        <div class="spinner-border spinner-border-sm text-danger" role="status">
+                            <span class="visually-hidden">Đang tìm kiếm...</span>
+                        </div>
+                        <div class="mt-2 text-muted small">Đang tìm kiếm...</div>
+                    </div>
+                </div>
                     </div>
                     <div id="historyList" class="history-list">
                         <!-- Danh sách sẽ được load bằng JS -->

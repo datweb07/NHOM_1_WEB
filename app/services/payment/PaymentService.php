@@ -160,28 +160,9 @@ class PaymentService
 
     private function getGatewayInstance(string $paymentMethod): ?PaymentGatewayInterface
     {
-        $gatewayMap = [
-            'COD' => 'CODHandler',
-            'CHUYEN_KHOAN' => 'VNPayGateway',
-            'VIETQR' => 'VietQRGateway',
-            'PAYPAL' => 'PayPalGateway'
-        ];
-        
-        $gatewayClass = $gatewayMap[$paymentMethod] ?? null;
-        
-        if (!$gatewayClass) {
-            return null;
-        }
-        
-        $gatewayPath = __DIR__ . "/{$gatewayClass}.php";
-        
-        if (!file_exists($gatewayPath)) {
-            return null;
-        }
-        
-        require_once $gatewayPath;
-        
-        return new $gatewayClass();
+        // Use PaymentGatewayFactory for gateway instantiation
+        require_once __DIR__ . '/PaymentGatewayFactory.php';
+        return PaymentGatewayFactory::create($paymentMethod);
     }
 
     private function getGatewayName(string $paymentMethod): string
