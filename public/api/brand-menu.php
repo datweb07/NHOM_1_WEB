@@ -5,7 +5,9 @@
  * Trả về 5 sản phẩm nổi bật và các danh mục có chứa sản phẩm của hãng đó
  */
 
-require_once dirname(__DIR__) . '../models/BaseModel.php';
+// Load config and database connection
+require_once dirname(__DIR__, 2) . '/config/config.php';
+require_once dirname(__DIR__, 2) . '/app/models/BaseModel.php';
 
 class MegaMenuBrandApi
 {
