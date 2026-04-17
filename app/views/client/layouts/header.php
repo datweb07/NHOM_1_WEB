@@ -599,6 +599,7 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                 <div class="col-12 mt-2">
                     <form class="search-form position-relative" action="/san-pham" method="GET">
                         <input class="form-control rounded-pill ps-3" type="search" name="keyword"
+                            value="<?= htmlspecialchars($_GET['keyword'] ?? '') ?>"
                             placeholder="Nhập tên điện thoại, laptop, phụ kiện... cần tìm" style="height: 38px;">
                         <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-danger"
                             type="submit" style="text-decoration: none;">
@@ -713,6 +714,7 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                 <form class="search-form d-flex w-100 position-relative" action="/san-pham" method="GET"
                     autocomplete="off">
                     <input class="form-control rounded-pill ps-4" type="search" name="keyword" id="searchInput" data-xml-search-input
+                        value="<?= htmlspecialchars($_GET['keyword'] ?? '') ?>"
                         placeholder="Nhập tên điện thoại, laptop, phụ kiện... cần tìm" style="height: 42px;">
                     <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-danger"
                         type="submit" style="text-decoration: none;">
