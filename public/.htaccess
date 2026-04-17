@@ -1,6 +1,15 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
+    
+    # Allow direct access to API files
+    RewriteCond %{REQUEST_URI} ^/api/.*\.php$ [NC]
+    RewriteRule ^ - [L]
+    
+    # Allow direct access to test files
+    RewriteCond %{REQUEST_URI} ^/test-.*\.php$ [NC]
+    RewriteRule ^ - [L]
+    
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ index.php [QSA,L]

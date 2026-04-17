@@ -126,4 +126,82 @@ class TimKiemController
 
         echo json_encode(['success' => true, 'data' => $tuKhoas]);
     }
+
+    /**
+     * Tìm kiếm sản phẩm và trả về XML
+     */
+    public function timKiemXML(): void
+    {
+        // Clear any previous output
+        if (ob_get_level()) {
+            ob_clean();
+        }
+        
+        header('Content-Type: application/xml; charset=utf-8');
+        
+        try {
+            $keyword = $_GET['q'] ?? '';
+            
+            // Query products
+            $sanPhams = [];
+            if (!empty($keyword)) {
+                $sanPhams = $this->sanPhamModel->layDanhSachPhanTrang(
+                    $keyword,
+                    0,      // danhMucId
+                    null,   // giaMin
+                    null,   // giaMax
+                    10,     // limit
+                    0       // offset
+                );
+            }
+            
+            // Build XML document
+            $xml = new \DOMDocument('1.0', 'UTF-8');
+            $xml->formatOutput = true;
+            
+            // Create root element
+            $root = $xml->createElement('products');
+            $xml->appendChild($root);
+            
+            // Add products
+            foreach ($sanPhams as $sp) {
+                $product = $xml->createElement('product');
+                
+                // Add product elements with proper escaping
+                $id = $xml->createElement('id', htmlspecialchars((string)($sp['id'] ?? ''), ENT_XML1, 'UTF-8'));
+                $product->appendChild($id);
+                
+                $name = $xml->createElement('name', htmlspecialchars($sp['ten_san_pham'] ?? '', ENT_XML1, 'UTF-8'));
+                $product->appendChild($name);
+                
+                $price = $xml->createElement('price', htmlspecialchars((string)($sp['gia_ban'] ?? '0'), ENT_XML1, 'UTF-8'));
+                $product->appendChild($price);
+                
+                $image = $xml->createElement('image', htmlspecialchars($sp['hinh_anh'] ?? '', ENT_XML1, 'UTF-8'));
+                $product->appendChild($image);
+                
+                $slug = $xml->createElement('slug', htmlspecialchars($sp['slug'] ?? '', ENT_XML1, 'UTF-8'));
+                $product->appendChild($slug);
+                
+                $root->appendChild($product);
+            }
+            
+            echo $xml->saveXML();
+            exit; // Important: stop execution after XML output
+            
+        } catch (\Exception $e) {
+            // Return error XML
+            error_log("XML Search Error: " . $e->getMessage());
+            
+            $xml = new \DOMDocument('1.0', 'UTF-8');
+            $root = $xml->createElement('products');
+            $xml->appendChild($root);
+            
+            $error = $xml->createElement('error', htmlspecialchars($e->getMessage(), ENT_XML1, 'UTF-8'));
+            $root->appendChild($error);
+            
+            echo $xml->saveXML();
+            exit;
+        }
+    }
 }

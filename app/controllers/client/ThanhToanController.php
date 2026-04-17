@@ -16,6 +16,9 @@ require_once dirname(__DIR__, 2) . '/services/payment/PaymentService.php';
 require_once dirname(__DIR__, 2) . '/services/payment/CallbackHandler.php';
 require_once dirname(__DIR__, 2) . '/services/payment/VNPayGateway.php';
 require_once dirname(__DIR__, 2) . '/enums/PhuongThucThanhToan.php';
+require_once dirname(__DIR__, 2) . '/services/events/EventManager.php';
+require_once dirname(__DIR__, 2) . '/services/events/OrderObserver.php';
+require_once dirname(__DIR__, 2) . '/services/notification/NotificationService.php';
 
 use GioHang;
 use ChiTietGio;
@@ -283,6 +286,40 @@ class ThanhToanController
             'ghi_chu' => $ghiChu
         ]);
 
+        // Trigger order_created event using Observer Pattern
+        try {
+            require_once dirname(__DIR__, 2) . '/services/redis/RedisService.php';
+            require_once dirname(__DIR__, 2) . '/models/entities/Refund.php';
+            require_once dirname(__DIR__, 2) . '/models/entities/TransactionLog.php';
+            require_once dirname(__DIR__, 2) . '/models/entities/GatewayHealth.php';
+            require_once dirname(__DIR__, 2) . '/models/entities/DanhGia.php';
+            
+            $eventManager = new \EventManager();
+            $redis = \RedisService::getInstance();
+            $notificationService = new \NotificationService(
+                $redis,
+                $this->donHangModel,
+                $this->thanhToanModel,
+                new \Refund(),
+                $this->phienBanModel,
+                new \DanhGia(),
+                new \TransactionLog(),
+                new \GatewayHealth(),
+                $this->maGiamGiaModel
+            );
+            $orderObserver = new \OrderObserver($notificationService);
+            
+            $eventManager->attach($orderObserver);
+            $eventManager->notify('order_created', [
+                'order_id' => $donHangId,
+                'user_id' => Session::has('user_id') ? Session::get('user_id') : null,
+                'total_amount' => $tongThanhToan,
+                'timestamp' => date('Y-m-d H:i:s')
+            ]);
+        } catch (\Exception $e) {
+            // Log error but don't block order processing
+            error_log("Failed to trigger order_created event: " . $e->getMessage());
+        }
 
         foreach ($chiTietGioList as $item) {
             $this->chiTietDonModel->themChiTiet(
