@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Services\Events;
+
 require_once __DIR__ . '/ObserverInterface.php';
 
 /**
@@ -85,7 +87,7 @@ class EventManager
                 $observer->update($eventType, $eventData);
                 $successCount++;
                 error_log("[EventManager] Successfully notified observer: {$observerClass}");
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 error_log("[EventManager] Observer {$observerClass} failed: " . $e->getMessage());
                 // Continue notifying remaining observers
             }
