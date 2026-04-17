@@ -280,7 +280,7 @@ class BannerController
         $thuTu = trim((string)($input['thu_tu'] ?? '0'));
         $ngayBatDau = trim((string)($input['ngay_bat_dau'] ?? ''));
         $ngayKetThuc = trim((string)($input['ngay_ket_thuc'] ?? ''));
-        $trangThai = isset($input['trang_thai']) ? (int)$input['trang_thai'] : 1;
+        $trangThai = isset($input['trang_thai']) && $input['trang_thai'] == '1' ? 1 : 0;
 
         if ($tieuDe === '') {
             $errors['tieu_de'] = 'Tiêu đề không được để trống.';
