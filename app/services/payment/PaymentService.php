@@ -160,7 +160,6 @@ class PaymentService
 
     private function getGatewayInstance(string $paymentMethod): ?PaymentGatewayInterface
     {
-        // Use PaymentGatewayFactory for gateway instantiation
         require_once __DIR__ . '/PaymentGatewayFactory.php';
         return PaymentGatewayFactory::create($paymentMethod);
     }

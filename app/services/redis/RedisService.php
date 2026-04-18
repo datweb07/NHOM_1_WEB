@@ -300,10 +300,6 @@ class RedisService
         }
     }
 
-    /**
-     * Convert Predis Status object to boolean
-     * Predis returns Status objects for commands like SET, SETEX
-     */
     private function convertStatusToBool($result): bool
     {
         if (is_object($result) && method_exists($result, 'getPayload')) {

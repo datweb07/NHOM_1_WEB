@@ -4,16 +4,10 @@ namespace App\Core;
 
 require_once dirname(__DIR__) . '/models/entities/DanhMuc.php';
 
-/**
- * Helper class để load dữ liệu cho header
- */
 class HeaderHelper
 {
     private static ?\DanhMuc $danhMucModel = null;
 
-    /**
-     * Lấy instance của DanhMuc model
-     */
     private static function getDanhMucModel(): \DanhMuc
     {
         if (self::$danhMucModel === null) {
@@ -22,17 +16,10 @@ class HeaderHelper
         return self::$danhMucModel;
     }
 
-    /**
-     * Lấy danh mục cho navigation menu
-     * Trả về danh mục cha và con theo cấu trúc phân cấp
-     * 
-     * @return array
-     */
     public static function layDanhMucNavigation(): array
     {
         $danhMucModel = self::getDanhMucModel();
         
-        // Lấy tất cả danh mục đang hiển thị
         $sql = "SELECT id, ten, slug, icon_url, danh_muc_cha_id, thu_tu
                 FROM danh_muc
                 WHERE trang_thai = 1
@@ -40,7 +27,6 @@ class HeaderHelper
         
         $allCategories = $danhMucModel->query($sql);
         
-        // Tổ chức thành cấu trúc cha-con
         $categoriesById = [];
         $parentCategories = [];
         
@@ -53,7 +39,6 @@ class HeaderHelper
             }
         }
         
-        // Gán con vào cha
         foreach ($allCategories as $category) {
             if ($category['danh_muc_cha_id'] !== null && isset($categoriesById[$category['danh_muc_cha_id']])) {
                 $categoriesById[$category['danh_muc_cha_id']]['children'][] = &$categoriesById[$category['id']];
@@ -63,12 +48,6 @@ class HeaderHelper
         return $parentCategories;
     }
 
-    /**
-     * Lấy danh mục cha (top-level categories) cho navigation
-     * 
-     * @param int $limit
-     * @return array
-     */
     public static function layDanhMucCha(int $limit = 10): array
     {
         $danhMucModel = self::getDanhMucModel();
@@ -82,12 +61,6 @@ class HeaderHelper
         return $danhMucModel->query($sql);
     }
 
-    /**
-     * Lấy danh mục con theo ID cha
-     * 
-     * @param int $parentId
-     * @return array
-     */
     public static function layDanhMucCon(int $parentId): array
     {
         $danhMucModel = self::getDanhMucModel();
@@ -100,13 +73,6 @@ class HeaderHelper
         return $danhMucModel->query($sql);
     }
 
-    /**
-     * Lấy icon class cho danh mục
-     * Map tên danh mục sang icon FontAwesome
-     * 
-     * @param string $categoryName
-     * @return string
-     */
     public static function layIconClass(string $categoryName): string
     {
         $iconMap = [

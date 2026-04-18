@@ -102,7 +102,6 @@ class VNPayGateway implements PaymentGatewayInterface
             return false;
         }
 
-        // Only record health metrics based on actual payment result, not signature validation
         $responseCode = $data['vnp_ResponseCode'] ?? '99';
         if ($responseCode === '00') {
             $this->recordHealthSuccess();

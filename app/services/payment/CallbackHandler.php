@@ -132,7 +132,6 @@ class CallbackHandler
                 'Message' => 'Success'
             ];
         } else {
-            // Log specific cancellation/failure scenarios
             $scenario = $responseCode === '24' ? 'USER CANCELED' : 'PAYMENT FAILED';
             error_log(sprintf(
                 "[VNPAY %s] Transaction: %s, Response Code: %s, Amount: %s",
@@ -159,8 +158,6 @@ class CallbackHandler
 
         return $result;
     }
-
-
 
     private function handleSuccessfulPayment(array $transaction, ?string $gatewayTransactionId, string $gatewayName, array $callbackData): void
     {
@@ -191,7 +188,6 @@ class CallbackHandler
             }
         }
 
-        // Trigger PAYMENT_SUCCESS event for email notification
         try {
             require_once dirname(__DIR__, 2) . '/services/events/EventManager.php';
             require_once dirname(__DIR__, 2) . '/services/events/EmailObserver.php';
@@ -239,21 +235,17 @@ class CallbackHandler
         $gateway = new VNPayGateway();
         $errorMessage = $gateway->getErrorMessage($errorCode);
 
-        // Update payment status to FAILED
         $this->paymentService->updateTransactionStatus($transactionId, 'THAT_BAI', [
             'error_code' => addslashes($errorCode),
             'error_message' => addslashes($errorMessage)
         ]);
 
-        // Update order status to CANCELED
         $this->donHangModel->update($donHangId, [
             'trang_thai' => 'DA_HUY'
         ]);
 
-        // Restore product inventory
         $this->restoreInventory($donHangId);
 
-        // Log the failure with detailed information
         error_log(sprintf(
             "[PAYMENT FAILED] Gateway: %s, Transaction: %d, Order: %d, Error Code: %s, Error Message: %s",
             $gatewayName,
@@ -348,9 +340,6 @@ class CallbackHandler
         ], $violationType);
     }
 
-    /**
-     * Format payment method for email display
-     */
     private function formatPaymentMethodForEmail(string $gatewayName): string
     {
         $methods = [

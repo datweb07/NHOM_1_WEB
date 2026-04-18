@@ -74,13 +74,6 @@ class NotificationService
         return $this->redis->delete($key);
     }
 
-    /**
-     * Generate a deterministic notification ID based on type and entity ID
-     * 
-     * @param string $type Notification type (e.g., 'new_order_pending', 'low_stock_warning')
-     * @param int|null $entityId Optional entity ID for single-entity notifications
-     * @return string Notification ID in format "{type}:{entity_id}" or "{type}:aggregate"
-     */
     private function generateNotificationId(string $type, ?int $entityId = null): string
     {
         if ($entityId !== null) {
@@ -89,13 +82,6 @@ class NotificationService
         return "{$type}:aggregate";
     }
 
-    /**
-     * Mark notifications as read
-     * 
-     * @param int $adminId Admin user ID
-     * @param array $notificationIds Array of notification IDs to mark as read
-     * @return int Count of marked notifications
-     */
     public function markAsRead(int $adminId, array $notificationIds): int
     {
         if (empty($notificationIds)) {
@@ -105,10 +91,8 @@ class NotificationService
         $key = "notification:read:{$adminId}";
         
         try {
-            // Add notification IDs to read Set
             $count = $this->redis->sAdd($key, ...$notificationIds);
-            
-            // Set/extend TTL to 7 days
+
             $this->redis->expire($key, 604800);
             
             return $count;
@@ -118,13 +102,6 @@ class NotificationService
         }
     }
 
-    /**
-     * Mark notifications as unread
-     * 
-     * @param int $adminId Admin user ID
-     * @param array $notificationIds Array of notification IDs to mark as unread
-     * @return int Count of unmarked notifications
-     */
     public function markAsUnread(int $adminId, array $notificationIds): int
     {
         if (empty($notificationIds)) {
@@ -134,10 +111,8 @@ class NotificationService
         $key = "notification:read:{$adminId}";
         
         try {
-            // Remove notification IDs from read Set
             $count = $this->redis->sRem($key, ...$notificationIds);
             
-            // Extend TTL to 7 days
             $this->redis->expire($key, 604800);
             
             return $count;
@@ -147,32 +122,20 @@ class NotificationService
         }
     }
 
-    /**
-     * Mark all notifications as read
-     * 
-     * @param int $adminId Admin user ID
-     * @return int Count of marked notifications
-     */
     public function markAllAsRead(int $adminId): int
     {
         try {
-            // Get all current notifications
             $notifications = $this->aggregateNotifications($adminId);
             
             if (empty($notifications['items'])) {
                 return 0;
             }
 
-            // Extract notification IDs from all notifications
             $notificationIds = [];
             foreach ($notifications['items'] as $notification) {
                 $type = $notification['type'];
                 
-                // For single-entity notifications, we need to query the actual IDs
-                // For aggregate notifications, use the aggregate ID
                 if ($notification['count'] === 1) {
-                    // This is a simplification - in a real implementation,
-                    // we would need to query the actual entity ID
                     $notificationIds[] = $this->generateNotificationId($type);
                 } else {
                     $notificationIds[] = $this->generateNotificationId($type);
@@ -185,10 +148,8 @@ class NotificationService
 
             $key = "notification:read:{$adminId}";
             
-            // Add all notification IDs to read Set
             $count = $this->redis->sAdd($key, ...$notificationIds);
             
-            // Set/extend TTL to 7 days
             $this->redis->expire($key, 604800);
             
             return $count;
@@ -198,13 +159,6 @@ class NotificationService
         }
     }
 
-    /**
-     * Check if a notification is read
-     * 
-     * @param int $adminId Admin user ID
-     * @param string $notificationId Notification ID to check
-     * @return bool True if notification is read, false otherwise
-     */
     public function isNotificationRead(int $adminId, string $notificationId): bool
     {
         $key = "notification:read:{$adminId}";
@@ -217,19 +171,6 @@ class NotificationService
         }
     }
 
-    /**
-     * Get paginated notification list with filtering and sorting
-     * 
-     * @param int $adminId Admin user ID
-     * @param int $page Page number (1-indexed)
-     * @param int $perPage Items per page
-     * @param string|null $category Filter by category (orders, inventory, customer, system, all)
-     * @param string|null $priority Filter by priority (high, medium, low, all)
-     * @param string|null $status Filter by status (read, unread, all)
-     * @param string $sortBy Sort by field (time, priority)
-     * @param string $sortOrder Sort order (asc, desc)
-     * @return array Notification list with pagination metadata
-     */
     public function getNotificationList(
         int $adminId,
         int $page = 1,
@@ -241,25 +182,21 @@ class NotificationService
         string $sortOrder = 'desc'
     ): array {
         try {
-            // Validate and set defaults
             $page = max(1, $page);
             $perPage = max(1, min(100, $perPage));
             $category = $category ?? 'all';
             $priority = $priority ?? 'all';
             $status = $status ?? 'all';
             
-            // Get all notifications (without time filtering for list page)
             $allNotifications = [];
             $allNotifications = array_merge($allNotifications, $this->getOrderNotificationsForList());
             $allNotifications = array_merge($allNotifications, $this->getInventoryNotificationsForList());
             $allNotifications = array_merge($allNotifications, $this->getCustomerNotificationsForList());
             $allNotifications = array_merge($allNotifications, $this->getSystemNotificationsForList());
             
-            // Retrieve read notification IDs once for efficiency
             $readNotificationIds = $this->getReadNotificationIds($adminId);
             $readSet = array_flip($readNotificationIds);
             
-            // Add notification ID and read status to each notification
             foreach ($allNotifications as &$notification) {
                 $type = $notification['type'];
                 $notificationId = $this->generateNotificationId($type);
@@ -268,19 +205,16 @@ class NotificationService
             }
             unset($notification);
             
-            // Apply filters
             $filteredNotifications = array_filter($allNotifications, function($notification) use ($category, $priority, $status) {
-                // Category filter
+
                 if ($category !== 'all' && $notification['group'] !== $category) {
                     return false;
                 }
                 
-                // Priority filter
                 if ($priority !== 'all' && $notification['priority'] !== $priority) {
                     return false;
                 }
-                
-                // Status filter
+
                 if ($status === 'read' && !$notification['is_read']) {
                     return false;
                 }
@@ -290,15 +224,13 @@ class NotificationService
                 
                 return true;
             });
-            
-            // Apply sorting
+
             usort($filteredNotifications, function($a, $b) use ($sortBy, $sortOrder) {
                 if ($sortBy === 'priority') {
                     $priorityOrder = ['high' => 0, 'medium' => 1, 'low' => 2];
                     $aVal = $priorityOrder[$a['priority']] ?? 3;
                     $bVal = $priorityOrder[$b['priority']] ?? 3;
                 } else {
-                    // Sort by time (timestamp)
                     $aVal = $a['timestamp'] ?? '';
                     $bVal = $b['timestamp'] ?? '';
                 }
@@ -307,13 +239,11 @@ class NotificationService
                 return $sortOrder === 'desc' ? -$comparison : $comparison;
             });
             
-            // Calculate pagination
             $total = count($filteredNotifications);
             $totalPages = $total > 0 ? (int)ceil($total / $perPage) : 1;
             $page = min($page, $totalPages);
             $offset = ($page - 1) * $perPage;
             
-            // Apply pagination
             $paginatedNotifications = array_slice($filteredNotifications, $offset, $perPage);
             
             return [
@@ -341,9 +271,6 @@ class NotificationService
         }
     }
     
-    /**
-     * Get order notifications for list page (no time filtering)
-     */
     private function getOrderNotificationsForList(): array
     {
         $notifications = [];
@@ -411,9 +338,6 @@ class NotificationService
         return $notifications;
     }
     
-    /**
-     * Get inventory notifications for list page (no time filtering)
-     */
     private function getInventoryNotificationsForList(): array
     {
         $notifications = [];
@@ -463,9 +387,6 @@ class NotificationService
         return $notifications;
     }
     
-    /**
-     * Get customer notifications for list page (no time filtering)
-     */
     private function getCustomerNotificationsForList(): array
     {
         $notifications = [];
@@ -513,9 +434,6 @@ class NotificationService
         return $notifications;
     }
     
-    /**
-     * Get system notifications for list page (no time filtering)
-     */
     private function getSystemNotificationsForList(): array
     {
         $notifications = [];
@@ -567,12 +485,6 @@ class NotificationService
         return $notifications;
     }
 
-    /**
-     * Get all read notification IDs for an admin
-     * 
-     * @param int $adminId Admin user ID
-     * @return array Array of read notification IDs
-     */
     private function getReadNotificationIds(int $adminId): array
     {
         $key = "notification:read:{$adminId}";
@@ -598,21 +510,13 @@ class NotificationService
 
         $this->updateLastCheckTimestamp($adminId, $currentTime);
 
-        // Retrieve read notification IDs once for efficiency
         $readNotificationIds = $this->getReadNotificationIds($adminId);
-        $readSet = array_flip($readNotificationIds); // Convert to associative array for O(1) lookup
+        $readSet = array_flip($readNotificationIds); 
 
-        // Add notification ID and read status to each notification
         foreach ($notifications as &$notification) {
             $type = $notification['type'];
-            
-            // Generate notification ID based on count
-            // For single-entity notifications (count = 1), we would need the actual entity ID
-            // For now, we use aggregate format for all notifications
-            // This will be refined when we have access to individual entity IDs
+
             if ($notification['count'] === 1) {
-                // For single entity notifications, use aggregate for now
-                // In a full implementation, we would query the actual entity ID
                 $notificationId = $this->generateNotificationId($type);
             } else {
                 $notificationId = $this->generateNotificationId($type);

@@ -16,7 +16,6 @@ class PayPalGateway implements PaymentGatewayInterface
         $this->clientId = $envConfig('PAYPAL_CLIENT_ID') ?: '';
         $this->secret = $envConfig('PAYPAL_SECRET') ?: '';
         
-        // Chọn URL gọi API tùy thuộc vào môi trường
         $mode = trim($envConfig('PAYPAL_MODE') ?? 'sandbox');
         $this->baseUrl = ($mode === 'sandbox')
             ? 'https://api-m.sandbox.paypal.com'
