@@ -11,62 +11,51 @@ The FPT Shop e-commerce website project is an online shopping platform specializ
 ## Key Features
 
 ### Client Features
-- **Product Catalog**: Browse a diverse range of products with detailed information, images, specifications, and pricing.
-- **Product Variants**: Support for product variants (color, storage capacity, RAM) with different prices.
-- **Shopping Cart**: Add, remove, update quantities, and manage items in the cart.
-- **Advanced Search & Filter**: Search by name, filter by category, price range, and brand.
-- **Wishlist**: Save favorite products for later purchase.
-- **User Authentication**: Registration, login, email verification, and password reset.
-- **Profile Management**: Update personal information (full name, phone number, date of birth, gender, avatar) and change password.
-- **Order Management**: View order history, track order status, and order details.
-- **Checkout Process**: Complete orders with various payment methods.
-- **Product Reviews**: Rate and leave comments on purchased products.
-- **Promotions & Discounts**: Apply discount codes and view promotional products.
-- **Search History**: Track and manage product search history.
-- **Responsive Design**: Mobile-friendly interface with optimized layouts.
+- **Product Catalog** — Browse products with images, specs, pricing, and variants (color, storage, RAM)
+- **Product Detail** — Full spec sheet, image gallery, variant selector, related products
+- **Shopping Cart** — Add, update quantity, remove items, persistent across sessions
+- **Search** — Real-time XML-based search with history tracking and popular keywords
+- **Wishlist** — Save products for later, toggle from product cards
+- **Checkout** — Multi-step checkout with address selection and payment method choice
+- **Payment Methods** — VNPay (card), PayPal (international), VietQR (bank transfer QR), COD (cash on delivery)
+- **Order Management** — View order history, track status, cancel pending orders
+- **Product Reviews** — Star rating + comment system, one review per purchased product
+- **Promotions** — Browse active promotions, apply discount/coupon codes at checkout
+- **User Authentication** — Register, login, email verification, forgot/reset password
+- **Google Login** — One-click sign-in via Google OAuth (Supabase Auth)
+- **Profile Management** — Update name, phone, DOB, gender, avatar (Cloudinary upload)
+- **Address Book** — Add/edit/delete multiple shipping addresses, set default
+- **Responsive Design** — Mobile-first layout, works on all screen sizes
 
 ### Admin Features
-- **Dashboard**: Overview statistics of orders, revenue, and products.
-- **Product Management**: Perform CRUD (Create, Read, Update, Delete) operations for products, variants, images, and specifications.
-- **Category Management**: Hierarchical category structure along with featured and suggested categories.
-- **Order Management**: View, update order status, and manage order details.
-- **User Management**: View and manage customer accounts.
-- **Promotion Management**: Create and manage promotional campaigns.
-- **Discount Code Management**: Create and manage voucher/coupon codes.
-- **Banner Management**: Manage hero banners and promotional banners.
-- **Review Management**: View and manage product reviews.
-- **Payment Verification**: Approve or reject payment confirmations.
+- **Dashboard** — Revenue charts, order stats, top products, recent activity
+- **Product Management** — Full CRUD for products, variants, images (Cloudinary), specifications
+- **Category Management** — Hierarchical categories with featured/suggested flags
+- **Order Management** — View all orders, update status, view order details
+- **User Management** — View customer accounts, account details
+- **Promotion Management** — Create/edit/delete promotional campaigns with product linking
+- **Discount Code Management** — Generate and manage voucher/coupon codes with usage limits
+- **Banner Management** — Hero banners and promotional banners with display toggle
+- **Review Management** — View and moderate product reviews
+- **Payment Verification** — Approve or reject manual payment confirmations (VietQR/COD)
+- **Payment Gateway Health** — Monitor success/failure rates per gateway
+- **Notification System** — Real-time admin notifications for new orders and payments
+- **Refund Management** — Process refunds for VNPay (sandbox mock) and PayPal
 
 ## Technologies Used
 
-### Frontend
-- **HTML5, CSS3, JavaScript (ES6+)**
-- **Bootstrap 5**: UI framework supporting responsive design.
-- **Font Awesome**: Icon library.
-- **Custom CSS**: Grid system, sliders, and animations.
-
-### Backend
-- **PHP 8.x**: Server-side programming.
-- **OOP Architecture**: MVC pattern for clear separation of functional components.
-- **Custom Router**: File-based routing system.
-- **Middleware**: Middleware for handling authentication and authorization.
-- **Session Management**: Use PHP Sessions for user authentication.
-
-### Database
-- **MySQL 8.x**: Relational database.
-- **Charset**: utf8mb4.
-
-### Third-Party Services & Libraries
-- **Cloudinary**: Cloud-based image storage and optimization.
-- **PHPMailer**: Send emails for verification and password reset.
-- **PHPDotenv**: Environment variable management.
-- **Redis** (Optional): Caching layer to improve performance.
-- **Supabase**: Login via Google OAuth.
-
-### Development Tools
-- **Composer**: PHP dependency management.
-- **Git & GitHub**: Version control.
-- **VS Code**: Integrated Development Environment (IDE).
+| Layer | Technology |
+|---|---|
+| Backend | PHP 8.x, MVC architecture, custom file-based router |
+| Frontend | HTML5, CSS3, JavaScript ES6+, Bootstrap 5, Font Awesome 6 |
+| Database | MySQL 8.x (utf8mb4) |
+| Image Storage | Cloudinary PHP SDK |
+| Email | PHPMailer (bundled), Gmail SMTP |
+| Auth | PHP Sessions + Supabase Auth (Google OAuth) |
+| Payment | VNPay, PayPal REST API v2, VietQR, COD |
+| Security | Google reCAPTCHA v2 |
+| Caching | Redis (predis) |
+| Env Config | vlucas/phpdotenv |
 
 ## Installation & Setup
 
@@ -113,13 +102,9 @@ APP_URL=http://localhost:3000
 
 DB_HOST=localhost
 DB_PORT=3306
-DB_DATABASE=db_web
+DB_DATABASE=db_fpt
 DB_USERNAME=root
 DB_PASSWORD=your_password
-
-REDIS_HOST=127.0.0.1
-REDIS_PORT=6379
-REDIS_PASSWORD=null
 
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
@@ -131,8 +116,25 @@ MAIL_USERNAME=your_email@gmail.com
 MAIL_PASSWORD=your_app_password
 MAIL_ENCRYPTION=tls
 
-SUPABASE_URL=[https://your-project-id.supabase.co](https://your-project-id.supabase.co)
-SUPABASE_ANON_KEY=your-jwt-secret-from-api-settings
+RECAPTCHA_SITE_KEY=your_recaptcha_site_key
+RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
+
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_JWT_SECRET=your_supabase_jwt_secret
+
+VNPAY_TMN_CODE=your_tmn_code
+VNPAY_HASH_SECRET=your_hash_secret
+VNPAY_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+
+VIETQR_BANK_ID=VCB
+VIETQR_ACCOUNT_NO=your_account_number
+VIETQR_ACCOUNT_NAME=YOUR FULL NAME
+VIETQR_TEMPLATE=compact2
+
+PAYPAL_CLIENT_ID=your_paypal_client_id
+PAYPAL_SECRET=your_paypal_secret
+PAYPAL_MODE=sandbox
 ```
 
 ### Step 4: Setup Database
@@ -221,7 +223,64 @@ Configure Supabase and Google Cloud Console (Supabase & Google Cloud)
     Example: `http://localhost:3000/app/views/client/auth/callback.php`
 4.  Update the `.env` file with your Cloudinary credentials.
 
-### Step 8: Run the Development Server
+### Step 8: Google reCAPTCHA v2 
+
+1. Go to https://www.google.com/recaptcha/admin/create.
+2. Under **Label**, enter a name (e.g., `FPT Shop`).
+3. Under **reCAPTCHA type**, select **reCAPTCHA v2** → "I'm not a robot" Checkbox.
+4. Under **Domains**, add `localhost` (for development) and your production domain.
+5. Click **Submit** — you will receive a **Site Key** and **Secret Key**.
+6. Copy them into your `.env`:
+   ```env
+   RECAPTCHA_SITE_KEY=6Lc...your_site_key
+   RECAPTCHA_SECRET_KEY=6Lc...your_secret_key
+   ```
+### Step 9: VNPay (Card Payment — Sandbox)
+
+1. Go to https://sandbox.vnpayment.vn/devreg/ and register a sandbox merchant account.
+2. After registration, log in to the sandbox portal.
+3. Go to **Thông tin tích hợp** (Integration Info) to find your:
+   - **TMN Code** (`vnp_TmnCode`) — your merchant terminal code
+   - **Hash Secret** (`vnp_HashSecret`) — your signing secret
+4. Copy them into your `.env`:
+   ```env
+   VNPAY_TMN_CODE=XXXXXXXX
+   VNPAY_HASH_SECRET=your_hash_secret_here
+   VNPAY_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+   ```
+5. For testing, use VNPay's test card numbers from: https://sandbox.vnpayment.vn/apis/docs/thanh-toan-pay/pay.html
+
+> **Note**: VNPay sandbox does not support real refunds. This project uses a mock refund simulation that logs the operation without calling the VNPay API.
+
+### Step 10: PayPal (International Payment — Sandbox)
+
+1. Go to https://developer.paypal.com/ and log in with your PayPal account.
+2. Go to **Apps & Credentials** → make sure you are in **Sandbox** mode.
+3. Click **Create App** → name it `FPT Shop` → **Create App**.
+4. You will see your **Client ID** and **Secret key 1** — copy them:
+   ```env
+   PAYPAL_CLIENT_ID=AXxx...your_client_id
+   PAYPAL_SECRET=EXxx...your_secret
+   PAYPAL_MODE=sandbox
+   ```
+5. For testing, use PayPal sandbox buyer accounts from **Testing Tools** → **Sandbox Accounts** → Choose an account with the `Type` Personal, which will contain the `Email` and `Password` used to test payments.
+6. Currency conversion: VND amounts are divided by 25,000 to get USD (e.g., 500,000 VND → $20.00 USD).
+
+> For production, change `PAYPAL_MODE=live` and replace with live credentials.
+
+### Step 11: VietQR (Bank Transfer QR)
+
+1. Set your bank details in `.env`:
+   ```env
+   VIETQR_BANK_ID=VCB          # Bank code (VCB = Vietcombank, TCB = Techcombank, etc.)
+   VIETQR_ACCOUNT_NO=1234567890
+   VIETQR_ACCOUNT_NAME=NGUYEN VAN A
+   VIETQR_TEMPLATE=compact2
+   ```
+2. Find your bank's code at: https://www.vietqr.io/danh-sach-ngan-hang
+3. Payment confirmation is **manual** — admin must verify and approve the transfer.
+
+### Step 12: Run the Development Server
 
 From the project root directory:
 
@@ -229,7 +288,7 @@ From the project root directory:
 php -S localhost:3000 router.php
 ```
 
-### Step 9: Access the Application
+### Step 13: Access the Application
 
   - **Client**: http://localhost:3000
   - **Admin Panel**: http://localhost:3000/admin/auth/login
