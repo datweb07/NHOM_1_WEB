@@ -2,52 +2,92 @@
 
 ## Supported Versions
 
-We release patches for security vulnerabilities. Which versions are eligible for receiving such patches depends on the CVSS v3.0 Rating:
-
 | Version | Supported |
 | ------- | --------- |
 | 1.x.x   | Yes       |
 | < 1.0   | No        |
 
+
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within this project, please send an email to the development team at [datweb07@gmail.com](mailto:datweb07@gmail.com). All security vulnerabilities will be promptly addressed.
+**Please do not report security vulnerabilities through public GitHub Issues.**
 
-### What to Include
+Send a private email to: [datweb07@gmail.com](mailto:datweb07@gmail.com)
 
-When reporting a vulnerability, please include:
+Include the following in your report:
 
-* **Description**: A clear and concise description of the vulnerability
-* **Steps to Reproduce**: Detailed steps to reproduce the vulnerability
-* **Impact**: The potential impact of the vulnerability
-* **Affected Components**: Which parts of the application are affected
-* **Suggested Fix**: If you have a suggested fix, please include it
+- **Description**: A clear description of the vulnerability.
+- **Steps to Reproduce**: Detailed, reproducible steps.
+- **Impact**: What an attacker could achieve by exploiting this.
+- **Affected Components**: Which files, routes, or features are affected.
+- **Suggested Fix**: Optional, but appreciated.
 
 ### Response Timeline
 
-* **Initial Response**: We will acknowledge your report within 48 hours
-* **Investigation**: We will investigate and validate the vulnerability within 7 days
-* **Fix and Disclosure**: If validated, we will work on a fix and coordinate disclosure
+| Stage | Timeframe |
+|---|---|
+| Initial acknowledgement | Within 48 hours |
+| Validation & investigation | Within 7 days |
+| Fix & coordinated disclosure | As soon as possible after validation |
 
-## Security Best Practices
 
-When contributing to this project, please follow these security best practices:
+## Security Architecture
 
-* Never commit sensitive data (passwords, API keys, tokens) to the repository
-* Use environment variables for configuration
-* Validate and sanitize all user inputs
-* Use prepared statements for database queries to prevent SQL injection
-* Keep dependencies up to date
-* Follow secure coding practices
+### Credentials & Secrets
 
-## Security Updates
+- All API keys, secrets, and passwords are stored in `.env` files only.
+- `.env` is listed in `.gitignore` and is **never committed** to version control.
+- `.env.example` contains only placeholder values and is safe to commit.
+- The following secrets are managed via environment variables:
 
-Security updates will be released as soon as possible after a vulnerability is confirmed. We recommend:
+| Variable | Purpose |
+|---|---|
+| `DB_PASSWORD` | MySQL database password |
+| `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | Image upload credentials |
+| `MAIL_PASSWORD` | Gmail App Password for SMTP |
+| `SUPABASE_ANON_KEY` / `SUPABASE_JWT_SECRET` | Supabase Auth credentials |
+| `VNPAY_TMN_CODE` / `VNPAY_HASH_SECRET` | VNPay payment signing |
+| `PAYPAL_CLIENT_ID` / `PAYPAL_SECRET` | PayPal API credentials |
+| `RECAPTCHA_SITE_KEY` / `RECAPTCHA_SECRET_KEY` | Google reCAPTCHA keys |
 
-* Keeping your installation up to date
-* Subscribing to security announcements
-* Regularly checking for updates
+### Authentication
 
-## Acknowledgments
+- PHP sessions are used for user authentication with a 2-hour timeout.
+- Passwords are hashed using `sha1()` (legacy — migration to `password_hash()` is recommended for production).
+- Google OAuth is handled via Supabase Auth — no Google credentials are stored server-side.
+- Admin routes are protected by `AdminMiddleware` which checks `loai_tai_khoan === 'ADMIN'`.
+- Client-only routes are protected by `AuthMiddleware` which checks `loai_tai_khoan === 'MEMBER'`.
 
-We appreciate the security research community's efforts to responsibly disclose vulnerabilities. Contributors who report valid security issues will be acknowledged in our security advisories (unless they prefer to remain anonymous).
+### Payment Security
+
+- VNPay callbacks are verified using HMAC-SHA512 signature validation before processing.
+- PayPal payments use OAuth2 access tokens fetched server-side — client ID and secret are never exposed to the browser.
+- VietQR is a stateless QR generation service — no sensitive data is transmitted.
+- All payment gateway credentials are sandbox/test credentials in development.
+
+### Input Validation
+
+- User inputs in SQL queries use `addslashes()` or integer casting.
+- All output to HTML is escaped with `htmlspecialchars()`.
+- File uploads are validated for MIME type and size before processing.
+- reCAPTCHA v2 is used on login and registration forms to prevent automated attacks.
+
+### HTTPS
+
+- In production, all traffic should be served over HTTPS.
+- Payment gateway callbacks (VNPay IPN) require a publicly accessible HTTPS URL.
+- Supabase OAuth redirect URLs must use HTTPS in production.
+
+
+## Security Best Practices for Contributors
+
+- Never hardcode credentials, tokens, or secrets in source code.
+- Never log sensitive data (passwords, full card numbers, tokens) — mask or omit them.
+- Always validate and sanitize user input before using it in SQL, file paths, or HTML output.
+- Keep dependencies up to date — run `composer update` periodically and review changelogs.
+- Use `hash_equals()` for timing-safe string comparison when verifying signatures or tokens.
+- Set `CURLOPT_SSL_VERIFYPEER` to `true` in production (it is set to `false` in some places for local development only).
+
+## Acknowledgements
+
+We appreciate responsible disclosure from the security community. Reporters of valid, confirmed vulnerabilities will be acknowledged in release notes (unless they prefer to remain anonymous).
