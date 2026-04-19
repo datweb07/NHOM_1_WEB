@@ -44,6 +44,8 @@ Dự án website thương mại điện tử FPT Shop là một nền tảng mua
 
 ## Công nghệ Sử dụng
 
+<img width="960" height="313" alt="fpt-shop-banner" src="https://github.com/datweb07/NHOM_1_WEB/blob/main/images/technology.png" />
+
 | Tầng | Công nghệ |
 |---|---|
 | Backend | PHP 8.x, kiến trúc MVC, router tùy chỉnh dựa trên file |
