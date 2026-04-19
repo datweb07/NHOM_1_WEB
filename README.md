@@ -44,7 +44,7 @@ The FPT Shop e-commerce website project is an online shopping platform specializ
 
 ## Technologies Used
 
-<img width="960" height="313" alt="fpt-shop-banner" src="https://github.com/datweb07/NHOM_1_WEB/blob/main/images/technology.png" />
+<img alt="fpt-shop-banner" src="https://github.com/datweb07/NHOM_1_WEB/blob/main/images/technology.png" />
 
 | Layer | Technology |
 |---|---|
