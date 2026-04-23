@@ -64,8 +64,20 @@ class KhachHangController
             exit();
         }
 
+        require_once dirname(__DIR__, 2) . '/models/relationships/YeuThich.php';
+        $yeuThichModel = new \YeuThich();
+        $limit = 20;
+        $sanPhamsYeuThich = $yeuThichModel->layDanhSachTheoUser($safeUserId, $limit, 0);
+
+        require_once dirname(__DIR__, 2) . '/models/entities/DanhGia.php';
+        $danhGiaModel = new \DanhGia();
+        $danhGiaList = $danhGiaModel->layDanhGiaTheoUser($safeUserId, 20, 0);
+
         $data = [
-            'user' => $user
+            'user' => $user,
+            'auth_provider' => $user['auth_provider'] ?? 'LOCAL',
+            'sanPhamsYeuThich' => $sanPhamsYeuThich,
+            'danhGiaList' => $danhGiaList
         ];
 
         extract($data);
