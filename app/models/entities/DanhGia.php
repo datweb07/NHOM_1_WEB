@@ -48,11 +48,30 @@ class DanhGia extends BaseModel
         $sanPhamId = (int)$sanPhamId;
         $sql = "SELECT AVG(so_sao) as diem_tb FROM {$this->table}
                 WHERE san_pham_id = $sanPhamId";
-        
         $result = $this->query($sql);
-        return !empty($result) && $result[0]['diem_tb'] !== null 
-            ? (float)$result[0]['diem_tb'] 
-            : 0;
+        return !empty($result) && $result[0]['diem_tb'] !== null ? (float)$result[0]['diem_tb'] : 0;
+    }
+
+    /**
+     * Lấy đánh giá theo người dùng
+     */
+    public function layDanhGiaTheoUser(int $userId, int $limit = 20, int $offset = 0): array
+    {
+        $userId = (int)$userId;
+        $limit = max(1, (int)$limit);
+        $offset = max(0, (int)$offset);
+        
+        $sql = "SELECT dg.*, sp.ten_san_pham, sp.slug,
+                       (SELECT url_anh FROM hinh_anh_san_pham 
+                        WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
+                        LIMIT 1) as anh_chinh
+                FROM {$this->table} dg
+                INNER JOIN san_pham sp ON dg.san_pham_id = sp.id
+                WHERE dg.nguoi_dung_id = $userId
+                ORDER BY dg.ngay_viet DESC
+                LIMIT $limit OFFSET $offset";
+        
+        return $this->query($sql);
     }
 
     /**

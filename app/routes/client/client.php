@@ -141,7 +141,9 @@ function clientRoute(string $uri): void
 	}
 
 	if ($path === 'client/profile') {
-		require_once dirname(__DIR__, 2) . '/views/client/khach_hang/profile.php';
+		require_once dirname(__DIR__, 2) . '/controllers/client/KhachHangController.php';
+		$controller = new KhachHangController();
+		$controller->profile();
 		return;
 	}
 
