@@ -28,7 +28,6 @@ class ProfileController
             exit;
         }
 
-        // Lấy thông tin admin từ database
         $admin = $this->adminModel->getById($adminId);
 
         if (!$admin) {
@@ -68,7 +67,6 @@ class ProfileController
         $ngaySinh = trim($_POST['ngay_sinh'] ?? '');
         $gioiTinh = trim($_POST['gioi_tinh'] ?? '');
 
-        // Validate
         $errors = [];
 
         if (empty($hoTen)) {
@@ -85,7 +83,6 @@ class ProfileController
             exit;
         }
 
-        // Cập nhật thông tin
         $updateData = [
             'ho_ten' => $hoTen,
             'sdt' => $sdt,
@@ -96,7 +93,6 @@ class ProfileController
         $result = $this->adminModel->update($adminId, $updateData);
 
         if ($result > 0) {
-            // Cập nhật session
             Session::set('user_name', $hoTen);
             Session::set('success_message', 'Cập nhật thông tin thành công');
         } else {
@@ -128,7 +124,6 @@ class ProfileController
         }
 
         try {
-            // Upload avatar
             $uploadDir = __DIR__ . '/../../../public/uploads/avatars/';
             $avatarPath = FileUpload::uploadImage($_FILES['avatar'], $uploadDir);
 
@@ -137,20 +132,16 @@ class ProfileController
                 exit;
             }
 
-            // Lấy thông tin admin cũ để xóa avatar cũ
             $admin = $this->adminModel->getById($adminId);
             $oldAvatar = $admin['avatar_url'] ?? null;
 
-            // Cập nhật database
             $result = $this->adminModel->update($adminId, ['avatar_url' => $avatarPath]);
 
             if ($result > 0) {
-                // Xóa avatar cũ nếu có
                 if ($oldAvatar && file_exists(__DIR__ . '/../../../public/uploads/avatars/' . $oldAvatar)) {
                     unlink(__DIR__ . '/../../../public/uploads/avatars/' . $oldAvatar);
                 }
 
-                // Cập nhật session
                 Session::set('user_avatar', $avatarPath);
 
                 echo json_encode([
@@ -186,7 +177,6 @@ class ProfileController
         $newPassword = $_POST['new_password'] ?? '';
         $confirmPassword = $_POST['confirm_password'] ?? '';
 
-        // Validate
         $errors = [];
 
         if (empty($currentPassword)) {
@@ -209,7 +199,6 @@ class ProfileController
             exit;
         }
 
-        // Kiểm tra mật khẩu hiện tại
         $admin = $this->adminModel->getById($adminId);
         
         if (!$admin || !password_verify($currentPassword, $admin['mat_khau'])) {
@@ -218,7 +207,6 @@ class ProfileController
             exit;
         }
 
-        // Cập nhật mật khẩu mới
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
         $result = $this->adminModel->update($adminId, ['mat_khau' => $hashedPassword]);
 

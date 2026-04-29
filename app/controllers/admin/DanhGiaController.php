@@ -14,12 +14,8 @@ class DanhGiaController
         $this->sanPhamModel = new SanPham();
     }
 
-    /**
-     * Display reviews list with filtering and search
-     */
     public function index(): void
     {
-        // Get filter parameters
         $soSao = isset($_GET['so_sao']) && $_GET['so_sao'] !== '' ? (int)$_GET['so_sao'] : null;
         $sanPhamId = isset($_GET['san_pham_id']) && $_GET['san_pham_id'] !== '' ? (int)$_GET['san_pham_id'] : null;
         $keyword = $_GET['keyword'] ?? '';
@@ -27,35 +23,26 @@ class DanhGiaController
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
-        // Get reviews based on filters
         if ($keyword !== '') {
             $danhSachDanhGia = $this->danhGiaModel->timKiem($keyword, $limit, $offset);
         } else {
             $danhSachDanhGia = $this->danhGiaModel->layDanhSach($soSao, $sanPhamId, $limit, $offset);
         }
 
-        // Get total count for pagination
         $totalReviews = $this->danhGiaModel->demDanhGia($soSao, $sanPhamId, $keyword !== '' ? $keyword : null);
         $totalPages = ceil($totalReviews / $limit);
 
-        // Get all products for filter dropdown
         $danhSachSanPham = $this->sanPhamModel->getAll();
 
-        // Get success/error messages
         $success = $_GET['success'] ?? '';
         $error = $_GET['error'] ?? '';
 
-        // Pass variables to view using extract
         $data = compact('danhSachDanhGia', 'totalReviews', 'totalPages', 'danhSachSanPham', 'success', 'error', 'soSao', 'sanPhamId', 'keyword', 'page');
         extract($data);
 
-        // Load view
         require_once dirname(dirname(__DIR__)) . '/views/admin/danh_gia/index.php';
     }
 
-    /**
-     * Display review detail
-     */
     public function detail(): void
     {
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -65,7 +52,6 @@ class DanhGiaController
             exit;
         }
 
-        // Get review with user and product info
         $sql = "SELECT dg.*, nd.ho_ten, nd.email, nd.sdt, sp.ten_san_pham, sp.slug
                 FROM danh_gia dg
                 LEFT JOIN nguoi_dung nd ON dg.nguoi_dung_id = nd.id
@@ -80,21 +66,15 @@ class DanhGiaController
             exit;
         }
 
-        // Get success/error messages
         $success = $_GET['success'] ?? '';
         $error = $_GET['error'] ?? '';
 
-        // Pass variables to view
         $data = compact('danhGia', 'success', 'error');
         extract($data);
 
-        // Load view
         require_once dirname(dirname(__DIR__)) . '/views/admin/danh_gia/detail.php';
     }
 
-    /**
-     * Delete a review
-     */
     public function delete(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -116,7 +96,6 @@ class DanhGiaController
             exit;
         }
 
-        // Delete review
         $deleted = $this->danhGiaModel->xoa($id);
 
         if ($deleted) {

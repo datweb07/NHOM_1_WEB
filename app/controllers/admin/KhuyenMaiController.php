@@ -145,10 +145,8 @@ class KhuyenMaiController
             exit;
         }
 
-        // Delete product links first
         $this->khuyenMaiModel->xoaLienKetSanPham($id);
         
-        // Delete promotion
         $this->baseModel->delete($id);
         
         header('Location: /admin/khuyen-mai?success=deleted');
@@ -169,12 +167,10 @@ class KhuyenMaiController
             exit;
         }
 
-        // Get all products
         require_once dirname(__DIR__, 2) . '/models/entities/SanPham.php';
         $sanPhamModel = new SanPham();
         $allProducts = $sanPhamModel->layDanhSachPhanTrang(null, 0, null, null, 1000, 0);
 
-        // Get linked products
         $linkedProducts = $this->khuyenMaiModel->layDanhSachSanPhamLienKet($id);
         $linkedProductIds = array_column($linkedProducts, 'id');
 
@@ -212,15 +208,12 @@ class KhuyenMaiController
             exit;
         }
 
-        // Get selected product IDs
         $sanPhamIds = isset($_POST['san_pham_ids']) && is_array($_POST['san_pham_ids']) 
             ? array_map('intval', $_POST['san_pham_ids']) 
             : [];
 
-        // Delete existing links
         $this->khuyenMaiModel->xoaLienKetSanPham($id);
 
-        // Add new links
         if (!empty($sanPhamIds)) {
             $this->khuyenMaiModel->themLienKetSanPham($id, $sanPhamIds);
         }
@@ -240,21 +233,18 @@ class KhuyenMaiController
         $ngayBatDau = trim((string)($input['ngay_bat_dau'] ?? ''));
         $ngayKetThuc = trim((string)($input['ngay_ket_thuc'] ?? ''));
 
-        // Validate ten_chuong_trinh
         if ($tenChuongTrinh === '') {
             $errors['ten_chuong_trinh'] = 'Tên chương trình không được để trống.';
         } elseif (mb_strlen($tenChuongTrinh) > 255) {
             $errors['ten_chuong_trinh'] = 'Tên chương trình không được vượt quá 255 ký tự.';
         }
 
-        // Validate loai_giam
         if ($loaiGiam === '') {
             $errors['loai_giam'] = 'Loại giảm không được để trống.';
         } elseif (!in_array($loaiGiam, ['PHAN_TRAM', 'SO_TIEN'], true)) {
             $errors['loai_giam'] = 'Loại giảm phải là PHAN_TRAM hoặc SO_TIEN.';
         }
 
-        // Validate gia_tri_giam
         $giaTriGiam = null;
         if ($giaTriGiamRaw === '') {
             $errors['gia_tri_giam'] = 'Giá trị giảm không được để trống.';
@@ -266,13 +256,11 @@ class KhuyenMaiController
                 $errors['gia_tri_giam'] = 'Giá trị giảm phải lớn hơn 0.';
             }
             
-            // If percentage, must be 0-100
             if ($loaiGiam === 'PHAN_TRAM' && ($giaTriGiam < 0 || $giaTriGiam > 100)) {
                 $errors['gia_tri_giam'] = 'Giá trị giảm phần trăm phải từ 0 đến 100.';
             }
         }
 
-        // Validate giam_toi_da (required if loai_giam is PHAN_TRAM)
         $giamToiDa = null;
         if ($loaiGiam === 'PHAN_TRAM') {
             if ($giamToiDaRaw === '') {
@@ -289,17 +277,14 @@ class KhuyenMaiController
             $giamToiDa = (float)$giamToiDaRaw;
         }
 
-        // Validate ngay_bat_dau
         if ($ngayBatDau === '') {
             $errors['ngay_bat_dau'] = 'Ngày bắt đầu không được để trống.';
         }
 
-        // Validate ngay_ket_thuc
         if ($ngayKetThuc === '') {
             $errors['ngay_ket_thuc'] = 'Ngày kết thúc không được để trống.';
         }
 
-        // Validate date range
         if ($ngayBatDau !== '' && $ngayKetThuc !== '') {
             if (strtotime($ngayBatDau) >= strtotime($ngayKetThuc)) {
                 $errors['ngay_ket_thuc'] = 'Ngày kết thúc phải sau ngày bắt đầu.';

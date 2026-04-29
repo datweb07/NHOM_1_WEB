@@ -11,7 +11,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// ĐẶT ROUTE API NÀY LÊN GẦN TRÊN CÙNG
 	if ($path === 'api/mega-menu') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
 		$controller = new \App\Controllers\Client\SanPhamController();
@@ -45,7 +44,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	//auth routes
 	if ($path === 'client/auth/callback') {
 		require_once dirname(__DIR__, 2) . '/views/client/auth/callback.php';
 		return;
@@ -76,32 +74,27 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	//trang kiểm tra mail
 	if ($path === 'client/auth/check-email') {
 		require_once dirname(__DIR__, 2) . '/views/client/auth/check_email.php';
 		return;
 	}
 
-	// Route xử lý link xác thực từ email
 	if ($path === 'client/auth/verify-email') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/AuthController.php';
 		\App\Controllers\Client\AuthController::verifyEmail($_GET['token'] ?? '');
 		return;
 	}
 
-	//xác thực thành công
 	if ($path === 'client/auth/verified') {
 		require_once dirname(__DIR__, 2) . '/views/client/auth/verified.php';
 		return;
 	}
 
-	//xác thực thất bại
 	if ($path === 'client/auth/verify-failed') {
 		require_once dirname(__DIR__, 2) . '/views/client/auth/verify_failed.php';
 		return;
 	}
 
-	//quên mật khẩu
 	if ($path === 'client/auth/forgot-password') {
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			require_once dirname(__DIR__, 2) . '/controllers/client/AuthController.php';
@@ -112,7 +105,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	//new password
 	if ($path === 'client/auth/reset-password') {
 		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			require_once dirname(__DIR__, 2) . '/controllers/client/AuthController.php';
@@ -128,7 +120,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	//đặt lại mk thành công
 	if ($path === 'client/auth/reset-success') {
 		require_once dirname(__DIR__, 2) . '/views/client/auth/reset_success.php';
 		return;
@@ -161,7 +152,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	//cập nhật avatar
 	if ($path === 'khach-hang/cap-nhat-avatar') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/KhachHangController.php';
 		$controller = new KhachHangController();
@@ -169,7 +159,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Address management routes
 	if ($path === 'khach-hang/them-dia-chi') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/KhachHangController.php';
 		$controller = new KhachHangController();
@@ -244,12 +233,11 @@ function clientRoute(string $uri): void
 	if (preg_match('#^danh-muc/([a-z0-9-]+)$#', $path, $matches)) {
 		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
 		$controller = new \App\Controllers\Client\SanPhamController();
-		// Gọi đến hàm danhSachTheoSlug() mà bạn đã viết sẵn trong Controller
+
 		$controller->danhSachTheoSlug($matches[1]);
 		return;
 	}
 
-	// Sản phẩm routes
 	if (preg_match('#^san-pham/([a-z0-9-]+)$#', $path, $matches)) {
 		require_once dirname(__DIR__, 2) . '/controllers/client/SanPhamController.php';
 		$controller = new \App\Controllers\Client\SanPhamController();
@@ -257,7 +245,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Thanh toán routes
 	if ($path === 'thanh-toan') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
 		$controller = new \App\Controllers\Client\ThanhToanController();
@@ -279,7 +266,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Payment gateway callback routes (no authentication required)
 	if ($path === 'thanh-toan/callback/vnpay') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
 		$controller = new \App\Controllers\Client\ThanhToanController();
@@ -287,7 +273,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Payment gateway return URL routes
 	if ($path === 'thanh-toan/return/vnpay') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
 		$controller = new \App\Controllers\Client\ThanhToanController();
@@ -302,7 +287,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// VietQR routes
 	if ($path === 'thanh-toan/vietqr') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/ThanhToanController.php';
 		$controller = new \App\Controllers\Client\ThanhToanController();
@@ -317,7 +301,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Đơn hàng routes
 	if ($path === 'don-hang/huy') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/DonHangController.php';
 		$controller = new \App\Controllers\Client\DonHangController();
@@ -339,7 +322,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Tìm kiếm routes
 	if ($path === 'tim-kiem') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/TimKiemController.php';
 		$controller = new \App\Controllers\Client\TimKiemController();
@@ -375,7 +357,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Yêu thích routes
 	if ($path === 'yeu-thich') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/YeuThichController.php';
 		$controller = new \App\Controllers\Client\YeuThichController();
@@ -411,7 +392,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Đánh giá routes
 	if ($path === 'danh-gia/danh-sach') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/DanhGiaController.php';
 		$controller = new \App\Controllers\Client\DanhGiaController();
@@ -433,7 +413,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Khuyến mãi routes
 	if ($path === 'khuyen-mai') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/KhuyenMaiController.php';
 		$controller = new \App\Controllers\Client\KhuyenMaiController();
@@ -455,7 +434,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// About routes
 	if ($path === 'gioi-thieu') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/AboutController.php';
 		$controller = new \App\Controllers\Client\AboutController();
@@ -463,7 +441,6 @@ function clientRoute(string $uri): void
 		return;
 	}
 
-	// Banner routes
 	if ($path === 'banner/hide-popup') {
 		require_once dirname(__DIR__, 2) . '/controllers/client/BannerController.php';
 		$controller = new \App\Controllers\Client\BannerController();

@@ -9,102 +9,102 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="icon" href="<?= ASSET_URL ?>/assets/client/images/header/1.png">
     <style>
-        :root {
-            --fpt-red: #cb1c22;
-            --fpt-red-hover: #a8151b;
-        }
+    :root {
+        --fpt-red: #cb1c22;
+        --fpt-red-hover: #a8151b;
+    }
 
-        body {
-            background-color: #f8f9fa;
-        }
+    body {
+        background-color: #f8f9fa;
+    }
 
-        .auth-card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
+    .auth-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
 
-        .btn-primary-brand {
-            background-color: var(--fpt-red);
-            border-color: var(--fpt-red);
-            color: white;
-            font-weight: 500;
-            padding: 10px 20px;
-        }
+    .btn-primary-brand {
+        background-color: var(--fpt-red);
+        border-color: var(--fpt-red);
+        color: white;
+        font-weight: 500;
+        padding: 10px 20px;
+    }
 
-        .btn-primary-brand:hover,
-        .btn-primary-brand:focus {
-            background-color: var(--fpt-red-hover);
-            border-color: var(--fpt-red-hover);
-            color: white;
-        }
+    .btn-primary-brand:hover,
+    .btn-primary-brand:focus {
+        background-color: var(--fpt-red-hover);
+        border-color: var(--fpt-red-hover);
+        color: white;
+    }
 
-        .form-control {
-            padding: 10px 15px;
-            border-color: #ced4da;
-        }
+    .form-control {
+        padding: 10px 15px;
+        border-color: #ced4da;
+    }
 
-        .form-control:focus {
-            border-color: var(--fpt-red);
-            box-shadow: 0 0 0 0.25rem rgba(203, 28, 34, 0.15);
-        }
+    .form-control:focus {
+        border-color: var(--fpt-red);
+        box-shadow: 0 0 0 0.25rem rgba(203, 28, 34, 0.15);
+    }
 
-        .text-brand {
-            color: var(--fpt-red);
-        }
+    .text-brand {
+        color: var(--fpt-red);
+    }
 
-        a.text-brand:hover {
-            color: var(--fpt-red-hover);
-        }
+    a.text-brand:hover {
+        color: var(--fpt-red-hover);
+    }
 
-        .form-check-input:checked {
-            background-color: var(--fpt-red);
-            border-color: var(--fpt-red);
-        }
+    .form-check-input:checked {
+        background-color: var(--fpt-red);
+        border-color: var(--fpt-red);
+    }
 
-        .divider-text {
-            position: relative;
-            text-align: center;
-            margin: 24px 0;
-        }
+    .divider-text {
+        position: relative;
+        text-align: center;
+        margin: 24px 0;
+    }
 
-        .divider-text::before {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            border-top: 1px solid #dee2e6;
-            z-index: 1;
-        }
+    .divider-text::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        border-top: 1px solid #dee2e6;
+        z-index: 1;
+    }
 
-        .divider-text span {
-            background-color: #fff;
-            padding: 0 15px;
-            color: #6c757d;
-            font-size: 0.85rem;
-            position: relative;
-            z-index: 2;
-        }
+    .divider-text span {
+        background-color: #fff;
+        padding: 0 15px;
+        color: #6c757d;
+        font-size: 0.85rem;
+        position: relative;
+        z-index: 2;
+    }
 
-        .btn-social {
-            border: 1px solid #dee2e6;
-            background: white;
-            color: #495057;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
+    .btn-social {
+        border: 1px solid #dee2e6;
+        background: white;
+        color: #495057;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
 
-        .btn-social:hover {
-            background: #f8f9fa;
-            border-color: #cdd3d8;
-        }
+    .btn-social:hover {
+        background: #f8f9fa;
+        border-color: #cdd3d8;
+    }
 
-        .social-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 8px;
-        }
+    .social-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+    }
     </style>
 </head>
 
@@ -126,8 +126,8 @@
                         </div>
 
                         <?php if (isset($_GET['error'])): ?>
-                            <div class="alert alert-danger py-2" role="alert" style="font-size: 0.9rem;">
-                                <?php
+                        <div class="alert alert-danger py-2" role="alert" style="font-size: 0.9rem;">
+                            <?php
                                 $errorMessages = [
                                     'invalid_email' => 'Email không hợp lệ.',
                                     'empty_password' => 'Vui lòng nhập mật khẩu.',
@@ -138,7 +138,7 @@
                                 ];
                                 echo $errorMessages[$_GET['error']] ?? 'Đã có lỗi xảy ra.';
                                 ?>
-                            </div>
+                        </div>
                         <?php endif; ?>
 
                         <form method="POST" action="/client/auth/register">
@@ -205,13 +205,13 @@
     document.querySelectorAll('.toggle-password').forEach(function(icon) {
         icon.addEventListener('click', function() {
 
-            let input = this.previousElementSibling; 
-            
+            let input = this.previousElementSibling;
+
             if (input.type === "password") {
                 input.type = "text";
                 this.classList.remove('bi-eye-slash');
                 this.classList.add('bi-eye');
-                this.style.color = '#cb1c22'; 
+                this.style.color = '#cb1c22';
             } else {
                 input.type = "password";
                 this.classList.remove('bi-eye');
@@ -220,7 +220,7 @@
             }
         });
     });
-</script>
+    </script>
 </body>
 
 </html>

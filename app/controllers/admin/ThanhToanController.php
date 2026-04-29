@@ -75,7 +75,6 @@ class ThanhToanController
         $transactionLogModel = new TransactionLog();
         $transactionLogs = $transactionLogModel->getByThanhToanId($id);
 
-        // Fetch refund records for this payment
         require_once dirname(__DIR__, 2) . '/models/entities/Refund.php';
         $refundModel = new Refund();
         $refunds = $refundModel->findByThanhToanId($id);
@@ -430,27 +429,23 @@ class ThanhToanController
 
     public function processRefund($id): void
     {
-        // Validate POST request
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
             header('Location: /admin/thanh-toan');
             exit;
         }
 
-        // Validate payment ID
         $id = (int)$id;
         if ($id <= 0) {
             header('Location: /admin/thanh-toan?error=invalid_id');
             exit;
         }
 
-        // Get payment record
         $thanhToan = $this->thanhToanModel->getById($id);
         if ($thanhToan === null) {
             header('Location: /admin/thanh-toan?error=payment_not_found');
             exit;
         }
 
-        // Validate POST data: amount (numeric) and reason (required string)
         $amount = isset($_POST['amount']) ? (float)$_POST['amount'] : 0;
         $reason = trim((string)($_POST['reason'] ?? ''));
 
@@ -464,7 +459,6 @@ class ThanhToanController
             exit;
         }
 
-        // Get admin user ID from session
         require_once dirname(__DIR__, 2) . '/core/Session.php';
         \App\Core\Session::start();
         $adminId = \App\Core\Session::getUserId();
@@ -474,13 +468,11 @@ class ThanhToanController
             exit;
         }
 
-        // Instantiate RefundService and call initiateRefund
         require_once dirname(__DIR__, 2) . '/services/refund/RefundService.php';
         $refundService = new RefundService();
         
         $result = $refundService->initiateRefund($id, $amount, $reason, $adminId);
 
-        // Redirect to payment detail page with success or error message
         if ($result['success']) {
             header('Location: /admin/thanh-toan/chi-tiet?id=' . $id . '&success=refund_completed');
         } else {
@@ -507,7 +499,6 @@ class ThanhToanController
         $result = $thanhToanModel->duyetThanhToan($thanhToanId, $adminId, 'THANH_CONG', 'Đã xác nhận thanh toán VietQR');
         
         if ($result) {
-            // Update order status
             $thanhToan = $thanhToanModel->findById($thanhToanId);
             require_once dirname(__DIR__, 2) . '/models/entities/DonHang.php';
             $donHangModel = new DonHang();

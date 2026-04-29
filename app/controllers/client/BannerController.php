@@ -15,17 +15,11 @@ class BannerController
         $this->bannerModel = new BannerQuangCao();
     }
 
-    /**
-     * Lấy banner theo vị trí
-     */
     public function layBannerTheoViTri(string $viTri): array
     {
         return $this->bannerModel->layBannerTheoViTri($viTri);
     }
 
-    /**
-     * Lấy tất cả banner cho trang chủ
-     */
     public function layBannerTrangChu(): array
     {
         return [
@@ -35,17 +29,11 @@ class BannerController
         ];
     }
 
-    /**
-     * Lấy banner popup
-     */
     public function layBannerPopup(): array
     {
         return $this->bannerModel->layBannerTheoViTri('POPUP');
     }
 
-    /**
-     * Ẩn popup banner trong session
-     */
     public function hidePopup(): void
     {
         header('Content-Type: application/json');
@@ -63,7 +51,6 @@ class BannerController
             exit;
         }
 
-        // Lưu vào session
         if (!isset($_SESSION)) {
             session_start();
         }

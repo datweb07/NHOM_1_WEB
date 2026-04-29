@@ -10,8 +10,6 @@ class DanhMuc extends BaseModel
     protected ?int $danhMucChaId = null;
     protected ?int $thuTu = 0;
     protected int $trangThai = 1;
-    
-    // Khai báo thêm 2 thuộc tính mới
     protected int $isNoiBat = 0;
     protected int $isGoiY = 0;
 
@@ -51,7 +49,6 @@ class DanhMuc extends BaseModel
             $whereSql = 'WHERE ' . implode(' AND ', $where);
         }
 
-        // Hierarchical ordering: parent categories first, then children
         $sql = "SELECT dm.*, cha.ten AS ten_danh_muc_cha,
                        (SELECT COUNT(*) FROM san_pham sp WHERE sp.danh_muc_id = dm.id) AS tong_san_pham,
                        CASE 
@@ -94,11 +91,6 @@ class DanhMuc extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Lấy danh sách các danh mục con dựa vào ID của danh mục cha
-     * @param int $parentId ID của danh mục cha
-     * @return array Mảng chứa thông tin các danh mục con
-     */
     public function layDanhMucCon(int $parentId): array
     {
         $parentId = (int)$parentId;
@@ -106,7 +98,6 @@ class DanhMuc extends BaseModel
             return [];
         }
 
-        // Lấy các danh mục đang hoạt động và có cha là $parentId
         $sql = "SELECT id, ten, slug, icon_url 
                 FROM {$this->table} 
                 WHERE danh_muc_cha_id = $parentId 
@@ -149,9 +140,6 @@ class DanhMuc extends BaseModel
         return !empty($result) && (int)$result[0]['total'] > 0;
     }
 
-    /**
-     * Lấy danh mục hiển thị cho client (trang_thai = 1)
-     */
     public function layDanhMucHienThi(int $limit = 12): array
     {
         $limit = max(1, (int)$limit);
@@ -164,9 +152,6 @@ class DanhMuc extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Lấy danh mục Nổi Bật (is_noi_bat = 1)
-     */
     public function layDanhMucNoiBat(int $limit = 16): array
     {
         $limit = max(1, (int)$limit);
@@ -176,9 +161,6 @@ class DanhMuc extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Lấy danh mục Gợi Ý (is_goi_y = 1) và Loại trừ Nổi Bật (is_noi_bat = 0)
-     */
     public function layDanhMucGoiY(int $limit = 30): array
     {
         $limit = max(1, (int)$limit);
@@ -188,11 +170,6 @@ class DanhMuc extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Tìm danh mục theo slug
-     * @param string $slug Slug của danh mục
-     * @return array|null Trả về mảng thông tin danh mục hoặc null nếu không tìm thấy
-     */
     public function findBySlug(string $slug): ?array
     {
         $slug = mysqli_real_escape_string($this->link, $slug);
@@ -211,7 +188,6 @@ class DanhMuc extends BaseModel
             'danh_muc_cha_id' => $this->danhMucChaId,
             'thu_tu' => $this->thuTu,
             'trang_thai' => $this->trangThai,
-            // Thêm 2 trường mới vào mảng trả về
             'is_noi_bat' => $this->isNoiBat,
             'is_goi_y' => $this->isGoiY,
         ];

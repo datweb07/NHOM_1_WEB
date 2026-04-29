@@ -14,19 +14,17 @@ class MailerService
     {
         $mail = new PHPMailer(true);
 
-        // Load env from project root
         $envConfig = EnvSetup::env(dirname(__DIR__, 3));
         
         try {
-            // Cấu hình Server (SMTP)
             $mail->isSMTP();
             $mail->Host       = $envConfig('MAIL_HOST');
             $mail->SMTPAuth   = true;
             $mail->Username   = $envConfig('MAIL_USERNAME');
             $mail->Password   = $envConfig('MAIL_PASSWORD');
-            $mail->SMTPSecure = $envConfig('MAIL_ENCRYPTION'); // tls hoặc ssl
+            $mail->SMTPSecure = $envConfig('MAIL_ENCRYPTION'); 
             $mail->Port       = $envConfig('MAIL_PORT');
-            $mail->CharSet    = 'UTF-8'; // Hỗ trợ gửi tiếng Việt
+            $mail->CharSet    = 'UTF-8'; 
 
             return $mail;
         } catch (Exception $e) {
@@ -35,10 +33,6 @@ class MailerService
         }
     }
 
-    /**
-     * Send order confirmation email
-     * Event: ORDER_PLACED
-     */
     public function sendOrderConfirmation(array $emailData): bool
     {
         try {
@@ -47,12 +41,11 @@ class MailerService
                 return false;
             }
 
-            $envConfig = EnvSetup::env(dirname(__DIR__, 3)); // Load from project root
+            $envConfig = EnvSetup::env(dirname(__DIR__, 3)); 
             $mail->setFrom($envConfig('MAIL_FROM_ADDRESS'), $envConfig('MAIL_FROM_NAME'));
             $mail->addAddress($emailData['to']);
             $mail->Subject = $emailData['subject'];
             
-            // Build email body
             $data = $emailData['data'];
             $itemsHtml = $this->buildItemsTable($data['items']);
             
@@ -105,10 +98,6 @@ class MailerService
         }
     }
 
-    /**
-     * Send payment success notification
-     * Event: PAYMENT_SUCCESS
-     */
     public function sendPaymentSuccess(array $emailData): bool
     {
         try {
@@ -117,7 +106,7 @@ class MailerService
                 return false;
             }
 
-            $envConfig = EnvSetup::env(dirname(__DIR__, 3)); // Load from project root
+            $envConfig = EnvSetup::env(dirname(__DIR__, 3)); 
             $mail->setFrom($envConfig('MAIL_FROM_ADDRESS'), $envConfig('MAIL_FROM_NAME'));
             $mail->addAddress($emailData['to']);
             $mail->Subject = $emailData['subject'];
@@ -150,10 +139,6 @@ class MailerService
         }
     }
 
-    /**
-     * Send payment received notification
-     * Event: PAYMENT_RECEIVED
-     */
     public function sendPaymentReceived(array $emailData): bool
     {
         try {
@@ -162,7 +147,7 @@ class MailerService
                 return false;
             }
 
-            $envConfig = EnvSetup::env(dirname(__DIR__, 3)); // Load from project root
+            $envConfig = EnvSetup::env(dirname(__DIR__, 3)); 
             $mail->setFrom($envConfig('MAIL_FROM_ADDRESS'), $envConfig('MAIL_FROM_NAME'));
             $mail->addAddress($emailData['to']);
             $mail->Subject = $emailData['subject'];
@@ -194,10 +179,6 @@ class MailerService
             return false;
         }
     }
-
-    /**
-     * Build HTML table for order items
-     */
     private function buildItemsTable(array $items): string
     {
         if (empty($items)) {
@@ -225,11 +206,3 @@ class MailerService
         return $html;
     }
 }
-
-// Cách sử dụng ở nơi khác:
-// $mail = MailerService::getMailer();
-// $mail->setFrom('admin@example.com', 'Admin');
-// $mail->addAddress('khachhang@example.com');
-// $mail->Subject = 'Tiêu đề email';
-// $mail->Body    = 'Nội dung email';
-// $mail->send();

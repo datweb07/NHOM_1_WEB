@@ -2,10 +2,8 @@
 $pageTitle = htmlspecialchars($sanPham['ten_san_pham'] ?? 'Chi tiết sản phẩm') . ' - FPT Shop';
 ob_start();
 
-// Ảnh chính
 $anhChinh = !empty($hinhAnhList) ? $hinhAnhList[0]['url_anh'] : ($sanPham['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png');
 
-// Tính điểm trung bình
 $diemTB = 0;
 if (!empty($danhGiaList)) {
     $diemTB = array_sum(array_column($danhGiaList, 'so_sao')) / count($danhGiaList);
@@ -123,48 +121,6 @@ foreach ($thuocTinhHienThi as $tenThuocTinh) {
     $attributeOptions[$tenThuocTinh] = [];
 }
 
-// foreach ($bienTheTam as $bienThe) {
-//     $thuocTinhRutGon = [];
-//     foreach ($thuocTinhHienThi as $tenThuocTinh) {
-//         $giaTriThuocTinh = (string) ($bienThe['attributes'][$tenThuocTinh] ?? 'Không xác định');
-//         $thuocTinhRutGon[$tenThuocTinh] = $giaTriThuocTinh;
-//         $attributeOptions[$tenThuocTinh][$giaTriThuocTinh] = true;
-//     }
-
-//     // --- TÍNH TOÁN GIÁ SAU KHUYẾN MÃI DỰA TRÊN LOGIC DB ---
-//     $giaGoc = $bienThe['price'];
-//     $giaSauGiam = $giaGoc;
-//     $coKhuyenMai = false;
-//     $badgeText = '';
-
-//     if (!empty($khuyenMaiApDung)) {
-//         $coKhuyenMai = true;
-//         if ($khuyenMaiApDung['loai_giam'] === 'PHAN_TRAM') {
-//             $mucGiam = $giaGoc * ($khuyenMaiApDung['gia_tri_giam'] / 100);
-//             if ($khuyenMaiApDung['giam_toi_da'] > 0 && $mucGiam > $khuyenMaiApDung['giam_toi_da']) {
-//                 $mucGiam = $khuyenMaiApDung['giam_toi_da'];
-//             }
-//             $giaSauGiam = $giaGoc - $mucGiam;
-//             $badgeText = 'Giảm ' . (float) $khuyenMaiApDung['gia_tri_giam'] . '%';
-//         } else {
-//             $giaSauGiam = $giaGoc - $khuyenMaiApDung['gia_tri_giam'];
-//             $badgeText = 'Giảm ' . number_format($khuyenMaiApDung['gia_tri_giam'], 0, ',', '.') . 'đ';
-//         }
-//         $giaSauGiam = max(0, $giaSauGiam); // Chống giá âm
-//     }
-
-//     // SỬA LẠI MẢNG JS: Đẩy cả giá gốc và giá giảm vào
-//     $productVariantsForJs[] = [
-//         'id' => $bienThe['id'],
-//         'name' => $bienThe['name'],
-//         'price_original' => $giaGoc,
-//         'price_discounted' => $giaSauGiam,
-//         'has_promo' => $coKhuyenMai,
-//         'promo_badge_text' => $badgeText,
-//         'stock' => $bienThe['stock'],
-//         'attributes' => $thuocTinhRutGon,
-//     ];
-// }
 foreach ($bienTheTam as $bienThe) {
     $thuocTinhRutGon = [];
     foreach ($thuocTinhHienThi as $tenThuocTinh) {
@@ -173,7 +129,6 @@ foreach ($bienTheTam as $bienThe) {
         $attributeOptions[$tenThuocTinh][$giaTriThuocTinh] = true;
     }
 
-    // --- TÍNH TOÁN GIÁ: KHUYẾN MÃI VÀ GIÁ GỐC ---
     $giaBan = $bienThe['price'];
     $giaGocDb = $bienThe['original_price'];
     
@@ -184,7 +139,6 @@ foreach ($bienTheTam as $bienThe) {
     $badgeText = '';
 
     if (!empty($khuyenMaiApDung)) {
-        // TRƯỜNG HỢP 1: CÓ KHUYẾN MÃI
         $coKhuyenMai = true;
         if ($khuyenMaiApDung['loai_giam'] === 'PHAN_TRAM') {
             $mucGiam = $giaBan * ($khuyenMaiApDung['gia_tri_giam'] / 100);
@@ -202,14 +156,12 @@ foreach ($bienTheTam as $bienThe) {
         $hienThiGachNgang = true;
         $giaGachNgang = $giaBan; 
     } else {
-        // TRƯỜNG HỢP 2: KHÔNG CÓ KM -> KIỂM TRA GIÁ GỐC
         if ($giaGocDb > $giaBan) {
             $hienThiGachNgang = true;
             $giaGachNgang = $giaGocDb;
         }
     }
 
-    // Nạp dữ liệu vào mảng JSON cho Javascript thao tác
     $productVariantsForJs[] = [
         'id' => $bienThe['id'],
         'name' => $bienThe['name'],
@@ -229,169 +181,159 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
 }
 ?>
 <style>
-    /* CSS cho nút yêu thích */
-    .btn-wishlist {
-        border: 2px solid #dee2e6;
-        background-color: #fff;
-        color: #6c757d;
-        padding: 12px 20px;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        min-width: 60px;
-    }
+.btn-wishlist {
+    border: 2px solid #dee2e6;
+    background-color: #fff;
+    color: #6c757d;
+    padding: 12px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    min-width: 60px;
+}
 
-    .btn-wishlist:hover {
-        border-color: #d70018;
-        background-color: #fff;
-        color: #d70018;
-    }
+.btn-wishlist:hover {
+    border-color: #d70018;
+    background-color: #fff;
+    color: #d70018;
+}
 
-    .btn-wishlist i {
-        font-size: 1.2rem;
-        transition: all 0.3s ease;
-    }
+.btn-wishlist i {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
 
-    /* Trạng thái đã yêu thích */
-    .btn-wishlist.wishlisted {
-        border-color: #d70018;
-        background-color: #d70018;
-        color: #fff;
-    }
+.btn-wishlist.wishlisted {
+    border-color: #d70018;
+    background-color: #d70018;
+    color: #fff;
+}
 
-    .btn-wishlist.wishlisted:hover {
-        border-color: #a8151b;
-        background-color: #a8151b;
-        color: #fff;
-    }
+.btn-wishlist.wishlisted:hover {
+    border-color: #a8151b;
+    background-color: #a8151b;
+    color: #fff;
+}
 
-    .variant-card {
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        padding: 8px 10px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-align: center;
-        background: #fff;
-        position: relative;
-        overflow: hidden;
-        user-select: none;
+.variant-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
 
-        /* --- THÊM CÁC DÒNG NÀY ĐỂ FIX THẲNG HÀNG --- */
-        height: 100%;
-        /* Giãn chiều cao card lấp đầy cột */
-        display: flex;
-        /* Sử dụng flexbox */
-        flex-direction: column;
-        /* Xếp nội dung theo chiều dọc */
-        justify-content: center;
-        /* Căn giữa nội dung theo chiều dọc */
-        align-items: center;
-        /* Căn giữa nội dung theo chiều ngang */
-    }
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
-    .variant-card:hover:not(.disabled) {
-        border-color: #d70018;
-        box-shadow: 0 0 5px rgba(215, 0, 24, 0.15);
-    }
+.variant-card:hover:not(.disabled) {
+    border-color: #d70018;
+    box-shadow: 0 0 5px rgba(215, 0, 24, 0.15);
+}
 
-    .variant-card.active {
-        border-color: #d70018;
-        background-color: #fef2f2;
-    }
+.variant-card.active {
+    border-color: #d70018;
+    background-color: #fef2f2;
+}
 
-    .variant-card.active::before {
-        content: '\f00c';
-        /* Icon dấu tick của FontAwesome */
-        font-family: 'Font Awesome 6 Free', 'FontAwesome';
-        font-weight: 900;
-        position: absolute;
-        top: 0;
-        right: 0;
-        background: #d70018;
-        color: #fff;
-        font-size: 10px;
-        padding: 2px 6px;
-        border-bottom-left-radius: 8px;
-    }
+.variant-card.active::before {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free', 'FontAwesome';
+    font-weight: 900;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #d70018;
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-bottom-left-radius: 8px;
+}
 
-    .variant-card.disabled {
-        background-color: #f8f9fa;
-        color: #adb5bd;
-        cursor: not-allowed;
-        border-color: #e9ecef;
-        opacity: 0.7;
-    }
+.variant-card.disabled {
+    background-color: #f8f9fa;
+    color: #adb5bd;
+    cursor: not-allowed;
+    border-color: #e9ecef;
+    opacity: 0.7;
+}
 
-    .variant-price-label {
-        font-size: 0.85rem;
-        margin-top: 2px;
-    }
+.variant-price-label {
+    font-size: 0.85rem;
+    margin-top: 2px;
+}
 
-    .variant-attr-group .attr-option-btn {
-        border-radius: 999px;
-        min-width: 86px;
-    }
+.variant-attr-group .attr-option-btn {
+    border-radius: 999px;
+    min-width: 86px;
+}
 
-    .variant-attr-group .attr-option-btn.active {
-        background-color: #d70018;
-        border-color: #d70018;
-        color: #fff;
-    }
+.variant-attr-group .attr-option-btn.active {
+    background-color: #d70018;
+    border-color: #d70018;
+    color: #fff;
+}
 
-    .variant-attr-group .attr-option-btn:disabled {
-        opacity: 0.45;
-        cursor: not-allowed;
-    }
+.variant-attr-group .attr-option-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
 
-    /* CSS cho bài viết mô tả sản phẩm */
-    .product-description {
-        line-height: 1.6;
-        color: #333;
-    }
+.product-description {
+    line-height: 1.6;
+    color: #333;
+}
 
-    .product-description img {
-        max-width: 100%;
-        height: auto !important;
-        border-radius: 8px;
-        margin: 10px 0;
-    }
+.product-description img {
+    max-width: 100%;
+    height: auto !important;
+    border-radius: 8px;
+    margin: 10px 0;
+}
 
-    .product-description h2,
-    .product-description h3,
-    .product-description h4 {
-        color: #d70018;
-        margin-top: 20px;
-        margin-bottom: 10px;
-        font-weight: bold;
-    }
+.product-description h2,
+.product-description h3,
+.product-description h4 {
+    color: #d70018;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
 
-    .compare-similar-card {
-        border: 1px solid #f0d7db;
-        border-radius: 12px;
-        background: linear-gradient(180deg, #fff 0%, #fff8f9 100%);
-    }
+.compare-similar-card {
+    border: 1px solid #f0d7db;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #fff 0%, #fff8f9 100%);
+}
 
-    .compare-similar-option {
-        border: 1px solid #eceff3;
-        border-radius: 10px;
-        background: #fff;
-        padding: 10px;
-        height: 100%;
-    }
+.compare-similar-option {
+    border: 1px solid #eceff3;
+    border-radius: 10px;
+    background: #fff;
+    padding: 10px;
+    height: 100%;
+}
 
-    .inline-compare-table th,
-    .inline-compare-table td {
-        white-space: nowrap;
-        vertical-align: middle;
-    }
+.inline-compare-table th,
+.inline-compare-table td {
+    white-space: nowrap;
+    vertical-align: middle;
+}
 
-    .inline-compare-table th:first-child,
-    .inline-compare-table td:first-child {
-        position: sticky;
-        left: 0;
-        z-index: 1;
-        background: #f8f9fa;
-    }
+.inline-compare-table th:first-child,
+.inline-compare-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: #f8f9fa;
+}
 </style>
 
 <div class="container-xl py-4">
@@ -404,18 +346,18 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
     </nav>
 
     <?php if (isset($_SESSION['success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show">
-            <?= $_SESSION['success'];
+    <div class="alert alert-success alert-dismissible fade show">
+        <?= $_SESSION['success'];
             unset($_SESSION['success']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     <?php endif; ?>
     <?php if (isset($_SESSION['error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show">
-            <?= $_SESSION['error'];
+    <div class="alert alert-danger alert-dismissible fade show">
+        <?= $_SESSION['error'];
             unset($_SESSION['error']); ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
     <?php endif; ?>
 
     <div class="row g-4">
@@ -427,18 +369,17 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                     style="max-height:320px;object-fit:contain; transition: opacity 0.2s;">
 
                 <?php if (count($hinhAnhList) > 1): ?>
-                    <div class="d-flex gap-2 flex-wrap justify-content-center">
-                        <?php foreach ($hinhAnhList as $img): ?>
-                            <?php
-                            // Nếu ảnh có phien_ban_id thì in id đó ra, nếu không (Chung) thì in chữ 'all'
+                <div class="d-flex gap-2 flex-wrap justify-content-center">
+                    <?php foreach ($hinhAnhList as $img): ?>
+                    <?php
                             $variantDataId = !empty($img['phien_ban_id']) ? $img['phien_ban_id'] : 'all';
                             ?>
-                            <img src="<?= htmlspecialchars($img['url_anh']) ?>" alt="" class="thumb-img border rounded"
-                                data-variant-id="<?= $variantDataId ?>"
-                                style="width:60px;height:60px;object-fit:contain;cursor:pointer;border:2px solid transparent; transition: all 0.2s;"
-                                onclick="document.getElementById('main-img').src=this.src; document.querySelectorAll('.thumb-img').forEach(t=>t.style.borderColor='transparent'); this.style.borderColor='#d70018';">
-                        <?php endforeach; ?>
-                    </div>
+                    <img src="<?= htmlspecialchars($img['url_anh']) ?>" alt="" class="thumb-img border rounded"
+                        data-variant-id="<?= $variantDataId ?>"
+                        style="width:60px;height:60px;object-fit:contain;cursor:pointer;border:2px solid transparent; transition: all 0.2s;"
+                        onclick="document.getElementById('main-img').src=this.src; document.querySelectorAll('.thumb-img').forEach(t=>t.style.borderColor='transparent'); this.style.borderColor='#d70018';">
+                    <?php endforeach; ?>
+                </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -449,7 +390,7 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
             <div class="d-flex align-items-center gap-2 mb-3">
                 <div class="text-warning">
                     <?php for ($i = 1; $i <= 5; $i++): ?>
-                        <i class="fa<?= $i <= round($diemTB) ? 's' : 'r' ?> fa-star" style="font-size:0.85rem;"></i>
+                    <i class="fa<?= $i <= round($diemTB) ? 's' : 'r' ?> fa-star" style="font-size:0.85rem;"></i>
                     <?php endfor; ?>
                 </div>
                 <span class="text-muted small"><?= $tongDanhGia ?> đánh giá</span>
@@ -457,7 +398,6 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
 
             <div class="mb-3 d-flex align-items-center flex-wrap">
                 <?php
-                // TÍNH TOÁN CHO LẦN LOAD ĐẦU TIÊN
                 $giaBanMacDinh = $sanPham['gia_hien_thi'];
                 $giaGocDbMacDinh = $sanPham['gia_goc'] ?? 0;
                 if ($phienBanMacDinh) {
@@ -495,59 +435,60 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                     }
                 }
                 ?>
-                
+
                 <span class="text-danger fw-bold fs-3 me-3" id="current-price">
                     <?= number_format($giaHienThiMacDinh, 0, ',', '.') ?>đ
                 </span>
-                
-                <span class="text-muted text-decoration-line-through fs-5 me-2" id="original-price" style="<?= $showGachNgangMacDinh ? 'display: inline-block;' : 'display: none;' ?>">
+
+                <span class="text-muted text-decoration-line-through fs-5 me-2" id="original-price"
+                    style="<?= $showGachNgangMacDinh ? 'display: inline-block;' : 'display: none;' ?>">
                     <?= number_format($giaGachNgangMacDinh, 0, ',', '.') ?>đ
                 </span>
-                
-                <span class="badge bg-danger align-middle fs-6" id="promo-badge" style="<?= $coKhuyenMaiMacDinh ? 'display: inline-block;' : 'display: none;' ?>">
+
+                <span class="badge bg-danger align-middle fs-6" id="promo-badge"
+                    style="<?= $coKhuyenMaiMacDinh ? 'display: inline-block;' : 'display: none;' ?>">
                     <?= $badgeTextMacDinh ?>
                 </span>
             </div>
 
             <?php if (!empty($phienBanList)): ?>
-                <div class="mb-4">
-                    <p class="fw-medium small mb-2">Chọn phiên bản:</p>
-                    <?php if (!empty($thuocTinhHienThi) && !empty($productVariantsForJs)): ?>
-                        <div id="variant-attribute-groups" class="d-flex flex-column gap-3">
-                            <?php foreach ($thuocTinhHienThi as $tenThuocTinh): ?>
-                                <div class="variant-attr-group"
-                                    data-attribute-name="<?= htmlspecialchars($tenThuocTinh, ENT_QUOTES, 'UTF-8') ?>">
-                                    <div class="small fw-semibold mb-2"><?= htmlspecialchars($tenThuocTinh) ?>:</div>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <?php foreach (($attributeOptions[$tenThuocTinh] ?? []) as $giaTriThuocTinh): ?>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary attr-option-btn"
-                                                data-attr-name="<?= htmlspecialchars($tenThuocTinh, ENT_QUOTES, 'UTF-8') ?>"
-                                                data-attr-value="<?= htmlspecialchars($giaTriThuocTinh, ENT_QUOTES, 'UTF-8') ?>">
-                                                <?= htmlspecialchars($giaTriThuocTinh) ?>
-                                            </button>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
+            <div class="mb-4">
+                <p class="fw-medium small mb-2">Chọn phiên bản:</p>
+                <?php if (!empty($thuocTinhHienThi) && !empty($productVariantsForJs)): ?>
+                <div id="variant-attribute-groups" class="d-flex flex-column gap-3">
+                    <?php foreach ($thuocTinhHienThi as $tenThuocTinh): ?>
+                    <div class="variant-attr-group"
+                        data-attribute-name="<?= htmlspecialchars($tenThuocTinh, ENT_QUOTES, 'UTF-8') ?>">
+                        <div class="small fw-semibold mb-2"><?= htmlspecialchars($tenThuocTinh) ?>:</div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <?php foreach (($attributeOptions[$tenThuocTinh] ?? []) as $giaTriThuocTinh): ?>
+                            <button type="button" class="btn btn-sm btn-outline-secondary attr-option-btn"
+                                data-attr-name="<?= htmlspecialchars($tenThuocTinh, ENT_QUOTES, 'UTF-8') ?>"
+                                data-attr-value="<?= htmlspecialchars($giaTriThuocTinh, ENT_QUOTES, 'UTF-8') ?>">
+                                <?= htmlspecialchars($giaTriThuocTinh) ?>
+                            </button>
                             <?php endforeach; ?>
                         </div>
-                    <?php else: ?>
-                        <div class="row g-2">
-                            <?php foreach ($phienBanList as $idx => $pb): ?>
-                                <?php
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php else: ?>
+                <div class="row g-2">
+                    <?php foreach ($phienBanList as $idx => $pb): ?>
+                    <?php
                                 $isOutOfStock = $pb['so_luong_ton'] <= 0;
                                 $isActive = ($phienBanMacDinh && (int) $pb['id'] === (int) $phienBanMacDinh['id']) ? 'active' : '';
                                 ?>
-                                <div class="col-4">
-                                    <div class="variant-card variant-btn <?= $isActive ?> <?= $isOutOfStock ? 'disabled' : '' ?>"
-                                        data-id="<?= $pb['id'] ?>" data-price="<?= $pb['gia_ban'] ?>"
-                                        data-stock="<?= $pb['so_luong_ton'] ?>">
+                    <div class="col-4">
+                        <div class="variant-card variant-btn <?= $isActive ?> <?= $isOutOfStock ? 'disabled' : '' ?>"
+                            data-id="<?= $pb['id'] ?>" data-price="<?= $pb['gia_ban'] ?>"
+                            data-stock="<?= $pb['so_luong_ton'] ?>">
 
-                                        <div class="fw-bold text-wrap" style="font-size: 0.85rem;">
-                                            <?= htmlspecialchars($pb['ten_phien_ban']) ?>
-                                        </div>
-                                        <div class="variant-price-label <?= $isActive ? 'text-danger fw-medium' : 'text-muted' ?>">
-                                            <?php
-                                            // Tìm giá giảm trong mảng JS vừa tạo ở trên
+                            <div class="fw-bold text-wrap" style="font-size: 0.85rem;">
+                                <?= htmlspecialchars($pb['ten_phien_ban']) ?>
+                            </div>
+                            <div class="variant-price-label <?= $isActive ? 'text-danger fw-medium' : 'text-muted' ?>">
+                                <?php
                                             $giaHienThiOThe = $pb['gia_ban'];
                                             foreach ($productVariantsForJs as $jsVar) {
                                                 if ($jsVar['id'] == $pb['id']) {
@@ -556,23 +497,23 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                                                 }
                                             }
                                             ?>
-                                            <?= number_format($giaHienThiOThe, 0, ',', '.') ?>đ
-                                        </div>
+                                <?= number_format($giaHienThiOThe, 0, ',', '.') ?>đ
+                            </div>
 
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
                         </div>
-                    <?php endif; ?>
-
-                    <small id="stock-info"
-                        class="mt-2 d-block <?= ($phienBanMacDinh['so_luong_ton'] ?? 0) > 0 ? 'text-success' : 'text-danger' ?>">
-                        <?= ($phienBanMacDinh['so_luong_ton'] ?? 0) > 0 ? '<i class="fa fa-check-circle me-1"></i>Còn lại: ' . $phienBanMacDinh['so_luong_ton'] . ' sản phẩm' : '<i class="fa fa-times-circle me-1"></i>Đã hết hàng' ?>
-                    </small>
-                    <small id="variant-selected-name" class="text-muted d-block mt-1">
-                        <?= htmlspecialchars((string) ($phienBanMacDinh['ten_phien_ban'] ?? '')) ?>
-                    </small>
+                    </div>
+                    <?php endforeach; ?>
                 </div>
+                <?php endif; ?>
+
+                <small id="stock-info"
+                    class="mt-2 d-block <?= ($phienBanMacDinh['so_luong_ton'] ?? 0) > 0 ? 'text-success' : 'text-danger' ?>">
+                    <?= ($phienBanMacDinh['so_luong_ton'] ?? 0) > 0 ? '<i class="fa fa-check-circle me-1"></i>Còn lại: ' . $phienBanMacDinh['so_luong_ton'] . ' sản phẩm' : '<i class="fa fa-times-circle me-1"></i>Đã hết hàng' ?>
+                </small>
+                <small id="variant-selected-name" class="text-muted d-block mt-1">
+                    <?= htmlspecialchars((string) ($phienBanMacDinh['ten_phien_ban'] ?? '')) ?>
+                </small>
+            </div>
             <?php endif; ?>
 
             <form action="/gio-hang/them" method="POST" class="mb-3">
@@ -593,10 +534,10 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                         <i class="fa fa-cart-plus me-1"></i>Thêm vào giỏ hàng
                     </button>
                     <?php if ($isLoggedIn): ?>
-                        <button type="button" class="btn btn-wishlist <?= $isWishlisted ? 'wishlisted' : '' ?>"
-                            data-id="<?= $sanPham['id'] ?>" data-wishlisted="<?= $isWishlisted ? '1' : '0' ?>">
-                            <i class="<?= $isWishlisted ? 'fas' : 'far' ?> fa-heart"></i>
-                        </button>
+                    <button type="button" class="btn btn-wishlist <?= $isWishlisted ? 'wishlisted' : '' ?>"
+                        data-id="<?= $sanPham['id'] ?>" data-wishlisted="<?= $isWishlisted ? '1' : '0' ?>">
+                        <i class="<?= $isWishlisted ? 'fas' : 'far' ?> fa-heart"></i>
+                    </button>
                     <?php endif; ?>
                 </div>
             </form>
@@ -654,596 +595,583 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
 
             <div class="tab-pane fade show active product-description" id="pane-desc" role="tabpanel">
                 <?php if (!empty($sanPham['mo_ta'])): ?>
-                    <?= $sanPham['mo_ta'] ?>
+                <?= $sanPham['mo_ta'] ?>
                 <?php else: ?>
-                    <p class="text-muted small mb-0 text-center py-4">Nội dung mô tả sản phẩm đang được cập nhật.</p>
+                <p class="text-muted small mb-0 text-center py-4">Nội dung mô tả sản phẩm đang được cập nhật.</p>
                 <?php endif; ?>
             </div>
 
             <div class="tab-pane fade" id="pane-specs" role="tabpanel">
                 <?php if (empty($thongSoList)): ?>
-                    <p class="text-muted small mb-0 text-center py-4">Chưa có thông số kỹ thuật.</p>
+                <p class="text-muted small mb-0 text-center py-4">Chưa có thông số kỹ thuật.</p>
                 <?php else: ?>
-                    <table class="table table-sm table-striped mb-0">
-                        <tbody>
-                            <?php foreach ($thongSoList as $ts): ?>
-                                <tr>
-                                    <td class="fw-medium small py-2" style="width:40%;">
-                                        <?= htmlspecialchars($ts['ten_thong_so']) ?></td>
-                                    <td class="small py-2"><?= htmlspecialchars($ts['gia_tri']) ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                <table class="table table-sm table-striped mb-0">
+                    <tbody>
+                        <?php foreach ($thongSoList as $ts): ?>
+                        <tr>
+                            <td class="fw-medium small py-2" style="width:40%;">
+                                <?= htmlspecialchars($ts['ten_thong_so']) ?></td>
+                            <td class="small py-2"><?= htmlspecialchars($ts['gia_tri']) ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
                 <?php endif; ?>
             </div>
 
             <div class="tab-pane fade" id="pane-reviews" role="tabpanel">
                 <?php if (empty($danhGiaList)): ?>
-                    <p class="text-muted small text-center py-3">Chưa có đánh giá nào.</p>
+                <p class="text-muted small text-center py-3">Chưa có đánh giá nào.</p>
                 <?php else: ?>
-                    <?php foreach ($danhGiaList as $dg): ?>
-                        <div class="border-bottom pb-3 mb-3">
-                            <div class="d-flex align-items-center gap-2 mb-1">
-                                <strong class="small"><?= htmlspecialchars($dg['ho_ten'] ?? 'Ẩn danh') ?></strong>
-                                <div class="text-warning" style="font-size:0.75rem;">
-                                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <i class="fa<?= $i <= $dg['so_sao'] ? 's' : 'r' ?> fa-star"></i>
-                                    <?php endfor; ?>
-                                </div>
-                                <span class="text-muted"
-                                    style="font-size:0.72rem;"><?= date('d/m/Y', strtotime($dg['ngay_viet'])) ?></span>
-                            </div>
-                            <p class="small mb-0"><?= htmlspecialchars($dg['noi_dung']) ?></p>
+                <?php foreach ($danhGiaList as $dg): ?>
+                <div class="border-bottom pb-3 mb-3">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <strong class="small"><?= htmlspecialchars($dg['ho_ten'] ?? 'Ẩn danh') ?></strong>
+                        <div class="text-warning" style="font-size:0.75rem;">
+                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                            <i class="fa<?= $i <= $dg['so_sao'] ? 's' : 'r' ?> fa-star"></i>
+                            <?php endfor; ?>
                         </div>
-                    <?php endforeach; ?>
+                        <span class="text-muted"
+                            style="font-size:0.72rem;"><?= date('d/m/Y', strtotime($dg['ngay_viet'])) ?></span>
+                    </div>
+                    <p class="small mb-0"><?= htmlspecialchars($dg['noi_dung']) ?></p>
+                </div>
+                <?php endforeach; ?>
                 <?php endif; ?>
 
                 <?php if ($isLoggedIn): ?>
-                    <div class="border rounded p-3 bg-light mt-3">
-                        <h6 class="fw-bold mb-3">Gửi đánh giá của bạn</h6>
-                        <div id="review-msg"></div>
-                        <div class="mb-2">
-                            <label class="form-label small fw-medium">Điểm đánh giá</label>
-                            <select id="so_sao" class="form-select form-select-sm" style="width:120px;">
-                                <option value="5">★★★★★ (5)</option>
-                                <option value="4">★★★★☆ (4)</option>
-                                <option value="3">★★★☆☆ (3)</option>
-                                <option value="2">★★☆☆☆ (2)</option>
-                                <option value="1">★☆☆☆☆ (1)</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-medium">Nội dung</label>
-                            <textarea id="noi_dung" class="form-control form-control-sm" rows="3"
-                                placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
-                        </div>
-                        <button type="button" class="btn btn-danger btn-sm" id="btn-review"
-                            data-id="<?= $sanPham['id'] ?>">Gửi đánh giá</button>
+                <div class="border rounded p-3 bg-light mt-3">
+                    <h6 class="fw-bold mb-3">Gửi đánh giá của bạn</h6>
+                    <div id="review-msg"></div>
+                    <div class="mb-2">
+                        <label class="form-label small fw-medium">Điểm đánh giá</label>
+                        <select id="so_sao" class="form-select form-select-sm" style="width:120px;">
+                            <option value="5">★★★★★ (5)</option>
+                            <option value="4">★★★★☆ (4)</option>
+                            <option value="3">★★★☆☆ (3)</option>
+                            <option value="2">★★☆☆☆ (2)</option>
+                            <option value="1">★☆☆☆☆ (1)</option>
+                        </select>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-medium">Nội dung</label>
+                        <textarea id="noi_dung" class="form-control form-control-sm" rows="3"
+                            placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
+                    </div>
+                    <button type="button" class="btn btn-danger btn-sm" id="btn-review"
+                        data-id="<?= $sanPham['id'] ?>">Gửi đánh giá</button>
+                </div>
                 <?php else: ?>
-                    <div class="alert alert-info small mt-4 mb-0">
-                        <i class="fa fa-info-circle me-1"></i> <a href="/client/auth/login"
-                            class="text-danger fw-bold text-decoration-none">Đăng nhập</a> để gửi đánh giá.
-                    </div>
+                <div class="alert alert-info small mt-4 mb-0">
+                    <i class="fa fa-info-circle me-1"></i> <a href="/client/auth/login"
+                        class="text-danger fw-bold text-decoration-none">Đăng nhập</a> để gửi đánh giá.
+                </div>
                 <?php endif; ?>
             </div>
         </div>
     </div>
 
     <?php if (!empty($sanPhamTuongTu)): ?>
-        <div class="mt-5">
-            <h5 class="fw-bold mb-3 border-start border-danger border-3 ps-2">Sản phẩm tương tự</h5>
-            <div class="row g-3">
-                <?php foreach ($sanPhamTuongTu as $sp): ?>
-                    <?php if ($sp['id'] == $sanPham['id'])
+    <div class="mt-5">
+        <h5 class="fw-bold mb-3 border-start border-danger border-3 ps-2">Sản phẩm tương tự</h5>
+        <div class="row g-3">
+            <?php foreach ($sanPhamTuongTu as $sp): ?>
+            <?php if ($sp['id'] == $sanPham['id'])
                         continue; ?>
-                    <div class="col-6 col-md-3">
-                        <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
-                            <div class="card border-0 shadow-sm h-100 custom-hover-card">
-                                <div class="overflow-hidden p-2">
-                                    <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png') ?>"
-                                        class="card-img-top custom-hover-zoom" alt="" style="height:150px;object-fit:contain;">
-                                </div>
-                                <div class="card-body pt-0 px-3 pb-3">
-                                    <p class="small mb-1 text-dark fw-medium"
-                                        style="display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                                        <?= htmlspecialchars($sp['ten_san_pham']) ?>
-                                    </p>
-                                    <p class="text-danger fw-bold mb-0 small">
-                                        <?= number_format($sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>
-                                </div>
-                            </div>
-                        </a>
+            <div class="col-6 col-md-3">
+                <a href="/san-pham/<?= htmlspecialchars($sp['slug']) ?>" class="text-decoration-none">
+                    <div class="card border-0 shadow-sm h-100 custom-hover-card">
+                        <div class="overflow-hidden p-2">
+                            <img src="<?= htmlspecialchars($sp['anh_chinh'] ?? ASSET_URL . '/assets/client/images/products/14.png') ?>"
+                                class="card-img-top custom-hover-zoom" alt="" style="height:150px;object-fit:contain;">
+                        </div>
+                        <div class="card-body pt-0 px-3 pb-3">
+                            <p class="small mb-1 text-dark fw-medium"
+                                style="display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                <?= htmlspecialchars($sp['ten_san_pham']) ?>
+                            </p>
+                            <p class="text-danger fw-bold mb-0 small">
+                                <?= number_format($sp['gia_hien_thi'], 0, ',', '.') ?>đ</p>
+                        </div>
                     </div>
-                <?php endforeach; ?>
+                </a>
             </div>
+            <?php endforeach; ?>
         </div>
+    </div>
     <?php endif; ?>
 
     <?php if (!empty($goiYSoSanh)): ?>
-        <div class="mt-4">
-            <div class="compare-similar-card p-3 p-md-4 shadow-sm">
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
-                    <h5 class="fw-bold mb-0">
-                        <i class="fa fa-balance-scale text-danger me-2"></i>So sánh sản phẩm tương tự
-                    </h5>
-                    <span class="small text-muted">Chỉ hiển thị sản phẩm cùng danh mục, có thể chọn nhiều sản phẩm để so
-                        sánh</span>
+    <div class="mt-4">
+        <div class="compare-similar-card p-3 p-md-4 shadow-sm">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+                <h5 class="fw-bold mb-0">
+                    <i class="fa fa-balance-scale text-danger me-2"></i>So sánh sản phẩm tương tự
+                </h5>
+                <span class="small text-muted">Chỉ hiển thị sản phẩm cùng danh mục, có thể chọn nhiều sản phẩm để so
+                    sánh</span>
+            </div>
+
+            <form method="GET" action="/so-sanh" id="compare-similar-form">
+                <div class="row g-2 g-md-3 mb-3">
+                    <?php foreach ($goiYSoSanh as $idx => $sp): ?>
+                    <?php if ($idx >= 8)
+                                break; ?>
+                    <div class="col-12 col-sm-6 col-lg-4">
+                        <label class="compare-similar-option d-flex align-items-start gap-2">
+                            <input class="form-check-input mt-1 compare-similar-checkbox" type="checkbox" name="slug[]"
+                                value="<?= htmlspecialchars($sp['slug']) ?>">
+                            <div class="flex-grow-1">
+                                <div class="small fw-semibold text-dark mb-1"
+                                    style="display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                    <?= htmlspecialchars($sp['ten_san_pham']) ?>
+                                </div>
+                                <div class="small text-danger fw-bold">
+                                    <?= number_format((float) ($sp['gia_hien_thi'] ?? 0), 0, ',', '.') ?>đ
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <?php endforeach; ?>
                 </div>
 
-                <form method="GET" action="/so-sanh" id="compare-similar-form">
-                    <div class="row g-2 g-md-3 mb-3">
-                        <?php foreach ($goiYSoSanh as $idx => $sp): ?>
-                            <?php if ($idx >= 8)
-                                break; ?>
-                            <div class="col-12 col-sm-6 col-lg-4">
-                                <label class="compare-similar-option d-flex align-items-start gap-2">
-                                    <input class="form-check-input mt-1 compare-similar-checkbox" type="checkbox" name="slug[]"
-                                        value="<?= htmlspecialchars($sp['slug']) ?>">
-                                    <div class="flex-grow-1">
-                                        <div class="small fw-semibold text-dark mb-1"
-                                            style="display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                                            <?= htmlspecialchars($sp['ten_san_pham']) ?>
-                                        </div>
-                                        <div class="small text-danger fw-bold">
-                                            <?= number_format((float) ($sp['gia_hien_thi'] ?? 0), 0, ',', '.') ?>đ
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                        <?php endforeach; ?>
+                <div id="compare-extra-selects" class="row g-2 g-md-3 mb-3">
+                    <div class="col-12 col-md-6 compare-extra-item">
+                        <label class="form-label small fw-semibold mb-1">Chọn thêm sản phẩm khác</label>
+                        <select class="form-select form-select-sm compare-extra-select" name="slug[]">
+                            <?= $optionsSanPhamKhacHtml ?>
+                        </select>
                     </div>
+                </div>
 
-                    <div id="compare-extra-selects" class="row g-2 g-md-3 mb-3">
-                        <div class="col-12 col-md-6 compare-extra-item">
-                            <label class="form-label small fw-semibold mb-1">Chọn thêm sản phẩm khác</label>
-                            <select class="form-select form-select-sm compare-extra-select" name="slug[]">
-                                <?= $optionsSanPhamKhacHtml ?>
-                            </select>
-                        </div>
-                    </div>
+                <button type="button" class="btn btn-outline-danger btn-sm mb-3" id="btn-add-compare-select">
+                    <i class="fa fa-plus me-1"></i>Thêm ô chọn sản phẩm khác
+                </button>
 
-                    <button type="button" class="btn btn-outline-danger btn-sm mb-3" id="btn-add-compare-select">
-                        <i class="fa fa-plus me-1"></i>Thêm ô chọn sản phẩm khác
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                    <button type="submit" class="btn btn-danger" id="btn-compare-similar">
+                        <i class="fa fa-sliders me-1"></i>So sánh sản phẩm đã chọn
                     </button>
+                </div>
+            </form>
 
-                    <div class="d-flex flex-column flex-sm-row gap-2">
-                        <button type="submit" class="btn btn-danger" id="btn-compare-similar">
-                            <i class="fa fa-sliders me-1"></i>So sánh sản phẩm đã chọn
-                        </button>
-                    </div>
-                </form>
-
-                <div id="compare-inline-message" class="mt-3"></div>
-                <div id="compare-inline-result" class="mt-3 d-none">
-                    <div class="card border-0 shadow-sm overflow-hidden">
-                        <div class="table-responsive" style="max-height: 70vh;">
-                            <table class="table table-bordered align-middle mb-0 inline-compare-table"
-                                id="compare-inline-table"></table>
-                        </div>
+            <div id="compare-inline-message" class="mt-3"></div>
+            <div id="compare-inline-result" class="mt-3 d-none">
+                <div class="card border-0 shadow-sm overflow-hidden">
+                    <div class="table-responsive" style="max-height: 70vh;">
+                        <table class="table table-bordered align-middle mb-0 inline-compare-table"
+                            id="compare-inline-table"></table>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     <?php endif; ?>
 </div>
 
 <script>
-    const productVariants = <?= json_encode($productVariantsForJs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
-    const variantAttributeNames = <?= json_encode(array_values($thuocTinhHienThi), JSON_UNESCAPED_UNICODE) ?>;
+const productVariants = <?= json_encode($productVariantsForJs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+const variantAttributeNames = <?= json_encode(array_values($thuocTinhHienThi), JSON_UNESCAPED_UNICODE) ?>;
 
-    let selectedVariantId = document.getElementById('selected-variant')?.value;
-    let currentSelection = {};
+let selectedVariantId = document.getElementById('selected-variant')?.value;
+let currentSelection = {};
 
-    function formatCurrency(value) {
-        const num = Number(value || 0);
-        return num.toLocaleString('vi-VN') + 'đ';
-    }
+function formatCurrency(value) {
+    const num = Number(value || 0);
+    return num.toLocaleString('vi-VN') + 'đ';
+}
 
-    function isVariantMatchedBySelection(variant, selection) {
-        for (const [attrName, attrValue] of Object.entries(selection)) {
-            if (variant.attributes?.[attrName] !== attrValue) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    function setAddToCartState(stock) {
-        const btnCart = document.getElementById('add-to-cart-btn');
-        if (!btnCart) {
-            return;
-        }
-
-        if (stock <= 0) {
-            btnCart.disabled = true;
-            btnCart.classList.remove('btn-danger');
-            btnCart.classList.add('btn-secondary');
-            btnCart.innerHTML = '<i class="fa fa-ban me-1"></i>Hết hàng';
-            return;
-        }
-
-        btnCart.disabled = false;
-        btnCart.classList.remove('btn-secondary');
-        btnCart.classList.add('btn-danger');
-        btnCart.innerHTML = '<i class="fa fa-cart-plus me-1"></i>Thêm vào giỏ hàng';
-    }
-
-    function syncVariantUIByData(variant) {
-        if (!variant) return;
-
-        selectedVariantId = String(variant.id);
-        const selectedVariantInput = document.getElementById('selected-variant');
-        if (selectedVariantInput) selectedVariantInput.value = selectedVariantId;
-
-        // --- CẬP NHẬT GIÁ HIỂN THỊ (GIAO DIỆN KHUYẾN MÃI VÀ GIÁ GỐC) ---
-        const priceEl = document.getElementById('current-price');
-        const originalPriceEl = document.getElementById('original-price');
-        const promoBadgeEl = document.getElementById('promo-badge');
-
-        if (priceEl) {
-            priceEl.textContent = formatCurrency(variant.price_current);
-        }
-
-        if (originalPriceEl) {
-            if (variant.show_crossed) {
-                originalPriceEl.style.display = 'inline-block';
-                originalPriceEl.textContent = formatCurrency(variant.price_crossed);
-            } else {
-                originalPriceEl.style.display = 'none';
-            }
-        }
-
-        if (promoBadgeEl) {
-            if (variant.has_promo) {
-                promoBadgeEl.style.display = 'inline-block';
-                promoBadgeEl.textContent = variant.promo_badge_text;
-            } else {
-                promoBadgeEl.style.display = 'none';
-            }
-        }
-        // ------------------------------------------------
-
-        const stockInfo = document.getElementById('stock-info');
-        if (stockInfo) {
-            if (Number(variant.stock) > 0) {
-                stockInfo.className = 'mt-2 d-block text-success';
-                stockInfo.innerHTML = '<i class="fa fa-check-circle me-1"></i>Còn lại: ' + Number(variant.stock) + ' sản phẩm';
-            } else {
-                stockInfo.className = 'mt-2 d-block text-danger';
-                stockInfo.innerHTML = '<i class="fa fa-times-circle me-1"></i>Đã hết hàng';
-            }
-        }
-
-        const variantNameEl = document.getElementById('variant-selected-name');
-        if (variantNameEl) {
-            variantNameEl.textContent = variant.name || '';
-        }
-
-        setAddToCartState(Number(variant.stock || 0));
-        filterImagesByVariant(selectedVariantId);
-    }
-
-    function syncAttributeButtonState() {
-        document.querySelectorAll('.attr-option-btn').forEach((btn) => {
-            const attrName = btn.dataset.attrName;
-            const attrValue = btn.dataset.attrValue;
-            const isActive = currentSelection[attrName] === attrValue;
-            btn.classList.toggle('active', isActive);
-            btn.classList.toggle('btn-outline-danger', isActive);
-            btn.classList.toggle('btn-outline-secondary', !isActive);
-        });
-    }
-
-    function updateUIButtons() {
-        const buttons = document.querySelectorAll('.attr-option-btn');
-        if (buttons.length === 0) {
-            return;
-        }
-
-        buttons.forEach((btn) => {
-            const attrName = btn.dataset.attrName;
-            const attrValue = btn.dataset.attrValue;
-            const nextSelection = {
-                ...currentSelection,
-                [attrName]: attrValue,
-            };
-
-            const isSelectable = productVariants.some((variant) => {
-                return Number(variant.stock) > 0 && isVariantMatchedBySelection(variant, nextSelection);
-            });
-
-            btn.disabled = !isSelectable;
-        });
-
-        syncAttributeButtonState();
-    }
-
-    function handleOptionSelect(attributeName, attributeValue) {
-        currentSelection[attributeName] = attributeValue;
-
-        const validVariants = productVariants.filter((variant) => {
-            return Number(variant.stock) > 0 && isVariantMatchedBySelection(variant, currentSelection);
-        });
-
-        updateUIButtons(validVariants);
-
-        const matchedBySelection = productVariants.filter((variant) => {
-            return isVariantMatchedBySelection(variant, currentSelection);
-        });
-        const selectedEnough = variantAttributeNames.length > 0 &&
-            variantAttributeNames.every((name) => Boolean(currentSelection[name]));
-
-        let finalSKU = null;
-        if (selectedEnough && matchedBySelection.length === 1) {
-            finalSKU = matchedBySelection[0];
-        } else if (matchedBySelection.length === 1) {
-            finalSKU = matchedBySelection[0];
-        } else if (validVariants.length === 1) {
-            finalSKU = validVariants[0];
-        } else if (selectedVariantId) {
-            finalSKU = matchedBySelection.find((variant) => String(variant.id) === String(selectedVariantId)) || null;
-        }
-
-        if (finalSKU) {
-            syncVariantUIByData(finalSKU);
-        }
-    }
-
-    function initAttributeVariantSelector() {
-        const attributeButtons = document.querySelectorAll('.attr-option-btn');
-        if (attributeButtons.length === 0 || productVariants.length === 0 || variantAttributeNames.length === 0) {
+function isVariantMatchedBySelection(variant, selection) {
+    for (const [attrName, attrValue] of Object.entries(selection)) {
+        if (variant.attributes?. [attrName] !== attrValue) {
             return false;
         }
+    }
+    return true;
+}
 
-        attributeButtons.forEach((btn) => {
-            btn.addEventListener('click', function () {
-                if (this.disabled) {
-                    return;
-                }
-                handleOptionSelect(this.dataset.attrName, this.dataset.attrValue);
-            });
-        });
+function setAddToCartState(stock) {
+    const btnCart = document.getElementById('add-to-cart-btn');
+    if (!btnCart) {
+        return;
+    }
 
-        let initialVariant = productVariants.find((variant) => {
-            return String(variant.id) === String(selectedVariantId);
-        });
+    if (stock <= 0) {
+        btnCart.disabled = true;
+        btnCart.classList.remove('btn-danger');
+        btnCart.classList.add('btn-secondary');
+        btnCart.innerHTML = '<i class="fa fa-ban me-1"></i>Hết hàng';
+        return;
+    }
 
-        if (!initialVariant) {
-            initialVariant = productVariants.find((variant) => Number(variant.stock) > 0) || productVariants[0];
+    btnCart.disabled = false;
+    btnCart.classList.remove('btn-secondary');
+    btnCart.classList.add('btn-danger');
+    btnCart.innerHTML = '<i class="fa fa-cart-plus me-1"></i>Thêm vào giỏ hàng';
+}
+
+function syncVariantUIByData(variant) {
+    if (!variant) return;
+
+    selectedVariantId = String(variant.id);
+    const selectedVariantInput = document.getElementById('selected-variant');
+    if (selectedVariantInput) selectedVariantInput.value = selectedVariantId;
+
+    const priceEl = document.getElementById('current-price');
+    const originalPriceEl = document.getElementById('original-price');
+    const promoBadgeEl = document.getElementById('promo-badge');
+
+    if (priceEl) {
+        priceEl.textContent = formatCurrency(variant.price_current);
+    }
+
+    if (originalPriceEl) {
+        if (variant.show_crossed) {
+            originalPriceEl.style.display = 'inline-block';
+            originalPriceEl.textContent = formatCurrency(variant.price_crossed);
+        } else {
+            originalPriceEl.style.display = 'none';
         }
+    }
 
-        if (!initialVariant) {
-            return false;
+    if (promoBadgeEl) {
+        if (variant.has_promo) {
+            promoBadgeEl.style.display = 'inline-block';
+            promoBadgeEl.textContent = variant.promo_badge_text;
+        } else {
+            promoBadgeEl.style.display = 'none';
         }
+    }
 
-        currentSelection = {
-            ...initialVariant.attributes
+    const stockInfo = document.getElementById('stock-info');
+    if (stockInfo) {
+        if (Number(variant.stock) > 0) {
+            stockInfo.className = 'mt-2 d-block text-success';
+            stockInfo.innerHTML = '<i class="fa fa-check-circle me-1"></i>Còn lại: ' + Number(variant.stock) +
+                ' sản phẩm';
+        } else {
+            stockInfo.className = 'mt-2 d-block text-danger';
+            stockInfo.innerHTML = '<i class="fa fa-times-circle me-1"></i>Đã hết hàng';
+        }
+    }
+
+    const variantNameEl = document.getElementById('variant-selected-name');
+    if (variantNameEl) {
+        variantNameEl.textContent = variant.name || '';
+    }
+
+    setAddToCartState(Number(variant.stock || 0));
+    filterImagesByVariant(selectedVariantId);
+}
+
+function syncAttributeButtonState() {
+    document.querySelectorAll('.attr-option-btn').forEach((btn) => {
+        const attrName = btn.dataset.attrName;
+        const attrValue = btn.dataset.attrValue;
+        const isActive = currentSelection[attrName] === attrValue;
+        btn.classList.toggle('active', isActive);
+        btn.classList.toggle('btn-outline-danger', isActive);
+        btn.classList.toggle('btn-outline-secondary', !isActive);
+    });
+}
+
+function updateUIButtons() {
+    const buttons = document.querySelectorAll('.attr-option-btn');
+    if (buttons.length === 0) {
+        return;
+    }
+
+    buttons.forEach((btn) => {
+        const attrName = btn.dataset.attrName;
+        const attrValue = btn.dataset.attrValue;
+        const nextSelection = {
+            ...currentSelection,
+            [attrName]: attrValue,
         };
 
-        updateUIButtons();
-        syncVariantUIByData(initialVariant);
-        return true;
+        const isSelectable = productVariants.some((variant) => {
+            return Number(variant.stock) > 0 && isVariantMatchedBySelection(variant, nextSelection);
+        });
+
+        btn.disabled = !isSelectable;
+    });
+
+    syncAttributeButtonState();
+}
+
+function handleOptionSelect(attributeName, attributeValue) {
+    currentSelection[attributeName] = attributeValue;
+
+    const validVariants = productVariants.filter((variant) => {
+        return Number(variant.stock) > 0 && isVariantMatchedBySelection(variant, currentSelection);
+    });
+
+    updateUIButtons(validVariants);
+
+    const matchedBySelection = productVariants.filter((variant) => {
+        return isVariantMatchedBySelection(variant, currentSelection);
+    });
+    const selectedEnough = variantAttributeNames.length > 0 &&
+        variantAttributeNames.every((name) => Boolean(currentSelection[name]));
+
+    let finalSKU = null;
+    if (selectedEnough && matchedBySelection.length === 1) {
+        finalSKU = matchedBySelection[0];
+    } else if (matchedBySelection.length === 1) {
+        finalSKU = matchedBySelection[0];
+    } else if (validVariants.length === 1) {
+        finalSKU = validVariants[0];
+    } else if (selectedVariantId) {
+        finalSKU = matchedBySelection.find((variant) => String(variant.id) === String(selectedVariantId)) || null;
     }
 
-    // Hàm lọc hình ảnh thông minh theo phiên bản
-    function filterImagesByVariant(variantId) {
-        const thumbnails = document.querySelectorAll('.thumb-img');
-        if (thumbnails.length === 0) return;
+    if (finalSKU) {
+        syncVariantUIByData(finalSKU);
+    }
+}
 
-        let firstVisibleImageSrc = null;
-        let hasSpecificImages = false;
+function initAttributeVariantSelector() {
+    const attributeButtons = document.querySelectorAll('.attr-option-btn');
+    if (attributeButtons.length === 0 || productVariants.length === 0 || variantAttributeNames.length === 0) {
+        return false;
+    }
 
-        // Kiểm tra xem phiên bản đang chọn CÓ ảnh riêng nào không
-        thumbnails.forEach(thumb => {
-            if (thumb.getAttribute('data-variant-id') === variantId.toString()) {
-                hasSpecificImages = true;
+    attributeButtons.forEach((btn) => {
+        btn.addEventListener('click', function() {
+            if (this.disabled) {
+                return;
             }
+            handleOptionSelect(this.dataset.attrName, this.dataset.attrValue);
         });
+    });
 
-        // Duyệt qua từng ảnh để quyết định Ẩn hay Hiện
-        thumbnails.forEach(thumb => {
-            const thumbVariantId = thumb.getAttribute('data-variant-id');
-            let shouldShow = false;
+    let initialVariant = productVariants.find((variant) => {
+        return String(variant.id) === String(selectedVariantId);
+    });
 
-            if (hasSpecificImages) {
-                shouldShow = (thumbVariantId === variantId.toString());
-            } else {
-                shouldShow = (thumbVariantId === 'all');
+    if (!initialVariant) {
+        initialVariant = productVariants.find((variant) => Number(variant.stock) > 0) || productVariants[0];
+    }
+
+    if (!initialVariant) {
+        return false;
+    }
+
+    currentSelection = {
+        ...initialVariant.attributes
+    };
+
+    updateUIButtons();
+    syncVariantUIByData(initialVariant);
+    return true;
+}
+
+function filterImagesByVariant(variantId) {
+    const thumbnails = document.querySelectorAll('.thumb-img');
+    if (thumbnails.length === 0) return;
+
+    let firstVisibleImageSrc = null;
+    let hasSpecificImages = false;
+
+    thumbnails.forEach(thumb => {
+        if (thumb.getAttribute('data-variant-id') === variantId.toString()) {
+            hasSpecificImages = true;
+        }
+    });
+
+    thumbnails.forEach(thumb => {
+        const thumbVariantId = thumb.getAttribute('data-variant-id');
+        let shouldShow = false;
+
+        if (hasSpecificImages) {
+            shouldShow = (thumbVariantId === variantId.toString());
+        } else {
+            shouldShow = (thumbVariantId === 'all');
+        }
+
+        if (shouldShow) {
+            thumb.style.display = 'block';
+            if (!firstVisibleImageSrc) {
+                firstVisibleImageSrc = thumb.src;
             }
+        } else {
+            thumb.style.display = 'none';
+        }
+    });
 
-            if (shouldShow) {
-                thumb.style.display = 'block';
-                if (!firstVisibleImageSrc) {
-                    firstVisibleImageSrc = thumb.src;
-                }
-            } else {
-                thumb.style.display = 'none';
-            }
-        });
+    const mainImg = document.getElementById('main-img');
+    if (firstVisibleImageSrc && mainImg) {
+        mainImg.style.opacity = 0.5;
+        setTimeout(() => {
+            mainImg.src = firstVisibleImageSrc;
+            mainImg.style.opacity = 1;
+        }, 150);
 
-        // Tự động đổi ảnh to ở trên cùng theo ảnh đầu tiên
-        const mainImg = document.getElementById('main-img');
-        if (firstVisibleImageSrc && mainImg) {
-            mainImg.style.opacity = 0.5;
-            setTimeout(() => {
-                mainImg.src = firstVisibleImageSrc;
-                mainImg.style.opacity = 1;
-            }, 150);
-
-            document.querySelectorAll('.thumb-img').forEach(t => t.style.borderColor = 'transparent');
-            const firstVisibleThumb = Array.from(thumbnails).find(t => t.style.display !== 'none');
-            if (firstVisibleThumb) {
-                firstVisibleThumb.style.borderColor = '#d70018';
-            }
+        document.querySelectorAll('.thumb-img').forEach(t => t.style.borderColor = 'transparent');
+        const firstVisibleThumb = Array.from(thumbnails).find(t => t.style.display !== 'none');
+        if (firstVisibleThumb) {
+            firstVisibleThumb.style.borderColor = '#d70018';
         }
     }
+}
 
-    const hasAttributeSelector = initAttributeVariantSelector();
+const hasAttributeSelector = initAttributeVariantSelector();
 
-    // Lọc ảnh ngay khi vừa tải trang
-    if (!hasAttributeSelector && selectedVariantId) {
-        filterImagesByVariant(selectedVariantId);
-    }
+if (!hasAttributeSelector && selectedVariantId) {
+    filterImagesByVariant(selectedVariantId);
+}
 
-    // Sự kiện khi Click chọn phiên bản (Dành cho giao diện không có nhóm thuộc tính)
-    if (!hasAttributeSelector) {
-        document.querySelectorAll('.variant-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (this.classList.contains('disabled')) return;
+if (!hasAttributeSelector) {
+    document.querySelectorAll('.variant-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (this.classList.contains('disabled')) return;
 
-                // 1. Tự động đổi màu UI Button
-                document.querySelectorAll('.variant-btn').forEach(b => {
-                    b.classList.remove('active');
-                    const priceLabel = b.querySelector('.variant-price-label');
-                    if (priceLabel) {
-                        priceLabel.classList.remove('text-danger', 'fw-medium');
-                        priceLabel.classList.add('text-muted');
-                    }
-                });
-
-                this.classList.add('active');
-                const activePriceLabel = this.querySelector('.variant-price-label');
-                if (activePriceLabel) {
-                    activePriceLabel.classList.remove('text-muted');
-                    activePriceLabel.classList.add('text-danger', 'fw-medium');
-                }
-
-                // 2. Chọc vào Data thay vì đọc HTML
-                const clickedVariantId = this.dataset.id;
-                const selectedVariantData = productVariants.find(v => String(v.id) === String(clickedVariantId));
-                
-                if (selectedVariantData) {
-                    syncVariantUIByData(selectedVariantData);
+            document.querySelectorAll('.variant-btn').forEach(b => {
+                b.classList.remove('active');
+                const priceLabel = b.querySelector('.variant-price-label');
+                if (priceLabel) {
+                    priceLabel.classList.remove('text-danger', 'fw-medium');
+                    priceLabel.classList.add('text-muted');
                 }
             });
+
+            this.classList.add('active');
+            const activePriceLabel = this.querySelector('.variant-price-label');
+            if (activePriceLabel) {
+                activePriceLabel.classList.remove('text-muted');
+                activePriceLabel.classList.add('text-danger', 'fw-medium');
+            }
+
+            const clickedVariantId = this.dataset.id;
+            const selectedVariantData = productVariants.find(v => String(v.id) === String(
+                clickedVariantId));
+
+            if (selectedVariantData) {
+                syncVariantUIByData(selectedVariantData);
+            }
         });
-    }
+    });
+}
 
-    // Yêu thích - Toggle thêm/xóa
-    document.querySelector('.btn-wishlist')?.addEventListener('click', function () {
-        const id = this.dataset.id;
-        const isWishlisted = this.dataset.wishlisted === '1';
-        const url = isWishlisted ? '/yeu-thich/xoa' : '/yeu-thich/them';
-        const button = this;
+document.querySelector('.btn-wishlist')?.addEventListener('click', function() {
+    const id = this.dataset.id;
+    const isWishlisted = this.dataset.wishlisted === '1';
+    const url = isWishlisted ? '/yeu-thich/xoa' : '/yeu-thich/them';
+    const button = this;
 
-        fetch(url, {
+    fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             body: 'san_pham_id=' + id
         })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    const icon = button.querySelector('i');
-                    if (isWishlisted) {
-                        // Đã xóa khỏi yêu thích
-                        button.classList.remove('wishlisted');
-                        button.dataset.wishlisted = '0';
-                        icon.className = 'far fa-heart';
-                    } else {
-                        // Đã thêm vào yêu thích
-                        button.classList.add('wishlisted');
-                        button.dataset.wishlisted = '1';
-                        icon.className = 'fas fa-heart';
-                    }
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const icon = button.querySelector('i');
+                if (isWishlisted) {
+                    button.classList.remove('wishlisted');
+                    button.dataset.wishlisted = '0';
+                    icon.className = 'far fa-heart';
                 } else {
-                    alert(data.message || 'Có lỗi xảy ra');
+                    button.classList.add('wishlisted');
+                    button.dataset.wishlisted = '1';
+                    icon.className = 'fas fa-heart';
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Có lỗi xảy ra, vui lòng thử lại');
-            });
-    });
-
-    // Nút cộng/trừ số lượng
-    function changeQty(delta) {
-        const inp = document.getElementById('qty-input');
-        let val = parseInt(inp.value) + delta;
-        if (val < 1) val = 1;
-        if (val > 99) val = 99;
-        inp.value = val;
-    }
-
-    // Xử lý thêm vào giỏ hàng và cập nhật số lượng
-    const addToCartForm = document.querySelector('form[action="/gio-hang/them"]');
-    if (addToCartForm) {
-        addToCartForm.addEventListener('submit', function (e) {
-            // Không prevent default, để form submit bình thường
-            // Nhưng sau khi trang redirect về, số lượng giỏ hàng sẽ được cập nhật
-            // Vì vậy chúng ta sẽ cập nhật ngay sau khi submit
-            setTimeout(() => {
-                if (typeof window.updateCartCount === 'function') {
-                    window.updateCartCount();
-                }
-            }, 500);
+            } else {
+                alert(data.message || 'Có lỗi xảy ra');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra, vui lòng thử lại');
         });
+});
+
+function changeQty(delta) {
+    const inp = document.getElementById('qty-input');
+    let val = parseInt(inp.value) + delta;
+    if (val < 1) val = 1;
+    if (val > 99) val = 99;
+    inp.value = val;
+}
+
+const addToCartForm = document.querySelector('form[action="/gio-hang/them"]');
+if (addToCartForm) {
+    addToCartForm.addEventListener('submit', function(e) {
+        setTimeout(() => {
+            if (typeof window.updateCartCount === 'function') {
+                window.updateCartCount();
+            }
+        }, 500);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof window.updateCartCount === 'function') {
+        window.updateCartCount();
+    }
+});
+
+document.getElementById('btn-review')?.addEventListener('click', function() {
+    const sanPhamId = this.dataset.id;
+    const soSao = document.getElementById('so_sao').value;
+    const noiDung = document.getElementById('noi_dung').value.trim();
+    const msg = document.getElementById('review-msg');
+
+    if (!noiDung) {
+        msg.innerHTML =
+            '<div class="alert alert-warning py-2 small mb-3"><i class="fa fa-exclamation-triangle me-1"></i>Vui lòng nhập nội dung đánh giá</div>';
+        return;
     }
 
-    // Cập nhật số lượng giỏ hàng khi trang load (nếu có flash message thành công)
-    document.addEventListener('DOMContentLoaded', function () {
-        if (typeof window.updateCartCount === 'function') {
-            window.updateCartCount();
-        }
-    });
-
-    // Đánh giá
-    document.getElementById('btn-review')?.addEventListener('click', function () {
-        const sanPhamId = this.dataset.id;
-        const soSao = document.getElementById('so_sao').value;
-        const noiDung = document.getElementById('noi_dung').value.trim();
-        const msg = document.getElementById('review-msg');
-
-        if (!noiDung) {
-            msg.innerHTML = '<div class="alert alert-warning py-2 small mb-3"><i class="fa fa-exclamation-triangle me-1"></i>Vui lòng nhập nội dung đánh giá</div>';
-            return;
-        }
-
-        fetch('/danh-gia/them', {
+    fetch('/danh-gia/them', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: 'san_pham_id=' + sanPhamId + '&so_sao=' + soSao + '&noi_dung=' + encodeURIComponent(noiDung)
+            body: 'san_pham_id=' + sanPhamId + '&so_sao=' + soSao + '&noi_dung=' + encodeURIComponent(
+                noiDung)
         })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    msg.innerHTML = '<div class="alert alert-success py-2 small mb-3"><i class="fa fa-check-circle me-1"></i>' + data.message + '</div>';
-                    document.getElementById('noi_dung').value = '';
-                } else {
-                    msg.innerHTML = '<div class="alert alert-danger py-2 small mb-3"><i class="fa fa-times-circle me-1"></i>' + data.message + '</div>';
-                }
-            });
-    });
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                msg.innerHTML =
+                    '<div class="alert alert-success py-2 small mb-3"><i class="fa fa-check-circle me-1"></i>' +
+                    data.message + '</div>';
+                document.getElementById('noi_dung').value = '';
+            } else {
+                msg.innerHTML =
+                    '<div class="alert alert-danger py-2 small mb-3"><i class="fa fa-times-circle me-1"></i>' +
+                    data.message + '</div>';
+            }
+        });
+});
 
-    // So sánh sản phẩm ngay trên trang chi tiết
-    const compareSimilarForm = document.getElementById('compare-similar-form');
-    if (compareSimilarForm) {
-        const compareCheckboxes = Array.from(compareSimilarForm.querySelectorAll('.compare-similar-checkbox'));
-        const compareBtn = document.getElementById('btn-compare-similar');
-        const compareMsg = document.getElementById('compare-inline-message');
-        const compareResultWrap = document.getElementById('compare-inline-result');
-        const compareTable = document.getElementById('compare-inline-table');
-        const addCompareSelectBtn = document.getElementById('btn-add-compare-select');
-        const compareExtraSelectsWrap = document.getElementById('compare-extra-selects');
-        const extraSelectOptions = <?= json_encode($optionsSanPhamKhacHtml, JSON_UNESCAPED_UNICODE) ?>;
+const compareSimilarForm = document.getElementById('compare-similar-form');
+if (compareSimilarForm) {
+    const compareCheckboxes = Array.from(compareSimilarForm.querySelectorAll('.compare-similar-checkbox'));
+    const compareBtn = document.getElementById('btn-compare-similar');
+    const compareMsg = document.getElementById('compare-inline-message');
+    const compareResultWrap = document.getElementById('compare-inline-result');
+    const compareTable = document.getElementById('compare-inline-table');
+    const addCompareSelectBtn = document.getElementById('btn-add-compare-select');
+    const compareExtraSelectsWrap = document.getElementById('compare-extra-selects');
+    const extraSelectOptions = <?= json_encode($optionsSanPhamKhacHtml, JSON_UNESCAPED_UNICODE) ?>;
 
-        const getCompareExtraSelects = () => {
-            return Array.from(compareSimilarForm.querySelectorAll('.compare-extra-select'));
-        };
+    const getCompareExtraSelects = () => {
+        return Array.from(compareSimilarForm.querySelectorAll('.compare-extra-select'));
+    };
 
-        addCompareSelectBtn?.addEventListener('click', () => {
-            if (!compareExtraSelectsWrap) return;
+    addCompareSelectBtn?.addEventListener('click', () => {
+        if (!compareExtraSelectsWrap) return;
 
-            const wrapper = document.createElement('div');
-            wrapper.className = 'col-12 col-md-6 compare-extra-item';
+        const wrapper = document.createElement('div');
+        wrapper.className = 'col-12 col-md-6 compare-extra-item';
 
-            wrapper.innerHTML = `
+        wrapper.innerHTML = `
                 <label class="form-label small fw-semibold mb-1">Chọn thêm sản phẩm khác</label>
                 <div class="d-flex gap-2">
                     <select class="form-select form-select-sm compare-extra-select" name="slug[]">
@@ -1255,72 +1183,72 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                 </div>
             `;
 
-            compareExtraSelectsWrap.appendChild(wrapper);
+        compareExtraSelectsWrap.appendChild(wrapper);
 
-            wrapper.querySelector('.compare-remove-select')?.addEventListener('click', () => {
-                wrapper.remove();
-            });
+        wrapper.querySelector('.compare-remove-select')?.addEventListener('click', () => {
+            wrapper.remove();
+        });
+    });
+
+    const getSelectedSlugs = () => {
+        const slugSet = new Set();
+
+        compareCheckboxes.forEach((cb) => {
+            if (cb.checked && cb.value) {
+                slugSet.add(cb.value);
+            }
         });
 
-        const getSelectedSlugs = () => {
-            const slugSet = new Set();
+        getCompareExtraSelects().forEach((sel) => {
+            if (sel.value) {
+                slugSet.add(sel.value);
+            }
+        });
 
-            compareCheckboxes.forEach((cb) => {
-                if (cb.checked && cb.value) {
-                    slugSet.add(cb.value);
-                }
-            });
+        return Array.from(slugSet);
+    };
 
-            getCompareExtraSelects().forEach((sel) => {
-                if (sel.value) {
-                    slugSet.add(sel.value);
-                }
-            });
+    const escapeHtml = (value) => {
+        return String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    };
 
-            return Array.from(slugSet);
-        };
+    const formatCurrency = (value) => {
+        const num = Number(value || 0);
+        if (num <= 0) return 'Liên hệ';
+        return num.toLocaleString('vi-VN') + 'đ';
+    };
 
-        const escapeHtml = (value) => {
-            return String(value ?? '')
-                .replaceAll('&', '&amp;')
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')
-                .replaceAll('"', '&quot;')
-                .replaceAll("'", '&#39;');
-        };
+    const renderCompareTable = (payload) => {
+        const products = payload.products || [];
+        const specNames = payload.specNames || [];
 
-        const formatCurrency = (value) => {
-            const num = Number(value || 0);
-            if (num <= 0) return 'Liên hệ';
-            return num.toLocaleString('vi-VN') + 'đ';
-        };
+        const headCells = products.map((p) => `<th>${escapeHtml(p.ten_san_pham)}</th>`).join('');
 
-        const renderCompareTable = (payload) => {
-            const products = payload.products || [];
-            const specNames = payload.specNames || [];
-
-            const headCells = products.map((p) => `<th>${escapeHtml(p.ten_san_pham)}</th>`).join('');
-
-            const rows = [];
-            rows.push(`
+        const rows = [];
+        rows.push(`
                 <tr>
                     <th class="bg-light">Giá hiển thị</th>
                     ${products.map((p) => `<td class="text-danger fw-semibold">${formatCurrency(p.gia_hien_thi)}</td>`).join('')}
                 </tr>
             `);
-            rows.push(`
+        rows.push(`
                 <tr>
                     <th class="bg-light">Hãng sản xuất</th>
                     ${products.map((p) => `<td>${escapeHtml(p.hang_san_xuat || '-')}</td>`).join('')}
                 </tr>
             `);
-            rows.push(`
+        rows.push(`
                 <tr>
                     <th class="bg-light">Danh mục</th>
                     ${products.map((p) => `<td>${escapeHtml(p.ten_danh_muc || '-')}</td>`).join('')}
                 </tr>
             `);
-            rows.push(`
+        rows.push(`
                 <tr>
                     <th class="bg-light">Tổng tồn kho</th>
                     ${products.map((p) => {
@@ -1330,16 +1258,16 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                 </tr>
             `);
 
-            specNames.forEach((name) => {
-                rows.push(`
+        specNames.forEach((name) => {
+            rows.push(`
                     <tr>
                         <th class="bg-light">${escapeHtml(name)}</th>
                         ${products.map((p) => `<td>${escapeHtml((p.thong_so && p.thong_so[name]) || '-')}</td>`).join('')}
                     </tr>
                 `);
-            });
+        });
 
-            compareTable.innerHTML = `
+        compareTable.innerHTML = `
                 <thead class="table-light">
                     <tr>
                         <th style="width:220px;">Tiêu chí</th>
@@ -1350,54 +1278,56 @@ foreach ($attributeOptions as $tenThuocTinh => $dsGiaTri) {
                     ${rows.join('')}
                 </tbody>
             `;
-        };
+    };
 
-        compareCheckboxes.forEach(cb => {
-            cb.addEventListener('change', () => {
-                // Cho phép chọn nhiều sản phẩm, không giới hạn số lượng
-            });
-        });
+    compareCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {});
+    });
 
-        compareSimilarForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const selectedSlugs = getSelectedSlugs();
-            if (selectedSlugs.length < 2) {
-                alert('Vui lòng chọn ít nhất 2 sản phẩm để bắt đầu so sánh.');
+    compareSimilarForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const selectedSlugs = getSelectedSlugs();
+        if (selectedSlugs.length < 2) {
+            alert('Vui lòng chọn ít nhất 2 sản phẩm để bắt đầu so sánh.');
+            return;
+        }
+
+        const queryParams = new URLSearchParams();
+        selectedSlugs.forEach((slug) => queryParams.append('slug[]', slug));
+        const query = queryParams.toString();
+
+        compareMsg.innerHTML =
+            '<div class="alert alert-info py-2 mb-0 small">Đang tạo bảng so sánh...</div>';
+        compareBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/so-sanh-san-pham?' + query);
+            const data = await response.json();
+
+            if (!data.success || !data.data || !Array.isArray(data.data.products)) {
+                compareMsg.innerHTML = '<div class="alert alert-warning py-2 mb-0 small">' + escapeHtml(data
+                    .message || 'Không thể tải dữ liệu so sánh.') + '</div>';
+                compareResultWrap.classList.add('d-none');
                 return;
             }
 
-            const queryParams = new URLSearchParams();
-            selectedSlugs.forEach((slug) => queryParams.append('slug[]', slug));
-            const query = queryParams.toString();
-
-            compareMsg.innerHTML = '<div class="alert alert-info py-2 mb-0 small">Đang tạo bảng so sánh...</div>';
-            compareBtn.disabled = true;
-
-            try {
-                const response = await fetch('/api/so-sanh-san-pham?' + query);
-                const data = await response.json();
-
-                if (!data.success || !data.data || !Array.isArray(data.data.products)) {
-                    compareMsg.innerHTML = '<div class="alert alert-warning py-2 mb-0 small">' + escapeHtml(data.message || 'Không thể tải dữ liệu so sánh.') + '</div>';
-                    compareResultWrap.classList.add('d-none');
-                    return;
-                }
-
-                renderCompareTable(data.data);
-                compareMsg.innerHTML = '<div class="alert alert-success py-2 mb-0 small">Đã tạo bảng so sánh thành công.</div>';
-                compareResultWrap.classList.remove('d-none');
-                compareResultWrap.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            } catch (error) {
-                compareMsg.innerHTML = '<div class="alert alert-danger py-2 mb-0 small">Có lỗi xảy ra khi tải dữ liệu so sánh.</div>';
-                compareResultWrap.classList.add('d-none');
-            } finally {
-                compareBtn.disabled = false;
-            }
-        });
-    }
+            renderCompareTable(data.data);
+            compareMsg.innerHTML =
+                '<div class="alert alert-success py-2 mb-0 small">Đã tạo bảng so sánh thành công.</div>';
+            compareResultWrap.classList.remove('d-none');
+            compareResultWrap.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        } catch (error) {
+            compareMsg.innerHTML =
+                '<div class="alert alert-danger py-2 mb-0 small">Có lỗi xảy ra khi tải dữ liệu so sánh.</div>';
+            compareResultWrap.classList.add('d-none');
+        } finally {
+            compareBtn.disabled = false;
+        }
+    });
+}
 </script>
 
 <?php

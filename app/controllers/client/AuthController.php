@@ -16,7 +16,7 @@ class AuthController
 
     $envConfig = \EnvSetup::env(dirname(__DIR__, 3));
     $recaptchaSecret = $envConfig('RECAPTCHA_SECRET_KEY', '');
-    
+
     $recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
 
     if (empty($recaptchaResponse)) {
@@ -26,32 +26,32 @@ class AuthController
 
     $verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
     $data = [
-        'secret' => $recaptchaSecret,
-        'response' => $recaptchaResponse
+      'secret' => $recaptchaSecret,
+      'response' => $recaptchaResponse
     ];
 
     $options = [
-        'http' => [
-            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-            'method'  => 'POST',
-            'content' => http_build_query($data)
-        ]
+      'http' => [
+        'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+        'method' => 'POST',
+        'content' => http_build_query($data)
+      ]
     ];
-    $context  = stream_context_create($options);
+    $context = stream_context_create($options);
     $verifyResponse = file_get_contents($verifyUrl, false, $context);
-    
+
     if ($verifyResponse === false) {
 
-        header('Location: /client/auth/login?error=network_error');
-        exit;
+      header('Location: /client/auth/login?error=network_error');
+      exit;
     }
 
     $responseData = json_decode($verifyResponse);
 
     if (!$responseData || !$responseData->success) {
 
-        header('Location: /client/auth/login?error=captcha_failed');
-        exit;
+      header('Location: /client/auth/login?error=captcha_failed');
+      exit;
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -70,19 +70,13 @@ class AuthController
     $checkUser = $khachHang->query("SELECT trang_thai FROM nguoi_dung WHERE email = '$emailSafe' LIMIT 1");
 
     if (!empty($checkUser)) {
-        $trangThai = $checkUser[0]['trang_thai'];
-        
-        // Nếu admin đã set trạng thái là BLOCKED
-        if ($trangThai === 'BLOCKED') {
-            header('Location: /client/auth/login?error=account_blocked');
-            exit;
-        }
-        
-        // Tùy chọn thêm: Nếu bạn muốn chặn luôn những người chưa xác thực email
-        // if ($trangThai === 'UNVERIFIED') {
-        //     header('Location: /client/auth/login?error=unverified_account');
-        //     exit;
-        // }
+      $trangThai = $checkUser[0]['trang_thai'];
+
+      if ($trangThai === 'BLOCKED') {
+        header('Location: /client/auth/login?error=account_blocked');
+        exit;
+      }
+
     }
     if ($khachHang->dang_nhap($email, $password)) {
       Session::start();
@@ -101,7 +95,6 @@ class AuthController
       exit;
     }
 
-    // Lỗi sai email hoặc mật khẩu
     header('Location: /client/auth/login?error=invalid_credentials');
     exit;
   }
@@ -123,7 +116,6 @@ class AuthController
       exit;
     }
 
-    //thực hiện register
     $khachHang = new \KhachHang();
     $result = $khachHang->dang_ky($email, $password, $name);
 
@@ -135,12 +127,10 @@ class AuthController
     if ($result) {
       $token = $result['token'];
 
-      //lấy url
       $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
       $host = $_SERVER['HTTP_HOST'] ?? 'localhost:3000';
       $verifyUrl = $scheme . '://' . $host . '/client/auth/verify-email?token=' . $token;
 
-      //email content
       $nameSafe = htmlspecialchars($name);
       $emailContent = "<!doctype html>
 <html lang=\"vi\">
@@ -338,32 +328,21 @@ class AuthController
     exit;
   }
 
-  /**
-   * Xử lý yêu cầu đặt lại mật khẩu
-   * 
-   * @param string $email Email người dùng
-   * @return void Redirect to check-email page
-   */
   public static function requestPasswordReset(string $email): void
   {
-    // Validate email format
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
       header('Location: /client/auth/forgot-password?error=invalid_email');
       exit;
     }
 
-    // Gọi KhachHang->tao_reset_token()
     $khachHang = new \KhachHang();
     $token = $khachHang->tao_reset_token($email);
 
-    // Nếu token được tạo (email tồn tại), gửi email
     if ($token !== null) {
-      // Tạo reset URL với token
       $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
       $host = $_SERVER['HTTP_HOST'] ?? 'localhost:3000';
       $resetUrl = $scheme . '://' . $host . '/client/auth/reset-password?token=' . $token;
 
-      // Tạo email content
       $emailSafe = htmlspecialchars($email);
       $emailContent = "<!doctype html>
 <html lang=\"vi\">
@@ -511,110 +490,73 @@ class AuthController
   </body>
 </html>";
 
-      // Gửi email chứa reset link
       sendMail($email, 'Đặt lại mật khẩu FPT Shop của bạn', $emailContent);
     }
 
-    // Redirect đến check-email page với message nhất quán
-    // (không tiết lộ thông tin email có tồn tại hay không)
     header('Location: /client/auth/check-email?email=' . urlencode($email) . '&type=password_reset');
     exit;
   }
 
-  /**
-   * Xác thực reset token và hiển thị form đặt lại mật khẩu
-   * 
-   * @param string $token Reset token từ URL
-   * @return void Display form or redirect with error
-   */
   public static function verifyResetToken(string $token): void
   {
-    // Trích xuất token từ URL query parameter (đã được truyền vào)
-    // Kiểm tra token không rỗng
     if (empty(trim($token))) {
       header('Location: /client/auth/forgot-password?error=invalid_token');
       exit;
     }
 
-    // Tạo instance KhachHang để kiểm tra token
     $khachHang = new \KhachHang();
 
-    // Gọi xac_thuc_reset_token để kiểm tra token
     $userData = $khachHang->xac_thuc_reset_token($token);
 
-    // Nếu token hợp lệ và chưa hết hạn
     if ($userData !== false) {
-      // Token hợp lệ - hiển thị form reset password
       require_once __DIR__ . '/../../views/client/auth/reset_password.php';
       return;
     }
 
-    // Token không hợp lệ hoặc đã hết hạn
-    // Cần phân biệt giữa invalid và expired để hiển thị message phù hợp
-    // Tạo một instance mới để query (vì xac_thuc_reset_token đã escape token)
     $khachHangCheck = new \KhachHang();
 
-    // Validate token format trước (64 hex chars)
     if (!preg_match('/^[0-9a-f]{64}$/i', $token)) {
       header('Location: /client/auth/forgot-password?error=invalid_token');
       exit;
     }
 
-    // Query để kiểm tra token có tồn tại không
-    // Sử dụng prepared statement pattern với query method
     $escapedToken = addslashes($token);
     $tokenCheck = $khachHangCheck->query("SELECT forget_token_created_at FROM nguoi_dung WHERE forget_token = '$escapedToken' LIMIT 1");
 
-    // Nếu token không tồn tại trong database
     if (empty($tokenCheck)) {
       header('Location: /client/auth/forgot-password?error=invalid_token');
       exit;
     }
 
-    // Token tồn tại nhưng đã hết hạn
     header('Location: /client/auth/forgot-password?error=expired_token');
     exit;
   }
 
-  /**
-   * Xử lý đặt lại mật khẩu
-   * 
-   * @param string $token Reset token
-   * @param string $newPassword Mật khẩu mới
-   * @param string $confirmPassword Xác nhận mật khẩu
-   * @return void Redirect to success or error page
-   */
   public static function resetPassword(string $token, string $newPassword, string $confirmPassword): void
   {
-    // Validate password mới không rỗng
     if (empty(trim($newPassword))) {
       header('Location: /client/auth/reset-password?token=' . urlencode($token) . '&error=empty_password');
       exit;
     }
 
-    // Validate password >= 6 ký tự
     if (strlen(trim($newPassword)) < 6) {
       header('Location: /client/auth/reset-password?token=' . urlencode($token) . '&error=password_too_short');
       exit;
     }
 
-    // Validate password và confirm password khớp nhau
     if ($newPassword !== $confirmPassword) {
       header('Location: /client/auth/reset-password?token=' . urlencode($token) . '&error=password_mismatch');
       exit;
     }
 
-    // Gọi KhachHang->dat_lai_mat_khau()
     $khachHang = new \KhachHang();
     $result = $khachHang->dat_lai_mat_khau($token, $newPassword);
 
-    // Nếu thất bại
     if (!$result) {
       header('Location: /client/auth/reset-password?token=' . urlencode($token) . '&error=update_failed');
       exit;
     }
 
-    // Redirect đến reset-success page nếu thành công
     header('Location: /client/auth/reset-success');
     exit;
   }

@@ -34,8 +34,6 @@ class VietQRGateway implements PaymentGatewayInterface
 
         $description = !empty($donHangId) ? "DH{$donHangId}" : "TT{$transactionId}";
 
-        // URL API VietQR để tạo mã QR
-        // Format: https://img.vietqr.io/image/{BANK_ID}-{ACCOUNT_NO}-{TEMPLATE}.png?amount={AMOUNT}&addInfo={DESCRIPTION}&accountName={ACCOUNT_NAME}
         $qrUrl = sprintf(
             'https://img.vietqr.io/image/%s-%s-%s.png?amount=%d&addInfo=%s&accountName=%s',
             $this->bankId,

@@ -154,7 +154,7 @@ class ThanhToanController
 
         $diaChiId = null;
         $thongTinGuest = null;
-        $emailNhan = trim((string)($_POST['email_nhan'] ?? '')); // Lấy email cho tất cả trường hợp
+        $emailNhan = trim((string)($_POST['email_nhan'] ?? '')); 
 
         if (Session::has('user_id')) {
             $suDungDiaChiKhac = !empty($_POST['su_dung_dia_chi_khac']);
@@ -201,7 +201,6 @@ class ThanhToanController
                 }
             }
             
-            // Validate email cho user đăng nhập
             if ($emailNhan === '') {
                 Session::flash('error', 'Vui lòng nhập email để nhận xác nhận đơn hàng');
                 header('Location: /thanh-toan');
@@ -305,7 +304,6 @@ class ThanhToanController
             'ghi_chu' => $ghiChu
         ]);
 
-        // Insert order items FIRST before triggering events
         foreach ($chiTietGioList as $item) {
             $this->chiTietDonModel->themChiTiet(
                 $donHangId,
@@ -314,11 +312,9 @@ class ThanhToanController
                 $item['gia_ban']
             );
 
-            // Reduce inventory
             $this->phienBanModel->giamTonKho($item['phien_ban_id'], $item['so_luong']);
         }
 
-        // Trigger order_created event using Observer Pattern AFTER items are inserted
         try {
             require_once dirname(__DIR__, 2) . '/services/redis/RedisService.php';
             require_once dirname(__DIR__, 2) . '/models/entities/Refund.php';
@@ -331,7 +327,6 @@ class ThanhToanController
             $eventManager = new EventManager();
             $redis = \RedisService::getInstance();
             
-            // Initialize NotificationService for OrderObserver
             $notificationService = new \NotificationService(
                 $redis,
                 $this->donHangModel,
@@ -345,29 +340,25 @@ class ThanhToanController
             );
             $orderObserver = new OrderObserver($notificationService);
             
-            // Initialize MailerService for EmailObserver
             $mailerService = new \MailerService();
             $emailObserver = new EmailObserver($mailerService);
             
-            // Attach both observers
             $eventManager->attach($orderObserver);
             $eventManager->attach($emailObserver);
             
-            // Trigger ORDER_PLACED event (for all payment methods)
             $eventManager->notify('ORDER_PLACED', [
                 'order_id' => $donHangId,
                 'user_id' => Session::has('user_id') ? Session::get('user_id') : null,
                 'total_amount' => $tongThanhToan,
-                'email' => $emailNhan, // Truyền email trực tiếp
-                'payment_method' => $phuongThucThanhToan, // Truyền phương thức thanh toán chính xác
-                'subtotal' => $tongTien, // Tổng tiền hàng
-                'shipping_fee' => $phiVanChuyen, // Phí vận chuyển
-                'discount_amount' => $tienGiamGia, // Số tiền giảm giá
-                'discount_code' => !empty($_POST['ma_giam_gia']) ? trim($_POST['ma_giam_gia']) : null, // Mã giảm giá
+                'email' => $emailNhan, 
+                'payment_method' => $phuongThucThanhToan, 
+                'subtotal' => $tongTien, 
+                'shipping_fee' => $phiVanChuyen, 
+                'discount_amount' => $tienGiamGia, 
+                'discount_code' => !empty($_POST['ma_giam_gia']) ? trim($_POST['ma_giam_gia']) : null, 
                 'timestamp' => date('Y-m-d H:i:s')
             ]);
             
-            // Keep old event for backward compatibility
             $eventManager->notify('order_created', [
                 'order_id' => $donHangId,
                 'user_id' => Session::has('user_id') ? Session::get('user_id') : null,
@@ -375,7 +366,6 @@ class ThanhToanController
                 'timestamp' => date('Y-m-d H:i:s')
             ]);
         } catch (\Exception $e) {
-            // Log error but don't block order processing
             error_log("Failed to trigger order events: " . $e->getMessage());
         }
 
@@ -414,13 +404,10 @@ class ThanhToanController
                 exit;
             }
         } elseif ($phuongThucThanhToan === 'COD') {
-            // Gửi email xác nhận đơn hàng COD
             $emailNguoiNhan = '';
             $tenNguoiNhan = '';
 
             if (Session::has('user_id')) {
-                // Trường hợp 1: Người dùng đã đăng nhập
-                // Lấy email trực tiếp từ DB
                 $userId = (int)Session::get('user_id');
                 $sql = "SELECT email, ho_ten FROM nguoi_dung WHERE id = $userId LIMIT 1";
                 $userInfo = $this->diaChiModel->query($sql);
@@ -428,7 +415,6 @@ class ThanhToanController
                 if (!empty($userInfo)) {
                     $emailNguoiNhan = $userInfo[0]['email'] ?? '';
 
-                    // Lấy tên người nhận từ địa chỉ mà khách đã chọn
                     if ($diaChiId) {
                         $diaChiChon = $this->diaChiModel->getById($diaChiId);
                         if ($diaChiChon) {
@@ -443,19 +429,16 @@ class ThanhToanController
 
                 error_log("COD Email - Logged in user. Email: $emailNguoiNhan, Name: $tenNguoiNhan");
             } else {
-                // Trường hợp 2: Khách vãng lai
                 $emailNguoiNhan = trim($_POST['email_nhan'] ?? '');
                 $tenNguoiNhan = trim($_POST['ten_nguoi_nhan'] ?? 'Quý khách');
 
                 error_log("COD Email - Guest user. Email: $emailNguoiNhan, Name: $tenNguoiNhan");
             }
 
-            // Gửi email nếu có địa chỉ email hợp lệ
             if (!empty($emailNguoiNhan) && filter_var($emailNguoiNhan, FILTER_VALIDATE_EMAIL)) {
                 try {
                     error_log("COD Email - Preparing to send email to: $emailNguoiNhan for order: $maDonHang");
 
-                    // Tạo nội dung email
                     $emailContent = $this->generateOrderConfirmationEmail(
                         $maDonHang,
                         $tenNguoiNhan,
@@ -466,7 +449,6 @@ class ThanhToanController
                         $tongThanhToan
                     );
 
-                    // Gửi email
                     $mailSent = sendMail(
                         $emailNguoiNhan,
                         'Xác nhận đơn hàng #' . $maDonHang . ' từ FPT Shop',
@@ -567,7 +549,6 @@ class ThanhToanController
         $vietqrGateway = new \VietQRGateway();
         $qrInfo = $vietqrGateway->getQRInfo($thanhToan);
         
-        // Debug: Log QR info
         error_log("VietQR Info: " . json_encode($qrInfo, JSON_UNESCAPED_UNICODE));
         
         require_once dirname(__DIR__, 2) . '/views/client/thanh_toan/vietqr.php';
@@ -622,7 +603,6 @@ class ThanhToanController
     {
         $data = $_GET;
 
-        // Xác thực chữ ký từ VNPay
         $gateway = new \VNPayGateway();
         $isValidSignature = $gateway->verifyReturnUrl($data);
 
@@ -632,9 +612,8 @@ class ThanhToanController
             exit;
         }
 
-        // Lấy thông tin từ VNPay response
         $transactionId = $data['vnp_TxnRef'] ?? null;
-        $vnpayTransactionNo = $data['vnp_TransactionNo'] ?? null; // Mã giao dịch từ VNPay
+        $vnpayTransactionNo = $data['vnp_TransactionNo'] ?? null;
         $responseCode = $data['vnp_ResponseCode'] ?? '99';
 
         if (!$transactionId) {
@@ -643,7 +622,6 @@ class ThanhToanController
             exit;
         }
 
-        // Lấy transaction từ database
         $transaction = $this->thanhToanModel->findById($transactionId);
 
         if (!$transaction) {
@@ -654,21 +632,15 @@ class ThanhToanController
 
         $donHangId = $transaction['don_hang_id'];
 
-        // Xử lý kết quả thanh toán
         if ($responseCode === '00') {
-            // Thanh toán thành công
-            
-            // Cập nhật trạng thái thanh toán
             $this->thanhToanModel->update($transaction['id'], [
                 'trang_thai_duyet' => 'THANH_CONG',
                 'gateway_transaction_id' => $vnpayTransactionNo,
                 'ngay_thanh_toan' => date('Y-m-d H:i:s')
             ]);
 
-            // Cập nhật trạng thái đơn hàng - Tự động xác nhận
             $this->donHangModel->capNhatTrangThai($donHangId, 'DA_XAC_NHAN');
 
-            // Log transaction vào transaction_log
             require_once dirname(__DIR__, 2) . '/models/entities/TransactionLog.php';
             $transactionLog = new \TransactionLog();
             $transactionLog->create([
@@ -683,15 +655,11 @@ class ThanhToanController
             Session::flash('success', 'Thanh toán VNPay thành công!');
             header('Location: /don-hang/' . $donHangId);
         } else {
-            // Thanh toán thất bại
-            
-            // Cập nhật trạng thái thanh toán
             $this->thanhToanModel->update($transaction['id'], [
                 'trang_thai_duyet' => 'THAT_BAI',
                 'gateway_transaction_id' => $vnpayTransactionNo
             ]);
 
-            // Log transaction thất bại
             require_once dirname(__DIR__, 2) . '/models/entities/TransactionLog.php';
             $transactionLog = new \TransactionLog();
             $transactionLog->create([
@@ -724,7 +692,6 @@ class ThanhToanController
         require_once dirname(__DIR__, 2) . '/services/payment/PayPalGateway.php';
         $paypalGateway = new \PayPalGateway();
 
-        // Capture payment (chốt giao dịch)
         $captureResult = $paypalGateway->capturePayment($token);
 
         if (!$captureResult['success']) {
@@ -733,8 +700,6 @@ class ThanhToanController
             exit;
         }
 
-        // Tìm transaction trong DB dựa vào gateway_transaction_id hoặc token
-        // Vì PayPal Order ID được lưu trong gateway_transaction_id khi tạo payment URL
         $transaction = $this->thanhToanModel->findByGatewayTransactionId($token);
 
         if (!$transaction) {
@@ -743,17 +708,14 @@ class ThanhToanController
             exit;
         }
 
-        // Cập nhật trạng thái thanh toán
         $this->thanhToanModel->update($transaction['id'], [
             'trang_thai_duyet' => 'THANH_CONG',
             'gateway_transaction_id' => $captureResult['gateway_transaction_id'],
             'ngay_thanh_toan' => date('Y-m-d H:i:s')
         ]);
 
-        // Cập nhật trạng thái đơn hàng
         $this->donHangModel->capNhatTrangThai($transaction['don_hang_id'], 'DA_XAC_NHAN');
 
-        // Log transaction
         require_once dirname(__DIR__, 2) . '/models/entities/TransactionLog.php';
         $transactionLog = new \TransactionLog();
         $transactionLog->create([
@@ -769,12 +731,6 @@ class ThanhToanController
         header('Location: /don-hang/' . $transaction['don_hang_id']);
         exit;
     }
-
-
-
-
-
-
 
     private function checkGatewayHealth(): array
     {
@@ -799,9 +755,6 @@ class ThanhToanController
         return $warnings;
     }
 
-    /**
-     * Tạo nội dung HTML cho email xác nhận đơn hàng
-     */
     private function generateOrderConfirmationEmail(
         string $maDonHang,
         string $tenKhachHang,
@@ -819,7 +772,6 @@ class ThanhToanController
         $tienGiamGiaFormat = number_format($tienGiamGia, 0, ',', '.') . 'đ';
         $tongThanhToanFormat = number_format($tongThanhToan, 0, ',', '.') . 'đ';
 
-        // Tạo chuỗi HTML cho danh sách sản phẩm
         $productListHtml = '';
         if (!empty($chiTietDon)) {
             foreach ($chiTietDon as $item) {
@@ -844,7 +796,6 @@ class ThanhToanController
             }
         }
 
-        // Trả về chuỗi HTML template
         return "<!doctype html>
 <html lang=\"vi\">
 <head>

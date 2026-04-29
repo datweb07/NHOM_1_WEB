@@ -46,9 +46,8 @@
             box-shadow: 0 0 0 0.25rem rgba(203, 28, 34, 0.15);
         }
 
-        /* Thẻ tag dành riêng cho trang Admin */
         .admin-badge {
-            background-color: #343a40; /* Màu xám đen chuyên nghiệp */
+            background-color: #343a40; 
             color: white;
             font-size: 0.75rem;
             letter-spacing: 0.5px;

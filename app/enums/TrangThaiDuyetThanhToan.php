@@ -7,8 +7,6 @@ abstract class TrangThaiDuyetThanhToan
     const TU_CHOI = 'TU_CHOI';
     const HOAN_TIEN = 'HOAN_TIEN';
 
-
-
     public static function getAll(): array
     {
         return [
@@ -19,14 +17,12 @@ abstract class TrangThaiDuyetThanhToan
         ];
     }
 
-
     //kiểm tra hợp lệ của trạng thái thanh toán
     public static function isValid(?string $value): bool
     {
         return in_array($value, self::getAll());
     }
 
-    
     //hiển thị
     public static function getLabel(?string $value): string
     {
@@ -43,7 +39,6 @@ abstract class TrangThaiDuyetThanhToan
                 return 'Không xác định';
         }
     }
-
     
     //lấy màu trạng thái
     public static function getBadgeColor(?string $value): string

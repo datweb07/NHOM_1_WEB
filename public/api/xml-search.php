@@ -1,19 +1,12 @@
 <?php
-/**
- * XML Search API Endpoint
- * Direct endpoint to avoid routing issues
- */
 
-// Clear any output buffer
 while (ob_get_level()) {
     ob_end_clean();
 }
 
-// Set XML header
 header('Content-Type: application/xml; charset=utf-8');
 
 try {
-    // Include config and autoload
     $basePath = dirname(__DIR__, 2);
     $configPath = $basePath . '/config/config.php';
     
@@ -22,8 +15,7 @@ try {
     }
     
     require_once $configPath;
-    
-    // Include required model
+
     $modelPath = $basePath . '/app/models/entities/SanPham.php';
     
     if (!file_exists($modelPath)) {
@@ -31,11 +23,9 @@ try {
     }
     
     require_once $modelPath;
-    
-    // Get search keyword
+
     $keyword = $_GET['q'] ?? '';
-    
-    // Query products
+
     $sanPhams = [];
     if (!empty($keyword)) {
         $sanPhamModel = new \SanPham();
@@ -49,30 +39,24 @@ try {
         );
     }
     
-    // Build XML document
     $xml = new \DOMDocument('1.0', 'UTF-8');
     $xml->formatOutput = true;
     
-    // Create root element
     $root = $xml->createElement('products');
     $xml->appendChild($root);
     
-    // Add products
     foreach ($sanPhams as $sp) {
         $product = $xml->createElement('product');
         
-        // Add product elements with proper escaping
         $id = $xml->createElement('id', htmlspecialchars((string)($sp['id'] ?? ''), ENT_XML1, 'UTF-8'));
         $product->appendChild($id);
         
         $name = $xml->createElement('name', htmlspecialchars($sp['ten_san_pham'] ?? '', ENT_XML1, 'UTF-8'));
         $product->appendChild($name);
         
-        // Use gia_hien_thi instead of gia_ban
         $price = $xml->createElement('price', htmlspecialchars((string)($sp['gia_hien_thi'] ?? '0'), ENT_XML1, 'UTF-8'));
         $product->appendChild($price);
         
-        // Use anh_chinh instead of hinh_anh
         $image = $xml->createElement('image', htmlspecialchars($sp['anh_chinh'] ?? '', ENT_XML1, 'UTF-8'));
         $product->appendChild($image);
         
@@ -82,11 +66,9 @@ try {
         $root->appendChild($product);
     }
     
-    // Output XML
     echo $xml->saveXML();
     
 } catch (\Exception $e) {
-    // Return error XML
     error_log("XML Search Error: " . $e->getMessage());
     
     $xml = new \DOMDocument('1.0', 'UTF-8');
@@ -99,5 +81,4 @@ try {
     echo $xml->saveXML();
 }
 
-// Stop execution
 exit;

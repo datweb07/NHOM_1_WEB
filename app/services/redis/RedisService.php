@@ -59,7 +59,6 @@ class RedisService
             
             $response = $this->redis->ping();
             
-            // Predis returns a Status object, not a string
             $responsePayload = null;
             if (is_object($response) && method_exists($response, 'getPayload')) {
                 $responsePayload = $response->getPayload();
@@ -114,7 +113,6 @@ class RedisService
                 $result = $this->redis->set($key, $value);
             }
             
-            // Predis returns Status objects for SET/SETEX commands
             return $this->convertStatusToBool($result);
         } catch (Exception $e) {
             error_log('[RedisService] Set failed for key ' . $key . ': ' . $e->getMessage());
@@ -158,7 +156,6 @@ class RedisService
 
         try {
             $result = $this->redis->expire($key, $ttl);
-            // EXPIRE returns 1 if successful, 0 if key doesn't exist
             return (int)$result === 1;
         } catch (Exception $e) {
             error_log('[RedisService] Expire failed for key ' . $key . ': ' . $e->getMessage());
@@ -290,7 +287,6 @@ class RedisService
     {
         if ($this->redis !== null) {
             try {
-                // Predis disconnect method
                 $this->redis->disconnect();
             } catch (Exception $e) {
                 error_log('[RedisService] Close failed: ' . $e->getMessage());

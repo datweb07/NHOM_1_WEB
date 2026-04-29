@@ -181,7 +181,6 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
 
                                 <div class="mb-3">
                                     <div class="form-check">
-                                        <!-- Hidden input để đảm bảo luôn có giá trị 0 khi checkbox không được tick -->
                                         <input type="hidden" name="trang_thai" value="0">
                                         <input
                                             class="form-check-input"

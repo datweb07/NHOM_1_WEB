@@ -51,7 +51,6 @@ class SanPham extends BaseModel
         return addslashes(trim($keyword));
     }
 
-    // BỔ SUNG: Thêm tham số $trangThai mặc định là 'CON_BAN'
     private function buildWhereClause(
         ?string $keyword = null,
         int $danhMucId = 0,
@@ -63,7 +62,6 @@ class SanPham extends BaseModel
     ): string {
         $whereConditions = [];
 
-        // Chặn sản phẩm ngưng bán
         if ($trangThai !== null) {
             $whereConditions[] = "sp.trang_thai = '" . addslashes($trangThai) . "'";
         }
@@ -142,7 +140,6 @@ class SanPham extends BaseModel
         ?array $hangFilters = null,
         ?array $giaKhoangFilters = null
     ): int {
-        // buildWhereClause đã tự động thêm điều kiện CON_BAN
         $whereClause = $this->buildWhereClause($keyword, $danhMucId, $giaMin, $giaMax, 'CON_BAN', $hangFilters, $giaKhoangFilters);
         $sql = "SELECT COUNT(*) as total FROM {$this->table} sp $whereClause";
         $result = parent::query($sql);
@@ -162,24 +159,20 @@ class SanPham extends BaseModel
         ?array $hangFilters = null,
         ?array $giaKhoangFilters = null
     ): array {
-        // buildWhereClause đã tự động thêm điều kiện CON_BAN
         $whereClause = $this->buildWhereClause($keyword, $danhMucId, $giaMin, $giaMax, 'CON_BAN', $hangFilters, $giaKhoangFilters);
         $limit = max(1, (int)$limit);
         $offset = max(0, (int)$offset);
 
-        // Validate sort column
         $allowedColumns = ['id', 'ten_san_pham', 'hang_san_xuat', 'gia_hien_thi', 'ngay_tao', 'trang_thai'];
         if (!in_array($sortBy, $allowedColumns, true)) {
             $sortBy = 'ngay_tao';
         }
 
-        // Validate sort order
         $sortOrder = strtoupper($sortOrder);
         if (!in_array($sortOrder, ['ASC', 'DESC'], true)) {
             $sortOrder = 'DESC';
         }
 
-        // FIX: Lấy giá thấp nhất từ phiên bản sản phẩm nếu có, nếu không thì lấy gia_hien_thi
         $sql = "SELECT sp.*, dm.ten AS ten_danh_muc,
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
@@ -253,7 +246,6 @@ class SanPham extends BaseModel
 
     public function layDanhSachChoSoSanh(): array
     {
-        // FIX: Lấy giá thấp nhất từ phiên bản sản phẩm
         $sql = "SELECT sp.id,
                        sp.ten_san_pham,
                        sp.slug,
@@ -317,8 +309,6 @@ class SanPham extends BaseModel
         return mysqli_affected_rows($this->link);
     }
 
-    // ===== Getter =====
-
     public function getId()
     {
         return $this->id;
@@ -379,8 +369,6 @@ class SanPham extends BaseModel
         return $this->ngayCapNhat;
     }
 
-    // ===== Setter =====
-
     public function setDanhMucId($danhMucId)
     {
         $this->danhMucId = $danhMucId;
@@ -426,15 +414,9 @@ class SanPham extends BaseModel
         $this->noiBat = $noiBat;
     }
 
-    // ===== Method cho client =====
-
-    /**
-     * Lấy sản phẩm nổi bật
-     */
     public function laySanPhamNoiBat(int $limit = 8): array
     {
         $limit = max(1, (int)$limit);
-        // FIX: Lấy giá thấp nhất từ phiên bản sản phẩm
         $sql = "SELECT sp.*, 
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
@@ -453,13 +435,9 @@ class SanPham extends BaseModel
         return parent::query($sql);
     }
 
-    /**
-     * Lấy sản phẩm có khuyến mãi
-     */
     public function laySanPhamKhuyenMai(int $limit = 8): array
     {
         $limit = max(1, (int)$limit);
-        // FIX: Lấy giá thấp nhất từ phiên bản sản phẩm
         $sql = "SELECT sp.*, 
                        km.loai_giam, 
                        km.gia_tri_giam, 
@@ -487,15 +465,11 @@ class SanPham extends BaseModel
         return parent::query($sql);
     }
 
-    /**
-     * Lấy sản phẩm theo danh mục (slug)
-     */
     public function laySanPhamTheoDanhMuc(string $slugDanhMuc, int $limit = 8): array
     {
         $limit = max(1, (int)$limit);
         $slugDanhMuc = mysqli_real_escape_string($this->link, $slugDanhMuc);
 
-        // FIX: Lấy giá thấp nhất từ phiên bản sản phẩm
         $sql = "SELECT sp.*, 
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
@@ -516,9 +490,6 @@ class SanPham extends BaseModel
         return parent::query($sql);
     }
 
-    /**
-     * Tính giá sau khuyến mãi
-     */
     public function tinhGiaSauKhuyenMai(float $giaGoc, string $loaiGiam, float $giaTriGiam, ?float $giamToiDa = null): float
     {
         if ($loaiGiam === 'PHAN_TRAM') {
@@ -529,18 +500,13 @@ class SanPham extends BaseModel
             return $giaGoc - $tienGiam;
         }
 
-        // SO_TIEN
         return max(0, $giaGoc - $giaTriGiam);
     }
 
-    /**
-     * Lấy chi tiết sản phẩm theo slug
-     */
     public function layChiTietTheoSlug(string $slug): ?array
     {
         $slug = mysqli_real_escape_string($this->link, $slug);
 
-        // FIX: Thêm ảnh chính vào query
         $sql = "SELECT sp.*, dm.ten AS ten_danh_muc, dm.slug AS slug_danh_muc,
                        (SELECT url_anh FROM hinh_anh_san_pham 
                         WHERE san_pham_id = sp.id AND la_anh_chinh = 1 
@@ -553,8 +519,6 @@ class SanPham extends BaseModel
         $result = parent::query($sql);
         return !empty($result) ? $result[0] : null;
     }
-
-    // ===== Method hiển thị =====
 
     public function hienThiThongTin()
     {

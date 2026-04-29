@@ -17,9 +17,6 @@ class TimKiemController
         $this->lichSuModel = new \LichSuTimKiem();
     }
 
-    /**
-     * Tìm kiếm sản phẩm
-     */
     public function timKiem(): void
     {
         $params = $_GET;
@@ -42,12 +39,10 @@ class TimKiemController
         $limit = 15;
         $offset = ($page - 1) * $limit;
 
-        // Lưu lịch sử tìm kiếm nếu user đã đăng nhập
         if (!empty($keyword) && \App\Core\Session::get('user_id')) {
             $this->lichSuModel->luuLichSu(\App\Core\Session::get('user_id'), $keyword);
         }
 
-        // Lấy danh sách sản phẩm
         $sanPhams = $this->sanPhamModel->layDanhSachPhanTrang(
             $keyword,
             $danhMucId,
@@ -57,19 +52,14 @@ class TimKiemController
             $offset
         );
 
-        // Đếm tổng số sản phẩm
         $tongSanPham = $this->sanPhamModel->demSanPham($keyword, $danhMucId, $giaMin, $giaMax);
         $tongTrang = ceil($tongSanPham / $limit);
 
-        // Lấy danh mục để hiển thị filter
         $danhMucs = $this->sanPhamModel->layDanhSachDanhMucHoatDong();
 
         require_once dirname(__DIR__, 2) . '/views/client/tim_kiem/index.php';
     }
 
-    /**
-     * Lấy lịch sử tìm kiếm
-     */
     public function layLichSu(): void
     {
         if (!$_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -89,9 +79,6 @@ class TimKiemController
         echo json_encode(['success' => true, 'data' => $lichSu]);
     }
 
-    /**
-     * Xóa lịch sử tìm kiếm
-     */
     public function xoaLichSu(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -110,9 +97,6 @@ class TimKiemController
         echo json_encode(['success' => $result, 'message' => $result ? 'Đã xóa lịch sử' : 'Xóa thất bại']);
     }
 
-    /**
-     * Lấy từ khóa phổ biến
-     */
     public function layTuKhoaPhoBien(): void
     {
         if (!$_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -127,12 +111,8 @@ class TimKiemController
         echo json_encode(['success' => true, 'data' => $tuKhoas]);
     }
 
-    /**
-     * Tìm kiếm sản phẩm và trả về XML
-     */
     public function timKiemXML(): void
     {
-        // Clear any previous output
         if (ob_get_level()) {
             ob_clean();
         }
@@ -142,7 +122,6 @@ class TimKiemController
         try {
             $keyword = $_GET['q'] ?? '';
             
-            // Query products
             $sanPhams = [];
             if (!empty($keyword)) {
                 $sanPhams = $this->sanPhamModel->layDanhSachPhanTrang(
@@ -155,19 +134,15 @@ class TimKiemController
                 );
             }
             
-            // Build XML document
             $xml = new \DOMDocument('1.0', 'UTF-8');
             $xml->formatOutput = true;
             
-            // Create root element
             $root = $xml->createElement('products');
             $xml->appendChild($root);
-            
-            // Add products
+
             foreach ($sanPhams as $sp) {
                 $product = $xml->createElement('product');
                 
-                // Add product elements with proper escaping
                 $id = $xml->createElement('id', htmlspecialchars((string)($sp['id'] ?? ''), ENT_XML1, 'UTF-8'));
                 $product->appendChild($id);
                 
@@ -187,10 +162,9 @@ class TimKiemController
             }
             
             echo $xml->saveXML();
-            exit; // Important: stop execution after XML output
+            exit; 
             
         } catch (\Exception $e) {
-            // Return error XML
             error_log("XML Search Error: " . $e->getMessage());
             
             $xml = new \DOMDocument('1.0', 'UTF-8');

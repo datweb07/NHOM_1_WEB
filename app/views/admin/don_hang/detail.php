@@ -1,5 +1,4 @@
 <?php
-// Giữ nguyên các hàm và logic xử lý dữ liệu đầu trang
 function e($value): string
 {
     return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
@@ -25,7 +24,6 @@ $thanhToan = (isset($thanhToan) && is_array($thanhToan)) ? $thanhToan : null;
 $refunds = (isset($refunds) && is_array($refunds)) ? $refunds : [];
 $orderId = (int)($donHang['id'] ?? 0);
 
-// Include Master Layout
 require_once dirname(__DIR__) . '/layouts/header.php';
 require_once dirname(__DIR__) . '/layouts/sidebar.php';
 ?>

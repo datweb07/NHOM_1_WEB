@@ -1,18 +1,14 @@
 <?php
-// Load danh mục cho header
 require_once __DIR__ . '/../../../core/HeaderHelper.php';
 
 use App\Core\HeaderHelper;
 
-// SỬ DỤNG HÀM LẤY DANH MỤC PHÂN CẤP CHA-CON
 $danhMucTree = HeaderHelper::layDanhMucNavigation();
 
-// Kiểm tra đăng nhập và lấy số lượng yêu thích
 $isLoggedIn = \App\Core\Session::isLoggedIn();
 $userRole = \App\Core\Session::getUserRole();
 $accountUrl = ($isLoggedIn && $userRole === 'MEMBER') ? '/client/profile' : '/client/auth/login';
 
-// Lấy số lượng sản phẩm yêu thích
 $wishlistCount = 0;
 if ($isLoggedIn && $userRole === 'MEMBER') {
     require_once __DIR__ . '/../../../models/relationships/YeuThich.php';
@@ -20,7 +16,6 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
     $wishlistCount = YeuThich::demSoLuongYeuThich($userId);
 }
 
-// Lấy số lượng sản phẩm trong giỏ hàng
 $cartCount = 0;
 require_once __DIR__ . '/../../../models/entities/GioHang.php';
 require_once __DIR__ . '/../../../models/entities/ChiTietGio.php';
@@ -28,12 +23,10 @@ $gioHangModel = new GioHang();
 $chiTietGioModel = new ChiTietGio();
 
 if ($isLoggedIn && $userRole === 'MEMBER') {
-    // User đã đăng nhập
     $userId = \App\Core\Session::getUserId();
     $gioHang = $gioHangModel->layHoacTaoGioHangUser($userId);
     $cartCount = $chiTietGioModel->demSanPham($gioHang['id']);
 } else {
-    // Guest user
     $sessionId = session_id();
     if ($sessionId) {
         $gioHang = $gioHangModel->layHoacTaoGioHangGuest($sessionId);
@@ -42,516 +35,509 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
 }
 ?>
 <style>
-    /* --- BẠN GIỮ NGUYÊN CSS NÀY, CHỈ ĐIỀU CHỈNH FPT-BTN-MENU ĐỂ CÂN BẰNG CHIỀU CAO --- */
-    .sticky-header {
-        position: sticky;
-        top: 0;
-        z-index: 1030;
-        background-color: #cb1c22;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        width: 100%;
-    }
-
-    .sticky-header.scrolled {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        backdrop-filter: blur(10px);
-        z-index: 1030 !important;
-    }
-
-    body.sticky-active {
-        padding-top: 80px;
-    }
-
-    .navbar-main {
-        background-color: #cb1c22;
-    }
-
-    /* FPT Shop để cả thanh đỏ */
-    .fpt-menu-wrapper {
-        position: relative;
-        display: flex;
-        align-items: flex-start; /* ĐỔI THÀNH FLEX-START ĐỂ KHÔNG BỊ CĂN GIỮA NẾU HEADER CAO LÊN */
-    }
-
-    /* Nút Danh mục - ĐÃ ĐIỀU CHỈNH ĐỂ CAO ĐÚNG BẰNG THANH SEARCH (42px) */
-    .fpt-btn-menu {
-        background-color: rgba(0, 0, 0, 0.15);
-        color: #fff;
-        padding: 0 16px; 
-        height: 42px; /* Force chiều cao 42px cho bằng với Form tìm kiếm */
-        border-radius: 8px;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
-        font-size: 0.95rem;
-        transition: all 0.2s;
-    }
-
-    .fpt-btn-menu:hover {
-        background-color: rgba(0, 0, 0, 0.25);
-    }
-
-    .fpt-menu-wrapper::after {
-        content: '';
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        height: 15px; /* Tăng khoảng hở để dễ di chuột xuống menu */
-        background: transparent;
-        pointer-events: auto;
-    }
-
-    /* --- HIỆU ỨNG GẠCH CHÂN CHO TỪ KHÓA TÌM KIẾM THEO YÊU CẦU --- */
-    .quick-search-tags a:hover {
-        text-decoration: underline !important;
-    }
-
-    /* --- MEGA MENU PANEL KHỔNG LỒ --- */
-    .mega-menu-panel {
-        position: absolute;
-        top: calc(100% + 10px);
-        left: 0;
-        width: 1200px;
-        max-width: 100vw;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-        display: none;
-        flex-direction: row;
-        z-index: 1050;
-        overflow: hidden;
-    }
-
-    .fpt-menu-wrapper:hover .mega-menu-panel {
-        display: flex;
-    }
-
-    .mega-col-left {
-        width: 260px;
-        background: #fff;
-        border-right: 1px solid #f0f0f0;
-        padding: 15px 0;
-        height: 600px;
-        overflow-y: auto;
-    }
-
-    .mega-col-left::-webkit-scrollbar {
-        width: 4px;
-    }
-
-    .mega-col-left::-webkit-scrollbar-thumb {
-        background: #ddd;
-        border-radius: 4px;
-    }
-
-    .left-brand-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        padding: 0 15px 15px;
-    }
-
-    .left-brand-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.85rem;
-        color: #333;
-        text-decoration: none;
-        font-weight: 500;
-    }
-
-    .left-brand-item:hover,
-    .left-brand-item.active {
-        color: #cb1c22;
-        font-weight: 600;
-    }
-
-    .left-brand-item img {
-        width: 20px;
-        height: 20px;
-        object-fit: contain;
-    }
-
-    .menu-group-title {
-        font-size: 0.75rem;
-        color: #999;
-        text-transform: uppercase;
-        padding: 10px 15px 5px;
-        position: relative;
-    }
-
-    .menu-group-title::before {
-        content: "";
-        position: absolute;
-        left: 15px;
-        right: 15px;
-        top: 0;
-        border-top: 1px solid #f0f0f0;
-    }
-
-    .left-nav-item {
-        display: flex;
-        align-items: center;
-        padding: 10px 15px;
-        color: #333;
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: background 0.2s;
-    }
-
-    .left-nav-item i {
-        width: 24px;
-        text-align: center;
-        font-size: 1.1rem;
-        color: #555;
-    }
-
-    .left-nav-item:hover,
-    .left-nav-item.active {
-        background-color: #f8f9fa;
-        color: #cb1c22;
-        font-weight: 500;
-    }
-
-    .left-nav-item:hover i,
-    .left-nav-item.active i {
-        color: #cb1c22;
-    }
-
-    .mega-col-center {
-        flex: 1;
-        padding: 20px;
-        background: #fff;
-    }
-
-    .center-title {
-        font-size: 1.1rem;
-        font-weight: bold;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .brand-pills {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-    }
-
-    .brand-pill {
-        border: 1px solid #e0e0e0;
-        border-radius: 20px;
-        padding: 6px 16px;
-        color: #333;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.85rem;
-        transition: border 0.2s;
-    }
-
-    .brand-pill:hover {
-        border-color: #cb1c22;
-        color: #cb1c22;
-    }
-
-    .suggest-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 15px;
-        margin-bottom: 25px;
-        text-align: center;
-    }
-
-    .suggest-item {
-        text-decoration: none;
-        color: #333;
-    }
-
-    .suggest-item img {
-        width: 60px;
-        height: 60px;
-        object-fit: contain;
-        margin-bottom: 8px;
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 5px;
-    }
-
-    .suggest-item span {
-        display: block;
-        font-size: 0.8rem;
-        font-weight: 500;
-    }
-
-    .sub-cat-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-    }
-
-    .sub-cat-col h6 {
-        font-size: 0.9rem;
-        font-weight: bold;
-        margin-bottom: 10px;
-        color: #333;
-        cursor: pointer;
-    }
-
-    .sub-cat-col h6:hover {
-        color: #cb1c22;
-    }
-
-    .sub-cat-col a {
-        display: block;
-        color: #555;
-        text-decoration: none;
-        font-size: 0.85rem;
-        margin-bottom: 8px;
-        transition: color 0.2s;
-    }
-
-    .sub-cat-col a:hover {
-        color: #cb1c22;
-    }
-
-    .mega-col-right {
-        width: 260px;
-        background: #f8f9fa;
-        padding: 20px;
-        border-left: 1px solid #f0f0f0;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .right-btn {
-        background: #fff;
-        border: 1px solid #eee;
-        border-radius: 12px;
-        padding: 10px 15px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: #333;
-        text-decoration: none;
-        font-size: 0.85rem;
-        font-weight: 500;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
-        transition: all 0.2s;
-    }
-
-    .right-btn img {
-        width: 30px;
-        height: 30px;
-        object-fit: contain;
-    }
-
-    .right-btn:hover {
-        border-color: #cb1c22;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-        color: #cb1c22;
-    }
-
-    .promo-banner {
-        margin-top: auto;
-        border-radius: 12px;
-        overflow: hidden;
-    }
-
-    .promo-banner img {
-        width: 100%;
-        height: auto;
-        display: block;
-    }
-
-    .offcanvas {
-        z-index: 1050 !important;
-    }
-
-    .btn-profile {
-        background-color: rgba(0, 0, 0, 0.15);
-        border: none;
-        color: white;
-    }
-
-    .btn-profile:hover {
-        background-color: rgba(0, 0, 0, 0.25);
-        color: white;
-    }
-
-    /* Dropdown lịch sử tìm kiếm */
-    .search-history-dropdown {
-        position: absolute;
-        top: calc(100% + 5px);
-        left: 0;
-        right: 0;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        z-index: 1060;
-        max-height: 400px;
-        overflow-y: auto;
-        border: 1px solid #eee;
-    }
-
-    .dropdown-header {
-        border-bottom: 1px solid #f0f0f0;
-        background: #fafafa;
-    }
-
-    .history-list {
-        max-height: 300px;
-        overflow-y: auto;
-    }
-
-    .history-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 15px;
-        border-bottom: 1px solid #f5f5f5;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
-
-    .history-item:hover {
-        background: #f8f9fa;
-    }
-
-    .history-item .keyword {
-        flex: 1;
-        color: #333;
-        text-decoration: none;
-        font-size: 0.9rem;
-    }
-
-    .history-item .delete-btn {
-        color: #999;
-        background: none;
-        border: none;
-        font-size: 0.8rem;
-        cursor: pointer;
-        padding: 4px 8px;
-        border-radius: 20px;
-    }
-
-    .history-item .delete-btn:hover {
-        background: #eee;
-        color: #cb1c22;
-    }
-
-    .history-empty {
-        padding: 20px;
-        text-align: center;
-        color: #999;
-        font-size: 0.85rem;
-    }
-
-    /* XML Search Results Styles */
-    #xml-search-results,
-    #xml-search-loading {
-        position: absolute;
-        top: calc(100% + 5px);
-        left: 0;
-        right: 0;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        z-index: 1060;
-        max-height: 500px;
-        overflow-y: auto;
-        border: 1px solid #eee;
-    }
-
-    .xml-search-results-list {
-        padding: 10px;
-    }
-
-    .xml-search-result-item {
-        display: flex;
-        align-items: center;
-        padding: 12px;
-        border-radius: 8px;
-        text-decoration: none;
-        color: inherit;
-        transition: background 0.2s;
-        margin-bottom: 8px;
-    }
-
-    .xml-search-result-item:hover {
-        background: #f8f9fa;
-    }
-
-    .xml-search-result-image {
-        width: 60px;
-        height: 60px;
-        flex-shrink: 0;
-        margin-right: 12px;
-        border-radius: 6px;
-        overflow: hidden;
-        background: #f5f5f5;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .xml-search-result-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .xml-search-result-no-image {
-        font-size: 0.7rem;
-        color: #999;
-        text-align: center;
-    }
-
-    .xml-search-result-info {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .xml-search-result-name {
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #333;
-        margin-bottom: 4px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-    }
-
-    .xml-search-result-price {
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #cb1c22;
-    }
-
-    .xml-search-error,
-    .xml-search-no-results {
-        padding: 20px;
-        text-align: center;
-        color: #999;
-        font-size: 0.9rem;
-    }
-
-    .xml-search-error {
-        color: #dc3545;
-    }
+.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    background-color: #cb1c22;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.sticky-header.scrolled {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    z-index: 1030 !important;
+}
+
+body.sticky-active {
+    padding-top: 80px;
+}
+
+.navbar-main {
+    background-color: #cb1c22;
+}
+
+.fpt-menu-wrapper {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+}
+
+.fpt-btn-menu {
+    background-color: rgba(0, 0, 0, 0.15);
+    color: #fff;
+    padding: 0 16px;
+    height: 42px;
+    border-radius: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.fpt-btn-menu:hover {
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+.fpt-menu-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background: transparent;
+    pointer-events: auto;
+}
+
+.quick-search-tags a:hover {
+    text-decoration: underline !important;
+}
+
+.mega-menu-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: 1200px;
+    max-width: 100vw;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    display: none;
+    flex-direction: row;
+    z-index: 1050;
+    overflow: hidden;
+}
+
+.fpt-menu-wrapper:hover .mega-menu-panel {
+    display: flex;
+}
+
+.mega-col-left {
+    width: 260px;
+    background: #fff;
+    border-right: 1px solid #f0f0f0;
+    padding: 15px 0;
+    height: 600px;
+    overflow-y: auto;
+}
+
+.mega-col-left::-webkit-scrollbar {
+    width: 4px;
+}
+
+.mega-col-left::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 4px;
+}
+
+.left-brand-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0 15px 15px;
+}
+
+.left-brand-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.left-brand-item:hover,
+.left-brand-item.active {
+    color: #cb1c22;
+    font-weight: 600;
+}
+
+.left-brand-item img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.menu-group-title {
+    font-size: 0.75rem;
+    color: #999;
+    text-transform: uppercase;
+    padding: 10px 15px 5px;
+    position: relative;
+}
+
+.menu-group-title::before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    top: 0;
+    border-top: 1px solid #f0f0f0;
+}
+
+.left-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.left-nav-item i {
+    width: 24px;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #555;
+}
+
+.left-nav-item:hover,
+.left-nav-item.active {
+    background-color: #f8f9fa;
+    color: #cb1c22;
+    font-weight: 500;
+}
+
+.left-nav-item:hover i,
+.left-nav-item.active i {
+    color: #cb1c22;
+}
+
+.mega-col-center {
+    flex: 1;
+    padding: 20px;
+    background: #fff;
+}
+
+.center-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brand-pills {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.brand-pill {
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 6px 16px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+    transition: border 0.2s;
+}
+
+.brand-pill:hover {
+    border-color: #cb1c22;
+    color: #cb1c22;
+}
+
+.suggest-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.suggest-item {
+    text-decoration: none;
+    color: #333;
+}
+
+.suggest-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 8px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.suggest-item span {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.sub-cat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.sub-cat-col h6 {
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+    cursor: pointer;
+}
+
+.sub-cat-col h6:hover {
+    color: #cb1c22;
+}
+
+.sub-cat-col a {
+    display: block;
+    color: #555;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    transition: color 0.2s;
+}
+
+.sub-cat-col a:hover {
+    color: #cb1c22;
+}
+
+.mega-col-right {
+    width: 260px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-left: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.right-btn {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s;
+}
+
+.right-btn img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+.right-btn:hover {
+    border-color: #cb1c22;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    color: #cb1c22;
+}
+
+.promo-banner {
+    margin-top: auto;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.promo-banner img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.offcanvas {
+    z-index: 1050 !important;
+}
+
+.btn-profile {
+    background-color: rgba(0, 0, 0, 0.15);
+    border: none;
+    color: white;
+}
+
+.btn-profile:hover {
+    background-color: rgba(0, 0, 0, 0.25);
+    color: white;
+}
+
+.search-history-dropdown {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    z-index: 1060;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+}
+
+.dropdown-header {
+    border-bottom: 1px solid #f0f0f0;
+    background: #fafafa;
+}
+
+.history-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.history-item:hover {
+    background: #f8f9fa;
+}
+
+.history-item .keyword {
+    flex: 1;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.history-item .delete-btn {
+    color: #999;
+    background: none;
+    border: none;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 20px;
+}
+
+.history-item .delete-btn:hover {
+    background: #eee;
+    color: #cb1c22;
+}
+
+.history-empty {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-size: 0.85rem;
+}
+
+#xml-search-results,
+#xml-search-loading {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    z-index: 1060;
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+}
+
+.xml-search-results-list {
+    padding: 10px;
+}
+
+.xml-search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s;
+    margin-bottom: 8px;
+}
+
+.xml-search-result-item:hover {
+    background: #f8f9fa;
+}
+
+.xml-search-result-image {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    margin-right: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.xml-search-result-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.xml-search-result-no-image {
+    font-size: 0.7rem;
+    color: #999;
+    text-align: center;
+}
+
+.xml-search-result-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.xml-search-result-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.xml-search-result-price {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #cb1c22;
+}
+
+.xml-search-error,
+.xml-search-no-results {
+    padding: 20px;
+    text-align: center;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.xml-search-error {
+    color: #dc3545;
+}
 </style>
 
 <header class="sticky-header">
@@ -574,24 +560,25 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                     <a href="/yeu-thich" class="text-white text-decoration-none position-relative">
                         <i class="fa fa-heart fs-4"></i>
                         <?php if ($wishlistCount > 0): ?>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
-                                style="font-size: 0.6rem;">
-                                <?= $wishlistCount ?>
-                            </span>
+                        <span
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                            style="font-size: 0.6rem;">
+                            <?= $wishlistCount ?>
+                        </span>
                         <?php endif; ?>
                     </a>
                     <a href="/gio-hang" class="text-white text-decoration-none position-relative">
                         <i class="fa fa-shopping-cart fs-3"></i>
                         <?php if ($cartCount > 0): ?>
-                            <span id="cart-count-mobile"
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
-                                style="font-size: 0.6rem;">
-                                <?= $cartCount ?>
-                            </span>
+                        <span id="cart-count-mobile"
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                            style="font-size: 0.6rem;">
+                            <?= $cartCount ?>
+                        </span>
                         <?php else: ?>
-                            <span id="cart-count-mobile"
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark d-none"
-                                style="font-size: 0.6rem;">0</span>
+                        <span id="cart-count-mobile"
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark d-none"
+                            style="font-size: 0.6rem;">0</span>
                         <?php endif; ?>
                     </a>
                 </div>
@@ -606,16 +593,24 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                             <i class="fa fa-magnifying-glass"></i>
                         </button>
                     </form>
-                    
-                    <div class="quick-search-tags mt-2 d-flex flex-wrap justify-content-center gap-3 px-1" style="font-size: 0.8rem;">
-                        <a href="/san-pham?keyword=iphone+17" class="text-white text-decoration-none text-nowrap">iphone 17</a>
-                        <a href="/san-pham?keyword=laptop" class="text-white text-decoration-none text-nowrap">laptop</a>
-                        <a href="/san-pham?keyword=samsung" class="text-white text-decoration-none text-nowrap">samsung</a>
-                        <a href="/san-pham?keyword=iphone+16" class="text-white text-decoration-none text-nowrap">iphone 16</a>
-                        <a href="/san-pham?keyword=macbook" class="text-white text-decoration-none text-nowrap">macbook</a>
+
+                    <div class="quick-search-tags mt-2 d-flex flex-wrap justify-content-center gap-3 px-1"
+                        style="font-size: 0.8rem;">
+                        <a href="/san-pham?keyword=iphone+17" class="text-white text-decoration-none text-nowrap">iphone
+                            17</a>
+                        <a href="/san-pham?keyword=laptop"
+                            class="text-white text-decoration-none text-nowrap">laptop</a>
+                        <a href="/san-pham?keyword=samsung"
+                            class="text-white text-decoration-none text-nowrap">samsung</a>
+                        <a href="/san-pham?keyword=iphone+16" class="text-white text-decoration-none text-nowrap">iphone
+                            16</a>
+                        <a href="/san-pham?keyword=macbook"
+                            class="text-white text-decoration-none text-nowrap">macbook</a>
                         <a href="/san-pham?keyword=ipad" class="text-white text-decoration-none text-nowrap">ipad</a>
-                        <a href="/san-pham?keyword=macbook+neo" class="text-white text-decoration-none text-nowrap">macbook neo</a>
-                        <a href="/san-pham?keyword=may+lanh" class="text-white text-decoration-none text-nowrap">máy lạnh</a>
+                        <a href="/san-pham?keyword=macbook+neo"
+                            class="text-white text-decoration-none text-nowrap">macbook neo</a>
+                        <a href="/san-pham?keyword=may+lanh" class="text-white text-decoration-none text-nowrap">máy
+                            lạnh</a>
                     </div>
                 </div>
             </div>
@@ -679,11 +674,11 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                             $categoryUrl = '/danh-muc/' . $category['slug'];
                             $activeClass = ($index === 0) ? 'active' : '';
                         ?>
-                            <a href="<?= htmlspecialchars($categoryUrl) ?>" class="left-nav-item <?= $activeClass ?>"
-                                onmouseenter="fetchMegaMenu(<?= $category['id'] ?>, this)">
-                                <i class="<?= htmlspecialchars($iconClass) ?>"></i>
-                                <?= htmlspecialchars($category['ten']) ?>
-                            </a>
+                        <a href="<?= htmlspecialchars($categoryUrl) ?>" class="left-nav-item <?= $activeClass ?>"
+                            onmouseenter="fetchMegaMenu(<?= $category['id'] ?>, this)">
+                            <i class="<?= htmlspecialchars($iconClass) ?>"></i>
+                            <?= htmlspecialchars($category['ten']) ?>
+                        </a>
                         <?php endforeach; ?>
                     </div>
 
@@ -713,8 +708,8 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
             <div class="flex-grow-1 me-4 position-relative">
                 <form class="search-form d-flex w-100 position-relative" action="/san-pham" method="GET"
                     autocomplete="off">
-                    <input class="form-control rounded-pill ps-4" type="search" name="keyword" id="searchInput" data-xml-search-input
-                        value="<?= htmlspecialchars($_GET['keyword'] ?? '') ?>"
+                    <input class="form-control rounded-pill ps-4" type="search" name="keyword" id="searchInput"
+                        data-xml-search-input value="<?= htmlspecialchars($_GET['keyword'] ?? '') ?>"
                         placeholder="Nhập tên điện thoại, laptop, phụ kiện... cần tìm" style="height: 42px;">
                     <button class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-danger"
                         type="submit" style="text-decoration: none;">
@@ -722,17 +717,22 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                     </button>
                 </form>
 
-                <div class="quick-search-tags mt-2 d-flex justify-content-between px-3 w-100" style="font-size: 0.85rem;">
-                    <a href="/san-pham?keyword=iphone+17" class="text-white text-decoration-none text-nowrap">iphone 17</a>
+                <div class="quick-search-tags mt-2 d-flex justify-content-between px-3 w-100"
+                    style="font-size: 0.85rem;">
+                    <a href="/san-pham?keyword=iphone+17" class="text-white text-decoration-none text-nowrap">iphone
+                        17</a>
                     <a href="/san-pham?keyword=laptop" class="text-white text-decoration-none text-nowrap">laptop</a>
                     <a href="/san-pham?keyword=samsung" class="text-white text-decoration-none text-nowrap">samsung</a>
-                    <a href="/san-pham?keyword=iphone+16" class="text-white text-decoration-none text-nowrap">iphone 16</a>
+                    <a href="/san-pham?keyword=iphone+16" class="text-white text-decoration-none text-nowrap">iphone
+                        16</a>
                     <a href="/san-pham?keyword=macbook" class="text-white text-decoration-none text-nowrap">macbook</a>
                     <a href="/san-pham?keyword=ipad" class="text-white text-decoration-none text-nowrap">ipad</a>
-                    <a href="/san-pham?keyword=macbook+neo" class="text-white text-decoration-none text-nowrap">macbook neo</a>
-                    <a href="/san-pham?keyword=may+lanh" class="text-white text-decoration-none text-nowrap">máy lạnh</a>
-                </div>  
-                
+                    <a href="/san-pham?keyword=macbook+neo" class="text-white text-decoration-none text-nowrap">macbook
+                        neo</a>
+                    <a href="/san-pham?keyword=may+lanh" class="text-white text-decoration-none text-nowrap">máy
+                        lạnh</a>
+                </div>
+
                 <div id="searchHistoryDropdown" class="search-history-dropdown" style="display: none;">
                     <div class="dropdown-header d-flex justify-content-between align-items-center px-3 py-2">
                         <span class="fw-bold">Lịch sử tìm kiếm</span>
@@ -742,10 +742,10 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                             <a href="#" id="clearAllHistory" class="text-decoration-none text-danger"
                                 style="font-size: 0.8rem;">Xóa tất cả</a>
                         </div>
-                    </div> 
+                    </div>
 
                     <div id="xml-search-results" data-xml-search-results style="display: none;"></div>
-                    
+
                     <div id="xml-search-loading" data-xml-search-loading style="display: none;">
                         <div class="text-center py-3">
                             <div class="spinner-border spinner-border-sm text-danger" role="status">
@@ -754,7 +754,7 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                             <div class="mt-2 text-muted small">Đang tìm kiếm...</div>
                         </div>
                     </div>
-                    
+
                     <div id="historyList" class="history-list">
                         <div class="text-muted text-center py-2">Đang tải...</div>
                     </div>
@@ -770,10 +770,11 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                     style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
                     <i class="fa fa-heart fs-5"></i>
                     <?php if ($wishlistCount > 0): ?>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
-                            style="font-size: 0.65rem; padding: 0.25em 0.5em;">
-                            <?= $wishlistCount ?>
-                        </span>
+                    <span
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                        style="font-size: 0.65rem; padding: 0.25em 0.5em;">
+                        <?= $wishlistCount ?>
+                    </span>
                     <?php endif; ?>
                 </a>
                 <a href="/gio-hang" class="btn btn-dark rounded-pill px-4 position-relative"
@@ -781,15 +782,15 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                     <i class="fa fa-shopping-cart text-white fs-5"></i>
                     <span class="text-white fw-bold">Giỏ hàng</span>
                     <?php if ($cartCount > 0): ?>
-                        <span id="cart-count-desktop"
-                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
-                            style="font-size: 0.65rem; padding: 0.25em 0.5em;">
-                            <?= $cartCount ?>
-                        </span>
+                    <span id="cart-count-desktop"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                        style="font-size: 0.65rem; padding: 0.25em 0.5em;">
+                        <?= $cartCount ?>
+                    </span>
                     <?php else: ?>
-                        <span id="cart-count-desktop"
-                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark d-none"
-                            style="font-size: 0.65rem; padding: 0.25em 0.5em;">0</span>
+                    <span id="cart-count-desktop"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark d-none"
+                        style="font-size: 0.65rem; padding: 0.25em 0.5em;">0</span>
                     <?php endif; ?>
                 </a>
             </div>
@@ -808,14 +809,14 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
                     $iconClass = HeaderHelper::layIconClass($category['ten']);
                     $categoryUrl = '/danh-muc/' . $category['slug'];
                 ?>
-                    <a href="<?= htmlspecialchars($categoryUrl) ?>"
-                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                        <span><i class="<?= htmlspecialchars($iconClass) ?> fa-fw me-2"></i>
-                            <?= htmlspecialchars($category['ten']) ?></span>
-                        <?php if (!empty($category['children'])): ?>
-                            <i class="fa fa-chevron-right text-muted" style="font-size: 0.8rem;"></i>
-                        <?php endif; ?>
-                    </a>
+                <a href="<?= htmlspecialchars($categoryUrl) ?>"
+                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    <span><i class="<?= htmlspecialchars($iconClass) ?> fa-fw me-2"></i>
+                        <?= htmlspecialchars($category['ten']) ?></span>
+                    <?php if (!empty($category['children'])): ?>
+                    <i class="fa fa-chevron-right text-muted" style="font-size: 0.8rem;"></i>
+                    <?php endif; ?>
+                </a>
                 <?php endforeach; ?>
 
                 <div class="p-3 bg-light text-muted fw-bold mt-2" style="font-size:0.8rem;">TIỆN ÍCH & TÀI KHOẢN</div>
@@ -830,362 +831,340 @@ if ($isLoggedIn && $userRole === 'MEMBER') {
 </header>
 
 <script>
-    const megaMenuCache = {};
-    const brandMenuCache = {}; // Cache mới dành riêng cho thương hiệu
-    let currentHoverId = null;
-    let currentHoverBrand = null; // Theo dõi hãng đang hover
+const megaMenuCache = {};
+const brandMenuCache = {};
+let currentHoverId = null;
+let currentHoverBrand = null;
 
-    // Load dữ liệu cho danh mục đầu tiên ngay khi vào trang (giữ nguyên)
-    document.addEventListener('DOMContentLoaded', () => {
-        const firstNavItem = document.querySelector('.left-nav-item');
-        if (firstNavItem) {
-            const onclickAttr = firstNavItem.getAttribute('onmouseenter');
-            if (onclickAttr) {
-                const idMatch = onclickAttr.match(/fetchMegaMenu\((\d+)/);
-                if (idMatch) {
-                    fetchMegaMenu(idMatch[1], firstNavItem);
-                }
+document.addEventListener('DOMContentLoaded', () => {
+    const firstNavItem = document.querySelector('.left-nav-item');
+    if (firstNavItem) {
+        const onclickAttr = firstNavItem.getAttribute('onmouseenter');
+        if (onclickAttr) {
+            const idMatch = onclickAttr.match(/fetchMegaMenu\((\d+)/);
+            if (idMatch) {
+                fetchMegaMenu(idMatch[1], firstNavItem);
             }
-        }
-    });
-
-    // --- HÀM 1: LẤY DỮ LIỆU THEO DANH MỤC (Đã chỉnh sửa để xóa active của Brand) ---
-    async function fetchMegaMenu(id, element) {
-        // Tắt active của TẤT CẢ danh mục và thương hiệu
-        document.querySelectorAll('.left-nav-item, .left-brand-item').forEach(el => el.classList.remove('active'));
-        element.classList.add('active');
-
-        currentHoverBrand = null; // Reset trạng thái brand
-        currentHoverId = id;
-        const container = document.getElementById('mega-center-content');
-
-        if (megaMenuCache[id]) {
-            renderMegaMenu(megaMenuCache[id], container);
-            return;
-        }
-
-        container.innerHTML = '<div class="text-center py-5 mt-5"><div class="spinner-border text-danger"></div></div>';
-
-        try {
-            const response = await fetch(`/api/mega-menu?id=${id}`);
-            const result = await response.json();
-
-            if (result.success) {
-                megaMenuCache[id] = result.data;
-                if (currentHoverId === id) { // Chống nháy
-                    renderMegaMenu(result.data, container);
-                }
-            }
-        } catch (error) {
-            container.innerHTML = '<div class="text-danger p-3 text-center mt-5">Lỗi tải dữ liệu. Vui lòng thử lại.</div>';
         }
     }
+});
 
-    // --- HÀM 2: HÀM MỚI LẤY DỮ LIỆU THEO THƯƠNG HIỆU ---
-    async function fetchBrandMenu(brandName, element) {
-        // Tắt active của TẤT CẢ danh mục và thương hiệu
-        document.querySelectorAll('.left-nav-item, .left-brand-item').forEach(el => el.classList.remove('active'));
-        element.classList.add('active');
+async function fetchMegaMenu(id, element) {
+    document.querySelectorAll('.left-nav-item, .left-brand-item').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
 
-        currentHoverId = null; // Reset trạng thái danh mục
-        currentHoverBrand = brandName;
-        const container = document.getElementById('mega-center-content');
+    currentHoverBrand = null;
+    currentHoverId = id;
+    const container = document.getElementById('mega-center-content');
 
-        if (brandMenuCache[brandName]) {
-            renderMegaMenu(brandMenuCache[brandName], container);
-            return;
+    if (megaMenuCache[id]) {
+        renderMegaMenu(megaMenuCache[id], container);
+        return;
+    }
+
+    container.innerHTML = '<div class="text-center py-5 mt-5"><div class="spinner-border text-danger"></div></div>';
+
+    try {
+        const response = await fetch(`/api/mega-menu?id=${id}`);
+        const result = await response.json();
+
+        if (result.success) {
+            megaMenuCache[id] = result.data;
+            if (currentHoverId === id) {
+                renderMegaMenu(result.data, container);
+            }
         }
+    } catch (error) {
+        container.innerHTML =
+            '<div class="text-danger p-3 text-center mt-5">Lỗi tải dữ liệu. Vui lòng thử lại.</div>';
+    }
+}
 
-        container.innerHTML = '<div class="text-center py-5 mt-5"><div class="spinner-border text-danger"></div></div>';
+async function fetchBrandMenu(brandName, element) {
+    document.querySelectorAll('.left-nav-item, .left-brand-item').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+
+    currentHoverId = null;
+    currentHoverBrand = brandName;
+    const container = document.getElementById('mega-center-content');
+
+    if (brandMenuCache[brandName]) {
+        renderMegaMenu(brandMenuCache[brandName], container);
+        return;
+    }
+
+    container.innerHTML = '<div class="text-center py-5 mt-5"><div class="spinner-border text-danger"></div></div>';
+
+    try {
+
+        const response = await fetch(`/api/brand-menu.php?name=${encodeURIComponent(brandName)}`);
+
+        const rawText = await response.text();
 
         try {
 
-            const response = await fetch(`/api/brand-menu.php?name=${encodeURIComponent(brandName)}`);
+            const result = JSON.parse(rawText);
 
-            const rawText = await response.text();
-
-            try {
-
-                const result = JSON.parse(rawText);
-
-                if (result.success) {
-                    brandMenuCache[brandName] = result.data;
-                    if (currentHoverBrand === brandName) {
-                        renderMegaMenu(result.data, container);
-                    }
-                } else {
-                    container.innerHTML = `<div class="text-muted p-3 text-center mt-5">${result.message || 'Chưa có dữ liệu cho thương hiệu này.'}</div>`;
+            if (result.success) {
+                brandMenuCache[brandName] = result.data;
+                if (currentHoverBrand === brandName) {
+                    renderMegaMenu(result.data, container);
                 }
-            } catch (parseError) {
+            } else {
+                container.innerHTML =
+                    `<div class="text-muted p-3 text-center mt-5">${result.message || 'Chưa có dữ liệu cho thương hiệu này.'}</div>`;
+            }
+        } catch (parseError) {
 
-                console.error("Raw response:", rawText);
-                container.innerHTML = `
+            console.error("Raw response:", rawText);
+            container.innerHTML = `
                     <div class="text-danger p-3 text-start mt-4" style="max-height: 400px; overflow-y: auto; background: #fff3f3; border-radius: 8px;">
                         <b>Phát hiện lỗi từ Server (Không phải chuẩn JSON):</b><br/>
                         <code style="color: #d63384;">${rawText}</code>
                     </div>`;
-            }
-        } catch (error) {
-            container.innerHTML = '<div class="text-danger p-3 text-center mt-5">Lỗi tải dữ liệu thương hiệu.</div>';
         }
+    } catch (error) {
+        container.innerHTML = '<div class="text-danger p-3 text-center mt-5">Lỗi tải dữ liệu thương hiệu.</div>';
+    }
+}
+
+function renderMegaMenu(data, container) {
+    let html = '<div class="center-title">🔥 Gợi ý cho bạn</div>';
+
+    if (data.brands && data.brands.length > 0) {
+        html += '<div class="brand-pills">';
+        data.brands.forEach(b => {
+            html +=
+                `<a href="/san-pham?keyword=${encodeURIComponent(b.hang_san_xuat)}" class="brand-pill">${b.hang_san_xuat}</a>`;
+        });
+        html += '</div>';
     }
 
-    function renderMegaMenu(data, container) {
-        let html = '<div class="center-title">🔥 Gợi ý cho bạn</div>';
+    if (data.products && data.products.length > 0) {
+        html += '<div class="suggest-grid">';
+        data.products.forEach(p => {
+            const img = p.anh_chinh || 'https://via.placeholder.com/60';
+            const shortName = p.ten_san_pham.length > 25 ? p.ten_san_pham.substring(0, 25) + '...' : p
+                .ten_san_pham;
 
-        // 1. Thương hiệu (Pills)
-        if (data.brands && data.brands.length > 0) {
-            html += '<div class="brand-pills">';
-            data.brands.forEach(b => {
-                html += `<a href="/san-pham?keyword=${encodeURIComponent(b.hang_san_xuat)}" class="brand-pill">${b.hang_san_xuat}</a>`;
-            });
-            html += '</div>';
-        }
-
-        // 2. Gợi ý Sản phẩm (5 Sản phẩm có ảnh chính)
-        if (data.products && data.products.length > 0) {
-            html += '<div class="suggest-grid">';
-            data.products.forEach(p => {
-                const img = p.anh_chinh || 'https://via.placeholder.com/60';
-                const shortName = p.ten_san_pham.length > 25 ? p.ten_san_pham.substring(0, 25) + '...' : p.ten_san_pham;
-
-                html += `
+            html += `
                 <a href="/san-pham/${p.slug}" class="suggest-item">
                     <img src="${img}" alt="${p.ten_san_pham}">
                     <span>${shortName}</span>
                 </a>`;
-            });
-            html += '</div>';
-        } else {
-            html += '<div class="text-muted mb-4 small">Chưa có sản phẩm nào cho danh mục này.</div>';
-        }
+        });
+        html += '</div>';
+    } else {
+        html += '<div class="text-muted mb-4 small">Chưa có sản phẩm nào cho danh mục này.</div>';
+    }
 
-        // 3. Danh mục con
-        if (data.subCategories && data.subCategories.length > 0) {
-            html += '<div class="sub-cat-grid mt-4">';
+    if (data.subCategories && data.subCategories.length > 0) {
+        html += '<div class="sub-cat-grid mt-4">';
 
-            let colHtml = '';
-            data.subCategories.forEach((sub, index) => {
-                if (index % 5 === 0) {
-                    if (index > 0) colHtml += '</div>'; // Đóng cột
-                    colHtml += `<div class="sub-cat-col">
+        let colHtml = '';
+        data.subCategories.forEach((sub, index) => {
+            if (index % 5 === 0) {
+                if (index > 0) colHtml += '</div>';
+                colHtml += `<div class="sub-cat-col">
                                     <h6>Phân loại <i class="fa fa-angle-right ms-1"></i></h6>`;
-                }
-                colHtml += `<a href="/danh-muc/${sub.slug}">${sub.ten}</a>`;
-            });
-            colHtml += '</div>';
-
-            html += colHtml + '</div>';
-        }
-
-        container.innerHTML = html;
-    }
-    // ========== LỊCH SỬ TÌM KIẾM ==========
-    const searchInput = document.getElementById('searchInput');
-    const historyDropdown = document.getElementById('searchHistoryDropdown');
-    const historyListDiv = document.getElementById('historyList');
-    const viewAllBtn = document.getElementById('viewAllHistory');
-    const clearAllBtn = document.getElementById('clearAllHistory');
-
-    let currentHistoryData = [];
-
-    // Kiểm tra đăng nhập qua session (có thể gán biến từ PHP)
-    // Giả sử bạn đã có biến isLoggedIn ở đây, nếu không thì gọi API kiểm tra riêng
-    const isLoggedIn = <?php echo json_encode($isLoggedIn); ?>; // $isLoggedIn đã có ở trên
-
-    async function loadSearchHistory(limit = 5) {
-        if (!isLoggedIn) {
-            historyListDiv.innerHTML = '<div class="history-empty">Đăng nhập để xem lịch sử tìm kiếm</div>';
-            return;
-        }
-        try {
-            const response = await fetch(`/tim-kiem/lich-su?limit=${limit}`);
-            const result = await response.json();
-            if (result.success && result.data.length > 0) {
-                currentHistoryData = result.data;
-                renderHistoryList(result.data);
-            } else {
-                historyListDiv.innerHTML = '<div class="history-empty">Chưa có lịch sử tìm kiếm</div>';
             }
-        } catch (error) {
-            historyListDiv.innerHTML = '<div class="history-empty">Lỗi tải dữ liệu</div>';
-        }
+            colHtml += `<a href="/danh-muc/${sub.slug}">${sub.ten}</a>`;
+        });
+        colHtml += '</div>';
+
+        html += colHtml + '</div>';
     }
 
-    function renderHistoryList(history) {
-        if (!history.length) {
+    container.innerHTML = html;
+}
+const searchInput = document.getElementById('searchInput');
+const historyDropdown = document.getElementById('searchHistoryDropdown');
+const historyListDiv = document.getElementById('historyList');
+const viewAllBtn = document.getElementById('viewAllHistory');
+const clearAllBtn = document.getElementById('clearAllHistory');
+
+let currentHistoryData = [];
+
+const isLoggedIn = <?php echo json_encode($isLoggedIn); ?>;
+
+async function loadSearchHistory(limit = 5) {
+    if (!isLoggedIn) {
+        historyListDiv.innerHTML = '<div class="history-empty">Đăng nhập để xem lịch sử tìm kiếm</div>';
+        return;
+    }
+    try {
+        const response = await fetch(`/tim-kiem/lich-su?limit=${limit}`);
+        const result = await response.json();
+        if (result.success && result.data.length > 0) {
+            currentHistoryData = result.data;
+            renderHistoryList(result.data);
+        } else {
             historyListDiv.innerHTML = '<div class="history-empty">Chưa có lịch sử tìm kiếm</div>';
-            return;
         }
-        let html = '';
-        history.forEach(item => {
-            html += `
+    } catch (error) {
+        historyListDiv.innerHTML = '<div class="history-empty">Lỗi tải dữ liệu</div>';
+    }
+}
+
+function renderHistoryList(history) {
+    if (!history.length) {
+        historyListDiv.innerHTML = '<div class="history-empty">Chưa có lịch sử tìm kiếm</div>';
+        return;
+    }
+    let html = '';
+    history.forEach(item => {
+        html += `
             <div class="history-item" data-keyword="${escapeHtml(item.tu_khoa)}">
                 <a href="/san-pham?keyword=${encodeURIComponent(item.tu_khoa)}" class="keyword">${escapeHtml(item.tu_khoa)}</a>
                 <button class="delete-btn" data-keyword="${escapeHtml(item.tu_khoa)}"><i class="fa fa-trash-o"></i></button>
             </div>
         `;
+    });
+    historyListDiv.innerHTML = html;
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const keyword = btn.getAttribute('data-keyword');
+            await deleteSingleKeyword(keyword);
         });
-        historyListDiv.innerHTML = html;
-
-        // Gắn sự kiện xóa từng từ khóa
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                e.stopPropagation();
-                const keyword = btn.getAttribute('data-keyword');
-                await deleteSingleKeyword(keyword);
-            });
-        });
-    }
-
-    async function deleteSingleKeyword(keyword) {
-        if (!confirm(`Xóa từ khóa "${keyword}" khỏi lịch sử?`)) return;
-        try {
-            const response = await fetch('/tim-kiem/xoa-lich-su', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    keyword: keyword
-                }) // cần sửa backend hỗ trợ xóa 1 từ
-            });
-            const result = await response.json();
-            if (result.success) {
-                loadSearchHistory(5); // reload lại 5 mục
-            } else {
-                alert('Xóa thất bại');
-            }
-        } catch (error) {
-            alert('Lỗi kết nối');
-        }
-    }
-
-    async function clearAllHistory() {
-        if (!confirm('Bạn có chắc muốn xóa toàn bộ lịch sử tìm kiếm?')) return;
-        try {
-            const response = await fetch('/tim-kiem/xoa-lich-su', {
-                method: 'POST'
-            });
-            const result = await response.json();
-            if (result.success) {
-                loadSearchHistory(5);
-            } else {
-                alert('Xóa thất bại');
-            }
-        } catch (error) {
-            alert('Lỗi kết nối');
-        }
-    }
-
-    // Xem tất cả: load 20 từ khóa (hoặc tất cả)
-    function viewAllHistory() {
-        loadSearchHistory(20); // hoặc 0 để lấy tất cả (cần backend hỗ trợ)
-    }
-
-    // Khi focus vào input
-    searchInput.addEventListener('focus', () => {
-        loadSearchHistory(5);
-        historyDropdown.style.display = 'block';
     });
+}
 
-    // Ẩn dropdown khi click ra ngoài
-    document.addEventListener('click', function(e) {
-        if (!searchInput.contains(e.target) && !historyDropdown.contains(e.target)) {
-            historyDropdown.style.display = 'none';
-        }
-    });
-
-    // Ngăn click vào dropdown làm mất focus input
-    historyDropdown.addEventListener('click', (e) => {
-        e.stopPropagation();
-    });
-
-    // Xử lý nút xem tất cả và xóa tất cả
-    if (viewAllBtn) viewAllBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        viewAllHistory();
-    });
-    if (clearAllBtn) clearAllBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        clearAllHistory();
-    });
-
-    // Helper escape HTML
-    function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    // Hàm cập nhật số lượng giỏ hàng
-    function updateCartCount() {
-        fetch('/gio-hang/dem-san-pham')
-            .then(response => response.json())
-            .then(data => {
-                const count = data.count || 0;
-                const cartCountMobile = document.getElementById('cart-count-mobile');
-                const cartCountDesktop = document.getElementById('cart-count-desktop');
-
-                if (cartCountMobile) {
-                    cartCountMobile.textContent = count;
-                    if (count > 0) {
-                        cartCountMobile.classList.remove('d-none');
-                    } else {
-                        cartCountMobile.classList.add('d-none');
-                    }
-                }
-
-                if (cartCountDesktop) {
-                    cartCountDesktop.textContent = count;
-                    if (count > 0) {
-                        cartCountDesktop.classList.remove('d-none');
-                    } else {
-                        cartCountDesktop.classList.add('d-none');
-                    }
-                }
+async function deleteSingleKeyword(keyword) {
+    if (!confirm(`Xóa từ khóa "${keyword}" khỏi lịch sử?`)) return;
+    try {
+        const response = await fetch('/tim-kiem/xoa-lich-su', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                keyword: keyword
             })
-            .catch(error => console.error('Error updating cart count:', error));
+        });
+        const result = await response.json();
+        if (result.success) {
+            loadSearchHistory(5);
+        } else {
+            alert('Xóa thất bại');
+        }
+    } catch (error) {
+        alert('Lỗi kết nối');
     }
+}
 
-    // Expose hàm updateCartCount ra global scope để các trang khác có thể gọi
-    window.updateCartCount = updateCartCount;
+async function clearAllHistory() {
+    if (!confirm('Bạn có chắc muốn xóa toàn bộ lịch sử tìm kiếm?')) return;
+    try {
+        const response = await fetch('/tim-kiem/xoa-lich-su', {
+            method: 'POST'
+        });
+        const result = await response.json();
+        if (result.success) {
+            loadSearchHistory(5);
+        } else {
+            alert('Xóa thất bại');
+        }
+    } catch (error) {
+        alert('Lỗi kết nối');
+    }
+}
 
-    // ========== STICKY HEADER BEHAVIOR ==========
-    // Force sticky behavior with JavaScript
-    const stickyHeader = document.querySelector('.sticky-header');
-    let headerHeight = 0;
-    
-    if (stickyHeader) {
-        // Get header height after DOM is loaded
+function viewAllHistory() {
+    loadSearchHistory(20);
+}
+
+searchInput.addEventListener('focus', () => {
+    loadSearchHistory(5);
+    historyDropdown.style.display = 'block';
+});
+
+document.addEventListener('click', function(e) {
+    if (!searchInput.contains(e.target) && !historyDropdown.contains(e.target)) {
+        historyDropdown.style.display = 'none';
+    }
+});
+
+historyDropdown.addEventListener('click', (e) => {
+    e.stopPropagation();
+});
+
+if (viewAllBtn) viewAllBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    viewAllHistory();
+});
+if (clearAllBtn) clearAllBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    clearAllHistory();
+});
+
+function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
+function updateCartCount() {
+    fetch('/gio-hang/dem-san-pham')
+        .then(response => response.json())
+        .then(data => {
+            const count = data.count || 0;
+            const cartCountMobile = document.getElementById('cart-count-mobile');
+            const cartCountDesktop = document.getElementById('cart-count-desktop');
+
+            if (cartCountMobile) {
+                cartCountMobile.textContent = count;
+                if (count > 0) {
+                    cartCountMobile.classList.remove('d-none');
+                } else {
+                    cartCountMobile.classList.add('d-none');
+                }
+            }
+
+            if (cartCountDesktop) {
+                cartCountDesktop.textContent = count;
+                if (count > 0) {
+                    cartCountDesktop.classList.remove('d-none');
+                } else {
+                    cartCountDesktop.classList.add('d-none');
+                }
+            }
+        })
+        .catch(error => console.error('Error updating cart count:', error));
+}
+
+window.updateCartCount = updateCartCount;
+
+const stickyHeader = document.querySelector('.sticky-header');
+let headerHeight = 0;
+
+if (stickyHeader) {
+    headerHeight = stickyHeader.offsetHeight;
+
+    window.addEventListener('scroll', function() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (scrollTop > 10) {
+            stickyHeader.classList.add('scrolled');
+            document.body.classList.add('sticky-active');
+
+            document.body.style.paddingTop = headerHeight + 'px';
+        } else {
+            stickyHeader.classList.remove('scrolled');
+            document.body.classList.remove('sticky-active');
+            document.body.style.paddingTop = '0';
+        }
+    });
+
+    window.addEventListener('resize', function() {
         headerHeight = stickyHeader.offsetHeight;
-        
-        window.addEventListener('scroll', function() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            // Force sticky behavior
-            if (scrollTop > 10) {
-                stickyHeader.classList.add('scrolled');
-                document.body.classList.add('sticky-active');
-                
-                // Update padding based on actual header height
-                document.body.style.paddingTop = headerHeight + 'px';
-            } else {
-                stickyHeader.classList.remove('scrolled');
-                document.body.classList.remove('sticky-active');
-                document.body.style.paddingTop = '0';
-            }
-        });
-        
-        // Recalculate height on resize
-        window.addEventListener('resize', function() {
-            headerHeight = stickyHeader.offsetHeight;
-            if (stickyHeader.classList.contains('scrolled')) {
-                document.body.style.paddingTop = headerHeight + 'px';
-            }
-        });
-    }
+        if (stickyHeader.classList.contains('scrolled')) {
+            document.body.style.paddingTop = headerHeight + 'px';
+        }
+    });
+}
 </script>

@@ -9,12 +9,10 @@ class PaymentConfigValidator
         $warnings = [];
         $errors = [];
 
-
         $vnpayResult = self::validateVNPay();
         if (!$vnpayResult['valid']) {
             $warnings[] = $vnpayResult['message'];
         }
-
 
         if (!empty($warnings)) {
             error_log('[Payment Config] ' . implode(' | ', $warnings));
@@ -45,7 +43,6 @@ class PaymentConfigValidator
             ];
         }
 
-
         if (!filter_var($_ENV['VNPAY_URL'], FILTER_VALIDATE_URL)) {
             return [
                 'valid' => false,
@@ -58,8 +55,6 @@ class PaymentConfigValidator
             'message' => 'VNPay gateway configured successfully'
         ];
     }
-
-
 
     public static function getStatus(): array
     {
@@ -88,7 +83,7 @@ class PaymentConfigValidator
     public static function getAvailablePaymentMethods(): array
     {
         $validation = self::validate();
-        $methods = ['COD']; // COD is always available
+        $methods = ['COD']; 
 
         if ($validation['vnpay_configured']) {
             $methods[] = 'CHUYEN_KHOAN';

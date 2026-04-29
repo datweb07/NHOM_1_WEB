@@ -1,79 +1,83 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kiểm tra email - FPT Shop</title>
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    
+
     <link rel="icon" href="<?= ASSET_URL ?>/assets/client/images/header/1.png">
-    
+
     <style>
-        :root {
-            --fpt-red: #cb1c22;
-            --fpt-red-hover: #a8151b;
-        }
+    :root {
+        --fpt-red: #cb1c22;
+        --fpt-red-hover: #a8151b;
+    }
 
-        body {
-            background-color: #f8f9fa;
-        }
+    body {
+        background-color: #f8f9fa;
+    }
 
-        .custom-card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
+    .custom-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
 
-        .text-brand {
-            color: var(--fpt-red);
-        }
+    .text-brand {
+        color: var(--fpt-red);
+    }
 
-        a.text-brand:hover {
-            color: var(--fpt-red-hover);
-        }
+    a.text-brand:hover {
+        color: var(--fpt-red-hover);
+    }
 
-        .btn-primary-brand {
-            background-color: var(--fpt-red);
-            border-color: var(--fpt-red);
-            color: white;
-            font-weight: 500;
-            padding: 10px 20px;
-        }
+    .btn-primary-brand {
+        background-color: var(--fpt-red);
+        border-color: var(--fpt-red);
+        color: white;
+        font-weight: 500;
+        padding: 10px 20px;
+    }
 
-        .btn-primary-brand:hover, .btn-primary-brand:focus {
-            background-color: var(--fpt-red-hover);
-            border-color: var(--fpt-red-hover);
-            color: white;
-        }
+    .btn-primary-brand:hover,
+    .btn-primary-brand:focus {
+        background-color: var(--fpt-red-hover);
+        border-color: var(--fpt-red-hover);
+        color: white;
+    }
 
-        .icon-circle {
-            width: 80px;
-            height: 80px;
-            background-color: rgba(203, 28, 34, 0.08); 
-            color: var(--fpt-red);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            margin: 0 auto;
-        }
+    .icon-circle {
+        width: 80px;
+        height: 80px;
+        background-color: rgba(203, 28, 34, 0.08);
+        color: var(--fpt-red);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto;
+    }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="row justify-content-center align-items-center min-vh-100 py-5">
             <div class="col-md-7 col-lg-6 col-xl-5">
-                
+
                 <div class="text-center mb-4">
-                    <img src="<?= ASSET_URL ?>/assets/client/images/others/fpt-shop-banner.png" alt="FPT Shop" style="height: 100px;">
+                    <img src="<?= ASSET_URL ?>/assets/client/images/others/fpt-shop-banner.png" alt="FPT Shop"
+                        style="height: 100px;">
                 </div>
 
                 <div class="card custom-card">
                     <div class="card-body p-4 p-sm-5">
-                        
+
                         <div class="text-center mb-4">
                             <div class="icon-circle mb-3">
                                 <i class="bi bi-envelope-check"></i>
@@ -85,9 +89,10 @@
                         </div>
 
                         <div class="d-grid mb-3">
-                            <a href="/client/auth/login" class="btn btn-primary-brand btn-lg" style="font-size: 1rem;">Đến trang Đăng nhập</a>
+                            <a href="/client/auth/login" class="btn btn-primary-brand btn-lg"
+                                style="font-size: 1rem;">Đến trang Đăng nhập</a>
                         </div>
-                        
+
                     </div>
                 </div>
 
@@ -96,11 +101,12 @@
                         &larr; Quay về trang chủ
                     </a>
                 </div>
-                
+
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

@@ -26,7 +26,6 @@ class NguoiDungController
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
-        // Get users based on search or filters
         if ($search !== '') {
             $danhSachNguoiDung = $this->nguoiDungModel->timKiem($search, $limit, $offset);
             $totalNguoiDung = count($this->nguoiDungModel->timKiem($search, 10000, 0));
@@ -98,7 +97,6 @@ class NguoiDungController
             exit;
         }
 
-        // Prevent self-blocking
         require_once dirname(__DIR__, 2) . '/core/Session.php';
         \App\Core\Session::start();
         $currentUserId = \App\Core\Session::get('user_id');
@@ -150,7 +148,6 @@ class NguoiDungController
             exit;
         }
 
-        // Prevent self-blocking
         require_once dirname(__DIR__, 2) . '/core/Session.php';
         \App\Core\Session::start();
         $currentUserId = \App\Core\Session::get('user_id');
@@ -158,7 +155,7 @@ class NguoiDungController
         $successCount = 0;
         foreach ($userIds as $userId) {
             if ($userId === $currentUserId && $action === 'block') {
-                continue; // Skip self-blocking
+                continue; 
             }
 
             if ($action === 'block') {

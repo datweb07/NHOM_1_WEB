@@ -33,7 +33,6 @@ class RefundService
             ];
         }
 
-
         if (isset($thanhToan['phuong_thuc']) && $thanhToan['phuong_thuc'] === 'COD') {
             return [
                 'can_refund' => false,
@@ -41,17 +40,12 @@ class RefundService
             ];
         }
 
-
-
-
-
         if (isset($thanhToan['id']) && $this->refundModel->hasCompletedRefund($thanhToan['id'])) {
             return [
                 'can_refund' => false,
                 'reason' => 'Thanh toán này đã được hoàn tiền'
             ];
         }
-
 
         return [
             'can_refund' => true,
@@ -61,7 +55,6 @@ class RefundService
 
     public function initiateRefund(int $thanhToanId, float $amount, string $reason, int $adminId): array
     {
-
         $thanhToan = $this->thanhToanModel->findById($thanhToanId);
         
         if (!$thanhToan) {
@@ -71,7 +64,6 @@ class RefundService
                 'refund_id' => null
             ];
         }
-
 
         $canRefundCheck = $this->canRefund($thanhToan);
         
@@ -83,7 +75,6 @@ class RefundService
             ];
         }
 
-
         $refundId = $this->refundModel->createRefund($thanhToanId, $amount, $reason, $adminId);
         
         if (!$refundId) {
@@ -94,7 +85,6 @@ class RefundService
             ];
         }
 
-
         $this->transactionLogModel->logRequest($thanhToanId, 'REFUND', [
             'action' => 'REFUND_INITIATED',
             'refund_id' => $refundId,
@@ -103,7 +93,6 @@ class RefundService
             'admin_id' => $adminId,
             'timestamp' => date('Y-m-d H:i:s')
         ]);
-
 
         $paymentMethod = $thanhToan['phuong_thuc'] ?? '';
         $gateway = $this->getGatewayInstance($paymentMethod);
@@ -129,17 +118,14 @@ class RefundService
             ];
         }
 
-
         $gatewayTransactionId = $thanhToan['gateway_transaction_id'] ?? (string)$thanhToanId;
         $gatewayResult = $gateway->initiateRefund($gatewayTransactionId, $amount, $reason);
-
 
         if ($gatewayResult['success']) {
 
             $gatewayRefundId = $gatewayResult['refund_id'] ?? null;
             $this->refundModel->updateRefundStatus($refundId, 'COMPLETED', $gatewayRefundId);
             
-
             $this->transactionLogModel->logRequest($thanhToanId, 'REFUND', [
                 'action' => 'REFUND_COMPLETED',
                 'refund_id' => $refundId,
@@ -156,10 +142,8 @@ class RefundService
                 'refund_id' => $refundId
             ];
         } else {
-
             $this->refundModel->updateRefundStatus($refundId, 'FAILED');
             
-
             $this->transactionLogModel->logRequest($thanhToanId, 'REFUND', [
                 'action' => 'REFUND_FAILED',
                 'refund_id' => $refundId,

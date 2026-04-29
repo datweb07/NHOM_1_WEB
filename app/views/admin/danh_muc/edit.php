@@ -19,7 +19,6 @@ $valueCha = (string)($old['danh_muc_cha_id'] ?? ($danhMuc['danh_muc_cha_id'] ?? 
 $valueThuTu = $old['thu_tu'] ?? ($danhMuc['thu_tu'] ?? '0');
 $valueTrangThai = (string)($old['trang_thai'] ?? ($danhMuc['trang_thai'] ?? '1'));
 
-// Lấy giá trị của Nổi bật và Gợi ý
 $valueIsNoiBat = (string)($old['is_noi_bat'] ?? ($danhMuc['is_noi_bat'] ?? '0'));
 $valueIsGoiY = (string)($old['is_goi_y'] ?? ($danhMuc['is_goi_y'] ?? '0'));
 

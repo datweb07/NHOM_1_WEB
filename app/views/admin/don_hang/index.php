@@ -20,7 +20,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div></div>
     <div>
-        <!-- Có thể thêm nút export hoặc các action khác ở đây -->
+        <!-- export hoặc các action khác -->
     </div>
 </div>
 
@@ -177,7 +177,6 @@ require_once dirname(__DIR__) . '/layouts/header.php';
             <nav aria-label="Page navigation" class="mt-4">
                 <ul class="pagination justify-content-center">
                     <?php
-                    // Build query string for pagination links
                     $queryParams = [];
                     if (!empty($searchFilter)) $queryParams['search'] = $searchFilter;
                     if (!empty($trangThaiFilter)) $queryParams['trang_thai'] = $trangThaiFilter;
@@ -202,7 +201,6 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                     </li>
                     
                     <?php
-                    // Show page numbers
                     $startPage = max(1, $currentPage - 2);
                     $endPage = min($totalPages, $currentPage + 2);
                     

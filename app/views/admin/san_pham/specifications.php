@@ -14,7 +14,7 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
     ];
     require_once dirname(__DIR__) . '/layouts/breadcrumb.php'; 
     ?>
-    
+
     <div class="app-content">
         <div class="container-fluid">
             <div class="mb-3 d-flex justify-content-between align-items-center">
@@ -33,15 +33,15 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
             </div>
 
             <?php if (isset($_GET['success'])): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <?php
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?php
                     $messages = [
                         'specs_updated' => 'Cập nhật thông số kỹ thuật thành công!'
                     ];
                     echo $messages[$_GET['success']] ?? 'Thao tác thành công!';
                     ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
             <?php endif; ?>
 
             <div class="card">
@@ -62,41 +62,52 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                 </thead>
                                 <tbody id="specsTableBody">
                                     <?php if (empty($specifications)): ?>
-                                        <tr class="spec-row">
-                                            <td>
-                                                <input type="number" name="specifications[0][thu_tu]" class="form-control form-control-sm" value="0" min="0">
-                                            </td>
-                                            <td>
-                                                <input type="text" name="specifications[0][ten_thong_so]" class="form-control form-control-sm" placeholder="VD: Màn hình">
-                                            </td>
-                                            <td>
-                                                <input type="text" name="specifications[0][gia_tri]" class="form-control form-control-sm" placeholder="VD: 6.7 inch, OLED">
-                                            </td>
-                                            <td class="text-center">
-                                                <button type="button" class="btn btn-sm btn-danger" onclick="removeSpecRow(this)">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                    <tr class="spec-row">
+                                        <td>
+                                            <input type="number" name="specifications[0][thu_tu]"
+                                                class="form-control form-control-sm" value="0" min="0">
+                                        </td>
+                                        <td>
+                                            <input type="text" name="specifications[0][ten_thong_so]"
+                                                class="form-control form-control-sm" placeholder="VD: Màn hình">
+                                        </td>
+                                        <td>
+                                            <input type="text" name="specifications[0][gia_tri]"
+                                                class="form-control form-control-sm" placeholder="VD: 6.7 inch, OLED">
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                onclick="removeSpecRow(this)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
                                     <?php else: ?>
-                                        <?php foreach ($specifications as $index => $spec): ?>
-                                            <tr class="spec-row">
-                                                <td>
-                                                    <input type="number" name="specifications[<?= $index ?>][thu_tu]" class="form-control form-control-sm" value="<?= $spec['thu_tu'] ?>" min="0">
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="specifications[<?= $index ?>][ten_thong_so]" class="form-control form-control-sm" value="<?= htmlspecialchars($spec['ten_thong_so']) ?>">
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="specifications[<?= $index ?>][gia_tri]" class="form-control form-control-sm" value="<?= htmlspecialchars($spec['gia_tri']) ?>">
-                                                </td>
-                                                <td class="text-center">
-                                                    <button type="button" class="btn btn-sm btn-danger" onclick="removeSpecRow(this)">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
+                                    <?php foreach ($specifications as $index => $spec): ?>
+                                    <tr class="spec-row">
+                                        <td>
+                                            <input type="number" name="specifications[<?= $index ?>][thu_tu]"
+                                                class="form-control form-control-sm" value="<?= $spec['thu_tu'] ?>"
+                                                min="0">
+                                        </td>
+                                        <td>
+                                            <input type="text" name="specifications[<?= $index ?>][ten_thong_so]"
+                                                class="form-control form-control-sm"
+                                                value="<?= htmlspecialchars($spec['ten_thong_so']) ?>">
+                                        </td>
+                                        <td>
+                                            <input type="text" name="specifications[<?= $index ?>][gia_tri]"
+                                                class="form-control form-control-sm"
+                                                value="<?= htmlspecialchars($spec['gia_tri']) ?>">
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                onclick="removeSpecRow(this)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
                                     <?php endif; ?>
                                 </tbody>
                             </table>
@@ -131,13 +142,13 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
 <?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
 
 <script>
-    let specIndex = <?= count($specifications) ?>;
+let specIndex = <?= count($specifications) ?>;
 
-    function addSpecRow() {
-        const tbody = document.getElementById('specsTableBody');
-        const newRow = document.createElement('tr');
-        newRow.className = 'spec-row';
-        newRow.innerHTML = `
+function addSpecRow() {
+    const tbody = document.getElementById('specsTableBody');
+    const newRow = document.createElement('tr');
+    newRow.className = 'spec-row';
+    newRow.innerHTML = `
             <td>
                 <input type="number" name="specifications[${specIndex}][thu_tu]" class="form-control form-control-sm" value="0" min="0">
             </td>
@@ -153,20 +164,18 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                 </button>
             </td>
         `;
-        tbody.appendChild(newRow);
-        specIndex++;
-    }
+    tbody.appendChild(newRow);
+    specIndex++;
+}
 
-    function removeSpecRow(button) {
-        const row = button.closest('tr');
-        const tbody = document.getElementById('specsTableBody');
-        
-        // Keep at least one row
-        if (tbody.querySelectorAll('tr').length > 1) {
-            row.remove();
-        } else {
-            // Clear the last row instead of removing it
-            row.querySelectorAll('input').forEach(input => input.value = '');
-        }
+function removeSpecRow(button) {
+    const row = button.closest('tr');
+    const tbody = document.getElementById('specsTableBody');
+
+    if (tbody.querySelectorAll('tr').length > 1) {
+        row.remove();
+    } else {
+        row.querySelectorAll('input').forEach(input => input.value = '');
     }
+}
 </script>

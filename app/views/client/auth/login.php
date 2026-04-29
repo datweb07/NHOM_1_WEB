@@ -18,85 +18,84 @@ $recaptchaSiteKey = $envConfig('RECAPTCHA_SITE_KEY', '');
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <style>
-        :root {
-            --fpt-red: #cb1c22;
-            --fpt-red-hover: #a8151b;
-        }
+    :root {
+        --fpt-red: #cb1c22;
+        --fpt-red-hover: #a8151b;
+    }
 
-        body {
-            background-color: #f8f9fa;
-        }
+    body {
+        background-color: #f8f9fa;
+    }
 
-        .login-card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
+    .login-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
 
-        .btn-primary-brand {
-            background-color: var(--fpt-red);
-            border-color: var(--fpt-red);
-            color: white;
-            font-weight: 500;
-            padding: 10px 20px;
-        }
+    .btn-primary-brand {
+        background-color: var(--fpt-red);
+        border-color: var(--fpt-red);
+        color: white;
+        font-weight: 500;
+        padding: 10px 20px;
+    }
 
-        .btn-primary-brand:hover,
-        .btn-primary-brand:focus {
-            background-color: var(--fpt-red-hover);
-            border-color: var(--fpt-red-hover);
-            color: white;
-        }
+    .btn-primary-brand:hover,
+    .btn-primary-brand:focus {
+        background-color: var(--fpt-red-hover);
+        border-color: var(--fpt-red-hover);
+        color: white;
+    }
 
-        .form-control {
-            padding: 10px 15px;
-            border-color: #ced4da;
-        }
+    .form-control {
+        padding: 10px 15px;
+        border-color: #ced4da;
+    }
 
-        .form-control:focus {
-            border-color: var(--fpt-red);
-            box-shadow: 0 0 0 0.25rem rgba(203, 28, 34, 0.15);
-        }
+    .form-control:focus {
+        border-color: var(--fpt-red);
+        box-shadow: 0 0 0 0.25rem rgba(203, 28, 34, 0.15);
+    }
 
-        .text-brand {
-            color: var(--fpt-red);
-        }
+    .text-brand {
+        color: var(--fpt-red);
+    }
 
-        a.text-brand:hover {
-            color: var(--fpt-red-hover);
-        }
+    a.text-brand:hover {
+        color: var(--fpt-red-hover);
+    }
 
-        .divider-text {
-            position: relative;
-            text-align: center;
-            margin: 24px 0;
-        }
+    .divider-text {
+        position: relative;
+        text-align: center;
+        margin: 24px 0;
+    }
 
-        .divider-text::before {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            border-top: 1px solid #dee2e6;
-            z-index: 1;
-        }
+    .divider-text::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        border-top: 1px solid #dee2e6;
+        z-index: 1;
+    }
 
-        .divider-text span {
-            background-color: #fff;
-            padding: 0 15px;
-            color: #6c757d;
-            font-size: 0.85rem;
-            position: relative;
-            z-index: 2;
-        }
+    .divider-text span {
+        background-color: #fff;
+        padding: 0 15px;
+        color: #6c757d;
+        font-size: 0.85rem;
+        position: relative;
+        z-index: 2;
+    }
 
-        /* Căn giữa reCAPTCHA */
-        .recaptcha-wrapper {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
+    .recaptcha-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
     </style>
 </head>
 
@@ -118,9 +117,9 @@ $recaptchaSiteKey = $envConfig('RECAPTCHA_SITE_KEY', '');
                         </div>
 
                         <?php if (isset($_GET['error'])): ?>
-                            <div class="alert alert-danger py-2" role="alert" style="font-size: 0.9rem;">
-                                <i class="bi bi-exclamation-circle me-1"></i>
-                                <?php
+                        <div class="alert alert-danger py-2" role="alert" style="font-size: 0.9rem;">
+                            <i class="bi bi-exclamation-circle me-1"></i>
+                            <?php
                                 $errorMessages = [
                                     'invalid_email' => 'Email không hợp lệ.',
                                     'empty_password' => 'Vui lòng nhập mật khẩu.',
@@ -137,7 +136,7 @@ $recaptchaSiteKey = $envConfig('RECAPTCHA_SITE_KEY', '');
                                 ];
                                 echo $errorMessages[$_GET['error']] ?? 'Đã có lỗi xảy ra.';
                                 ?>
-                            </div>
+                        </div>
                         <?php endif; ?>
 
                         <form method="POST" action="/client/auth/login" id="loginForm">
@@ -229,33 +228,33 @@ $recaptchaSiteKey = $envConfig('RECAPTCHA_SITE_KEY', '');
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function (event) {
-            var response = grecaptcha.getResponse();
-            if (response.length == 0) {
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        var response = grecaptcha.getResponse();
+        if (response.length == 0) {
 
-                event.preventDefault();
+            event.preventDefault();
 
-                document.getElementById('captchaError').classList.remove('d-none');
-            } else {
-                document.getElementById('captchaError').classList.add('d-none');
-            }
-        });
+            document.getElementById('captchaError').classList.remove('d-none');
+        } else {
+            document.getElementById('captchaError').classList.add('d-none');
+        }
+    });
 
-        document.querySelectorAll('.toggle-password').forEach(function(icon) {
+    document.querySelectorAll('.toggle-password').forEach(function(icon) {
         icon.addEventListener('click', function() {
 
-            let input = this.previousElementSibling; 
-            
+            let input = this.previousElementSibling;
+
             if (input.type === "password") {
                 input.type = "text";
                 this.classList.remove('bi-eye-slash');
                 this.classList.add('bi-eye');
-                this.style.color = '#cb1c22'; 
+                this.style.color = '#cb1c22';
             } else {
                 input.type = "password";
                 this.classList.remove('bi-eye');
                 this.classList.add('bi-eye-slash');
-                this.style.color = '#6c757d'; 
+                this.style.color = '#6c757d';
             }
         });
     });

@@ -28,10 +28,8 @@ class PayPalGateway implements PaymentGatewayInterface
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->baseUrl . '/v1/oauth2/token');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        // Xác thực Basic Auth bằng Client ID và Secret
         curl_setopt($ch, CURLOPT_USERPWD, $this->clientId . ":" . $this->secret);
         curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials");
-        // Tắt SSL Verify ở local để tránh lỗi, lên host thật thì nên bật = true
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         
         $response = curl_exec($ch);
@@ -67,7 +65,7 @@ class PayPalGateway implements PaymentGatewayInterface
         $cancelUrl = $appUrl . '/thanh-toan';
 
         $orderData = [
-            "intent" => "CAPTURE", // CAPTURE nghĩa là trừ tiền ngay
+            "intent" => "CAPTURE", 
             "purchase_units" => [
                 [
                     "reference_id" => "DH_" . $donHangId,

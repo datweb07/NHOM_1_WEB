@@ -93,12 +93,6 @@ class Refund extends BaseModel
         return $refund ?: null;
     }
 
-    /**
-     * Check if payment has any completed refunds
-     * 
-     * @param int $thanhToanId Payment ID
-     * @return bool True if payment has at least one COMPLETED refund
-     */
     public function hasCompletedRefund(int $thanhToanId): bool
     {
         $sql = "SELECT COUNT(*) as count FROM refund 
@@ -118,12 +112,6 @@ class Refund extends BaseModel
         return ($row['count'] ?? 0) > 0;
     }
 
-    /**
-     * Get refund statistics for a payment
-     * 
-     * @param int $thanhToanId Payment ID
-     * @return array Array with 'total_refunded' (sum of amounts) and 'refund_count' (number of refunds)
-     */
     public function getRefundStats(int $thanhToanId): array
     {
         $sql = "SELECT 

@@ -16,16 +16,12 @@ class KhuyenMaiController
         $this->maGiamGiaModel = new \MaGiamGia();
     }
 
-    /**
-     * Danh sách khuyến mãi
-     */
     public function danhSachKhuyenMai(): void
     {
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
         $limit = 12;
         $offset = ($page - 1) * $limit;
 
-        // Lấy khuyến mãi đang hoạt động
         $khuyenMais = $this->layKhuyenMaiHoatDong($limit, $offset);
         $tongKhuyenMai = $this->demKhuyenMaiHoatDong();
         $tongTrang = ceil($tongKhuyenMai / $limit);
@@ -33,9 +29,6 @@ class KhuyenMaiController
         require_once dirname(__DIR__, 2) . '/views/client/khuyen_mai/index.php';
     }
 
-    /**
-     * Chi tiết khuyến mãi
-     */
     public function chiTietKhuyenMai(): void
     {
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -52,30 +45,23 @@ class KhuyenMaiController
             exit;
         }
 
-        // Lấy danh sách sản phẩm áp dụng khuyến mãi
         $sanPhams = $this->laySanPhamKhuyenMai($id);
 
         require_once dirname(__DIR__, 2) . '/views/client/khuyen_mai/detail.php';
     }
 
-    /**
-     * Danh sách mã giảm giá
-     */
     public function danhSachMaGiamGia(): void
     {
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
         $limit = 12;
         $offset = ($page - 1) * $limit;
 
-        // Lấy mã giảm giá đang hoạt động
         $maGiamGias = $this->layMaGiamGiaHoatDong($limit, $offset);
         $tongMaGiamGia = $this->demMaGiamGiaHoatDong();
         $tongTrang = ceil($tongMaGiamGia / $limit);
 
         require_once dirname(__DIR__, 2) . '/views/client/ma_giam_gia/index.php';
     }
-
-    // ===== Private methods =====
 
     private function layKhuyenMaiHoatDong(int $limit, int $offset): array
     {

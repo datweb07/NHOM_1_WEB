@@ -165,7 +165,6 @@ class MaGiamGiaController
         $ngayBatDau = trim((string)($input['ngay_bat_dau'] ?? ''));
         $ngayKetThuc = trim((string)($input['ngay_ket_thuc'] ?? ''));
 
-        // Validate ma_code
         if ($maCode === '') {
             $errors['ma_code'] = 'Mã code không được để trống.';
         } elseif (!preg_match('/^[A-Z0-9]+$/', $maCode)) {
@@ -176,14 +175,12 @@ class MaGiamGiaController
             $errors['ma_code'] = 'Mã code đã tồn tại.';
         }
 
-        // Validate loai_giam
         if ($loaiGiam === '') {
             $errors['loai_giam'] = 'Loại giảm không được để trống.';
         } elseif (!in_array($loaiGiam, ['PHAN_TRAM', 'SO_TIEN'], true)) {
             $errors['loai_giam'] = 'Loại giảm phải là PHAN_TRAM hoặc SO_TIEN.';
         }
 
-        // Validate gia_tri_giam
         $giaTriGiam = null;
         if ($giaTriGiamRaw === '') {
             $errors['gia_tri_giam'] = 'Giá trị giảm không được để trống.';
@@ -195,13 +192,11 @@ class MaGiamGiaController
                 $errors['gia_tri_giam'] = 'Giá trị giảm phải lớn hơn 0.';
             }
             
-            // If percentage, must be 0-100
             if ($loaiGiam === 'PHAN_TRAM' && ($giaTriGiam < 0 || $giaTriGiam > 100)) {
                 $errors['gia_tri_giam'] = 'Giá trị giảm phần trăm phải từ 0 đến 100.';
             }
         }
 
-        // Validate giam_toi_da (optional for percentage)
         $giamToiDa = null;
         if ($giamToiDaRaw !== '') {
             if (!is_numeric($giamToiDaRaw)) {
@@ -214,7 +209,6 @@ class MaGiamGiaController
             }
         }
 
-        // Validate don_toi_thieu (optional)
         $donToiThieu = 0;
         if ($donToiThieuRaw !== '') {
             if (!is_numeric($donToiThieuRaw)) {
@@ -227,7 +221,6 @@ class MaGiamGiaController
             }
         }
 
-        // Validate gioi_han_su_dung (optional, NULL = unlimited)
         $gioiHanSuDung = null;
         if ($gioiHanSuDungRaw !== '') {
             if (!is_numeric($gioiHanSuDungRaw)) {
@@ -240,17 +233,14 @@ class MaGiamGiaController
             }
         }
 
-        // Validate ngay_bat_dau
         if ($ngayBatDau === '') {
             $errors['ngay_bat_dau'] = 'Ngày bắt đầu không được để trống.';
         }
 
-        // Validate ngay_ket_thuc
         if ($ngayKetThuc === '') {
             $errors['ngay_ket_thuc'] = 'Ngày kết thúc không được để trống.';
         }
 
-        // Validate date range
         if ($ngayBatDau !== '' && $ngayKetThuc !== '') {
             if (strtotime($ngayBatDau) >= strtotime($ngayKetThuc)) {
                 $errors['ngay_ket_thuc'] = 'Ngày kết thúc phải sau ngày bắt đầu.';

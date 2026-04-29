@@ -1,18 +1,5 @@
 <?php
 
-/**
- * Transaction Log Cleanup Script
- * 
- * Deletes transaction logs older than 12 months
- * Requirements: 13.6 (Sub-task 18.3)
- * 
- * Usage:
- * - Run manually: php app/scripts/cleanup_old_logs.php
- * - Schedule as cron job: 0 2 * * 0 php /path/to/app/scripts/cleanup_old_logs.php
- *   (Runs every Sunday at 2:00 AM)
- */
-
-// Load database configuration
 require_once dirname(__DIR__) . '/core/EnvSetup.php';
 require_once dirname(__DIR__) . '/models/entities/TransactionLog.php';
 
@@ -26,11 +13,6 @@ class LogCleanupScript
         $this->transactionLog = new TransactionLog();
     }
 
-    /**
-     * Execute cleanup of old transaction logs
-     * 
-     * @return array Cleanup result with deleted count
-     */
     public function execute(): array
     {
         $startTime = microtime(true);
@@ -38,12 +20,10 @@ class LogCleanupScript
         echo "Starting transaction log cleanup...\n";
         echo "Retention period: {$this->retentionMonths} months\n";
         
-        // Calculate cutoff date (12 months ago)
         $cutoffDate = date('Y-m-d H:i:s', strtotime("-{$this->retentionMonths} months"));
         
         echo "Deleting logs older than: {$cutoffDate}\n";
         
-        // Count logs to be deleted
         $countSql = "SELECT COUNT(*) as total FROM transaction_log 
                      WHERE created_at < '{$cutoffDate}'";
         $countResult = $this->transactionLog->query($countSql);
@@ -60,7 +40,6 @@ class LogCleanupScript
             ];
         }
         
-        // Delete old logs
         $deleteSql = "DELETE FROM transaction_log WHERE created_at < '{$cutoffDate}'";
         
         try {
@@ -70,8 +49,7 @@ class LogCleanupScript
             
             echo "Successfully deleted {$totalToDelete} logs\n";
             echo "Execution time: " . round($elapsedTime, 2) . " seconds\n";
-            
-            // Log cleanup action
+
             error_log(sprintf(
                 "[LOG CLEANUP] Deleted %d transaction logs older than %s. Execution time: %.2f seconds",
                 $totalToDelete,
@@ -102,11 +80,6 @@ class LogCleanupScript
         }
     }
 
-    /**
-     * Get statistics about transaction logs
-     * 
-     * @return array Log statistics
-     */
     public function getStatistics(): array
     {
         $totalSql = "SELECT COUNT(*) as total FROM transaction_log";
@@ -132,11 +105,9 @@ class LogCleanupScript
     }
 }
 
-// Run cleanup if executed directly
 if (php_sapi_name() === 'cli') {
     $cleanup = new LogCleanupScript();
-    
-    // Show statistics before cleanup
+
     echo "\n=== Log Statistics (Before Cleanup) ===\n";
     $stats = $cleanup->getStatistics();
     foreach ($stats as $key => $value) {
@@ -144,10 +115,8 @@ if (php_sapi_name() === 'cli') {
     }
     echo "\n";
     
-    // Execute cleanup
     $result = $cleanup->execute();
     
-    // Show statistics after cleanup
     if ($result['success']) {
         echo "\n=== Log Statistics (After Cleanup) ===\n";
         $stats = $cleanup->getStatistics();

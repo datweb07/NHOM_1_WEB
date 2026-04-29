@@ -19,7 +19,6 @@ class BannerQuangCao extends BaseModel
         parent::__construct('banner_quang_cao');
     }
 
-    // Lấy danh sách banner với lọc và phân trang
     public function layDanhSach(string $viTri = '', int $trangThai = -1, int $limit = 20, int $offset = 0): array
     {
         $where = [];
@@ -41,7 +40,6 @@ class BannerQuangCao extends BaseModel
         return $this->query($sql);
     }
 
-    // Đếm số lượng banner
     public function demBanner(string $viTri = '', int $trangThai = -1): int
     {
         $where = [];
@@ -61,7 +59,6 @@ class BannerQuangCao extends BaseModel
         return !empty($result) ? (int)$result[0]['total'] : 0;
     }
 
-    // Lấy banner đang hoạt động theo vị trí
     public function layBannerTheoViTri(string $viTri): array
     {
         $sql = "SELECT * FROM {$this->table}

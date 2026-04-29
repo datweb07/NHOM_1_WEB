@@ -32,12 +32,8 @@ class SanPhamController
         $this->danhGiaModel = new DanhGia();
     }
 
-    /**
-     * Hiển thị chi tiết sản phẩm
-     */
     public function chiTiet(string $slug): void
     {
-        // Lấy thông tin sản phẩm
         $sanPham = $this->sanPhamModel->layChiTietTheoSlug($slug);
 
         if (!$sanPham) {
@@ -45,29 +41,22 @@ class SanPhamController
             exit;
         }
 
-        // Lấy hình ảnh sản phẩm
         $hinhAnhList = $this->hinhAnhModel->layHinhAnhTheoSanPham($sanPham['id']);
 
-        // Lấy phiên bản sản phẩm
         $phienBanList = $this->phienBanModel->layPhienBanTheoSanPham($sanPham['id']);
 
-        // Lấy thông số kỹ thuật
         $thongSoList = $this->thongSoModel->layThongSoTheoSanPham($sanPham['id']);
 
-        // Lấy đánh giá
         $danhGiaList = $this->danhGiaModel->layDanhGiaTheoSanPham($sanPham['id'], 5);
         $tongDanhGia = $this->danhGiaModel->demDanhGiaTheoSanPham($sanPham['id']);
 
-        // Lấy sản phẩm tương tự (cùng danh mục)
         $sanPhamTuongTu = $this->sanPhamModel->laySanPhamTheoDanhMuc(
             $sanPham['slug_danh_muc'],
             8
         );
 
-        // Danh sách toàn bộ sản phẩm để hỗ trợ chọn so sánh ngoài sản phẩm tương tự
         $danhSachSanPhamSoSanh = $this->sanPhamModel->layDanhSachChoSoSanh();
 
-        // Kiểm tra trạng thái yêu thích
         $isWishlisted = false;
         if (\App\Core\Session::isLoggedIn() && \App\Core\Session::getUserRole() === 'MEMBER') {
             require_once dirname(__DIR__, 2) . '/models/relationships/YeuThich.php';
@@ -88,13 +77,9 @@ class SanPhamController
         $resultKM = $this->sanPhamModel->query($sqlKhuyenMai);
         $khuyenMaiApDung = !empty($resultKM) ? $resultKM[0] : null;
 
-        // Load view
         require_once dirname(__DIR__, 2) . '/views/client/san_pham/detail.php';
     }
 
-    /**
-     * Danh sách sản phẩm với filter
-     */
     public function danhSach(): void
     {
         $keyword = $_GET['keyword'] ?? ($_GET['q'] ?? null);
@@ -124,10 +109,8 @@ class SanPhamController
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
-        // Đếm tổng số sản phẩm
         $tongSanPham = $this->sanPhamModel->demSanPham($keyword, $danhMucId, $giaMin, $giaMax, $hangFilters, $giaKhoangFilters);
 
-        // Lấy danh sách sản phẩm
         $sanPhamList = $this->sanPhamModel->layDanhSachPhanTrang(
             $keyword,
             $danhMucId,
@@ -141,10 +124,8 @@ class SanPhamController
             $giaKhoangFilters
         );
 
-        // Tính tổng số trang
         $tongTrang = ceil($tongSanPham / $limit);
 
-        // Lấy danh sách danh mục
         $danhMucList = $this->sanPhamModel->layDanhSachDanhMucHoatDong();
         $danhSachHang = $this->sanPhamModel->layDanhSachHangSanXuat($keyword, $danhMucId);
         $khoangGia = $this->sanPhamModel->layKhoangGiaSanPham($keyword, $danhMucId, $hangFilters);
@@ -158,13 +139,8 @@ class SanPhamController
             $giaMax = $giaSliderMax;
         }
 
-        // Load view
         require_once dirname(__DIR__, 2) . '/views/client/san_pham/list.php';
     }
-
-    /**
-     * Danh sách sản phẩm theo slug danh mục
-     */
 
     public function danhSachTheoSlug(string $slugDanhMuc): void
     {
@@ -172,7 +148,6 @@ class SanPhamController
         require_once dirname(__DIR__, 2) . '/models/entities/DanhMuc.php';
         $danhMucModel = new \DanhMuc();
 
-        // Lookup category by slug
         $danhMuc = $danhMucModel->findBySlug($slugDanhMuc);
 
         if (!$danhMuc) {
@@ -180,9 +155,8 @@ class SanPhamController
             exit;
         }
 
-        // Get filter parameters
         $keyword = $_GET['keyword'] ?? ($_GET['q'] ?? null);
-        $danhMucId = $danhMuc['id']; // Use the ID from slug lookup
+        $danhMucId = $danhMuc['id']; 
         $giaMin = isset($_GET['gia_min']) && $_GET['gia_min'] !== '' ? (float)$_GET['gia_min'] : null;
         $giaMax = isset($_GET['gia_max']) && $_GET['gia_max'] !== '' ? (float)$_GET['gia_max'] : null;
         $hangFilters = $_GET['hang'] ?? [];
@@ -208,10 +182,8 @@ class SanPhamController
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
-        // Count total products
         $tongSanPham = $this->sanPhamModel->demSanPham($keyword, $danhMucId, $giaMin, $giaMax, $hangFilters, $giaKhoangFilters);
 
-        // Get product list
         $sanPhamList = $this->sanPhamModel->layDanhSachPhanTrang(
             $keyword,
             $danhMucId,
@@ -225,10 +197,8 @@ class SanPhamController
             $giaKhoangFilters
         );
 
-        // Calculate total pages
         $tongTrang = ceil($tongSanPham / $limit);
 
-        // Get category list
         $danhMucList = $this->sanPhamModel->layDanhSachDanhMucHoatDong();
         $danhSachHang = $this->sanPhamModel->layDanhSachHangSanXuat($keyword, $danhMucId);
         $khoangGia = $this->sanPhamModel->layKhoangGiaSanPham($keyword, $danhMucId, $hangFilters);
@@ -242,13 +212,9 @@ class SanPhamController
             $giaMax = $giaSliderMax;
         }
 
-        // Load view
         require_once dirname(__DIR__, 2) . '/views/client/san_pham/list.php';
     }
 
-    /**
-     * Trang so sánh sản phẩm
-     */
     public function soSanh(): void
     {
         $selectedSlugs = $_GET['slug'] ?? [];
@@ -320,17 +286,12 @@ class SanPhamController
         require_once dirname(__DIR__, 2) . '/views/client/san_pham/compare.php';
     }
 
-    /**
-     * API: Lấy dữ liệu cho Mega Menu khi hover (Hãng, Sản phẩm, Danh mục con)
-     */
     public function apiMegaMenu(): void
     {
-        // Xóa bộ nhớ đệm đề phòng có khoảng trắng dư thừa làm hỏng JSON
         while (ob_get_level() > 0) {
             ob_end_clean();
         }
 
-        // Bây giờ mới set Header JSON một cách an toàn
         header('Content-Type: application/json; charset=utf-8');
 
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -341,7 +302,6 @@ class SanPhamController
         }
 
         try {
-            // 1. Lấy 5 sản phẩm mới nhất (Sử dụng Subquery để lấy url_anh từ bảng hinh_anh_san_pham)
             $sqlProducts = "SELECT sp.ten_san_pham, sp.slug, 
                                    (SELECT url_anh FROM hinh_anh_san_pham ha WHERE ha.san_pham_id = sp.id AND ha.la_anh_chinh = 1 LIMIT 1) AS anh_chinh
                             FROM san_pham sp 
@@ -349,14 +309,12 @@ class SanPhamController
                             ORDER BY sp.ngay_tao DESC LIMIT 5";
             $products = $this->sanPhamModel->query($sqlProducts);
 
-            // 2. Lấy danh sách Hãng (Thương hiệu) có trong danh mục này
             $sqlBrands = "SELECT DISTINCT hang_san_xuat 
                           FROM san_pham 
                           WHERE danh_muc_id = $id AND hang_san_xuat != '' AND hang_san_xuat IS NOT NULL 
                           LIMIT 6";
             $brands = $this->sanPhamModel->query($sqlBrands);
 
-            // 3. Lấy danh mục con (Cấp 2)
             require_once dirname(__DIR__, 2) . '/models/entities/DanhMuc.php';
             $dmModel = new \DanhMuc();
             $subCategories = $dmModel->layDanhMucCon($id);
@@ -371,7 +329,6 @@ class SanPhamController
             ]);
             exit;
         } catch (\Throwable $th) {
-            // Bắt lỗi và trả về JSON thay vì in ra HTML làm vỡ giao diện
             echo json_encode([
                 'success' => false,
                 'error' => $th->getMessage(),
@@ -382,9 +339,6 @@ class SanPhamController
         }
     }
 
-    /**
-     * API: So sánh sản phẩm theo danh sách slug
-     */
     public function apiSoSanhTheoSlug(): void
     {
         while (ob_get_level() > 0) {

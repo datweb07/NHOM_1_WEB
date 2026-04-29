@@ -11,7 +11,6 @@ abstract class TrangThaiDon
     const TRA_HANG = 'TRA_HANG';
 
 
-
     public static function getAll(): array
     {
         return [
@@ -25,13 +24,11 @@ abstract class TrangThaiDon
         ];
     }
 
-
     //kiểm tra hợp lệ của trạng thái
     public static function isValid(?string $value): bool
     {
         return in_array($value, self::getAll());
     }
-
     
     //hiển thị
     public static function getLabel(?string $value): string
@@ -78,7 +75,6 @@ abstract class TrangThaiDon
                 return 'dark';
         }
     }
-
     
     //có thể hủy đơn hàng
     public static function canCancel(string $trangThai): bool
@@ -90,7 +86,6 @@ abstract class TrangThaiDon
         ]);
     }
 
-    
     //đơn hàng đã giao
     public static function isCompleted(string $trangThai): bool
     {

@@ -3,9 +3,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
 require_once dirname(__DIR__) . '/layouts/sidebar.php';
 ?>
 
-<!--begin::App Main-->
 <main class="app-main">
-    <!--begin::App Content Header-->
     <div class="app-content-header">
         <div class="container-fluid">
             <div class="row">
@@ -21,9 +19,7 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
             </div>
         </div>
     </div>
-    <!--end::App Content Header-->
 
-    <!--begin::App Content-->
     <div class="app-content">
         <div class="container-fluid">
             <div class="row">
@@ -39,7 +35,7 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                             </div>
                         </div>
                         <div class="card-body">
-                            <!-- Filters -->
+
                             <div class="row mb-3">
                                 <div class="col-md-3">
                                     <label for="filter-category" class="form-label">Danh mục</label>
@@ -85,7 +81,6 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                 </div>
                             </div>
 
-                            <!-- Loading State -->
                             <div id="loading-state" class="text-center py-5">
                                 <div class="spinner-border text-primary" role="status">
                                     <span class="visually-hidden">Đang tải...</span>
@@ -93,26 +88,20 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                 <p class="mt-2 text-muted">Đang tải thông báo...</p>
                             </div>
 
-                            <!-- Notification List -->
                             <div id="notification-list" style="display: none;">
-                                <!-- Notifications will be rendered here by JavaScript -->
                             </div>
 
-                            <!-- Empty State -->
                             <div id="empty-state" class="text-center py-5" style="display: none;">
                                 <i class="bi bi-bell-slash" style="font-size: 3rem; color: #6c757d;"></i>
                                 <p class="mt-3 text-muted">Không có thông báo</p>
                             </div>
 
-                            <!-- Pagination -->
                             <div id="pagination-container" class="mt-4" style="display: none;">
                                 <nav aria-label="Notification pagination">
                                     <ul class="pagination justify-content-center" id="pagination">
-                                        <!-- Pagination will be rendered here by JavaScript -->
                                     </ul>
                                 </nav>
                                 <div class="text-center text-muted" id="pagination-info">
-                                    <!-- Pagination info will be rendered here by JavaScript -->
                                 </div>
                             </div>
                         </div>
@@ -121,17 +110,13 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
             </div>
         </div>
     </div>
-    <!--end::App Content-->
 </main>
-<!--end::App Main-->
 
 <?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
 
-<!-- Notification List Page JavaScript -->
 <script src="<?= ASSET_URL ?>/assets/admin/js/read-status-manager.js"></script>
 <script src="<?= ASSET_URL ?>/assets/admin/js/notification-list.js"></script>
 <script>
-    // Initialize notification list page
     document.addEventListener('DOMContentLoaded', function() {
         window.notificationListPage = new NotificationListPage();
         window.notificationListPage.init();

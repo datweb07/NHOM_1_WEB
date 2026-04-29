@@ -29,30 +29,22 @@ class HomeController
 
     public function index(): void
     {
-        // Lấy banner
         $banners = $this->bannerController->layBannerTrangChu();
         $bannerHero = $banners['bannerHero'];
         $bannerSide = $banners['bannerSide'];
         $bannerMid  = $banners['bannerMid'];
         
-        // Lấy sản phẩm nổi bật & khuyến mãi
         $sanPhamNoiBat = $this->sanPhamModel->laySanPhamNoiBat(8);
         $sanPhamKhuyenMai = $this->sanPhamModel->laySanPhamKhuyenMai(8);
-        
-        // --- PHẦN CẬP NHẬT DANH MỤC ---
-        // Lấy danh mục nổi bật (16 cái)
+
         $danhMucNoiBat = $this->danhMucModel->layDanhMucNoiBat(16);
         
-        // Lấy danh mục gợi ý (30 cái)
         $danhMucGoiY = $this->danhMucModel->layDanhMucGoiY(30);
-        // ------------------------------
-        
-        // Lấy sản phẩm theo danh mục
+
         $sanPhamDienThoai = $this->sanPhamModel->laySanPhamTheoDanhMuc('dien-thoai', 8);
         $sanPhamLaptop    = $this->sanPhamModel->laySanPhamTheoDanhMuc('may-tinh-xach-tay', 8);
         $sanPhamPhuKien   = $this->sanPhamModel->laySanPhamTheoDanhMuc('phu-kien', 12);
 
-        // Load view
         require_once dirname(__DIR__, 2) . '/views/client/home/index.php';
     }
 }

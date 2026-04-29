@@ -9,9 +9,6 @@ class DanhGia extends BaseModel
         parent::__construct('danh_gia');
     }
 
-    /**
-     * Lấy đánh giá theo sản phẩm
-     */
     public function layDanhGiaTheoSanPham(int $sanPhamId, int $limit = 10): array
     {
         $sanPhamId = (int)$sanPhamId;
@@ -27,9 +24,6 @@ class DanhGia extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Đếm số đánh giá theo sản phẩm
-     */
     public function demDanhGiaTheoSanPham(int $sanPhamId): int
     {
         $sanPhamId = (int)$sanPhamId;
@@ -40,9 +34,6 @@ class DanhGia extends BaseModel
         return !empty($result) ? (int)$result[0]['total'] : 0;
     }
 
-    /**
-     * Tính điểm trung bình
-     */
     public function tinhDiemTrungBinh(int $sanPhamId): float
     {
         $sanPhamId = (int)$sanPhamId;
@@ -52,9 +43,6 @@ class DanhGia extends BaseModel
         return !empty($result) && $result[0]['diem_tb'] !== null ? (float)$result[0]['diem_tb'] : 0;
     }
 
-    /**
-     * Lấy đánh giá theo người dùng
-     */
     public function layDanhGiaTheoUser(int $userId, int $limit = 20, int $offset = 0): array
     {
         $userId = (int)$userId;
@@ -74,9 +62,6 @@ class DanhGia extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Thêm đánh giá
-     */
     public function themDanhGia(int $nguoiDungId, int $sanPhamId, int $soSao, string $noiDung): int
     {
         $data = [
@@ -89,9 +74,6 @@ class DanhGia extends BaseModel
         return $this->create($data);
     }
 
-    /**
-     * Kiểm tra user đã đánh giá sản phẩm chưa
-     */
     public function kiemTraDaDanhGia(int $nguoiDungId, int $sanPhamId): bool
     {
         $nguoiDungId = (int)$nguoiDungId;
@@ -105,9 +87,6 @@ class DanhGia extends BaseModel
         return !empty($result);
     }
 
-    /**
-     * Lấy đánh giá của user cho sản phẩm
-     */
     public function layDanhGiaCuaUser(int $nguoiDungId, int $sanPhamId): ?array
     {
         $nguoiDungId = (int)$nguoiDungId;
@@ -121,9 +100,6 @@ class DanhGia extends BaseModel
         return !empty($result) ? $result[0] : null;
     }
 
-    /**
-     * Lấy danh sách đánh giá với filter (cho admin)
-     */
     public function layDanhSach(?int $soSao, ?int $sanPhamId, int $limit, int $offset): array
     {
         $limit = (int)$limit;
@@ -150,9 +126,6 @@ class DanhGia extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Tìm kiếm đánh giá theo từ khóa
-     */
     public function timKiem(string $keyword, int $limit, int $offset): array
     {
         $limit = (int)$limit;
@@ -173,9 +146,6 @@ class DanhGia extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Đếm tổng số đánh giá với filter
-     */
     public function demDanhGia(?int $soSao, ?int $sanPhamId, ?string $keyword): int
     {
         if ($keyword !== null && $keyword !== '') {
@@ -206,17 +176,11 @@ class DanhGia extends BaseModel
         return !empty($result) ? (int)$result[0]['total'] : 0;
     }
 
-    /**
-     * Lấy đánh giá theo ID
-     */
     public function layTheoId(int $id): ?array
     {
         return $this->getById($id);
     }
 
-    /**
-     * Xóa đánh giá
-     */
     public function xoa(int $id): bool
     {
         return $this->delete($id) > 0;

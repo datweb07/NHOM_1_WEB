@@ -53,7 +53,6 @@ class FileUpload
         $filename = self::generateUniqueFilename($file['name']);
         $destination = $directory . $filename;
         
-        // Move uploaded file
         if (move_uploaded_file($file['tmp_name'], $destination)) {
             return $filename;
         }

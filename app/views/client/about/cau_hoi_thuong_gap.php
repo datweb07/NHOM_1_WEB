@@ -1,147 +1,147 @@
 <?php require_once dirname(__DIR__) . '/layouts/header.php'; ?>
 
 <style>
-    body {
-        background-color: #ffffff;
-    }
+body {
+    background-color: #ffffff;
+}
 
-    .breadcrumb-custom {
-        background-color: transparent;
-        padding: 15px 0;
-        margin-bottom: 10px;
-        font-size: 13px;
-    }
+.breadcrumb-custom {
+    background-color: transparent;
+    padding: 15px 0;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
 
-    .breadcrumb-custom a {
-        color: #007bff;
-        text-decoration: none;
-    }
+.breadcrumb-custom a {
+    color: #007bff;
+    text-decoration: none;
+}
 
-    .breadcrumb-custom a:hover {
-        color: #cb1c22;
-    }
+.breadcrumb-custom a:hover {
+    color: #cb1c22;
+}
 
-    .breadcrumb-custom .active {
-        color: #212529;
-    }
+.breadcrumb-custom .active {
+    color: #212529;
+}
 
-    .content-section h3 {
-        font-weight: bold;
-        font-size: 24px;
-        color: #212529;
-        margin-bottom: 25px;
-    }
+.content-section h3 {
+    font-weight: bold;
+    font-size: 24px;
+    color: #212529;
+    margin-bottom: 25px;
+}
 
-    .faq-item {
-        border-bottom: 1px solid #f0f0f0;
-    }
+.faq-item {
+    border-bottom: 1px solid #f0f0f0;
+}
 
-    .faq-button {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: none;
-        border: none;
-        padding: 18px 0;
-        text-align: left;
-        font-size: 15.5px;
-        font-weight: 600;
-        color: #333;
-        transition: color 0.2s ease;
-    }
+.faq-button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 18px 0;
+    text-align: left;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: #333;
+    transition: color 0.2s ease;
+}
 
-    .faq-button:focus {
-        outline: none;
-    }
+.faq-button:focus {
+    outline: none;
+}
 
-    .faq-icon-wrap {
-        width: 24px;
-        height: 24px;
-        background-color: #f5f5f5;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #333;
-        font-size: 18px;
-        flex-shrink: 0;
-        margin-left: 15px;
-        transition: all 0.3s ease;
-    }
+.faq-icon-wrap {
+    width: 24px;
+    height: 24px;
+    background-color: #f5f5f5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-left: 15px;
+    transition: all 0.3s ease;
+}
 
-    .faq-button.collapsed .faq-icon-wrap::before {
-        content: "+";
-        font-weight: 400;
-    }
+.faq-button.collapsed .faq-icon-wrap::before {
+    content: "+";
+    font-weight: 400;
+}
 
-    .faq-button:not(.collapsed) .faq-icon-wrap::before {
-        content: "-";
-        font-weight: 400;
-    }
+.faq-button:not(.collapsed) .faq-icon-wrap::before {
+    content: "-";
+    font-weight: 400;
+}
 
-    .faq-body {
-        padding: 0 0 15px 15px;
-        border-left: 3px solid #cb1c22;
-        margin-bottom: 20px;
-        font-size: 14.5px;
-        color: #495057;
-        line-height: 1.6;
-        transition: font-size 0.3s ease-in-out;
-    }
+.faq-body {
+    padding: 0 0 15px 15px;
+    border-left: 3px solid #cb1c22;
+    margin-bottom: 20px;
+    font-size: 14.5px;
+    color: #495057;
+    line-height: 1.6;
+    transition: font-size 0.3s ease-in-out;
+}
 
-    .faq-body p {
-        margin-bottom: 10px;
-        text-align: justify;
-    }
+.faq-body p {
+    margin-bottom: 10px;
+    text-align: justify;
+}
 
-    .faq-body p:last-child {
-        margin-bottom: 0;
-    }
+.faq-body p:last-child {
+    margin-bottom: 0;
+}
 
-    .faq-body a {
-        color: #0056b3;
-        text-decoration: none;
-        font-weight: 500;
-    }
+.faq-body a {
+    color: #0056b3;
+    text-decoration: none;
+    font-weight: 500;
+}
 
-    .faq-body a:hover {
-        text-decoration: underline;
-    }
+.faq-body a:hover {
+    text-decoration: underline;
+}
 
-    .btn-view-more {
-        display: block;
-        width: fit-content;
-        margin: 25px auto;
-        padding: 8px 30px;
-        background: #ffffff;
-        border: 1px solid #d1d5db;
-        border-radius: 25px;
-        font-size: 14px;
-        font-weight: 600;
-        color: #333;
-        transition: all 0.2s ease;
-    }
+.btn-view-more {
+    display: block;
+    width: fit-content;
+    margin: 25px auto;
+    padding: 8px 30px;
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    transition: all 0.2s ease;
+}
 
-    .btn-view-more:hover {
-        background-color: #eeededff;
-    }
+.btn-view-more:hover {
+    background-color: #eeededff;
+}
 
-    .content-section.large-text .faq-button {
-        font-size: 17.5px;
-    }
+.content-section.large-text .faq-button {
+    font-size: 17.5px;
+}
 
-    .content-section.large-text .faq-body {
-        font-size: 16.5px;
-        line-height: 1.7;
-    }
+.content-section.large-text .faq-body {
+    font-size: 16.5px;
+    line-height: 1.7;
+}
 </style>
 
 <div class="container my-3">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb breadcrumb-custom">
             <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Câu hỏi thường gặp</li>
+            <li class="breadcrumb-item active" aria-current="page">Câu hỏi thường gặp</li>
         </ol>
     </nav>
 
@@ -465,46 +465,49 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
 
-        const btnSmall = document.getElementById('btn-font-small');
-        const btnLarge = document.getElementById('btn-font-large');
-        const contentSection = document.getElementById('policy-content');
+    const btnSmall = document.getElementById('btn-font-small');
+    const btnLarge = document.getElementById('btn-font-large');
+    const contentSection = document.getElementById('policy-content');
 
-        if (btnSmall && btnLarge && contentSection) {
-            btnLarge.addEventListener('click', function () {
-                btnLarge.classList.add('active');
-                btnSmall.classList.remove('active');
-                contentSection.classList.add('large-text');
-            });
+    if (btnSmall && btnLarge && contentSection) {
+        btnLarge.addEventListener('click', function() {
+            btnLarge.classList.add('active');
+            btnSmall.classList.remove('active');
+            contentSection.classList.add('large-text');
+        });
 
-            btnSmall.addEventListener('click', function () {
-                btnSmall.classList.add('active');
-                btnLarge.classList.remove('active');
-                contentSection.classList.remove('large-text');
-            });
-        }
+        btnSmall.addEventListener('click', function() {
+            btnSmall.classList.add('active');
+            btnLarge.classList.remove('active');
+            contentSection.classList.remove('large-text');
+        });
+    }
 
 
-        const btnViewMore = document.getElementById('btnViewMore');
-        const hiddenItems = document.getElementById('hiddenFaqItems');
+    const btnViewMore = document.getElementById('btnViewMore');
+    const hiddenItems = document.getElementById('hiddenFaqItems');
 
-        if (btnViewMore && hiddenItems) {
-            btnViewMore.addEventListener('click', function () {
-                if (hiddenItems.style.display === 'none') {
+    if (btnViewMore && hiddenItems) {
+        btnViewMore.addEventListener('click', function() {
+            if (hiddenItems.style.display === 'none') {
 
-                    hiddenItems.style.display = 'block';
-                    btnViewMore.innerText = 'Thu gọn';
-                } else {
+                hiddenItems.style.display = 'block';
+                btnViewMore.innerText = 'Thu gọn';
+            } else {
 
-                    hiddenItems.style.display = 'none';
-                    btnViewMore.innerText = 'Xem thêm';
+                hiddenItems.style.display = 'none';
+                btnViewMore.innerText = 'Xem thêm';
 
-                    document.getElementById('faq5').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            });
-        }
-    });
+                document.getElementById('faq5').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        });
+    }
+});
 </script>
 
 <?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>

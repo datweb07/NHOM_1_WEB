@@ -193,7 +193,6 @@ class KhachHangController
             exit();
         }
 
-        // Kiểm tra xem có file được upload không
         if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
             $_SESSION['error'] = "Vui lòng chọn ảnh để upload!";
             header("Location: /client/profile");
@@ -202,7 +201,6 @@ class KhachHangController
 
         $file = $_FILES['avatar'];
 
-        // Kiểm tra dung lượng (Max 2MB)
         $maxSize = 2 * 1024 * 1024;
         if ($file['size'] > $maxSize) {
             $_SESSION['error'] = "Kích thước ảnh không được vượt quá 2MB!";
@@ -210,7 +208,6 @@ class KhachHangController
             exit();
         }
 
-        // Kiểm tra định dạng file
         $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
         $fileType = mime_content_type($file['tmp_name']);
         if (!in_array($fileType, $allowedTypes)) {
@@ -285,7 +282,6 @@ class KhachHangController
             exit();
         }
 
-        // Validate required fields
         $requiredFields = [
             'ho_ten_nguoi_nhan',
             'sdt_nguoi_nhan',
@@ -314,7 +310,6 @@ class KhachHangController
             'mac_dinh' => isset($_POST['is_mac_dinh']) ? 1 : 0
         ];
 
-        // Load DiaChi model
         require_once dirname(__DIR__, 2) . '/models/entities/DiaChi.php';
         $diaChiModel = new DiaChi();
 
@@ -345,7 +340,6 @@ class KhachHangController
             exit();
         }
 
-        // Get address ID
         $addressId = (int) ($_POST['id'] ?? 0);
         if (!$addressId) {
             $_SESSION['error'] = "Địa chỉ không hợp lệ!";
@@ -353,11 +347,9 @@ class KhachHangController
             exit();
         }
 
-        // Load DiaChi model
         require_once dirname(__DIR__, 2) . '/models/entities/DiaChi.php';
         $diaChiModel = new DiaChi();
 
-        // Verify address belongs to user
         $diaChi = $diaChiModel->getById($addressId);
         if (!$diaChi || $diaChi['nguoi_dung_id'] != $userId) {
             $_SESSION['error'] = "Bạn không có quyền thực hiện thao tác này!";
@@ -365,7 +357,6 @@ class KhachHangController
             exit();
         }
 
-        // Validate required fields
         $requiredFields = [
             'ho_ten_nguoi_nhan',
             'sdt_nguoi_nhan',
@@ -383,7 +374,6 @@ class KhachHangController
             }
         }
 
-        // Prepare data
         $data = [
             'ho_ten_nguoi_nhan' => trim($_POST['ho_ten_nguoi_nhan']),
             'sdt_nguoi_nhan' => trim($_POST['sdt_nguoi_nhan']),
@@ -421,7 +411,6 @@ class KhachHangController
             exit();
         }
 
-        // Get address ID
         $addressId = (int) ($_POST['id'] ?? 0);
         if (!$addressId) {
             $_SESSION['error'] = "Địa chỉ không hợp lệ!";
@@ -429,11 +418,9 @@ class KhachHangController
             exit();
         }
 
-        // Load DiaChi model
         require_once dirname(__DIR__, 2) . '/models/entities/DiaChi.php';
         $diaChiModel = new DiaChi();
 
-        // Verify address belongs to user
         $diaChi = $diaChiModel->getById($addressId);
         if (!$diaChi || $diaChi['nguoi_dung_id'] != $userId) {
             $_SESSION['error'] = "Bạn không có quyền thực hiện thao tác này!";
@@ -468,7 +455,6 @@ class KhachHangController
             exit();
         }
 
-        // Get address ID
         $addressId = (int) ($_POST['id'] ?? 0);
         if (!$addressId) {
             $_SESSION['error'] = "Địa chỉ không hợp lệ!";
@@ -476,11 +462,9 @@ class KhachHangController
             exit();
         }
 
-        // Load DiaChi model
         require_once dirname(__DIR__, 2) . '/models/entities/DiaChi.php';
         $diaChiModel = new DiaChi();
 
-        // Verify address belongs to user
         $diaChi = $diaChiModel->getById($addressId);
         if (!$diaChi || $diaChi['nguoi_dung_id'] != $userId) {
             $_SESSION['error'] = "Bạn không có quyền thực hiện thao tác này!";

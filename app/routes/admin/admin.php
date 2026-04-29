@@ -52,7 +52,6 @@ function adminRoute(string $uri): void
     require_once dirname(__DIR__, 2) . '/controllers/admin/BannerController.php';
     $bannerController = new BannerController();
 
-    // Profile routes
     if ($path === 'admin/profile' && $method === 'GET') {
         require_once dirname(__DIR__, 2) . '/controllers/admin/ProfileController.php';
         $profileController = new ProfileController();
@@ -377,7 +376,6 @@ function adminRoute(string $uri): void
         return;
     }
 
-    // Users
     if ($path === 'admin/nguoi-dung' && $method === 'GET') {
         $nguoiDungController->index();
         return;
@@ -406,7 +404,6 @@ function adminRoute(string $uri): void
         return;
     }
 
-    // Reviews
     if ($path === 'admin/danh-gia' && $method === 'GET') {
         $danhGiaController->index();
         return;
@@ -422,7 +419,6 @@ function adminRoute(string $uri): void
         return;
     }
 
-    // Banner
     if ($path === 'admin/banner' && $method === 'GET') {
         $bannerController->index();
         return;
@@ -453,19 +449,16 @@ function adminRoute(string $uri): void
         return;
     }
 
-    // API: Lấy danh sách sản phẩm cho modal chọn sản phẩm
     if ($path === 'admin/api/san-pham' && $method === 'GET') {
         $bannerController->layDanhSachSanPham();
         return;
     }
 
-    // API: Lấy thuộc tính động theo danh mục (AJAX)
     if ($path === 'admin/api/get-category-attributes' && $method === 'GET') {
         $sanPhamController->getCategoryAttributes();
         return;
     }
 
-    // API: Lấy thông báo cho admin
     if ($path === 'admin/api/notifications' && $method === 'GET') {
         require_once dirname(__DIR__, 2) . '/controllers/admin/NotificationController.php';
         $notificationController = new NotificationController();
@@ -473,7 +466,6 @@ function adminRoute(string $uri): void
         return;
     }
 
-    // API: Đánh dấu thông báo đã đọc
     if ($path === 'admin/api/notifications/mark-read' && $method === 'POST') {
         require_once dirname(__DIR__, 2) . '/controllers/admin/NotificationController.php';
         $notificationController = new NotificationController();
@@ -481,7 +473,6 @@ function adminRoute(string $uri): void
         return;
     }
 
-    // API: Đánh dấu thông báo chưa đọc
     if ($path === 'admin/api/notifications/mark-unread' && $method === 'POST') {
         require_once dirname(__DIR__, 2) . '/controllers/admin/NotificationController.php';
         $notificationController = new NotificationController();
@@ -489,7 +480,6 @@ function adminRoute(string $uri): void
         return;
     }
 
-    // API: Đánh dấu tất cả thông báo đã đọc
     if ($path === 'admin/api/notifications/mark-all-read' && $method === 'POST') {
         require_once dirname(__DIR__, 2) . '/controllers/admin/NotificationController.php';
         $notificationController = new NotificationController();
@@ -497,7 +487,6 @@ function adminRoute(string $uri): void
         return;
     }
 
-    // API: Lấy danh sách thông báo với phân trang và lọc
     if ($path === 'admin/api/notifications/list' && $method === 'GET') {
         require_once dirname(__DIR__, 2) . '/controllers/admin/NotificationController.php';
         $notificationController = new NotificationController();
@@ -505,7 +494,6 @@ function adminRoute(string $uri): void
         return;
     }
 
-    // Trang danh sách thông báo
     if ($path === 'admin/notifications' && $method === 'GET') {
         require_once dirname(__DIR__, 2) . '/controllers/admin/NotificationController.php';
         $notificationController = new NotificationController();

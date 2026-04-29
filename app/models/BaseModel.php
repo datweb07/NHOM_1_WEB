@@ -110,7 +110,6 @@ class BaseModel
         return $data;
     }
 
-    // // Dùng cho INSERT/UPDATE/DELETE phức tạp
     public function execute($sql)
     {
         chayTruyVanKhongTraVeDL($this->link, $sql);

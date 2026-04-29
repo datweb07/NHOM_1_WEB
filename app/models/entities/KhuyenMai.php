@@ -25,7 +25,6 @@ class KhuyenMai extends BaseModel
         return $this->query($sql);
     }
 
-    // Lấy danh sách khuyến mãi với lọc và phân trang
     public function layDanhSach(string $trangThai = '', int $limit = 20, int $offset = 0, ?string $tuNgay = null, ?string $denNgay = null): array
     {
         $where = [];
@@ -50,7 +49,6 @@ class KhuyenMai extends BaseModel
         return $this->query($sql);
     }
 
-    // Đếm số lượng khuyến mãi
     public function demKhuyenMai(string $trangThai = '', ?string $tuNgay = null, ?string $denNgay = null): int
     {
         $where = [];
@@ -73,7 +71,6 @@ class KhuyenMai extends BaseModel
         return !empty($result) ? (int)$result[0]['total'] : 0;
     }
 
-    // Lấy danh sách sản phẩm liên kết với khuyến mãi
     public function layDanhSachSanPhamLienKet(int $khuyenMaiId): array
     {
         $sql = "SELECT sp.*, spkm.khuyen_mai_id
@@ -84,7 +81,6 @@ class KhuyenMai extends BaseModel
         return $this->query($sql);
     }
 
-    // Xóa tất cả liên kết sản phẩm của khuyến mãi
     public function xoaLienKetSanPham(int $khuyenMaiId): bool
     {
         $sql = "DELETE FROM san_pham_khuyen_mai WHERE khuyen_mai_id = $khuyenMaiId";
@@ -92,7 +88,6 @@ class KhuyenMai extends BaseModel
         return true;
     }
 
-    // Thêm liên kết sản phẩm với khuyến mãi
     public function themLienKetSanPham(int $khuyenMaiId, array $sanPhamIds): bool
     {
         if (empty($sanPhamIds)) {
@@ -109,7 +104,6 @@ class KhuyenMai extends BaseModel
         return true;
     }
 
-    // Cập nhật trạng thái khuyến mãi hết hạn
     public function capNhatTrangThaiHetHan(): int
     {
         $sql = "UPDATE {$this->table} 
@@ -117,7 +111,7 @@ class KhuyenMai extends BaseModel
                 WHERE trang_thai = 'HOAT_DONG' 
                 AND ngay_ket_thuc < NOW()";
         $this->query($sql);
-        return 0; // Return affected rows if needed
+        return 0; 
     }
 
     public function toArray(): array

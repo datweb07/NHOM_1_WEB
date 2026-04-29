@@ -1,16 +1,7 @@
 <?php
 
-/**
- * Client API Controller
- * Handles AJAX API requests from client-side
- */
-
 class ApiController
 {
-    /**
-     * XML Search API
-     * GET /api/xml-search?q=keyword
-     */
     public function xmlSearch(): void
     {
         header('Content-Type: application/xml; charset=utf-8');
@@ -33,7 +24,6 @@ class ApiController
                 );
             }
             
-            // Build XML
             $xml = new \DOMDocument('1.0', 'UTF-8');
             $xml->formatOutput = true;
             
@@ -79,10 +69,6 @@ class ApiController
         exit;
     }
     
-    /**
-     * Brand Menu API
-     * GET /api/brand-menu?name=Samsung
-     */
     public function brandMenu(): void
     {
         header('Content-Type: application/json; charset=utf-8');
@@ -99,7 +85,6 @@ class ApiController
         
         $brandNameClean = addslashes(trim($brandName));
         
-        // Get products
         $sqlProducts = "
             SELECT 
                 sp.id, 
@@ -122,7 +107,6 @@ class ApiController
             return;
         }
         
-        // Get categories
         $sqlCategories = "
             SELECT DISTINCT 
                 dm.id, 
@@ -148,9 +132,6 @@ class ApiController
         $this->sendJsonResponse(true, $responseData);
     }
     
-    /**
-     * Helper: Send JSON response
-     */
     private function sendJsonResponse(bool $success, array $data, ?string $message = null): void
     {
         $response = [

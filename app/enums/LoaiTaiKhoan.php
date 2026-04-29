@@ -5,7 +5,6 @@ abstract class LoaiTaiKhoan
     const ADMIN = 'ADMIN';
     const MEMBER = 'MEMBER';
 
-
     public static function getAll(): array
     {
         return [
@@ -13,7 +12,6 @@ abstract class LoaiTaiKhoan
             self::MEMBER
         ];
     }
-
     
     //kiểm tra hợp lệ của value loại tk
     public static function isValid(?string $value): bool

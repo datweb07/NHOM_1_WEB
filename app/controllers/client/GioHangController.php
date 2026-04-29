@@ -25,16 +25,12 @@ class GioHangController
         $this->phienBanModel = new PhienBanSanPham();
     }
 
-    /**
-     * Lấy giỏ hàng hiện tại
-     */
     private function layGioHangHienTai(): array
     {
         if (Session::has('user_id')) {
             return $this->gioHangModel->layHoacTaoGioHangUser(Session::get('user_id'));
         }
         
-        // Khách vãng lai
         if (!Session::has('cart_session_id')) {
             Session::set('cart_session_id', session_id());
         }
@@ -42,9 +38,6 @@ class GioHangController
         return $this->gioHangModel->layHoacTaoGioHangGuest(Session::get('cart_session_id'));
     }
 
-    /**
-     * Hiển thị giỏ hàng
-     */
     public function index(): void
     {
         $gioHang = $this->layGioHangHienTai();
@@ -54,9 +47,6 @@ class GioHangController
         require_once dirname(__DIR__, 2) . '/views/client/gio_hang/index.php';
     }
 
-    /**
-     * Thêm sản phẩm vào giỏ
-     */
     public function them(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -73,14 +63,12 @@ class GioHangController
             exit;
         }
 
-        // Kiểm tra tồn kho
         if (!$this->phienBanModel->kiemTraTonKho($phienBanId, $soLuong)) {
             Session::flash('error', 'Sản phẩm không đủ số lượng trong kho');
             header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
             exit;
         }
 
-        // Thêm vào giỏ
         $gioHang = $this->layGioHangHienTai();
         $success = $this->chiTietGioModel->themVaoGio($gioHang['id'], $phienBanId, $soLuong);
 
@@ -94,9 +82,6 @@ class GioHangController
         exit;
     }
 
-    /**
-     * Cập nhật số lượng
-     */
     public function capNhat(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -116,9 +101,6 @@ class GioHangController
         exit;
     }
 
-    /**
-     * Xóa sản phẩm khỏi giỏ
-     */
     public function xoa(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -137,9 +119,6 @@ class GioHangController
         exit;
     }
 
-    /**
-     * Xóa tất cả sản phẩm khỏi giỏ
-     */
     public function xoaTatCa(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -155,9 +134,6 @@ class GioHangController
         exit;
     }
 
-    /**
-     * Lấy số lượng sản phẩm trong giỏ (AJAX)
-     */
     public function demSanPham(): void
     {
         header('Content-Type: application/json');

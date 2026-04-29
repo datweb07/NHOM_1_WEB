@@ -17,9 +17,6 @@ class DanhGiaController
         $this->sanPhamModel = new \SanPham();
     }
 
-    /**
-     * Lấy danh sách đánh giá của sản phẩm
-     */
     public function layDanhSach(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -48,9 +45,6 @@ class DanhGiaController
         ]);
     }
 
-    /**
-     * Thêm đánh giá
-     */
     public function them(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -68,7 +62,6 @@ class DanhGiaController
         $soSao = isset($_POST['so_sao']) ? (int)$_POST['so_sao'] : 0;
         $noiDung = isset($_POST['noi_dung']) ? trim($_POST['noi_dung']) : '';
 
-        // Validate
         if ($sanPhamId <= 0) {
             echo json_encode(['success' => false, 'message' => 'Sản phẩm không hợp lệ']);
             return;
@@ -84,13 +77,11 @@ class DanhGiaController
             return;
         }
 
-        // Kiểm tra đã đánh giá chưa
         if ($this->danhGiaModel->kiemTraDaDanhGia(\App\Core\Session::get('user_id'), $sanPhamId)) {
             echo json_encode(['success' => false, 'message' => 'Bạn đã đánh giá sản phẩm này rồi']);
             return;
         }
 
-        // Thêm đánh giá
         $result = $this->danhGiaModel->themDanhGia(
             \App\Core\Session::get('user_id'),
             $sanPhamId,
@@ -99,7 +90,6 @@ class DanhGiaController
         );
 
         if ($result > 0) {
-            // Cập nhật điểm đánh giá trung bình cho sản phẩm
             $diemTrungBinh = $this->danhGiaModel->tinhDiemTrungBinh($sanPhamId);
             $this->sanPhamModel->update($sanPhamId, ['diem_danh_gia' => $diemTrungBinh]);
 
@@ -109,9 +99,6 @@ class DanhGiaController
         }
     }
 
-    /**
-     * Kiểm tra user đã đánh giá sản phẩm chưa
-     */
     public function kiemTra(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {

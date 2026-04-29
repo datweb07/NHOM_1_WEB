@@ -89,237 +89,237 @@ if ($userId) {
         <h5 class="fw-bold mb-3 fs-6">Địa chỉ đã lưu</h5>
 
         <?php if (empty($danhSachDiaChi)): ?>
-            <div class="text-center py-4 text-muted border rounded"
-                style="background-color: #fafafa; border-style: dashed !important;">
-                <i class="bi bi-geo me-2"></i>Bạn chưa lưu địa chỉ nào.
-            </div>
+        <div class="text-center py-4 text-muted border rounded"
+            style="background-color: #fafafa; border-style: dashed !important;">
+            <i class="bi bi-geo me-2"></i>Bạn chưa lưu địa chỉ nào.
+        </div>
         <?php else: ?>
-            <?php foreach ($danhSachDiaChi as $diaChi): ?>
-                <div class="address-card card mb-3 <?php echo $diaChi['mac_dinh'] ? 'border-primary' : ''; ?>">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <?php if ($diaChi['mac_dinh']): ?>
-                                    <span class="badge bg-primary mb-2">Mặc định</span>
-                                <?php endif; ?>
-                                <h6 class="fw-bold mb-1"><?php echo htmlspecialchars($diaChi['ten_nguoi_nhan']); ?></h6>
-                                <p class="mb-1 text-muted small">
-                                    <i class="bi bi-telephone me-1"></i>
-                                    <?php echo htmlspecialchars($diaChi['sdt_nhan']); ?>
-                                </p>
-                                <p class="mb-0 small">
-                                    <i class="bi bi-geo-alt me-1"></i>
-                                    <?php echo htmlspecialchars($diaChi['so_nha_duong']); ?>,
-                                    <?php echo htmlspecialchars($diaChi['phuong_xa']); ?>,
-                                    <?php echo htmlspecialchars($diaChi['quan_huyen']); ?>,
-                                    <?php echo htmlspecialchars($diaChi['tinh_thanh']); ?>
-                                </p>
-                            </div>
-                            <div class="btn-group-vertical btn-group-sm ms-3">
-                                <?php if (!$diaChi['mac_dinh']): ?>
-                                    <button type="button" class="btn btn-outline-primary btn-sm"
-                                        onclick="setDefault(<?php echo $diaChi['id']; ?>)">
-                                        <i class="bi bi-star"></i> Đặt mặc định
-                                    </button>
-                                <?php endif; ?>
-                                <button type="button" class="btn btn-outline-secondary btn-sm"
-                                    onclick="editAddress(<?php echo $diaChi['id']; ?>)">
-                                    <i class="bi bi-pencil"></i> Sửa
-                                </button>
-                                <button type="button" class="btn btn-outline-danger btn-sm"
-                                    onclick="deleteAddress(<?php echo $diaChi['id']; ?>)">
-                                    <i class="bi bi-trash"></i> Xóa
-                                </button>
-                            </div>
-                        </div>
+        <?php foreach ($danhSachDiaChi as $diaChi): ?>
+        <div class="address-card card mb-3 <?php echo $diaChi['mac_dinh'] ? 'border-primary' : ''; ?>">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <?php if ($diaChi['mac_dinh']): ?>
+                        <span class="badge bg-primary mb-2">Mặc định</span>
+                        <?php endif; ?>
+                        <h6 class="fw-bold mb-1"><?php echo htmlspecialchars($diaChi['ten_nguoi_nhan']); ?></h6>
+                        <p class="mb-1 text-muted small">
+                            <i class="bi bi-telephone me-1"></i>
+                            <?php echo htmlspecialchars($diaChi['sdt_nhan']); ?>
+                        </p>
+                        <p class="mb-0 small">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            <?php echo htmlspecialchars($diaChi['so_nha_duong']); ?>,
+                            <?php echo htmlspecialchars($diaChi['phuong_xa']); ?>,
+                            <?php echo htmlspecialchars($diaChi['quan_huyen']); ?>,
+                            <?php echo htmlspecialchars($diaChi['tinh_thanh']); ?>
+                        </p>
+                    </div>
+                    <div class="btn-group-vertical btn-group-sm ms-3">
+                        <?php if (!$diaChi['mac_dinh']): ?>
+                        <button type="button" class="btn btn-outline-primary btn-sm"
+                            onclick="setDefault(<?php echo $diaChi['id']; ?>)">
+                            <i class="bi bi-star"></i> Đặt mặc định
+                        </button>
+                        <?php endif; ?>
+                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                            onclick="editAddress(<?php echo $diaChi['id']; ?>)">
+                            <i class="bi bi-pencil"></i> Sửa
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm"
+                            onclick="deleteAddress(<?php echo $diaChi['id']; ?>)">
+                            <i class="bi bi-trash"></i> Xóa
+                        </button>
                     </div>
                 </div>
-            <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endforeach; ?>
         <?php endif; ?>
     </div>
 </div>
 
 <style>
-    .address-card.border-primary {
-        border-width: 2px !important;
-    }
+.address-card.border-primary {
+    border-width: 2px !important;
+}
 </style>
 
 <script>
-    const addressesData = <?php echo json_encode($danhSachDiaChi); ?>;
+const addressesData = <?php echo json_encode($danhSachDiaChi); ?>;
 
-    function editAddress(id) {
-        const address = addressesData.find(a => a.id == id);
-        if (!address) return;
+function editAddress(id) {
+    const address = addressesData.find(a => a.id == id);
+    if (!address) return;
 
-        document.querySelector('input[name="ho_ten_nguoi_nhan"]').value = address.ten_nguoi_nhan;
-        document.querySelector('input[name="sdt_nguoi_nhan"]').value = address.sdt_nhan;
-        document.querySelector('input[name="dia_chi_cu_the"]').value = address.so_nha_duong;
-        document.getElementById('checkMacDinh').checked = address.mac_dinh == 1;
+    document.querySelector('input[name="ho_ten_nguoi_nhan"]').value = address.ten_nguoi_nhan;
+    document.querySelector('input[name="sdt_nguoi_nhan"]').value = address.sdt_nhan;
+    document.querySelector('input[name="dia_chi_cu_the"]').value = address.so_nha_duong;
+    document.getElementById('checkMacDinh').checked = address.mac_dinh == 1;
 
-        const form = document.getElementById('formDiaChi');
-        form.action = '/khach-hang/cap-nhat-dia-chi';
+    const form = document.getElementById('formDiaChi');
+    form.action = '/khach-hang/cap-nhat-dia-chi';
 
-        let idInput = form.querySelector('input[name="id"]');
-        if (!idInput) {
-            idInput = document.createElement('input');
-            idInput.type = 'hidden';
-            idInput.name = 'id';
-            form.appendChild(idInput);
-        }
-        idInput.value = id;
+    let idInput = form.querySelector('input[name="id"]');
+    if (!idInput) {
+        idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'id';
+        form.appendChild(idInput);
+    }
+    idInput.value = id;
 
-        const submitBtn = form.querySelector('button[type="submit"]');
-        submitBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Cập nhật địa chỉ';
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Cập nhật địa chỉ';
 
-        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    form.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
+
+    setTimeout(() => {
+        setSelectValue('tinhThanh', address.tinh_thanh);
+        document.getElementById('tinhThanh').dispatchEvent(new Event('change'));
 
         setTimeout(() => {
-            setSelectValue('tinhThanh', address.tinh_thanh);
-            document.getElementById('tinhThanh').dispatchEvent(new Event('change'));
+            setSelectValue('quanHuyen', address.quan_huyen);
+            document.getElementById('quanHuyen').dispatchEvent(new Event('change'));
 
             setTimeout(() => {
-                setSelectValue('quanHuyen', address.quan_huyen);
-                document.getElementById('quanHuyen').dispatchEvent(new Event('change'));
-
-                setTimeout(() => {
-                    setSelectValue('phuongXa', address.phuong_xa);
-                }, 300);
+                setSelectValue('phuongXa', address.phuong_xa);
             }, 300);
         }, 300);
-    }
+    }, 300);
+}
 
-    function setSelectValue(selectId, value) {
-        const select = document.getElementById(selectId);
-        for (let i = 0; i < select.options.length; i++) {
-            if (select.options[i].value === value) {
-                select.selectedIndex = i;
-                break;
-            }
+function setSelectValue(selectId, value) {
+    const select = document.getElementById(selectId);
+    for (let i = 0; i < select.options.length; i++) {
+        if (select.options[i].value === value) {
+            select.selectedIndex = i;
+            break;
         }
     }
+}
 
-    function deleteAddress(id) {
-        if (!confirm('Bạn có chắc chắn muốn xóa địa chỉ này?')) {
-            return;
-        }
-
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/khach-hang/xoa-dia-chi';
-
-        const idInput = document.createElement('input');
-        idInput.type = 'hidden';
-        idInput.name = 'id';
-        idInput.value = id;
-        form.appendChild(idInput);
-
-        document.body.appendChild(form);
-        form.submit();
+function deleteAddress(id) {
+    if (!confirm('Bạn có chắc chắn muốn xóa địa chỉ này?')) {
+        return;
     }
 
-    function setDefault(id) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/khach-hang/dat-mac-dinh';
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/khach-hang/xoa-dia-chi';
 
-        const idInput = document.createElement('input');
-        idInput.type = 'hidden';
-        idInput.name = 'id';
-        idInput.value = id;
-        form.appendChild(idInput);
+    const idInput = document.createElement('input');
+    idInput.type = 'hidden';
+    idInput.name = 'id';
+    idInput.value = id;
+    form.appendChild(idInput);
 
-        document.body.appendChild(form);
-        form.submit();
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function setDefault(id) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/khach-hang/dat-mac-dinh';
+
+    const idInput = document.createElement('input');
+    idInput.type = 'hidden';
+    idInput.name = 'id';
+    idInput.value = id;
+    form.appendChild(idInput);
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function resetForm() {
+    const form = document.getElementById('formDiaChi');
+    form.reset();
+    form.action = '/khach-hang/them-dia-chi';
+
+    const idInput = form.querySelector('input[name="id"]');
+    if (idInput) {
+        idInput.remove();
     }
 
-    function resetForm() {
-        const form = document.getElementById('formDiaChi');
-        form.reset();
-        form.action = '/khach-hang/them-dia-chi';
-
-        const idInput = form.querySelector('input[name="id"]');
-        if (idInput) {
-            idInput.remove();
-        }
-
-        const submitBtn = form.querySelector('button[type="submit"]');
-        submitBtn.innerHTML = '<i class="bi bi-plus-circle me-1"></i> Thêm địa chỉ';
-    }
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.innerHTML = '<i class="bi bi-plus-circle me-1"></i> Thêm địa chỉ';
+}
 </script>
 
 <script>
-    // 
-    // TÍCH HỢP DATA HÀNH CHÍNH VIỆT NAM (dvhcvn)
-    // 
-    document.addEventListener("DOMContentLoaded", function () {
-        const tinhThanhSelect = document.getElementById('tinhThanh');
-        const quanHuyenSelect = document.getElementById('quanHuyen');
-        const phuongXaSelect = document.getElementById('phuongXa');
-        let vnData = [];
+document.addEventListener("DOMContentLoaded", function() {
+    const tinhThanhSelect = document.getElementById('tinhThanh');
+    const quanHuyenSelect = document.getElementById('quanHuyen');
+    const phuongXaSelect = document.getElementById('phuongXa');
+    let vnData = [];
 
-        const dataUrl = 'https://raw.githubusercontent.com/daohoangson/dvhcvn/master/data/dvhcvn.json';
+    const dataUrl = 'https://raw.githubusercontent.com/daohoangson/dvhcvn/master/data/dvhcvn.json';
 
-        fetch(dataUrl)
-            .then(response => response.json())
-            .then(data => {
-                vnData = data.data;
-                vnData.forEach(tinh => {
-                    const option = document.createElement('option');
-                    option.value = tinh.name;
-                    option.dataset.id = tinh.level1_id;
-                    option.textContent = tinh.name;
-                    tinhThanhSelect.appendChild(option);
-                });
-            })
-            .catch(error => {
-                console.error('Lỗi khi tải dữ liệu hành chính:', error);
-                tinhThanhSelect.innerHTML = '<option disabled>Không thể tải dữ liệu</option>';
+    fetch(dataUrl)
+        .then(response => response.json())
+        .then(data => {
+            vnData = data.data;
+            vnData.forEach(tinh => {
+                const option = document.createElement('option');
+                option.value = tinh.name;
+                option.dataset.id = tinh.level1_id;
+                option.textContent = tinh.name;
+                tinhThanhSelect.appendChild(option);
             });
-
-        tinhThanhSelect.addEventListener('change', function () {
-            const selectedId = this.options[this.selectedIndex].dataset.id;
-
-            quanHuyenSelect.innerHTML = '<option value="" selected disabled>Chọn Quận/Huyện</option>';
-            phuongXaSelect.innerHTML = '<option value="" selected disabled>Chọn Phường/Xã</option>';
-            phuongXaSelect.disabled = true;
-
-            if (selectedId) {
-                const tinhData = vnData.find(t => t.level1_id === selectedId);
-                if (tinhData && tinhData.level2s) {
-                    tinhData.level2s.forEach(quan => {
-                        const option = document.createElement('option');
-                        option.value = quan.name;
-                        option.dataset.id = quan.level2_id;
-                        option.textContent = quan.name;
-                        quanHuyenSelect.appendChild(option);
-                    });
-                    quanHuyenSelect.disabled = false;
-                }
-            }
+        })
+        .catch(error => {
+            console.error('Lỗi khi tải dữ liệu hành chính:', error);
+            tinhThanhSelect.innerHTML = '<option disabled>Không thể tải dữ liệu</option>';
         });
 
-        quanHuyenSelect.addEventListener('change', function () {
-            const selectedTinhId = tinhThanhSelect.options[tinhThanhSelect.selectedIndex].dataset.id;
-            const selectedQuanId = this.options[this.selectedIndex].dataset.id;
+    tinhThanhSelect.addEventListener('change', function() {
+        const selectedId = this.options[this.selectedIndex].dataset.id;
 
-            phuongXaSelect.innerHTML = '<option value="" selected disabled>Chọn Phường/Xã</option>';
+        quanHuyenSelect.innerHTML = '<option value="" selected disabled>Chọn Quận/Huyện</option>';
+        phuongXaSelect.innerHTML = '<option value="" selected disabled>Chọn Phường/Xã</option>';
+        phuongXaSelect.disabled = true;
 
-            if (selectedTinhId && selectedQuanId) {
-                const tinhData = vnData.find(t => t.level1_id === selectedTinhId);
-                const quanData = tinhData.level2s.find(q => q.level2_id === selectedQuanId);
-
-                if (quanData && quanData.level3s) {
-                    quanData.level3s.forEach(phuong => {
-                        const option = document.createElement('option');
-                        option.value = phuong.name;
-                        option.dataset.id = phuong.level3_id;
-                        option.textContent = phuong.name;
-                        phuongXaSelect.appendChild(option);
-                    });
-                    phuongXaSelect.disabled = false;
-                }
+        if (selectedId) {
+            const tinhData = vnData.find(t => t.level1_id === selectedId);
+            if (tinhData && tinhData.level2s) {
+                tinhData.level2s.forEach(quan => {
+                    const option = document.createElement('option');
+                    option.value = quan.name;
+                    option.dataset.id = quan.level2_id;
+                    option.textContent = quan.name;
+                    quanHuyenSelect.appendChild(option);
+                });
+                quanHuyenSelect.disabled = false;
             }
-        });
+        }
     });
+
+    quanHuyenSelect.addEventListener('change', function() {
+        const selectedTinhId = tinhThanhSelect.options[tinhThanhSelect.selectedIndex].dataset.id;
+        const selectedQuanId = this.options[this.selectedIndex].dataset.id;
+
+        phuongXaSelect.innerHTML = '<option value="" selected disabled>Chọn Phường/Xã</option>';
+
+        if (selectedTinhId && selectedQuanId) {
+            const tinhData = vnData.find(t => t.level1_id === selectedTinhId);
+            const quanData = tinhData.level2s.find(q => q.level2_id === selectedQuanId);
+
+            if (quanData && quanData.level3s) {
+                quanData.level3s.forEach(phuong => {
+                    const option = document.createElement('option');
+                    option.value = phuong.name;
+                    option.dataset.id = phuong.level3_id;
+                    option.textContent = phuong.name;
+                    phuongXaSelect.appendChild(option);
+                });
+                phuongXaSelect.disabled = false;
+            }
+        }
+    });
+});
 </script>

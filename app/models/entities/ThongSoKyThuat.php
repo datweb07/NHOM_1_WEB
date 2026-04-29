@@ -13,20 +13,18 @@ class ThongSoKyThuat extends BaseModel
     {
         parent::__construct('thong_so_ky_thuat');
     }
-    // Lấy danh sách thông số của sản phẩm để hiển thị bảng cấu hình và sắp xếp theo thứ tự để đảm bảo các thông số quan trọng hiện trước
+
     public function layThongSoTheoSanPham(int $sanPhamId)
     {
         $sql = "SELECT * FROM {$this->table} WHERE san_pham_id = $sanPhamId ORDER BY thu_tu ASC";
         return $this->query($sql);
     }
 
-    // Lấy thông số theo sản phẩm (alias cho task 9.1)
     public function layTheoSanPham(int $sanPhamId): array
     {
         return $this->layThongSoTheoSanPham($sanPhamId);
     }
 
-    // Xóa toàn bộ thông số của 1 sản phẩm khi update lại toàn bộ cấu hình
     public function xoaThongSoCuaSanPham(int $sanPhamId)
     {
         $sql = "DELETE FROM {$this->table} WHERE san_pham_id = $sanPhamId";
@@ -34,13 +32,10 @@ class ThongSoKyThuat extends BaseModel
         return true;
     }
 
-    // Cập nhật hoặc tạo mới tất cả thông số của sản phẩm
     public function capNhatHoacTao(int $sanPhamId, array $specifications): bool
     {
-        // Xóa tất cả thông số cũ
         $this->xoaThongSoCuaSanPham($sanPhamId);
 
-        // Thêm thông số mới
         if (empty($specifications)) {
             return true;
         }

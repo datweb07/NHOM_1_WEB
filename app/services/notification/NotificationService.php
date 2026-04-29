@@ -23,7 +23,7 @@ class NotificationService
     private MaGiamGia $maGiamGiaModel;
 
     private const REDIS_KEY_PREFIX = 'notification:last_check:';
-    private const REDIS_TTL = 7200; // 2 hours in seconds
+    private const REDIS_TTL = 7200; 
     private const DEFAULT_LOOKBACK_HOURS = 24;
 
     public function __construct(
@@ -54,7 +54,6 @@ class NotificationService
         $timestamp = $this->redis->get($key);
 
         if ($timestamp === false || empty($timestamp)) {
-            // Initialize to 24 hours ago
             $timestamp = date('Y-m-d H:i:s', strtotime('-' . self::DEFAULT_LOOKBACK_HOURS . ' hours'));
             $this->updateLastCheckTimestamp($adminId, $timestamp);
         }
@@ -525,7 +524,7 @@ class NotificationService
             $notification['id'] = $notificationId;
             $notification['is_read'] = isset($readSet[$notificationId]);
         }
-        unset($notification); // Break reference
+        unset($notification); 
 
         $totalNotifications = array_reduce($notifications, function ($carry, $item) {
             return $carry + ($item['count'] ?? 0);

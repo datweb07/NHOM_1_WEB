@@ -54,13 +54,11 @@ class DanhMucController
 
         $input = $_POST;
 
-        // Xử lý upload ảnh Icon lên Cloudinary (Thêm mới)
         if (isset($_FILES['icon_url']) && $_FILES['icon_url']['error'] === UPLOAD_ERR_OK) {
             try {
                 require_once dirname(__DIR__, 2) . '/services/cloudinary/CloudinaryService.php';
                 $cloudinary = CloudinaryService::getInstance();
 
-                // Tạo tên ngẫu nhiên bằng Timestamp vì chưa có ID
                 $uniqueCode = time();
                 $publicId = 'category_icon_' . $uniqueCode;
 
@@ -70,7 +68,6 @@ class DanhMucController
                 ]);
                 $input['icon_url'] = $uploadResult['secure_url'];
             } catch (\Exception $e) {
-                // Có thể log lỗi ở đây nếu cần
             }
         }
 
@@ -134,10 +131,8 @@ class DanhMucController
 
         $input = $_POST;
         
-        // Mặc định giữ lại ảnh cũ nếu user không upload file mới
         $input['icon_url'] = $input['icon_url'] ?? $danhMuc['icon_url'];
 
-        // Xử lý cập nhật ảnh lên Cloudinary
         if (isset($_FILES['icon_url']) && $_FILES['icon_url']['error'] === UPLOAD_ERR_OK) {
             try {
                 require_once dirname(__DIR__, 2) . '/services/cloudinary/CloudinaryService.php';
@@ -148,12 +143,11 @@ class DanhMucController
                 $uploadResult = $cloudinary->uploadApi()->upload($_FILES['icon_url']['tmp_name'], [
                     'folder'     => 'categories',
                     'public_id'  => $publicId,
-                    'overwrite'  => true,       // Ghi đè file nếu đã tồn tại tên này
-                    'invalidate' => true        // Xóa cache trình duyệt
+                    'overwrite'  => true,    
+                    'invalidate' => true       
                 ]);
                 $input['icon_url'] = $uploadResult['secure_url'];
 
-                // DỌN RÁC: Xóa ảnh cũ nếu tên của nó là Timestamp (không khớp với ID chuẩn)
                 if (!empty($danhMuc['icon_url']) && strpos($danhMuc['icon_url'], $publicId) === false) {
                     $this->deleteCloudinaryImage($danhMuc['icon_url']);
                 }
@@ -185,14 +179,11 @@ class DanhMucController
             exit;
         }
 
-        // Check if category has products
         if ($this->danhMucModel->kiemTraCoSanPham($id)) {
             header('Location: /admin/danh-muc?error=has_products');
             exit;
         }
 
-        // Lưu ý: Do logic xóa của bạn đang là "ẩn danh mục" (soft-delete) thông qua hàm anDanhMuc() 
-        // Nên ta sẽ KHÔNG tự động xóa ảnh trên Cloudinary tại đây để đề phòng user khôi phục lại (hienDanhMuc).
         $this->danhMucModel->anDanhMuc($id);
         header('Location: /admin/danh-muc?success=hidden');
         exit;
@@ -263,9 +254,6 @@ class DanhMucController
         exit;
     }
 
-    /**
-     * Hàm hỗ trợ tự động xóa ảnh trên Cloudinary
-     */
     private function deleteCloudinaryImage($url): void
     {
         if (empty($url) || strpos($url, 'cloudinary.com') === false) {
@@ -293,7 +281,6 @@ class DanhMucController
         $trangThaiRaw = (string)($input['trang_thai'] ?? '1');
         $danhMucChaRaw = (string)($input['danh_muc_cha_id'] ?? '');
         
-        // BỔ SUNG: Lấy dữ liệu Nổi bật và Gợi ý từ form
         $isNoiBatRaw = (string)($input['is_noi_bat'] ?? '0');
         $isGoiYRaw = (string)($input['is_goi_y'] ?? '0');
 
@@ -324,8 +311,7 @@ class DanhMucController
         }
 
         $trangThai = ($trangThaiRaw === '0') ? 0 : 1;
-        
-        // BỔ SUNG: Ép kiểu dữ liệu về 0 hoặc 1
+
         $isNoiBat = ($isNoiBatRaw === '1') ? 1 : 0;
         $isGoiY = ($isGoiYRaw === '1') ? 1 : 0;
 
@@ -344,7 +330,6 @@ class DanhMucController
             }
         }
 
-        // BỔ SUNG: Đẩy 2 trường mới vào payload để Database lưu lại
         $payload = [
             'ten' => addslashes($ten),
             'slug' => addslashes($slug),
@@ -356,7 +341,6 @@ class DanhMucController
             'is_goi_y' => $isGoiY,
         ];
 
-        // BỔ SUNG: Đẩy 2 trường mới vào old để giữ lại lựa chọn nếu form bị lỗi validation
         $old = [
             'ten' => $ten,
             'slug' => $slugInput,

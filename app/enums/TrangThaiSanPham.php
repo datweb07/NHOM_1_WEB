@@ -7,7 +7,6 @@ abstract class TrangThaiSanPham
     const SAP_RA_MAT = 'SAP_RA_MAT';
     const HET_HANG = 'HET_HANG';
 
-
     public static function getAll(): array
     {
         return [
@@ -18,14 +17,12 @@ abstract class TrangThaiSanPham
         ];
     }
 
-
     //kiểm tra hợp lệ trạng thái sản phẩm
     public static function isValid(?string $value): bool
     {
         return in_array($value, self::getAll());
     }
 
-   
     //hiển thị
     public static function getLabel(?string $value): string
     {
@@ -42,8 +39,6 @@ abstract class TrangThaiSanPham
                 return 'Không xác định';
         }
     }
-
-   
     
     //lấy màu trạng thái
     public static function getBadgeColor(?string $value): string

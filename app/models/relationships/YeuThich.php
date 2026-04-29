@@ -9,12 +9,8 @@ class YeuThich extends BaseModel
         parent::__construct('yeu_thich');
     }
 
-    /**
-     * Thêm sản phẩm vào danh sách yêu thích
-     */
     public function them(int $nguoiDungId, int $sanPhamId): bool
     {
-        // Kiểm tra đã tồn tại chưa
         if ($this->kiemTraDaTonTai($nguoiDungId, $sanPhamId)) {
             return false;
         }
@@ -29,9 +25,6 @@ class YeuThich extends BaseModel
         return mysqli_affected_rows($this->link) > 0;
     }
 
-    /**
-     * Xóa sản phẩm khỏi danh sách yêu thích
-     */
     public function xoa(int $nguoiDungId, int $sanPhamId): bool
     {
         $nguoiDungId = (int)$nguoiDungId;
@@ -44,9 +37,6 @@ class YeuThich extends BaseModel
         return mysqli_affected_rows($this->link) > 0;
     }
 
-    /**
-     * Kiểm tra sản phẩm đã được yêu thích chưa
-     */
     public function kiemTraDaTonTai(int $nguoiDungId, int $sanPhamId): bool
     {
         $nguoiDungId = (int)$nguoiDungId;
@@ -59,9 +49,6 @@ class YeuThich extends BaseModel
         return !empty($result) && (int)$result[0]['total'] > 0;
     }
 
-    /**
-     * Lấy danh sách sản phẩm yêu thích của user
-     */
     public function layDanhSachTheoUser(int $nguoiDungId, int $limit = 20, int $offset = 0): array
     {
         $nguoiDungId = (int)$nguoiDungId;
@@ -81,9 +68,6 @@ class YeuThich extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Đếm số sản phẩm yêu thích của user
-     */
     public function demTheoUser(int $nguoiDungId): int
     {
         $nguoiDungId = (int)$nguoiDungId;
@@ -95,18 +79,12 @@ class YeuThich extends BaseModel
         return !empty($result) ? (int)$result[0]['total'] : 0;
     }
 
-    /**
-     * Đếm số lượng yêu thích (static method để gọi nhanh)
-     */
     public static function demSoLuongYeuThich(int $nguoiDungId): int
     {
         $instance = new self();
         return $instance->demTheoUser($nguoiDungId);
     }
 
-    /**
-     * Xóa tất cả sản phẩm yêu thích của user
-     */
     public function xoaTatCa(int $nguoiDungId): bool
     {
         $nguoiDungId = (int)$nguoiDungId;

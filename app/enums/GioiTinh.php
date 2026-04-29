@@ -6,7 +6,6 @@ abstract class GioiTinh
     const NU = 'NU';
     const KHAC = 'KHAC';
 
-
     public static function getAll(): array
     {
         return [
@@ -16,13 +15,11 @@ abstract class GioiTinh
         ];
     }
 
-
     //kiểm tra hợp lệ của value giới tính
     public static function isValid(?string $value): bool
     {
         return in_array($value, self::getAll());
     }
-
     
     //hiển thị giới tính
     public static function getLabel(?string $value): string

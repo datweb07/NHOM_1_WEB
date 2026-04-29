@@ -107,13 +107,8 @@ class SanPhamController
             exit;
         }
 
-        // Check if product has orders
         require_once dirname(__DIR__, 2) . '/models/entities/SanPham.php';
         $sanPhamModel = new SanPham();
-        // if ($sanPhamModel->kiemTraCoDonHang($id)) {
-        //     header("Location: /admin/san-pham?error=has_orders");
-        //     exit;
-        // }
         
         $this->baseModel->update($id, ['trang_thai' => 'NGUNG_BAN']);
         $sqlPhienBan = "UPDATE phien_ban_san_pham SET trang_thai = 'NGUNG_BAN' WHERE san_pham_id = $id";
@@ -281,7 +276,6 @@ class SanPhamController
 
         $this->baseModel->update($id, $payload);
 
-        // If status changed to NGUNG_BAN, update variants
         if (isset($payload['trang_thai']) && $payload['trang_thai'] === 'NGUNG_BAN') {
             $this->sanPhamModel->capNhatTrangThaiPhienBanKhiNgungBan($id);
         }
@@ -302,14 +296,12 @@ class SanPhamController
         $trangThai = trim((string)($input['trang_thai'] ?? 'CON_BAN'));
         $noiBatRaw = (string)($input['noi_bat'] ?? '0');
 
-        // Validate ten_san_pham
         if ($tenSanPham === '') {
             $errors['ten_san_pham'] = 'Tên sản phẩm không được để trống.';
         } elseif (mb_strlen($tenSanPham) > 255) {
             $errors['ten_san_pham'] = 'Tên sản phẩm không được vượt quá 255 ký tự.';
         }
 
-        // Generate or validate slug
         $slug = $slugInput !== '' ? $slugInput : $this->slugify($tenSanPham);
         if ($slug === '') {
             $errors['slug'] = 'Slug không hợp lệ.';
@@ -319,17 +311,14 @@ class SanPhamController
             $errors['slug'] = 'Slug chỉ gồm chữ thường, số và dấu gạch ngang.';
         }
 
-        // Check slug uniqueness
         if ($this->slugExists($slug, $editingId)) {
             $errors['slug'] = 'Slug đã tồn tại, vui lòng dùng slug khác.';
         }
 
-        // Validate hang_san_xuat
         if ($hangSanXuat !== '' && mb_strlen($hangSanXuat) > 100) {
             $errors['hang_san_xuat'] = 'Hãng sản xuất không được vượt quá 100 ký tự.';
         }
 
-        // Validate danh_muc_id
         $danhMucId = null;
         if ($danhMucIdRaw !== '') {
             if (!ctype_digit($danhMucIdRaw)) {
@@ -342,13 +331,11 @@ class SanPhamController
             }
         }
 
-        // Validate trang_thai
         $validStatuses = ['CON_BAN', 'NGUNG_BAN', 'SAP_RA_MAT', 'HET_HANG'];
         if (!in_array($trangThai, $validStatuses, true)) {
             $errors['trang_thai'] = 'Trạng thái không hợp lệ.';
         }
 
-        // Validate noi_bat
         $noiBat = ($noiBatRaw === '1') ? 1 : 0;
 
         $payload = [
@@ -406,8 +393,6 @@ class SanPhamController
         $result = $this->baseModel->query($sql);
         return !empty($result);
     }
-
-    // ===== VARIANT MANAGEMENT METHODS =====
 
     public function variants($sanPhamId): void
     {
@@ -545,20 +530,16 @@ class SanPhamController
         $giaGocRaw = trim((string)($input['gia_goc'] ?? ''));
         $soLuongTonRaw = trim((string)($input['so_luong_ton'] ?? '0'));
 
-        // --- XỬ LÝ LƯU JSON THUỘC TÍNH BẢN THỂ ---
         $thuocTinhBienThe = null;
         if (isset($input['thuoc_tinh']) && is_array($input['thuoc_tinh'])) {
-            // Lọc bỏ các thuộc tính bị bỏ trống (không nhập gì)
             $thuocTinhClean = array_filter($input['thuoc_tinh'], function($value) {
                 return trim($value) !== '';
             });
-            // Nếu có dữ liệu thì ép thành chuỗi JSON (Giữ nguyên tiếng Việt)
             if (!empty($thuocTinhClean)) {
                 $thuocTinhBienThe = json_encode($thuocTinhClean, JSON_UNESCAPED_UNICODE);
             }
         }
 
-        // Validate SKU
         if ($sku === '') {
             $errors['sku'] = 'SKU không được để trống.';
         } else {
@@ -569,7 +550,6 @@ class SanPhamController
             }
         }
 
-        // Validate gia_ban
         if ($giaBanRaw === '' || !is_numeric($giaBanRaw)) {
             $errors['gia_ban'] = 'Giá bán phải là số.';
         } else {
@@ -579,7 +559,6 @@ class SanPhamController
             }
         }
 
-        // Validate gia_goc
         $giaGoc = null;
         if ($giaGocRaw !== '') {
             if (!is_numeric($giaGocRaw)) {
@@ -592,7 +571,6 @@ class SanPhamController
             }
         }
 
-        // Validate so_luong_ton
         if (!is_numeric($soLuongTonRaw)) {
             $errors['so_luong_ton'] = 'Số lượng tồn phải là số.';
         } else {
@@ -618,8 +596,6 @@ class SanPhamController
 
         return [$payload, $errors];
     }
-
-    // ===== IMAGE MANAGEMENT METHODS =====
 
     public function images($sanPhamId): void
     {
@@ -783,21 +759,10 @@ class SanPhamController
         exit;
     }
 
-    // ===== TECHNICAL SPECIFICATIONS MANAGEMENT =====
-
-    // ===== API ENDPOINT FOR AJAX =====
-    
-    /**
-     * API Endpoint: Trả về danh sách thuộc tính động theo danh mục
-     * Delegate to API handler
-     */
     public function getCategoryAttributes(): void
     {
         require_once dirname(__DIR__, 2) . '/api/CategoryAttributesApi.php';
-        // API file sẽ tự xử lý request và trả về JSON response
     }
-
-    // ===== TECHNICAL SPECIFICATIONS MANAGEMENT =====
 
     public function specifications($sanPhamId): void
     {
@@ -842,7 +807,6 @@ class SanPhamController
         require_once dirname(__DIR__, 2) . '/models/entities/ThongSoKyThuat.php';
         $thongSoModel = new ThongSoKyThuat();
 
-        // Process specifications array from form
         $specifications = [];
         if (isset($_POST['specifications']) && is_array($_POST['specifications'])) {
             foreach ($_POST['specifications'] as $spec) {

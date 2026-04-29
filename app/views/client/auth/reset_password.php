@@ -9,53 +9,53 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="icon" href="<?= ASSET_URL ?>/assets/client/images/header/1.png">
     <style>
-        :root {
-            --fpt-red: #cb1c22;
-            --fpt-red-hover: #a8151b;
-        }
+    :root {
+        --fpt-red: #cb1c22;
+        --fpt-red-hover: #a8151b;
+    }
 
-        body {
-            background-color: #f8f9fa;
-        }
+    body {
+        background-color: #f8f9fa;
+    }
 
-        .reset-card {
-            border: none;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
+    .reset-card {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
 
-        .btn-primary-brand {
-            background-color: var(--fpt-red);
-            border-color: var(--fpt-red);
-            color: white;
-            font-weight: 500;
-            padding: 10px 20px;
-        }
+    .btn-primary-brand {
+        background-color: var(--fpt-red);
+        border-color: var(--fpt-red);
+        color: white;
+        font-weight: 500;
+        padding: 10px 20px;
+    }
 
-        .btn-primary-brand:hover,
-        .btn-primary-brand:focus {
-            background-color: var(--fpt-red-hover);
-            border-color: var(--fpt-red-hover);
-            color: white;
-        }
+    .btn-primary-brand:hover,
+    .btn-primary-brand:focus {
+        background-color: var(--fpt-red-hover);
+        border-color: var(--fpt-red-hover);
+        color: white;
+    }
 
-        .form-control {
-            padding: 10px 15px;
-            border-color: #ced4da;
-        }
+    .form-control {
+        padding: 10px 15px;
+        border-color: #ced4da;
+    }
 
-        .form-control:focus {
-            border-color: var(--fpt-red);
-            box-shadow: 0 0 0 0.25rem rgba(203, 28, 34, 0.15);
-        }
+    .form-control:focus {
+        border-color: var(--fpt-red);
+        box-shadow: 0 0 0 0.25rem rgba(203, 28, 34, 0.15);
+    }
 
-        .text-brand {
-            color: var(--fpt-red);
-        }
+    .text-brand {
+        color: var(--fpt-red);
+    }
 
-        a.text-brand:hover {
-            color: var(--fpt-red-hover);
-        }
+    a.text-brand:hover {
+        color: var(--fpt-red-hover);
+    }
     </style>
 </head>
 
@@ -77,9 +77,9 @@
                         </div>
 
                         <?php if (isset($_GET['error'])): ?>
-                            <div class="alert alert-danger py-2" role="alert" style="font-size: 0.9rem;">
-                                <i class="bi bi-exclamation-circle me-1"></i>
-                                <?php
+                        <div class="alert alert-danger py-2" role="alert" style="font-size: 0.9rem;">
+                            <i class="bi bi-exclamation-circle me-1"></i>
+                            <?php
                                 $errorMessages = [
                                     'empty_password' => 'Vui lòng nhập mật khẩu mới.',
                                     'password_too_short' => 'Mật khẩu phải có ít nhất 6 ký tự.',
@@ -88,7 +88,7 @@
                                 ];
                                 echo $errorMessages[$_GET['error']] ?? 'Đã có lỗi xảy ra.';
                                 ?>
-                            </div>
+                        </div>
                         <?php endif; ?>
 
                         <form method="POST" action="/client/auth/reset-password">
@@ -143,8 +143,8 @@
     document.querySelectorAll('.toggle-password').forEach(function(icon) {
         icon.addEventListener('click', function() {
 
-            let input = this.previousElementSibling; 
-            
+            let input = this.previousElementSibling;
+
             if (input.type === "password") {
                 input.type = "text";
                 this.classList.remove('bi-eye-slash');
@@ -154,11 +154,11 @@
                 input.type = "password";
                 this.classList.remove('bi-eye');
                 this.classList.add('bi-eye-slash');
-                this.style.color = '#6c757d'; 
+                this.style.color = '#6c757d';
             }
         });
     });
-</script>
+    </script>
 </body>
 
 </html>

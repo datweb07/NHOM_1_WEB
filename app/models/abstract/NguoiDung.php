@@ -24,15 +24,12 @@ abstract class NguoiDung extends BaseModel
         parent::__construct('nguoi_dung');
     }
 
-
-
     public function tim_kiem_san_pham(string $tuKhoa)
     {
         $sql = "SELECT * FROM san_pham WHERE ten_san_pham LIKE '%$tuKhoa%'";
 
         return $this->query($sql); 
     }
-
 
     public function duyet_danh_muc(int $danhMucId)
     {
@@ -41,7 +38,6 @@ abstract class NguoiDung extends BaseModel
         return $this->query($sql);
     }
 
-    // User management methods for admin
     public function layDanhSach(?string $loaiTaiKhoan = null, ?string $trangThai = null, int $limit = 20, int $offset = 0): array
     {
         $where = [];
@@ -117,7 +113,6 @@ abstract class NguoiDung extends BaseModel
         $result = $this->query($sql);
         return !empty($result) ? (int)$result[0]['total'] : 0;
     }
-
 
     public function getId(): ?int { return $this->id; }
     public function setId(?int $id): void { $this->id = $id; }

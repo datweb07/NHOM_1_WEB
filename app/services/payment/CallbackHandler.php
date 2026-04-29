@@ -193,7 +193,6 @@ class CallbackHandler
             require_once dirname(__DIR__, 2) . '/services/events/EmailObserver.php';
             require_once dirname(__DIR__, 2) . '/services/mailer/MailerService.php';
             
-            // Lấy email từ đơn hàng
             $emailNhan = null;
             $orders = $this->donHangModel->query("SELECT thong_tin_guest FROM don_hang WHERE id = $donHangId LIMIT 1");
             if (!empty($orders)) {
@@ -214,7 +213,7 @@ class CallbackHandler
                     'order_id' => $donHangId,
                     'payment_method' => $this->formatPaymentMethodForEmail($gatewayName),
                     'transaction_id' => $gatewayTransactionId ?? 'N/A',
-                    'email' => $emailNhan, // Thêm email vào event data
+                    'email' => $emailNhan, 
                     'timestamp' => date('Y-m-d H:i:s')
                 ]);
                 

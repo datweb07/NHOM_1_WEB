@@ -9,7 +9,6 @@ abstract class PhuongThucThanhToan
     const VIETQR = 'VIETQR';
     const PAYPAL = 'PAYPAL';
 
-
     public static function getAll(): array
     {
         return [
@@ -22,13 +21,11 @@ abstract class PhuongThucThanhToan
         ];
     }
 
-
     //kiểm tra hợp lệ của value phương thức thanh toán
     public static function isValid(?string $value): bool
     {
         return in_array($value, self::getAll());
     }
-
 
     //hiển thị 
     public static function getLabel(?string $value): string

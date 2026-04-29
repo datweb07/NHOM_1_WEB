@@ -182,7 +182,6 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
 
                                 <div class="mb-3">
                                     <div class="form-check">
-                                        <!-- Hidden input để đảm bảo luôn có giá trị 0 khi checkbox không được tick -->
                                         <input type="hidden" name="trang_thai" value="0">
                                         <input
                                             class="form-check-input"
@@ -272,9 +271,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Hàm vẽ danh sách sản phẩm ra HTML
     function renderProducts(products) {
-        productList.innerHTML = ''; // Xóa chữ "Đang tải..."
+        productList.innerHTML = ''; 
         
         if(products.length === 0) {
             productList.innerHTML = '<div class="text-center text-muted py-3">Không tìm thấy sản phẩm phù hợp.</div>';
@@ -287,13 +285,9 @@ document.addEventListener('DOMContentLoaded', function() {
             button.className = 'list-group-item list-group-item-action';
             button.textContent = product.ten_san_pham;
             
-            // Sự kiện khi click vào 1 sản phẩm
             button.onclick = function() {
-                // Điền link vào ô input ngoài form
-                // Giả định website bạn dùng slug (nếu dùng ID thì đổi thành product.id)
                 document.getElementById('link_dich').value = '/san-pham/' + product.slug;
                 
-                // Đóng modal
                 const modalInstance = bootstrap.Modal.getInstance(modalElement);
                 modalInstance.hide();
             };

@@ -222,7 +222,7 @@ class VNPayGateway implements PaymentGatewayInterface
 
         $vnpRequestId = time() . rand(1000, 9999);
         $vnpAmount = ((int) $amount) * 100;
-        $vnpTransactionType = '02'; // 02 = Hoàn tiền toàn phần
+        $vnpTransactionType = '02'; 
 
         $safeReason = preg_replace('/[^a-zA-Z0-9 ]/', '', $reason);
 

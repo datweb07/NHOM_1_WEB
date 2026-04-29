@@ -21,7 +21,6 @@ $errorMessages = [
     'not_found' => 'Không tìm thấy khuyến mãi.',
 ];
 
-// Include Master Layout
 require_once dirname(__DIR__) . '/layouts/header.php';
 require_once dirname(__DIR__) . '/layouts/sidebar.php';
 ?>
@@ -35,7 +34,7 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
     ];
     require_once dirname(__DIR__) . '/layouts/breadcrumb.php'; 
     ?>
-    
+
     <div class="app-content">
         <div class="container-fluid">
 
@@ -46,17 +45,17 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
             </div>
 
             <?php if (!empty($success) && isset($successMessages[$success])): ?>
-                <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-                    <i class="bi bi-check-circle me-1"></i> <?= LinkProductsViewHelper::e($successMessages[$success]) ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+            <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-check-circle me-1"></i> <?= LinkProductsViewHelper::e($successMessages[$success]) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
             <?php endif; ?>
 
             <?php if (!empty($error) && isset($errorMessages[$error])): ?>
-                <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
-                    <i class="bi bi-exclamation-triangle me-1"></i> <?= LinkProductsViewHelper::e($errorMessages[$error]) ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle me-1"></i> <?= LinkProductsViewHelper::e($errorMessages[$error]) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
             <?php endif; ?>
 
             <div class="card mb-4 border-0 shadow-sm">
@@ -88,47 +87,49 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                     </button>
                                 </div>
                             </div>
-                            
+
                             <?php if (empty($allProducts)): ?>
-                                <div class="alert alert-info border-0 shadow-sm d-flex align-items-center">
-                                    <i class="bi bi-info-circle-fill fs-4 me-3 text-info"></i>
-                                    <div>Không có sản phẩm nào trong hệ thống. Hãy thêm sản phẩm trước khi tạo liên kết.</div>
+                            <div class="alert alert-info border-0 shadow-sm d-flex align-items-center">
+                                <i class="bi bi-info-circle-fill fs-4 me-3 text-info"></i>
+                                <div>Không có sản phẩm nào trong hệ thống. Hãy thêm sản phẩm trước khi tạo liên kết.
                                 </div>
+                            </div>
                             <?php else: ?>
-                                <div class="bg-light border rounded p-3" style="max-height: 600px; overflow-y: auto;">
-                                    <div class="row g-3">
-                                        <?php foreach ($allProducts as $product): ?>
-                                            <div class="col-12 col-md-6 col-xl-4">
-                                                <div class="form-check custom-control border bg-white rounded p-3 h-100 position-relative shadow-sm transition-all product-card">
-                                                    <input
-                                                        class="form-check-input product-checkbox position-absolute"
-                                                        style="top: 15px; left: 15px; width: 1.2rem; height: 1.2rem;"
-                                                        type="checkbox"
-                                                        name="san_pham_ids[]"
-                                                        value="<?= (int)$product['id'] ?>"
-                                                        id="product_<?= (int)$product['id'] ?>"
-                                                        <?= in_array($product['id'], $linkedProductIds) ? 'checked' : '' ?>
-                                                    >
-                                                    
-                                                    <label class="form-check-label w-100 d-block" for="product_<?= (int)$product['id'] ?>" style="padding-left: 2rem; cursor: pointer;">
-                                                        <div class="fw-bold text-dark text-truncate mb-1" title="<?= LinkProductsViewHelper::e($product['ten_san_pham']) ?>">
-                                                            <?= LinkProductsViewHelper::e($product['ten_san_pham']) ?>
-                                                        </div>
-                                                        <div class="text-muted small">
-                                                            <div class="d-flex justify-content-between mb-1">
-                                                                <span>ID: #<?= (int)$product['id'] ?></span>
-                                                                <span class="badge bg-secondary"><?= LinkProductsViewHelper::e($product['trang_thai']) ?></span>
-                                                            </div>
-                                                            <div class="text-danger fw-semibold">
-                                                                <?= LinkProductsViewHelper::formatCurrency($product['gia_hien_thi']) ?>
-                                                            </div>
-                                                        </div>
-                                                    </label>
+                            <div class="bg-light border rounded p-3" style="max-height: 600px; overflow-y: auto;">
+                                <div class="row g-3">
+                                    <?php foreach ($allProducts as $product): ?>
+                                    <div class="col-12 col-md-6 col-xl-4">
+                                        <div
+                                            class="form-check custom-control border bg-white rounded p-3 h-100 position-relative shadow-sm transition-all product-card">
+                                            <input class="form-check-input product-checkbox position-absolute"
+                                                style="top: 15px; left: 15px; width: 1.2rem; height: 1.2rem;"
+                                                type="checkbox" name="san_pham_ids[]" value="<?= (int)$product['id'] ?>"
+                                                id="product_<?= (int)$product['id'] ?>"
+                                                <?= in_array($product['id'], $linkedProductIds) ? 'checked' : '' ?>>
+
+                                            <label class="form-check-label w-100 d-block"
+                                                for="product_<?= (int)$product['id'] ?>"
+                                                style="padding-left: 2rem; cursor: pointer;">
+                                                <div class="fw-bold text-dark text-truncate mb-1"
+                                                    title="<?= LinkProductsViewHelper::e($product['ten_san_pham']) ?>">
+                                                    <?= LinkProductsViewHelper::e($product['ten_san_pham']) ?>
                                                 </div>
-                                            </div>
-                                        <?php endforeach; ?>
+                                                <div class="text-muted small">
+                                                    <div class="d-flex justify-content-between mb-1">
+                                                        <span>ID: #<?= (int)$product['id'] ?></span>
+                                                        <span
+                                                            class="badge bg-secondary"><?= LinkProductsViewHelper::e($product['trang_thai']) ?></span>
+                                                    </div>
+                                                    <div class="text-danger fw-semibold">
+                                                        <?= LinkProductsViewHelper::formatCurrency($product['gia_hien_thi']) ?>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
                                     </div>
+                                    <?php endforeach; ?>
                                 </div>
+                            </div>
                             <?php endif; ?>
                         </div>
 
@@ -143,38 +144,42 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                 </div>
             </div>
 
-        </div> </div> </main>
+        </div>
+    </div>
+</main>
 
 <style>
-    /* CSS hỗ trợ hover nhẹ cho các card sản phẩm */
-    .product-card {
-        transition: all 0.2s ease-in-out;
-    }
-    .product-card:hover {
-        border-color: #0d6efd !important;
-        background-color: #f8f9fa !important;
-    }
-    .product-checkbox:checked + label {
-        opacity: 1;
-    }
-    .product-checkbox:checked ~ .product-card {
-        border-color: #0d6efd !important;
-        background-color: #f0f8ff !important;
-    }
+.product-card {
+    transition: all 0.2s ease-in-out;
+}
+
+.product-card:hover {
+    border-color: #0d6efd !important;
+    background-color: #f8f9fa !important;
+}
+
+.product-checkbox:checked+label {
+    opacity: 1;
+}
+
+.product-checkbox:checked~.product-card {
+    border-color: #0d6efd !important;
+    background-color: #f0f8ff !important;
+}
 </style>
 
 <script>
-    function selectAll() {
-        document.querySelectorAll('.product-checkbox').forEach(checkbox => {
-            checkbox.checked = true;
-        });
-    }
+function selectAll() {
+    document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+        checkbox.checked = true;
+    });
+}
 
-    function deselectAll() {
-        document.querySelectorAll('.product-checkbox').forEach(checkbox => {
-            checkbox.checked = false;
-        });
-    }
+function deselectAll() {
+    document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+}
 </script>
 
 <?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>

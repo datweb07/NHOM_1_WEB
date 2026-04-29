@@ -4,7 +4,6 @@ namespace App\Core;
 
 class Session
 {
-    // Session timeout in seconds (2 hours)
     private const TIMEOUT_DURATION = 7200;
 
     public static function start(): void
@@ -13,7 +12,6 @@ class Session
             session_start();
         }
 
-        // Check for session timeout
         self::checkTimeout();
     }
 
@@ -25,10 +23,8 @@ class Session
             $elapsed = time() - $lastActivity;
             
             if ($elapsed > self::TIMEOUT_DURATION) {
-                // Session has timed out
                 self::destroy();
                 
-                // Redirect to login with timeout message
                 if (self::isAdmin()) {
                     header('Location: /admin/auth/login?timeout=1');
                 } else {
@@ -38,7 +34,6 @@ class Session
             }
         }
         
-        // Update last activity timestamp
         self::set('last_activity', time());
     }
 
@@ -60,12 +55,10 @@ class Session
     public static function flash(string $key, $value = null)
     {
         if ($value === null) {
-            // Get flash message and remove it
             $message = self::get($key);
             self::remove($key);
             return $message;
         } else {
-            // Set flash message
             self::set($key, $value);
         }
     }
@@ -97,7 +90,6 @@ class Session
         return $_SESSION['guest_session_id'];
     }
 
-
     public static function login(array $user): void
     {
         self::set('user_id', $user['id']);
@@ -111,7 +103,6 @@ class Session
         }
     }
 
-
     public static function logout(): void
     {
         self::remove('user_id');
@@ -121,13 +112,11 @@ class Session
         self::remove('user_avatar');
     }
 
-
     public static function isLoggedIn(): bool
     {
         return self::get('user_id') !== null;
     }
 
- 
     public static function getUserId(): ?int
     {
         return self::get('user_id');

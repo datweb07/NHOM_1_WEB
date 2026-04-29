@@ -14,9 +14,6 @@ class YeuThichController
         $this->yeuThichModel = new \YeuThich();
     }
 
-    /**
-     * Hiển thị danh sách sản phẩm yêu thích
-     */
     public function index(): void
     {
         if (!\App\Core\Session::get('user_id')) {
@@ -35,9 +32,6 @@ class YeuThichController
         require_once dirname(__DIR__, 2) . '/views/client/yeu_thich/index.php';
     }
 
-    /**
-     * Thêm sản phẩm vào yêu thích
-     */
     public function them(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -67,9 +61,6 @@ class YeuThichController
         }
     }
 
-    /**
-     * Xóa sản phẩm khỏi yêu thích
-     */
     public function xoa(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -98,9 +89,6 @@ class YeuThichController
         ]);
     }
 
-    /**
-     * Kiểm tra sản phẩm đã được yêu thích chưa
-     */
     public function kiemTra(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -126,9 +114,6 @@ class YeuThichController
         echo json_encode(['success' => true, 'is_favorite' => $isFavorite]);
     }
 
-    /**
-     * Đếm số sản phẩm yêu thích
-     */
     public function dem(): void
     {
         if (!\App\Core\Session::get('user_id')) {

@@ -14,7 +14,7 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
     ];
     require_once dirname(__DIR__) . '/layouts/breadcrumb.php'; 
     ?>
-    
+
     <div class="app-content">
         <div class="container-fluid">
             <div class="mb-3 d-flex justify-content-between align-items-center">
@@ -33,8 +33,8 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
             </div>
 
             <?php if (isset($_GET['success'])): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <?php
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?php
                     $messages = [
                         'variant_created' => 'Thêm phiên bản thành công!',
                         'variant_updated' => 'Cập nhật phiên bản thành công!',
@@ -42,21 +42,21 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                     ];
                     echo $messages[$_GET['success']] ?? 'Thao tác thành công!';
                     ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
             <?php endif; ?>
 
             <?php if (isset($_GET['error'])): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <?php
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?php
                     $messages = [
                         'validation' => 'Vui lòng kiểm tra lại thông tin!',
                         'not_found' => 'Không tìm thấy phiên bản!'
                     ];
                     echo $messages[$_GET['error']] ?? 'Có lỗi xảy ra!';
                     ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
             <?php endif; ?>
 
             <div class="card mb-4">
@@ -69,60 +69,68 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label class="form-label">SKU <span class="text-danger">*</span></label>
-                                    <input type="text" name="sku" class="form-control <?= isset($_SESSION['variant_errors']['sku']) ? 'is-invalid' : '' ?>" 
-                                           value="<?= htmlspecialchars($_SESSION['variant_old']['sku'] ?? '') ?>" required>
+                                    <input type="text" name="sku"
+                                        class="form-control <?= isset($_SESSION['variant_errors']['sku']) ? 'is-invalid' : '' ?>"
+                                        value="<?= htmlspecialchars($_SESSION['variant_old']['sku'] ?? '') ?>" required>
                                     <?php if (isset($_SESSION['variant_errors']['sku'])): ?>
-                                        <div class="invalid-feedback"><?= $_SESSION['variant_errors']['sku'] ?></div>
+                                    <div class="invalid-feedback"><?= $_SESSION['variant_errors']['sku'] ?></div>
                                     <?php endif; ?>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label class="form-label">Tên phiên bản</label>
-                                    <input type="text" name="ten_phien_ban" class="form-control" 
-                                           value="<?= htmlspecialchars($_SESSION['variant_old']['ten_phien_ban'] ?? '') ?>">
+                                    <input type="text" name="ten_phien_ban" class="form-control"
+                                        value="<?= htmlspecialchars($_SESSION['variant_old']['ten_phien_ban'] ?? '') ?>">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label class="form-label">Màu sắc</label>
-                                    <input type="text" name="mau_sac" class="form-control" 
-                                           value="<?= htmlspecialchars($_SESSION['variant_old']['mau_sac'] ?? '') ?>">
+                                    <input type="text" name="mau_sac" class="form-control"
+                                        value="<?= htmlspecialchars($_SESSION['variant_old']['mau_sac'] ?? '') ?>">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="mb-3">
                                     <label class="form-label">Số lượng tồn <span class="text-danger">*</span></label>
-                                    <input type="number" name="so_luong_ton" class="form-control <?= isset($_SESSION['variant_errors']['so_luong_ton']) ? 'is-invalid' : '' ?>" 
-                                           value="<?= htmlspecialchars($_SESSION['variant_old']['so_luong_ton'] ?? '0') ?>" required>
+                                    <input type="number" name="so_luong_ton"
+                                        class="form-control <?= isset($_SESSION['variant_errors']['so_luong_ton']) ? 'is-invalid' : '' ?>"
+                                        value="<?= htmlspecialchars($_SESSION['variant_old']['so_luong_ton'] ?? '0') ?>"
+                                        required>
                                     <?php if (isset($_SESSION['variant_errors']['so_luong_ton'])): ?>
-                                        <div class="invalid-feedback"><?= $_SESSION['variant_errors']['so_luong_ton'] ?></div>
+                                    <div class="invalid-feedback"><?= $_SESSION['variant_errors']['so_luong_ton'] ?>
+                                    </div>
                                     <?php endif; ?>
                                 </div>
                             </div>
                         </div>
 
                         <div id="dynamic-attributes-container" class="row">
-                            </div>
+                        </div>
 
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Giá bán <span class="text-danger">*</span></label>
-                                    <input type="number" name="gia_ban" class="form-control <?= isset($_SESSION['variant_errors']['gia_ban']) ? 'is-invalid' : '' ?>" 
-                                           value="<?= htmlspecialchars($_SESSION['variant_old']['gia_ban'] ?? '') ?>" step="0.01" required>
+                                    <input type="number" name="gia_ban"
+                                        class="form-control <?= isset($_SESSION['variant_errors']['gia_ban']) ? 'is-invalid' : '' ?>"
+                                        value="<?= htmlspecialchars($_SESSION['variant_old']['gia_ban'] ?? '') ?>"
+                                        step="0.01" required>
                                     <?php if (isset($_SESSION['variant_errors']['gia_ban'])): ?>
-                                        <div class="invalid-feedback"><?= $_SESSION['variant_errors']['gia_ban'] ?></div>
+                                    <div class="invalid-feedback"><?= $_SESSION['variant_errors']['gia_ban'] ?></div>
                                     <?php endif; ?>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label class="form-label">Giá gốc</label>
-                                    <input type="number" name="gia_goc" class="form-control <?= isset($_SESSION['variant_errors']['gia_goc']) ? 'is-invalid' : '' ?>" 
-                                           value="<?= htmlspecialchars($_SESSION['variant_old']['gia_goc'] ?? '') ?>" step="0.01">
+                                    <input type="number" name="gia_goc"
+                                        class="form-control <?= isset($_SESSION['variant_errors']['gia_goc']) ? 'is-invalid' : '' ?>"
+                                        value="<?= htmlspecialchars($_SESSION['variant_old']['gia_goc'] ?? '') ?>"
+                                        step="0.01">
                                     <?php if (isset($_SESSION['variant_errors']['gia_goc'])): ?>
-                                        <div class="invalid-feedback"><?= $_SESSION['variant_errors']['gia_goc'] ?></div>
+                                    <div class="invalid-feedback"><?= $_SESSION['variant_errors']['gia_goc'] ?></div>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -145,34 +153,33 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                 </div>
                 <div class="card-body">
                     <?php if (empty($variants)): ?>
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle"></i> Chưa có phiên bản nào. Vui lòng thêm phiên bản mới.
-                        </div>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Chưa có phiên bản nào. Vui lòng thêm phiên bản mới.
+                    </div>
                     <?php else: ?>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>SKU</th>
-                                        <th>Tên phiên bản</th>
-                                        <th>Màu sắc</th>
-                                        <th>Thuộc tính</th>
-                                        <th>Giá bán</th>
-                                        <th>Giá gốc</th>
-                                        <th>Tồn kho</th>
-                                        <th>Trạng thái</th>
-                                        <th>Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($variants as $variant): ?>
-                                        <tr>
-                                            <td><strong><?= htmlspecialchars($variant['sku']) ?></strong></td>
-                                            <td><?= htmlspecialchars($variant['ten_phien_ban'] ?? '-') ?></td>
-                                            <td><?= htmlspecialchars($variant['mau_sac'] ?? '-') ?></td>
-                                            <td>
-                                                <?php
-                                                // Xử lý hiển thị chuỗi JSON thành văn bản đọc được
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>SKU</th>
+                                    <th>Tên phiên bản</th>
+                                    <th>Màu sắc</th>
+                                    <th>Thuộc tính</th>
+                                    <th>Giá bán</th>
+                                    <th>Giá gốc</th>
+                                    <th>Tồn kho</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($variants as $variant): ?>
+                                <tr>
+                                    <td><strong><?= htmlspecialchars($variant['sku']) ?></strong></td>
+                                    <td><?= htmlspecialchars($variant['ten_phien_ban'] ?? '-') ?></td>
+                                    <td><?= htmlspecialchars($variant['mau_sac'] ?? '-') ?></td>
+                                    <td>
+                                        <?php
                                                 $thuocTinhText = [];
                                                 if (!empty($variant['thuoc_tinh_bien_the'])) {
                                                     $thuocTinhArr = json_decode($variant['thuoc_tinh_bien_the'], true);
@@ -186,12 +193,13 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                                 }
                                                 echo !empty($thuocTinhText) ? htmlspecialchars(implode(' | ', $thuocTinhText)) : '-';
                                                 ?>
-                                            </td>
-                                            <td><?= number_format($variant['gia_ban'], 0, ',', '.') ?>đ</td>
-                                            <td><?= $variant['gia_goc'] ? number_format($variant['gia_goc'], 0, ',', '.') . 'đ' : '-' ?></td>
-                                            <td><?= number_format($variant['so_luong_ton']) ?></td>
-                                            <td>
-                                                <?php
+                                    </td>
+                                    <td><?= number_format($variant['gia_ban'], 0, ',', '.') ?>đ</td>
+                                    <td><?= $variant['gia_goc'] ? number_format($variant['gia_goc'], 0, ',', '.') . 'đ' : '-' ?>
+                                    </td>
+                                    <td><?= number_format($variant['so_luong_ton']) ?></td>
+                                    <td>
+                                        <?php
                                                 $badges = [
                                                     'CON_HANG' => 'success',
                                                     'HET_HANG' => 'danger',
@@ -205,24 +213,24 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                                                 $badge = $badges[$variant['trang_thai']] ?? 'secondary';
                                                 $label = $labels[$variant['trang_thai']] ?? $variant['trang_thai'];
                                                 ?>
-                                                <span class="badge bg-<?= $badge ?>"><?= $label ?></span>
-                                            </td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-warning" 
-                                                        onclick="editVariant(<?= htmlspecialchars(json_encode($variant)) ?>)">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
-                                                <a href="/admin/san-pham/phien-ban/xoa?id=<?= $variant['id'] ?>" 
-                                                   class="btn btn-sm btn-danger" 
-                                                   onclick="return confirm('Bạn có chắc muốn xóa phiên bản này?')">
-                                                    <i class="bi bi-trash"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                                        <span class="badge bg-<?= $badge ?>"><?= $label ?></span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-warning"
+                                            onclick="editVariant(<?= htmlspecialchars(json_encode($variant)) ?>)">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <a href="/admin/san-pham/phien-ban/xoa?id=<?= $variant['id'] ?>"
+                                            class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Bạn có chắc muốn xóa phiên bản này?')">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -261,13 +269,14 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                     </div>
 
                     <div id="edit-dynamic-attributes-container" class="row">
-                        </div>
+                    </div>
 
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label class="form-label">Giá bán <span class="text-danger">*</span></label>
-                                <input type="number" name="gia_ban" id="edit_gia_ban" class="form-control" step="0.01" required>
+                                <input type="number" name="gia_ban" id="edit_gia_ban" class="form-control" step="0.01"
+                                    required>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -279,7 +288,8 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label class="form-label">Số lượng tồn <span class="text-danger">*</span></label>
-                                <input type="number" name="so_luong_ton" id="edit_so_luong_ton" class="form-control" required>
+                                <input type="number" name="so_luong_ton" id="edit_so_luong_ton" class="form-control"
+                                    required>
                             </div>
                         </div>
                     </div>
@@ -296,43 +306,37 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
 <?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
 
 <script>
-    // Lấy tên danh mục của sản phẩm hiện tại để render đúng field
-    const productCategory = <?= json_encode($sanPham['ten_danh_muc'] ?? 'Điện Thoại') ?>; 
+const productCategory = <?= json_encode($sanPham['ten_danh_muc'] ?? 'Điện Thoại') ?>;
 
-    /**
-     * Hàm gọi AJAX để lấy cấu hình thuộc tính động từ Server
-     * Sử dụng Async/Await hiện đại
-     */
-    async function renderDynamicInputsAJAX(categoryName, containerId, existingData = null) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
+async function renderDynamicInputsAJAX(categoryName, containerId, existingData = null) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
 
-        // Hiển thị trạng thái đang tải (Loading state)
-        container.innerHTML = '<div class="col-12"><div class="spinner-border text-primary spinner-border-sm me-2"></div><span class="text-muted">Đang tải thuộc tính...</span></div>';
+    container.innerHTML =
+        '<div class="col-12"><div class="spinner-border text-primary spinner-border-sm me-2"></div><span class="text-muted">Đang tải thuộc tính...</span></div>';
 
-        try {
-            // 1. GỌI AJAX ĐẾN SERVER
-            // URL đã được cập nhật để khớp với routing admin
-            const response = await fetch(`/admin/api/get-category-attributes?category=${encodeURIComponent(categoryName)}`);
-            const result = await response.json();
+    try {
+        const response = await fetch(
+            `/admin/api/get-category-attributes?category=${encodeURIComponent(categoryName)}`);
+        const result = await response.json();
 
-            if (!result.success) {
-                container.innerHTML = '<div class="col-12"><div class="text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Lỗi khi tải cấu hình thuộc tính.</div></div>';
-                return;
-            }
+        if (!result.success) {
+            container.innerHTML =
+                '<div class="col-12"><div class="text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Lỗi khi tải cấu hình thuộc tính.</div></div>';
+            return;
+        }
 
-            // 2. VẼ FORM TỪ DỮ LIỆU JSON TRẢ VỀ
-            const attributes = result.data;
-            let html = '';
-            
-            // Hàm lấy giá trị cũ để fill vào input
-            const val = (key) => existingData && existingData[key] ? existingData[key] : '';
+        const attributes = result.data;
+        let html = '';
 
-            if (attributes.length === 0) {
-                html = '<div class="col-12 text-muted mb-3"><i class="bi bi-info-circle me-2"></i><em>Danh mục này không yêu cầu thuộc tính biến thể phụ.</em></div>';
-            } else {
-                attributes.forEach(attr => {
-                    html += `
+        const val = (key) => existingData && existingData[key] ? existingData[key] : '';
+
+        if (attributes.length === 0) {
+            html =
+                '<div class="col-12 text-muted mb-3"><i class="bi bi-info-circle me-2"></i><em>Danh mục này không yêu cầu thuộc tính biến thể phụ.</em></div>';
+        } else {
+            attributes.forEach(attr => {
+                html += `
                         <div class="col-md-${attr.col}">
                             <div class="mb-3">
                                 <label class="form-label">${attr.label}</label>
@@ -344,52 +348,48 @@ require_once dirname(__DIR__) . '/layouts/sidebar.php';
                             </div>
                         </div>
                     `;
-                });
-            }
+            });
+        }
 
-            container.innerHTML = html;
+        container.innerHTML = html;
 
-        } catch (error) {
-            console.error("Lỗi AJAX:", error);
-            container.innerHTML = '<div class="col-12"><div class="text-danger"><i class="bi bi-x-circle me-2"></i>Không thể kết nối đến máy chủ.</div></div>';
+    } catch (error) {
+        console.error("Lỗi AJAX:", error);
+        container.innerHTML =
+            '<div class="col-12"><div class="text-danger"><i class="bi bi-x-circle me-2"></i>Không thể kết nối đến máy chủ.</div></div>';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    renderDynamicInputsAJAX(productCategory, 'dynamic-attributes-container');
+});
+
+function editVariant(variant) {
+    document.getElementById('edit_sku').value = variant.sku || '';
+    document.getElementById('edit_ten_phien_ban').value = variant.ten_phien_ban || '';
+    document.getElementById('edit_mau_sac').value = variant.mau_sac || '';
+    document.getElementById('edit_gia_ban').value = variant.gia_ban || '';
+    document.getElementById('edit_gia_goc').value = variant.gia_goc || '';
+    document.getElementById('edit_so_luong_ton').value = variant.so_luong_ton || '';
+
+    let thuocTinhData = {};
+    if (variant.thuoc_tinh_bien_the) {
+        try {
+            thuocTinhData = JSON.parse(variant.thuoc_tinh_bien_the);
+        } catch (e) {
+            console.error("Lỗi parse JSON thuộc tính:", e);
         }
     }
 
-    // Tự động nạp field khi load trang form Thêm
-    document.addEventListener('DOMContentLoaded', function() {
-        renderDynamicInputsAJAX(productCategory, 'dynamic-attributes-container');
-    });
+    renderDynamicInputsAJAX(productCategory, 'edit-dynamic-attributes-container', thuocTinhData);
 
-    // Hàm gọi khi nhấn nút Sửa Phiên Bản
-    function editVariant(variant) {
-        document.getElementById('edit_sku').value = variant.sku || '';
-        document.getElementById('edit_ten_phien_ban').value = variant.ten_phien_ban || '';
-        document.getElementById('edit_mau_sac').value = variant.mau_sac || '';
-        document.getElementById('edit_gia_ban').value = variant.gia_ban || '';
-        document.getElementById('edit_gia_goc').value = variant.gia_goc || '';
-        document.getElementById('edit_so_luong_ton').value = variant.so_luong_ton || '';
-        
-        // Parse JSON thuộc tính biến thể để đưa vào Modal
-        let thuocTinhData = {};
-        if (variant.thuoc_tinh_bien_the) {
-            try {
-                thuocTinhData = JSON.parse(variant.thuoc_tinh_bien_the);
-            } catch (e) { 
-                console.error("Lỗi parse JSON thuộc tính:", e); 
-            }
-        }
+    document.getElementById('editVariantForm').action = '/admin/san-pham/phien-ban/sua?id=' + variant.id;
 
-        // Gọi AJAX khi mở Modal sửa
-        renderDynamicInputsAJAX(productCategory, 'edit-dynamic-attributes-container', thuocTinhData);
-        
-        document.getElementById('editVariantForm').action = '/admin/san-pham/phien-ban/sua?id=' + variant.id;
-        
-        new bootstrap.Modal(document.getElementById('editVariantModal')).show();
-    }
+    new bootstrap.Modal(document.getElementById('editVariantModal')).show();
+}
 </script>
 
 <?php
-// Clear session errors and old data
 unset($_SESSION['variant_errors']);
 unset($_SESSION['variant_old']);
 ?>

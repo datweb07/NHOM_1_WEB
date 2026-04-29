@@ -119,7 +119,6 @@ class MaGiamGia extends BaseModel
         return null;
     }
 
-    // Fixed: Changed ORDER BY from ngay_tao to id (ngay_tao column doesn't exist)
     public function layDanhSach(?string $trangThai = null, int $limit = 20, int $offset = 0): array
     {
         $sql = "SELECT * FROM {$this->table}";
@@ -200,9 +199,6 @@ class MaGiamGia extends BaseModel
         ];
     }
 
-    /**
-     * Kiểm tra mã giảm giá (alias cho timTheoMaCode + kiemTraHopLe)
-     */
     public function kiemTraMaGiamGia(string $maCode, float $tongTien): ?array
     {
         $voucher = $this->timTheoMaCode($maCode);
@@ -212,9 +208,6 @@ class MaGiamGia extends BaseModel
         return $voucher;
     }
 
-    /**
-     * Tính tiền giảm (alias cho tinhSoTienGiam)
-     */
     public function tinhTienGiam(array $maGiamGia, float $tongTien): float
     {
         return $this->tinhSoTienGiam($maGiamGia, $tongTien);

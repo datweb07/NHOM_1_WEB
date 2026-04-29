@@ -21,7 +21,6 @@ class DashboardController
         $this->thanhToanModel = new ThanhToan();
         $this->sanPhamModel = new SanPham();
         
-        // Create anonymous class extending NguoiDung for querying
         $this->nguoiDungModel = new class extends NguoiDung {
             public function __construct() {
                 parent::__construct();
@@ -31,30 +30,24 @@ class DashboardController
 
     public function index(): void
     {
-        // Query pending orders count (trang_thai = 'CHO_DUYET')
         $pendingOrdersSql = "SELECT COUNT(*) as total FROM don_hang WHERE trang_thai = 'CHO_DUYET'";
         $pendingOrdersResult = $this->donHangModel->query($pendingOrdersSql);
         $pendingOrders = $pendingOrdersResult[0]['total'] ?? 0;
 
-        // Query active users count (loai_tai_khoan = 'MEMBER')
         $activeUsersSql = "SELECT COUNT(*) as total FROM nguoi_dung WHERE loai_tai_khoan = 'MEMBER'";
         $activeUsersResult = $this->nguoiDungModel->query($activeUsersSql);
         $totalUsers = $activeUsersResult[0]['total'] ?? 0;
 
-        // Query available products count (trang_thai = 'CON_BAN')
         $activeProductsSql = "SELECT COUNT(*) as total FROM san_pham WHERE trang_thai = 'CON_BAN'";
         $activeProductsResult = $this->sanPhamModel->query($activeProductsSql);
         $activeProducts = $activeProductsResult[0]['total'] ?? 0;
 
-        // Query pending payments count (trang_thai_duyet = 'CHO_DUYET')
         $pendingPaymentsSql = "SELECT COUNT(*) as total FROM thanh_toan WHERE trang_thai_duyet = 'CHO_DUYET'";
         $pendingPaymentsResult = $this->thanhToanModel->query($pendingPaymentsSql);
         $pendingPayments = $pendingPaymentsResult[0]['total'] ?? 0;
 
-        // Calculate monthly revenue (current month)
         $monthlyRevenue = $this->calculateMonthlyRevenue();
 
-        // Calculate monthly orders count (current month)
         $currentMonth = date('Y-m');
         $monthlyOrdersSql = "SELECT COUNT(*) as total 
                              FROM don_hang 
@@ -62,7 +55,6 @@ class DashboardController
         $monthlyOrdersResult = $this->donHangModel->query($monthlyOrdersSql);
         $monthlyOrders = $monthlyOrdersResult[0]['total'] ?? 0;
 
-        // Prepare data for view
         $data = [
             'pendingOrders' => (int)$pendingOrders,
             'totalUsers' => (int)$totalUsers,
@@ -75,18 +67,9 @@ class DashboardController
             ]
         ];
 
-        // Load dashboard view (admin views don't use layout wrapper)
         View::render('admin/dashboard/index', $data, null);
     }
 
-    /**
-     * Calculate monthly revenue with corrected logic
-     * - Only include orders with THANH_CONG payment approval
-     * - Exclude orders with COMPLETED refunds
-     * - Exclude cancelled/returned orders
-     * 
-     * @return float Monthly revenue amount
-     */
     private function calculateMonthlyRevenue(): float
     {
         $currentMonth = date('Y-m');
@@ -105,14 +88,6 @@ class DashboardController
         return (float)($result[0]['revenue'] ?? 0);
     }
 
-    /**
-     * Calculate total revenue with corrected logic
-     * - Only include orders with THANH_CONG payment approval
-     * - Exclude orders with COMPLETED refunds
-     * - Exclude cancelled/returned orders
-     * 
-     * @return float Total revenue amount
-     */
     private function calculateTotalRevenue(): float
     {
         $sql = "SELECT COALESCE(SUM(don_hang.tong_thanh_toan), 0) as revenue 

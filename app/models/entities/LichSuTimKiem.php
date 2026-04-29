@@ -9,9 +9,6 @@ class LichSuTimKiem extends BaseModel
         parent::__construct('lich_su_tim_kiem');
     }
 
-    /**
-     * Lưu lịch sử tìm kiếm
-     */
     public function luuLichSu(int $nguoiDungId, string $tuKhoa): int
     {
         return $this->create([
@@ -20,9 +17,6 @@ class LichSuTimKiem extends BaseModel
         ]);
     }
 
-    /**
-     * Lấy lịch sử tìm kiếm của user
-     */
     public function layLichSuTheoUser(int $nguoiDungId, int $limit = 10): array
     {
         $nguoiDungId = (int)$nguoiDungId;
@@ -38,9 +32,6 @@ class LichSuTimKiem extends BaseModel
         return $this->query($sql);
     }
 
-    /**
-     * Xóa lịch sử tìm kiếm
-     */
     public function xoaLichSu(int $nguoiDungId): bool
     {
         $nguoiDungId = (int)$nguoiDungId;
@@ -49,9 +40,6 @@ class LichSuTimKiem extends BaseModel
         return true;
     }
 
-    /**
-     * Lấy từ khóa phổ biến
-     */
     public function layTuKhoaPhoBien(int $limit = 10): array
     {
         $limit = max(1, (int)$limit);
