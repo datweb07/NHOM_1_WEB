@@ -11,36 +11,36 @@ The FPT Shop e-commerce website project is an online shopping platform specializ
 ## Key Features
 
 ### Client Features
-- **Product Catalog** — Browse products with images, specs, pricing, and variants (color, storage, RAM)
-- **Product Detail** — Full spec sheet, image gallery, variant selector, related products
-- **Shopping Cart** — Add, update quantity, remove items, persistent across sessions
-- **Search** — Real-time XML-based search with history tracking and popular keywords
-- **Wishlist** — Save products for later, toggle from product cards
-- **Checkout** — Multi-step checkout with address selection and payment method choice
-- **Payment Methods** — VNPay (card), PayPal (international), VietQR (bank transfer QR), COD (cash on delivery)
-- **Order Management** — View order history, track status, cancel pending orders
-- **Product Reviews** — Star rating + comment system, one review per purchased product
-- **Promotions** — Browse active promotions, apply discount/coupon codes at checkout
-- **User Authentication** — Register, login, email verification, forgot/reset password
-- **Google Login** — One-click sign-in via Google OAuth (Supabase Auth)
-- **Profile Management** — Update name, phone, DOB, gender, avatar (Cloudinary upload)
-- **Address Book** — Add/edit/delete multiple shipping addresses, set default
-- **Responsive Design** — Mobile-first layout, works on all screen sizes
+- **Product Catalog** - Browse products with images, specs, pricing, and variants (color, storage, RAM)
+- **Product Detail** - Full spec sheet, image gallery, variant selector, related products
+- **Shopping Cart** - Add, update quantity, remove items, persistent across sessions
+- **Search** - Real-time XML-based search with history tracking and popular keywords
+- **Wishlist** - Save products for later, toggle from product cards
+- **Checkout** - Multi-step checkout with address selection and payment method choice
+- **Payment Methods** - VNPay (card), PayPal (international), VietQR (bank transfer QR), COD (cash on delivery)
+- **Order Management** - View order history, track status, cancel pending orders
+- **Product Reviews** - Star rating + comment system, one review per purchased product
+- **Promotions** - Browse active promotions, apply discount/coupon codes at checkout
+- **User Authentication** - Register, login, email verification, forgot/reset password
+- **Google Login** - One-click sign-in via Google OAuth (Supabase Auth)
+- **Profile Management** - Update name, phone, DOB, gender, avatar (Cloudinary upload)
+- **Address Book** - Add/edit/delete multiple shipping addresses, set default
+- **Responsive Design** - Mobile-first layout, works on all screen sizes
 
 ### Admin Features
-- **Dashboard** — Revenue charts, order stats, top products, recent activity
-- **Product Management** — Full CRUD for products, variants, images (Cloudinary), specifications
-- **Category Management** — Hierarchical categories with featured/suggested flags
-- **Order Management** — View all orders, update status, view order details
-- **User Management** — View customer accounts, account details
-- **Promotion Management** — Create/edit/delete promotional campaigns with product linking
-- **Discount Code Management** — Generate and manage voucher/coupon codes with usage limits
-- **Banner Management** — Hero banners and promotional banners with display toggle
-- **Review Management** — View and moderate product reviews
-- **Payment Verification** — Approve or reject manual payment confirmations (VietQR/COD)
-- **Payment Gateway Health** — Monitor success/failure rates per gateway
-- **Notification System** — Real-time admin notifications for new orders and payments
-- **Refund Management** — Process refunds for VNPay (sandbox mock) and PayPal
+- **Dashboard** - Revenue charts, order stats, top products, recent activity
+- **Product Management** - Full CRUD for products, variants, images (Cloudinary), specifications
+- **Category Management** - Hierarchical categories with featured/suggested flags
+- **Order Management** - View all orders, update status, view order details
+- **User Management** - View customer accounts, account details
+- **Promotion Management** - Create/edit/delete promotional campaigns with product linking
+- **Discount Code Management** - Generate and manage voucher/coupon codes with usage limits
+- **Banner Management** - Hero banners and promotional banners with display toggle
+- **Review Management** - View and moderate product reviews
+- **Payment Verification** - Approve or reject manual payment confirmations (VietQR/COD)
+- **Payment Gateway Health** - Monitor success/failure rates per gateway
+- **Notification System** - Real-time admin notifications for new orders and payments
+- **Refund Management** - Process refunds for VNPay (sandbox mock) and PayPal
 
 ## Technologies Used
 
